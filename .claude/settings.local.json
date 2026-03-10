@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs -I {} basename {})",
+      "WebFetch(domain:udssimulator.com)",
+      "Bash(npx tsc --noEmit --pretty)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx vite build)"
+    ]
+  }
+}
