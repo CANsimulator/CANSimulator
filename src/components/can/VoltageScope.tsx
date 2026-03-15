@@ -164,6 +164,10 @@ export const VoltageScope: React.FC = () => {
     const lastTick = useRef<number>(0);
     const isPanning = useRef(false);
     const panOrigin = useRef({ x: 0, y: 0, vx: 0, vy: 0 });
+    const requestClearRef = useRef(false);
+    const prevRunMode = useRef<RunMode>('run');
+    const isDraggingTrigger = useRef(false);
+    const draggingOffset = useRef<'ch1' | 'ch2' | null>(null);
 
     const [scope, setScope] = useState<ScopeState>({
         ch1: { enabled: true, vdiv: 1, offset: 0 },
@@ -195,6 +199,14 @@ export const VoltageScope: React.FC = () => {
     useEffect(() => { scopeRef.current = scope; }, [scope]);
     useEffect(() => { viewRef.current = view; }, [view]);
 
+    // Handle transition clear for persistence
+    useEffect(() => {
+        if (prevRunMode.current === 'stop' && scope.runMode !== 'stop') {
+            requestClearRef.current = true;
+        }
+        prevRunMode.current = scope.runMode;
+    }, [scope.runMode]);
+
     // ─── Coordinate transforms ──────────────────────────────
     const vToPanel = useCallback((v: number, vMin: number, vMax: number, panelH: number, vw: ViewState) => {
         const norm = (v - vMin) / (vMax - vMin);
@@ -202,9 +214,36 @@ export const VoltageScope: React.FC = () => {
         return (baseY - panelH / 2) * vw.zoomY + panelH / 2 + vw.panY;
     }, []);
 
+    const yToV = useCallback((y: number, vMin: number, vMax: number, panelH: number, vw: ViewState) => {
+        const baseY = (y - vw.panY - panelH / 2) / vw.zoomY + panelH / 2;
+        const norm = 1 - baseY / panelH;
+        return norm * (vMax - vMin) + vMin;
+    }, []);
+
     const sToX = useCallback((i: number, total: number, vw: ViewState) => {
         const base = (i / Math.max(total - 1, 1)) * PLOT_W;
         return (base - PLOT_W / 2) * vw.zoomX + PLOT_W / 2 + vw.panX;
+    }, []);
+
+    const getActiveWaveScale = useCallback(() => {
+        const s = scopeRef.current;
+        const o1 = s.ch1.enabled ? s.ch1.offset : 0;
+        const o2 = s.ch2.enabled ? s.ch2.offset : 0;
+        
+        let avgOffset = 0;
+        if (s.ch1.enabled && s.ch2.enabled) {
+            avgOffset = (o1 + o2) / 2;
+        } else if (s.ch1.enabled) {
+            avgOffset = o1;
+        } else if (s.ch2.enabled) {
+            avgOffset = o2;
+        }
+        
+        return {
+            vMin: ISO.V_MIN - avgOffset,
+            vMax: ISO.V_MAX - avgOffset,
+            avgOffset
+        };
     }, []);
 
     // ─── Drawing helpers (defined inside draw for ctx access) ─
@@ -232,8 +271,13 @@ export const VoltageScope: React.FC = () => {
         const scaleY = ch / CANVAS_H;
         ctx.scale(scaleX, scaleY);
 
-        // Background
-        ctx.fillStyle = C.bg;
+        // Background persistence
+        if (s.persistence && !requestClearRef.current) {
+            ctx.fillStyle = 'rgba(6,6,12,0.18)';
+        } else {
+            ctx.fillStyle = C.bg;
+            requestClearRef.current = false;
+        }
         ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
         // ── Helper: draw grid ──
@@ -353,19 +397,20 @@ export const VoltageScope: React.FC = () => {
         // PANEL 1: CANH / CANL Waveform
         // ════════════════════════════════════════════
         drawPanel(M.left, WAVE_Y, PLOT_W, WAVE_H, 'CANH / CANL — Physical Layer', () => {
+            const { vMin, vMax, avgOffset } = getActiveWaveScale();
             // ISO 11898 threshold bands
-            const cahDomTop = vToPanel(ISO.CANH_DOM_MAX, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw);
-            const cahDomBot = vToPanel(ISO.CANH_DOM_MIN, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw);
+            const cahDomTop = vToPanel(ISO.CANH_DOM_MAX + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, vw);
+            const cahDomBot = vToPanel(ISO.CANH_DOM_MIN + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, vw);
             ctx.fillStyle = 'rgba(0,212,255,0.04)';
             ctx.fillRect(0, cahDomTop, PLOT_W, cahDomBot - cahDomTop);
 
-            const calDomTop = vToPanel(ISO.CANL_DOM_MAX, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw);
-            const calDomBot = vToPanel(ISO.CANL_DOM_MIN, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw);
+            const calDomTop = vToPanel(ISO.CANL_DOM_MAX + (s.ch2.offset - avgOffset), vMin, vMax, WAVE_H, vw);
+            const calDomBot = vToPanel(ISO.CANL_DOM_MIN + (s.ch2.offset - avgOffset), vMin, vMax, WAVE_H, vw);
             ctx.fillStyle = 'rgba(200,80,255,0.04)';
             ctx.fillRect(0, calDomTop, PLOT_W, calDomBot - calDomTop);
 
             // Recessive center
-            const recY = vToPanel(ISO.V_REC, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw);
+            const recY = vToPanel(ISO.V_REC, vMin, vMax, WAVE_H, vw);
             ctx.strokeStyle = 'rgba(255,255,255,0.08)';
             ctx.setLineDash([2, 4]); ctx.lineWidth = 0.5;
             ctx.beginPath(); ctx.moveTo(0, recY); ctx.lineTo(PLOT_W, recY); ctx.stroke();
@@ -373,11 +418,11 @@ export const VoltageScope: React.FC = () => {
 
             // ISO threshold labels
             const thresholds = [
-                { v: ISO.CANH_DOM_MIN, label: 'CANH min 2.75V', color: C.ch1 },
-                { v: ISO.CANL_DOM_MAX, label: 'CANL max 2.25V', color: C.ch2 },
+                { v: ISO.CANH_DOM_MIN + (s.ch1.offset - avgOffset), label: 'CANH min 2.75V', color: C.ch1 },
+                { v: ISO.CANL_DOM_MAX + (s.ch2.offset - avgOffset), label: 'CANL max 2.25V', color: C.ch2 },
             ];
             for (const th of thresholds) {
-                const y = vToPanel(th.v, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw);
+                const y = vToPanel(th.v, vMin, vMax, WAVE_H, vw);
                 if (y < 0 || y > WAVE_H) continue;
                 ctx.strokeStyle = th.color; ctx.globalAlpha = 0.15;
                 ctx.setLineDash([1, 3]); ctx.lineWidth = 0.5;
@@ -389,16 +434,16 @@ export const VoltageScope: React.FC = () => {
             }
 
             drawGrid(PLOT_W, WAVE_H, 10, 8, vw);
-            drawVAxis(WAVE_H, ISO.V_MIN, ISO.V_MAX, 'V', 1, vw);
+            drawVAxis(WAVE_H, vMin, vMax, 'V', 1, vw);
 
             if (samples.length < 2) return;
 
             // Traces
-            if (s.ch2.enabled) drawWaveform(samples, p => p.canl, ISO.V_MIN, ISO.V_MAX, WAVE_H, C.ch2, C.ch2Dim, vw);
-            if (s.ch1.enabled) drawWaveform(samples, p => p.canh, ISO.V_MIN, ISO.V_MAX, WAVE_H, C.ch1, C.ch1Dim, vw);
+            if (s.ch2.enabled) drawWaveform(samples, p => p.canl + (s.ch2.offset - avgOffset), vMin, vMax, WAVE_H, C.ch2, C.ch2Dim, vw);
+            if (s.ch1.enabled) drawWaveform(samples, p => p.canh + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, C.ch1, C.ch1Dim, vw);
 
             // Trigger level
-            const trigY = vToPanel(s.triggerLevel, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw);
+            const trigY = vToPanel(s.triggerLevel, vMin, vMax, WAVE_H, vw);
             ctx.save();
             ctx.strokeStyle = C.trigger; ctx.setLineDash([3, 3]); ctx.lineWidth = 0.8; ctx.globalAlpha = 0.5;
             ctx.beginPath(); ctx.moveTo(0, trigY); ctx.lineTo(PLOT_W, trigY); ctx.stroke();
@@ -511,32 +556,67 @@ export const VoltageScope: React.FC = () => {
         // ════════════════════════════════════════════
         drawPanel(M.left, DECODE_Y, PLOT_W, DECODE_H, '', () => {
             if (samples.length < 2) return;
-            const bitsShown = new Map<number, { dom: boolean; x1: number; x2: number }>();
+            
+            const CAN_FIELDS = [
+                { name: 'SOF', color: '#ffffff', start: 0, end: 0 },
+                { name: 'ARB ID', color: '#00d4ff', start: 1, end: 11 },
+                { name: 'RTR/IDE/r0', color: '#888888', start: 12, end: 14 },
+                { name: 'DLC', color: '#ffd000', start: 15, end: 18 },
+                { name: 'DATA', color: '#00ff88', start: 19, end: 82 },
+                { name: 'CRC', color: '#ff8800', start: 83, end: 97 },
+                { name: 'ACK/EOF', color: '#c850ff', start: 98, end: 107 },
+            ];
+
+            const regions: { name: string; color: string; x1: number; x2: number }[] = [];
+            let currentRegion: { name: string; color: string; x1: number; x2: number } | null = null;
+            let currentFieldId: string | null = null;
+
             for (let i = 0; i < samples.length; i++) {
                 const x = sToX(i, samples.length, vw);
                 const bi = samples[i].bitIndex;
-                if (!bitsShown.has(bi)) {
-                    bitsShown.set(bi, { dom: samples[i].isDominant, x1: x, x2: x });
+                const field = CAN_FIELDS.find(f => bi >= f.start && bi <= f.end);
+                
+                if (field) {
+                    if (!currentRegion || currentFieldId !== field.name || (i > 0 && samples[i].bitIndex < samples[i-1].bitIndex)) {
+                        currentRegion = { name: field.name, color: field.color, x1: x, x2: x };
+                        currentFieldId = field.name;
+                        regions.push(currentRegion);
+                    } else {
+                        currentRegion.x2 = x;
+                    }
                 } else {
-                    bitsShown.get(bi)!.x2 = x;
+                    currentRegion = null;
+                    currentFieldId = null;
                 }
             }
+
             ctx.font = '600 9px monospace'; ctx.textAlign = 'center';
-            bitsShown.forEach((info) => {
-                const midX = (info.x1 + info.x2) / 2;
-                const w = Math.max(info.x2 - info.x1, 2);
-                if (midX < -20 || midX > PLOT_W + 20) return;
-                ctx.fillStyle = info.dom ? 'rgba(0,255,136,0.08)' : 'rgba(255,208,0,0.05)';
-                ctx.fillRect(info.x1, 2, w, DECODE_H - 4);
-                if (w > 8) {
-                    ctx.fillStyle = info.dom ? C.dominant : C.recessive;
-                    ctx.globalAlpha = 0.7;
-                    ctx.fillText(info.dom ? 'D' : 'R', midX, DECODE_H / 2 + 3);
-                    ctx.globalAlpha = 1;
+
+            regions.forEach((r) => {
+                const w = Math.max(r.x2 - r.x1, 2);
+                const midX = (r.x1 + r.x2) / 2;
+                if (midX < -40 || midX > PLOT_W + 40) return;
+
+                // Strip Background
+                ctx.fillStyle = r.color;
+                ctx.globalAlpha = 0.15;
+                ctx.fillRect(r.x1, 2, w, DECODE_H - 4);
+
+                // Strip Border
+                ctx.strokeStyle = r.color;
+                ctx.globalAlpha = 0.4;
+                ctx.lineWidth = 1;
+                ctx.strokeRect(r.x1, 2, w, DECODE_H - 4);
+                
+                // Label (only if wide enough)
+                if (w > 20) {
+                    ctx.globalAlpha = 0.9;
+                    ctx.fillStyle = r.color;
+                    ctx.fillText(r.name, midX, DECODE_H / 2 + 3);
                 }
-                ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 0.5;
-                ctx.beginPath(); ctx.moveTo(info.x1, 0); ctx.lineTo(info.x1, DECODE_H); ctx.stroke();
+                ctx.globalAlpha = 1;
             });
+
             ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.font = '7px monospace'; ctx.textAlign = 'left';
             ctx.fillText('DECODE', 4, 9);
         });
@@ -575,15 +655,16 @@ export const VoltageScope: React.FC = () => {
         }
 
         // Ground markers
+        const { vMin, vMax, avgOffset } = getActiveWaveScale();
         if (s.ch1.enabled) {
-            const gy = vToPanel(2.5, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw) + WAVE_Y;
+            const gy = vToPanel(2.5 + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, vw) + WAVE_Y;
             if (gy > WAVE_Y && gy < WAVE_Y + WAVE_H) {
                 ctx.fillStyle = C.ch1;
                 ctx.beginPath(); ctx.moveTo(M.left, gy); ctx.lineTo(M.left - 8, gy - 5); ctx.lineTo(M.left - 8, gy + 5); ctx.fill();
             }
         }
         if (s.ch2.enabled) {
-            const gy = vToPanel(2.5, ISO.V_MIN, ISO.V_MAX, WAVE_H, vw) + WAVE_Y;
+            const gy = vToPanel(2.5 + (s.ch2.offset - avgOffset), vMin, vMax, WAVE_H, vw) + WAVE_Y;
             if (gy > WAVE_Y && gy < WAVE_Y + WAVE_H) {
                 ctx.fillStyle = C.ch2;
                 ctx.beginPath(); ctx.moveTo(M.left, gy + 10); ctx.lineTo(M.left - 8, gy + 5); ctx.lineTo(M.left - 8, gy + 15); ctx.fill();
@@ -684,27 +765,128 @@ export const VoltageScope: React.FC = () => {
 
     // ─── Pan ────────────────────────────────────────────────
     const handlePointerDown = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
+        const rect = canvasRef.current!.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) * (CANVAS_W / rect.width);
+        const mouseY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
+
+        // Left click hit-test
+        if (e.button === 0) {
+            const { vMin, vMax, avgOffset } = getActiveWaveScale();
+            const vw = viewRef.current;
+            const scopeVal = scopeRef.current;
+
+            // 1. Trigger Marker/Line (Anywhere on the horizontal line in the panel or the triangle)
+            const trigY = vToPanel(scopeVal.triggerLevel, vMin, vMax, WAVE_H, vw);
+            const isNearTrigLine = mouseX > M.left - 20 && mouseX < CANVAS_W && Math.abs(mouseY - (WAVE_Y + trigY)) < 24;
+            if (isNearTrigLine) {
+                isDraggingTrigger.current = true;
+                e.currentTarget.setPointerCapture(e.pointerId);
+                return;
+            }
+
+            // 2. Offset Markers (Left Side)
+            if (mouseX < M.left + 30) {
+                // CH1 ground
+                const g1y = vToPanel(2.5 + (scopeVal.ch1.offset - avgOffset), vMin, vMax, WAVE_H, vw) + WAVE_Y;
+                if (Math.abs(mouseY - g1y) < 24) {
+                    draggingOffset.current = 'ch1';
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                    return;
+                }
+                // CH2 ground
+                const g2y = vToPanel(2.5 + (scopeVal.ch2.offset - avgOffset), vMin, vMax, WAVE_H, vw) + WAVE_Y;
+                if (Math.abs(mouseY - g2y) < 24) {
+                    draggingOffset.current = 'ch2';
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                    return;
+                }
+            }
+        }
+
         if (e.button === 1 || e.button === 2) {
             isPanning.current = true;
             panOrigin.current = { x: e.clientX, y: e.clientY, vx: viewRef.current.panX, vy: viewRef.current.panY };
             e.currentTarget.setPointerCapture(e.pointerId); e.preventDefault();
         }
-    }, []);
+    }, [vToPanel, getActiveWaveScale]);
     const handlePointerMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-        if (!isPanning.current) return;
         const rect = canvasRef.current!.getBoundingClientRect();
-        setView(p => ({
-            ...p,
-            panX: panOrigin.current.vx + (e.clientX - panOrigin.current.x) * (CANVAS_W / rect.width),
-            panY: panOrigin.current.vy + (e.clientY - panOrigin.current.y) * (CANVAS_H / rect.height),
-        }));
-    }, []);
-    const handlePointerUp = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-        if (isPanning.current) {
-            isPanning.current = false;
-            if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+        const mouseX = (e.clientX - rect.left) * (CANVAS_W / rect.width);
+        const mouseY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
+
+        if (isDraggingTrigger.current) {
+            const { vMin, vMax } = getActiveWaveScale();
+            const panelY = mouseY - WAVE_Y;
+            const newV = yToV(panelY, vMin, vMax, WAVE_H, viewRef.current);
+            const snappedV = Math.round(newV * 10) / 10;
+            const clampedV = clamp(snappedV, 0, 5);
+            setScope(p => ({ ...p, triggerLevel: clampedV }));
+            return;
         }
-    }, []);
+
+        if (draggingOffset.current) {
+            const { vMin, vMax, avgOffset } = getActiveWaveScale();
+            const panelY = mouseY - WAVE_Y;
+            const vAtMouse = yToV(panelY, vMin, vMax, WAVE_H, viewRef.current);
+            const newOffset = clamp(vAtMouse - 2.5 + avgOffset, -5, 5);
+            const snappedO = Math.round(newOffset * 10) / 10;
+            const ch = draggingOffset.current;
+            setScope(p => ({ ...p, [ch]: { ...p[ch], offset: snappedO } }));
+            return;
+        }
+
+        if (isPanning.current) {
+            setView(p => ({
+                ...p,
+                panX: panOrigin.current.vx + (e.clientX - panOrigin.current.x) * (CANVAS_W / rect.width),
+                panY: panOrigin.current.vy + (e.clientY - panOrigin.current.y) * (CANVAS_H / rect.height),
+            }));
+            return;
+        }
+
+        // Hover effect for markers
+        const { vMin, vMax, avgOffset } = getActiveWaveScale();
+        const trigY = vToPanel(scopeRef.current.triggerLevel, vMin, vMax, WAVE_H, viewRef.current);
+        const isNearTrigLine = mouseX > M.left - 20 && mouseX < CANVAS_W && Math.abs(mouseY - (WAVE_Y + trigY)) < 24;
+        
+        let isNearOffset = false;
+        if (mouseX < M.left + 30) {
+            const g1y = vToPanel(2.5 + (scopeRef.current.ch1.offset - avgOffset), vMin, vMax, WAVE_H, viewRef.current) + WAVE_Y;
+            const g2y = vToPanel(2.5 + (scopeRef.current.ch2.offset - avgOffset), vMin, vMax, WAVE_H, viewRef.current) + WAVE_Y;
+            if (Math.abs(mouseY - g1y) < 24 || Math.abs(mouseY - g2y) < 24) isNearOffset = true;
+        }
+
+        if (canvasRef.current) {
+            canvasRef.current.style.cursor = (isNearTrigLine || isNearOffset) ? 'ns-resize' : 'crosshair';
+        }
+    }, [yToV, vToPanel, getActiveWaveScale]);
+    const handlePointerUp = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
+        const rect = canvasRef.current!.getBoundingClientRect();
+        const mouseY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
+        const { vMin, vMax, avgOffset } = getActiveWaveScale();
+        const panelY = mouseY - WAVE_Y;
+
+        if (isDraggingTrigger.current) {
+            const finalV = yToV(panelY, vMin, vMax, WAVE_H, viewRef.current);
+            const snappedV = Math.round(finalV * 10) / 10;
+            const clampedV = clamp(snappedV, 0, 5);
+            setScope(p => ({ ...p, triggerLevel: clampedV }));
+            isDraggingTrigger.current = false;
+        }
+        if (draggingOffset.current) {
+            const vAtMouse = yToV(panelY, vMin, vMax, WAVE_H, viewRef.current);
+            const finalO = clamp(vAtMouse - 2.5 + avgOffset, -5, 5);
+            const snappedO = Math.round(finalO * 10) / 10;
+            const ch = draggingOffset.current;
+            setScope(p => ({ ...p, [ch]: { ...p[ch], offset: snappedO } }));
+            draggingOffset.current = null;
+        }
+        
+        if (isPanning.current) isPanning.current = false;
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+    }, [yToV, getActiveWaveScale]);
 
     // ─── Keyboard ───────────────────────────────────────────
     const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -827,17 +1009,27 @@ export const VoltageScope: React.FC = () => {
                     <CtrlGroup label="CH1 CANH" color={C.ch1}>
                         <ScopeBtn label={scope.ch1.enabled ? 'ON' : 'OFF'} active={scope.ch1.enabled} color={C.ch1}
                             onClick={() => updateCh('ch1', { enabled: !scope.ch1.enabled })} />
-                        <Stepper label="V/div" value={`${scope.ch1.vdiv}V`}
-                            onUp={() => updateCh('ch1', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch1.vdiv, 1) })}
-                            onDown={() => updateCh('ch1', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch1.vdiv, -1) })} />
+                        <div className="flex flex-col gap-1">
+                            <Stepper label="V/div" value={`${scope.ch1.vdiv}V`}
+                                onUp={() => updateCh('ch1', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch1.vdiv, 1) })}
+                                onDown={() => updateCh('ch1', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch1.vdiv, -1) })} />
+                            <Stepper label="Offset" value={`${scope.ch1.offset >= 0 ? '+' : ''}${scope.ch1.offset.toFixed(1)}V`}
+                                onUp={() => updateCh('ch1', { offset: Math.min(5, scope.ch1.offset + 0.5) })}
+                                onDown={() => updateCh('ch1', { offset: Math.max(-5, scope.ch1.offset - 0.5) })} />
+                        </div>
                     </CtrlGroup>
                     <Sep />
                     <CtrlGroup label="CH2 CANL" color={C.ch2}>
                         <ScopeBtn label={scope.ch2.enabled ? 'ON' : 'OFF'} active={scope.ch2.enabled} color={C.ch2}
                             onClick={() => updateCh('ch2', { enabled: !scope.ch2.enabled })} />
-                        <Stepper label="V/div" value={`${scope.ch2.vdiv}V`}
-                            onUp={() => updateCh('ch2', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch2.vdiv, 1) })}
-                            onDown={() => updateCh('ch2', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch2.vdiv, -1) })} />
+                        <div className="flex flex-col gap-1">
+                            <Stepper label="V/div" value={`${scope.ch2.vdiv}V`}
+                                onUp={() => updateCh('ch2', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch2.vdiv, 1) })}
+                                onDown={() => updateCh('ch2', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch2.vdiv, -1) })} />
+                            <Stepper label="Offset" value={`${scope.ch2.offset >= 0 ? '+' : ''}${scope.ch2.offset.toFixed(1)}V`}
+                                onUp={() => updateCh('ch2', { offset: Math.min(5, scope.ch2.offset + 0.5) })}
+                                onDown={() => updateCh('ch2', { offset: Math.max(-5, scope.ch2.offset - 0.5) })} />
+                        </div>
                     </CtrlGroup>
                     <Sep />
                     <CtrlGroup label="Diff">
@@ -857,8 +1049,8 @@ export const VoltageScope: React.FC = () => {
                                 ...p, triggerMode: ({ auto: 'SOF', SOF: 'error', error: 'ID', ID: 'auto' } as const)[p.triggerMode],
                             }))} />
                         <Stepper label="Level" value={`${scope.triggerLevel.toFixed(1)}V`}
-                            onUp={() => setScope(p => ({ ...p, triggerLevel: Math.min(5, p.triggerLevel + 0.5) }))}
-                            onDown={() => setScope(p => ({ ...p, triggerLevel: Math.max(0, p.triggerLevel - 0.5) }))} />
+                            onUp={() => setScope(p => ({ ...p, triggerLevel: clamp(p.triggerLevel + 0.1, 0, 5) }))}
+                            onDown={() => setScope(p => ({ ...p, triggerLevel: clamp(p.triggerLevel - 0.1, 0, 5) }))} />
                     </CtrlGroup>
                     <Sep />
                     <CtrlGroup label="Cursors">
