@@ -5,6 +5,9 @@
 @layer base {
   :root {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Dark theme (default) */
@@ -69,26 +72,83 @@
 
 /* Animations */
 @keyframes glow {
-  from { text-shadow: 0 0 5px #00f3ff, 0 0 10px #00f3ff; }
-  to { text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 30px #00f3ff; }
+  from {
+    text-shadow: 0 0 5px #00f3ff, 0 0 10px #00f3ff;
+  }
+
+  to {
+    text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff, 0 0 30px #00f3ff;
+  }
 }
 
 @keyframes pulseSlow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-.animate-glow { animation: glow 2s ease-in-out infinite alternate; }
-.animate-pulse-slow { animation: pulseSlow 3s ease-in-out infinite; }
-.animate-fade-in { animation: fadeIn 0.5s ease-out; }
-.animate-slide-up { animation: slideUp 0.3s ease-out; }
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Minimum readable size for technical labels (WCAG AA baseline) */
+.text-label-xs {
+  font-size: 0.5625rem;
+  /* 9px */
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+}
+
+.text-label-sm {
+  font-size: 0.625rem;
+  /* 10px */
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+.text-gray-400 {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255);
+}

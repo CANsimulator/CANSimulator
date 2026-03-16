@@ -156,7 +156,6 @@ export default function InspectorPage() {
     const fieldSegments = useMemo(() => {
         const segments: { field: FrameField; startBit: number; endBit: number; bitValues: number[] }[] = [];
         let currentFieldIndex = -1;
-        let startBit = 0;
 
         frameBits.forEach((bit, i) => {
             if (bit.fieldIndex !== currentFieldIndex) {
@@ -170,7 +169,6 @@ export default function InspectorPage() {
                     endBit: i,
                     bitValues: [bit.value]
                 });
-                startBit = i;
             } else {
                 segments[segments.length - 1].bitValues.push(bit.value);
                 segments[segments.length - 1].endBit = i;

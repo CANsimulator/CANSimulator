@@ -42,20 +42,6 @@ export default function Particles({
         initCanvas();
     }, [refresh]);
 
-    const onMouseMove = () => {
-        if (canvasContainerRef.current) {
-            const rect = canvasContainerRef.current.getBoundingClientRect();
-            const { w, h } = canvasSize.current;
-            const x = mouse.current.x - rect.left;
-            const y = mouse.current.y - rect.top;
-            const inside = x < w && x > 0 && y < h && y > 0;
-            if (inside) {
-                mouse.current.x = x;
-                mouse.current.y = y;
-            }
-        }
-    };
-
     const initCanvas = () => {
         resizeCanvas();
         drawParticles();

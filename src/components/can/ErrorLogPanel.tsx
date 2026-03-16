@@ -59,11 +59,10 @@ export const ErrorLogPanel: React.FC = () => {
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
-                        className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${
-                            filter === f
+                        className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${filter === f
                                 ? 'bg-cyber-blue/20 text-cyber-blue border border-cyber-blue/40'
                                 : 'bg-dark-800 text-gray-500 border border-dark-700 hover:text-gray-300 hover:border-dark-600'
-                        }`}
+                            }`}
                     >
                         {f}
                     </button>
@@ -71,11 +70,10 @@ export const ErrorLogPanel: React.FC = () => {
                 <div className="flex-1" />
                 <button
                     onClick={() => setAutoScroll(!autoScroll)}
-                    className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${
-                        autoScroll
+                    className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${autoScroll
                             ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/30'
                             : 'bg-dark-800 text-gray-500 border border-dark-700'
-                    }`}
+                        }`}
                 >
                     {autoScroll ? 'Auto-scroll ON' : 'Auto-scroll OFF'}
                 </button>
@@ -121,7 +119,7 @@ export const ErrorLogPanel: React.FC = () => {
                                     const colors = ERROR_COLORS[entry.errorCode];
                                     const stateColor = entry.newState === 'ERROR_ACTIVE' ? 'text-cyber-blue'
                                         : entry.newState === 'ERROR_PASSIVE' ? 'text-purple-400'
-                                        : 'text-red-400';
+                                            : 'text-red-400';
 
                                     return (
                                         <motion.tr
@@ -129,11 +127,10 @@ export const ErrorLogPanel: React.FC = () => {
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ duration: 0.2 }}
-                                            className={`border-b border-dark-800/50 hover:bg-dark-800/30 transition-colors ${
-                                                entry.stateChanged ? 'bg-yellow-500/5' : ''
-                                            }`}
+                                            className={`border-b border-dark-800/50 hover:bg-dark-800/30 transition-colors ${entry.stateChanged ? 'bg-yellow-500/5' : ''
+                                                }`}
                                         >
-                                            <td className="py-1.5 px-3 font-mono text-gray-600">{entry.id}</td>
+                                            <td className="py-1.5 px-3 font-mono text-gray-400">{entry.id}</td>
                                             <td className="py-1.5 px-3 font-mono text-gray-400">{formatTime(entry.timestamp)}</td>
                                             <td className="py-1.5 px-3">
                                                 <span className={`inline-flex px-2 py-0.5 rounded ${colors.bg} ${colors.text} ${colors.border} border font-black tracking-wider`}>

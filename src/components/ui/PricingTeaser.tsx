@@ -3,11 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Check, Shield, Zap, ArrowRight } from 'lucide-react';
 import { PRICING_PLANS } from '../../config/pricing';
-import { cn } from '../../utils/cn';
-import { useTheme } from '../../context/ThemeContext';
-
 export const PricingTeaser: React.FC = () => {
-    const { theme } = useTheme();
 
     // Find the free plan to show its capabilities
     const freePlan = PRICING_PLANS.find(plan => plan.id === 'free');
