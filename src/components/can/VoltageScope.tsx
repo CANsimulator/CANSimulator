@@ -271,6 +271,22 @@ export const VoltageScope: React.FC = () => {
             }
         };
 
+        // ── Helper: time axis ──
+        const drawTimeAxis = (w: number, h: number, cols: number, tdiv: number, v: ViewState) => {
+            ctx.font = '9px monospace';
+            ctx.fillStyle = C.axisText;
+            ctx.textAlign = 'center';
+            for (let i = 0; i <= cols; i++) {
+                const bx = (i / cols) * w;
+                const x = (bx - w / 2) * v.zoomX + w / 2 + v.panX;
+                if (x < -20 || x > w + 20) continue;
+                
+                const timeVal = i * tdiv;
+                const label = timeVal === 0 ? '0' : `${timeVal}µs`;
+                ctx.fillText(label, x, h - 6);
+            }
+        };
+
         // ── Helper: draw panel frame ──
         const drawPanel = (x: number, y: number, w: number, h: number, title: string, content: () => void) => {
             ctx.fillStyle = C.panelBg;
@@ -390,6 +406,7 @@ export const VoltageScope: React.FC = () => {
 
             drawGrid(PLOT_W, WAVE_H, 10, 8, vw);
             drawVAxis(WAVE_H, ISO.V_MIN, ISO.V_MAX, 'V', 1, vw);
+            drawTimeAxis(PLOT_W, WAVE_H, 10, s.tdiv, vw);
 
             if (samples.length < 2) return;
 
@@ -441,6 +458,7 @@ export const VoltageScope: React.FC = () => {
 
             drawGrid(PLOT_W, DIFF_H, 10, 4, vw);
             drawVAxis(DIFF_H, ISO.DIFF_MIN, ISO.DIFF_MAX, 'V', 0.5, vw);
+            drawTimeAxis(PLOT_W, DIFF_H, 10, s.tdiv, vw);
 
             if (samples.length < 2) return;
 
