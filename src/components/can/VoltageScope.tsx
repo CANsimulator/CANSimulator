@@ -945,8 +945,8 @@ export const VoltageScope: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col xl:flex-row">
-                    {/* Left Rail (Controls & Metrics) — Strictly Vertical Stack */}
+                <div className="flex flex-col xl:flex-row gap-0">
+                    {/* Left Rail (Controls only) */}
                     <div className="xl:w-64 w-full p-2.5 xl:border-r border-[#14142a] flex flex-col gap-3 bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner">
                         <MetricGroup title="Acquire" icon="⚡">
                             <div className="grid grid-cols-2 gap-2 p-1">
@@ -1014,9 +1014,25 @@ export const VoltageScope: React.FC = () => {
                                     onClick={() => setScope(p => ({ ...p, persistence: !p.persistence }))} />
                             </div>
                         </MetricGroup>
+                    </div>
 
-                        <div className="w-full h-px bg-[#14142a] my-1" />
+                    <div className="flex-1 relative">
+                        <canvas ref={canvasRef}
+                            className="w-full cursor-crosshair touch-none focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-500/40"
+                            style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}` }}
+                            tabIndex={0} role="img"
+                            aria-label="CAN bus physical layer oscilloscope — scroll to zoom, right-drag to pan"
+                            onWheel={handleWheel}
+                            onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
+                            onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
+                            onContextMenu={e => e.preventDefault()} onKeyDown={handleKeyDown} />
+                        <div className="absolute bottom-1.5 left-1.5 flex gap-1.5 pointer-events-none">
+                            <Hint text="Scroll: Zoom" /><Hint text="Ctrl/Shift+Scroll: Axis" /><Hint text="Right-drag: Pan" /><Hint text="C: Cursors" />
+                        </div>
+                    </div>
 
+                    {/* Right Rail (Metrics only) */}
+                    <div className="xl:w-64 w-full p-2.5 xl:border-l border-[#14142a] flex flex-col gap-3 bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner">
                         <MetricGroup title="Signal Quality" icon="⚡">
                             <MetricRow label="CANH Vpp" value={`${metrics.ch1Vpp.toFixed(2)} V`} color={C.ch1} />
                             <MetricRow label="CANH Avg" value={`${metrics.ch1Avg.toFixed(2)} V`} color={C.ch1} />
@@ -1041,21 +1057,6 @@ export const VoltageScope: React.FC = () => {
                             <MetricRow label="Eye Height" value={`${metrics.eyeHeight}%`}
                                 status={metrics.eyeHeight > 60 ? 'pass' : metrics.eyeHeight > 40 ? 'warn' : 'fail'} />
                         </MetricGroup>
-                    </div>
-
-                    <div className="flex-1 relative">
-                        <canvas ref={canvasRef}
-                            className="w-full cursor-crosshair touch-none focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-500/40"
-                            style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}` }}
-                            tabIndex={0} role="img"
-                            aria-label="CAN bus physical layer oscilloscope — scroll to zoom, right-drag to pan"
-                            onWheel={handleWheel}
-                            onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
-                            onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
-                            onContextMenu={e => e.preventDefault()} onKeyDown={handleKeyDown} />
-                        <div className="absolute bottom-1.5 left-1.5 flex gap-1.5 pointer-events-none">
-                            <Hint text="Scroll: Zoom" /><Hint text="Ctrl/Shift+Scroll: Axis" /><Hint text="Right-drag: Pan" /><Hint text="C: Cursors" />
-                        </div>
                     </div>
                 </div>
             </div>
