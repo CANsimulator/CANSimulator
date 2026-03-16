@@ -1,4 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { 
+    ISO, 
+    BIT_TIME_SAMPLES, 
+    type Sample, 
+    type WaveState, 
+    generateSample, 
+    createInitialWaveState 
+} from '../../services/can/waveform-generator';
 
 /* ═══════════════════════════════════════════════════════════════
    CAN-SCOPE CSO-2000 — Physical Layer Oscilloscope
@@ -9,15 +17,15 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 
 // ─── Layout Constants ───────────────────────────────────────
 const CANVAS_W = 900;
-const CANVAS_H = 620;
+const CANVAS_H = 540;
 const M = { top: 28, right: 8, bottom: 4, left: 52 }; // margins
 const PLOT_W = CANVAS_W - M.left - M.right;
 
 // Panel heights (proportional)
-const WAVE_H = 240;   // CANH/CANL waveform
-const DIFF_H = 120;   // Differential voltage
-const EYE_H = 130;    // Eye diagram
-const DECODE_H = 32;  // Protocol decode strip
+const WAVE_H = 200;   // CANH/CANL waveform
+const DIFF_H = 90;    // Differential voltage
+const EYE_H = 100;    // Eye diagram
+const DECODE_H = 28;  // Protocol decode strip
 const GAP = 8;        // between panels
 const EYE_MAX_OVERLAYS = 200;
 
@@ -27,16 +35,7 @@ const DIFF_Y = WAVE_Y + WAVE_H + GAP;
 const EYE_Y = DIFF_Y + DIFF_H + GAP;
 const DECODE_Y = EYE_Y + EYE_H + GAP;
 
-// ─── ISO 11898 Thresholds ───────────────────────────────────
-const ISO = {
-    CANH_DOM_MIN: 2.75,  CANH_DOM_TYP: 3.5,   CANH_DOM_MAX: 4.5,
-    CANL_DOM_MIN: 0.5,   CANL_DOM_TYP: 1.5,   CANL_DOM_MAX: 2.25,
-    VDIFF_DOM_MIN: 1.5,  VDIFF_DOM_TYP: 2.0,
-    VDIFF_REC_MAX: 0.5,
-    V_REC: 2.5,          // Recessive level for both lines
-    V_MIN: 0,   V_MAX: 5,
-    DIFF_MIN: -1, DIFF_MAX: 3.5,
-};
+// ISO thresholds and types imported from waveform-generator service
 
 // ─── Types ──────────────────────────────────────────────────
 const VDIV_OPTIONS = [0.2, 0.5, 1, 2, 5] as const;
@@ -66,12 +65,7 @@ interface ScopeState {
 
 interface ViewState { zoomX: number; zoomY: number; panX: number; panY: number; }
 
-interface Sample {
-    canh: number; canl: number;
-    isDominant: boolean;
-    bitIndex: number; // which bit in the frame
-    t: number;
-}
+// Types imported from waveform-generator service or defined here
 
 // ─── Color Palette ──────────────────────────────────────────
 const C = {
@@ -94,57 +88,7 @@ const C = {
     recessive: '#ffd000',
 };
 
-// ─── Waveform Generator ─────────────────────────────────────
-const BIT_TIME_SAMPLES = 8; // samples per bit period
-
-function generateBitStream(): boolean[] {
-    // SOF(1) + ID(11) + RTR(1) + IDE(1) + r0(1) + DLC(4) + Data(64) + CRC(15) + delim(1) + ACK(2) + EOF(7) + IFS(3)
-    const bits: boolean[] = [];
-    bits.push(true); // SOF dominant
-    for (let i = 0; i < 11; i++) bits.push(Math.random() > 0.5); // ID
-    bits.push(false); // RTR
-    bits.push(false); bits.push(false); // IDE + r0
-    bits.push(true); bits.push(false); bits.push(false); bits.push(false); // DLC=8
-    for (let i = 0; i < 64; i++) bits.push(Math.random() > 0.5); // Data
-    for (let i = 0; i < 15; i++) bits.push(Math.random() > 0.5); // CRC
-    bits.push(false); // CRC delim
-    bits.push(true);  // ACK
-    bits.push(false); // ACK delim
-    for (let i = 0; i < 7; i++) bits.push(false); // EOF
-    for (let i = 0; i < 3; i++) bits.push(false); // IFS
-    return bits;
-}
-
-let frameBits: boolean[] = generateBitStream();
-let frameBitIndex = 0;
-let globalSampleIndex = 0;
-
-function generateSample(prev: Sample | null): Sample {
-    const bitPhase = globalSampleIndex % BIT_TIME_SAMPLES;
-    if (bitPhase === 0) {
-        frameBitIndex++;
-        if (frameBitIndex >= frameBits.length) {
-            frameBits = generateBitStream();
-            frameBitIndex = 0;
-        }
-    }
-    const isDominant = frameBits[frameBitIndex];
-
-    const wasTransition = prev ? prev.isDominant !== isDominant : false;
-    const edgePhase = bitPhase / BIT_TIME_SAMPLES;
-    const n = () => (Math.random() - 0.5) * 0.06;
-    const ringing = wasTransition && edgePhase < 0.4
-        ? Math.sin(edgePhase * Math.PI * 6) * 0.15 * (1 - edgePhase * 2.5)
-        : 0;
-    const overshoot = wasTransition && edgePhase < 0.15 ? 0.12 : 0;
-
-    const canh = isDominant ? ISO.CANH_DOM_TYP + n() + ringing + overshoot : ISO.V_REC + n() * 0.5 + ringing * 0.3;
-    const canl = isDominant ? ISO.CANL_DOM_TYP + n() - ringing - overshoot : ISO.V_REC + n() * 0.5 - ringing * 0.3;
-
-    const sample: Sample = { canh, canl, isDominant, bitIndex: frameBitIndex, t: globalSampleIndex };
-    globalSampleIndex++;
-    return sample;
-}
+// Waveform generator moved to src/services/can/waveform-generator.ts
 
 // ─── Helpers ────────────────────────────────────────────────
 function stepOpt<T>(opts: readonly T[], cur: T, dir: 1 | -1): T {
@@ -169,6 +113,7 @@ export const VoltageScope: React.FC = () => {
     const prevRunMode = useRef<RunMode>('run');
     const isDraggingTrigger = useRef(false);
     const draggingOffset = useRef<'ch1' | 'ch2' | null>(null);
+    const waveStateRef = useRef<WaveState>(createInitialWaveState());
 
     const [scope, setScope] = useState<ScopeState>({
         ch1: { enabled: true, vdiv: 1, offset: 0 },
@@ -792,7 +737,7 @@ export const VoltageScope: React.FC = () => {
         const interval = s.tdiv / 4;
         if (s.runMode !== 'stop' && time - lastTick.current > interval) {
             const prev = samplesRef.current.length > 0 ? samplesRef.current[samplesRef.current.length - 1] : null;
-            samplesRef.current.push(generateSample(prev));
+            samplesRef.current.push(generateSample(prev, waveStateRef.current));
             const maxSamples = 200;
             if (samplesRef.current.length > maxSamples) samplesRef.current = samplesRef.current.slice(-maxSamples);
             if (s.runMode === 'single' && samplesRef.current.length >= maxSamples) {
@@ -1000,25 +945,77 @@ export const VoltageScope: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Main: Canvas + Sidebar */}
+                {/* Main: Sidebar + Canvas */}
                 <div className="flex flex-col xl:flex-row">
-                    <div className="flex-1 relative">
-                        <canvas ref={canvasRef}
-                            className="w-full cursor-crosshair touch-none focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-500/40"
-                            style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}` }}
-                            tabIndex={0} role="img"
-                            aria-label="CAN bus physical layer oscilloscope — scroll to zoom, right-drag to pan"
-                            onWheel={handleWheel}
-                            onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
-                            onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
-                            onContextMenu={e => e.preventDefault()} onKeyDown={handleKeyDown} />
-                        <div className="absolute bottom-1.5 left-1.5 flex gap-1.5 pointer-events-none">
-                            <Hint text="Scroll: Zoom" /><Hint text="Ctrl/Shift+Scroll: Axis" /><Hint text="Right-drag: Pan" /><Hint text="C: Cursors" />
-                        </div>
-                    </div>
+                    {/* Left Rail (Controls & Metrics) */}
+                    <div className="xl:w-64 p-2 xl:border-r border-[#14142a] flex xl:flex-col gap-2 flex-wrap bg-[#08080f] overflow-y-auto max-h-[540px]">
+                        <MetricGroup title="Acquire" icon="⏱">
+                            <div className="flex gap-1.5 px-0.5 py-1">
+                                <ScopeBtn label={scope.runMode === 'run' ? 'Stop' : 'Run'} active={scope.runMode === 'run'}
+                                    color={scope.runMode === 'run' ? '#00ff88' : '#ff4444'}
+                                    onClick={() => setScope(p => ({ ...p, runMode: p.runMode === 'run' ? 'stop' : 'run' }))} />
+                                <ScopeBtn label="Single" active={scope.runMode === 'single'} color="#ffd000"
+                                    onClick={() => { samplesRef.current = []; setScope(p => ({ ...p, runMode: 'single' })); }} />
+                            </div>
+                        </MetricGroup>
 
-                    {/* Right Panel */}
-                    <div className="xl:w-56 p-2 xl:border-l border-[#14142a] flex xl:flex-col gap-2 flex-wrap bg-[#08080f] overflow-y-auto max-h-[620px]">
+                        <MetricGroup title="CH1 CANH" icon="💠" color={C.ch1}>
+                            <div className="flex flex-col gap-2 p-1">
+                                <ScopeBtn label={scope.ch1.enabled ? 'Enabled' : 'Disabled'} active={scope.ch1.enabled} color={C.ch1}
+                                    onClick={() => updateCh('ch1', { enabled: !scope.ch1.enabled })} />
+                                <Stepper label="V/div" value={`${scope.ch1.vdiv}V`}
+                                    onUp={() => updateCh('ch1', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch1.vdiv, 1) })}
+                                    onDown={() => updateCh('ch1', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch1.vdiv, -1) })} />
+                                <Stepper label="Offset" value={`${scope.ch1.offset >= 0 ? '+' : ''}${scope.ch1.offset.toFixed(1)}V`}
+                                    onUp={() => updateCh('ch1', { offset: Math.min(5, scope.ch1.offset + 0.5) })}
+                                    onDown={() => updateCh('ch1', { offset: Math.max(-5, scope.ch1.offset - 0.5) })} />
+                            </div>
+                        </MetricGroup>
+
+                        <MetricGroup title="CH2 CANL" icon="💠" color={C.ch2}>
+                            <div className="flex flex-col gap-2 p-1">
+                                <ScopeBtn label={scope.ch2.enabled ? 'Enabled' : 'Disabled'} active={scope.ch2.enabled} color={C.ch2}
+                                    onClick={() => updateCh('ch2', { enabled: !scope.ch2.enabled })} />
+                                <Stepper label="V/div" value={`${scope.ch2.vdiv}V`}
+                                    onUp={() => updateCh('ch2', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch2.vdiv, 1) })}
+                                    onDown={() => updateCh('ch2', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch2.vdiv, -1) })} />
+                                <Stepper label="Offset" value={`${scope.ch2.offset >= 0 ? '+' : ''}${scope.ch2.offset.toFixed(1)}V`}
+                                    onUp={() => updateCh('ch2', { offset: Math.min(5, scope.ch2.offset + 0.5) })}
+                                    onDown={() => updateCh('ch2', { offset: Math.max(-5, scope.ch2.offset - 0.5) })} />
+                            </div>
+                        </MetricGroup>
+
+                        <MetricGroup title="Horizontal & Trigger" icon="🎯">
+                            <div className="flex flex-col gap-2 p-1">
+                                <Stepper label="Time/div" value={`${scope.tdiv}µs`}
+                                    onUp={() => setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, 1) }))}
+                                    onDown={() => setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, -1) }))} />
+                                <div className="flex items-center justify-between gap-1">
+                                    <span className="text-[7px] font-mono text-gray-600 uppercase">Mode</span>
+                                    <ScopeBtn label={scope.triggerMode} active color={C.trigger}
+                                        onClick={() => setScope(p => ({
+                                            ...p, triggerMode: ({ auto: 'SOF', SOF: 'error', error: 'ID', ID: 'auto' } as const)[p.triggerMode],
+                                        }))} />
+                                </div>
+                                <Stepper label="Trig Level" value={`${scope.triggerLevel.toFixed(1)}V`}
+                                    onUp={() => setScope(p => ({ ...p, triggerLevel: clamp(p.triggerLevel + 0.1, 0, 5) }))}
+                                    onDown={() => setScope(p => ({ ...p, triggerLevel: clamp(p.triggerLevel - 0.1, 0, 5) }))} />
+                            </div>
+                        </MetricGroup>
+
+                        <MetricGroup title="Display Tools" icon="🛠">
+                            <div className="flex gap-1.5 flex-wrap p-1">
+                                <ScopeBtn label={scope.math ? 'VDIFF On' : 'VDIFF Off'} active={scope.math} color={C.diff}
+                                    onClick={() => setScope(p => ({ ...p, math: !p.math }))} />
+                                <ScopeBtn label={scope.cursorMode === 'off' ? 'Cursors Off' : 'Cursors On'} active={scope.cursorMode !== 'off'} color={C.cursor}
+                                    onClick={() => setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' }))} />
+                                <ScopeBtn label={scope.persistence ? 'Persist On' : 'Persist Off'} active={scope.persistence} color="#8855ff"
+                                    onClick={() => setScope(p => ({ ...p, persistence: !p.persistence }))} />
+                            </div>
+                        </MetricGroup>
+
+                        <div className="w-full h-px bg-[#14142a] my-1" />
+
                         <MetricGroup title="Signal Quality" icon="⚡">
                             <MetricRow label="CANH Vpp" value={`${metrics.ch1Vpp.toFixed(2)} V`} color={C.ch1} />
                             <MetricRow label="CANH Avg" value={`${metrics.ch1Avg.toFixed(2)} V`} color={C.ch1} />
@@ -1037,11 +1034,6 @@ export const VoltageScope: React.FC = () => {
                                 status={metrics.busLoad < 70 ? 'pass' : metrics.busLoad < 85 ? 'warn' : 'fail'} />
                             <MetricRow label="Bit Rate" value={`~${metrics.bitRate} kbps`} />
                         </MetricGroup>
-                        <MetricGroup title="ISO 11898 Compliance" icon="📋">
-                            <ComplianceRow label="CANH Levels" pass={metrics.isoCANH} detail={`${metrics.ch1Min.toFixed(2)}–${metrics.ch1Max.toFixed(2)}V`} />
-                            <ComplianceRow label="CANL Levels" pass={metrics.isoCANL} detail={`${metrics.ch2Min.toFixed(2)}–${metrics.ch2Max.toFixed(2)}V`} />
-                            <ComplianceRow label="Differential" pass={metrics.isoDiff} detail={`Vdiff ${metrics.vdiff.toFixed(2)}V`} />
-                        </MetricGroup>
                         <MetricGroup title="Eye Diagram" icon="👁">
                             <MetricRow label="Eye Width" value={`${metrics.eyeWidth}%`}
                                 status={metrics.eyeWidth > 70 ? 'pass' : metrics.eyeWidth > 50 ? 'warn' : 'fail'} />
@@ -1049,74 +1041,21 @@ export const VoltageScope: React.FC = () => {
                                 status={metrics.eyeHeight > 60 ? 'pass' : metrics.eyeHeight > 40 ? 'warn' : 'fail'} />
                         </MetricGroup>
                     </div>
-                </div>
 
-                {/* Control Strip */}
-                <div className="px-3 py-2 border-t border-[#14142a] bg-[#0c0c16] flex flex-col lg:flex-row gap-2 flex-wrap">
-                    <CtrlGroup label="Acquire">
-                        <ScopeBtn label={scope.runMode === 'run' ? 'Stop' : 'Run'} active={scope.runMode === 'run'}
-                            color={scope.runMode === 'run' ? '#00ff88' : '#ff4444'}
-                            onClick={() => setScope(p => ({ ...p, runMode: p.runMode === 'run' ? 'stop' : 'run' }))} />
-                        <ScopeBtn label="Single" active={scope.runMode === 'single'} color="#ffd000"
-                            onClick={() => { samplesRef.current = []; setScope(p => ({ ...p, runMode: 'single' })); }} />
-                    </CtrlGroup>
-                    <Sep />
-                    <CtrlGroup label="CH1 CANH" color={C.ch1}>
-                        <ScopeBtn label={scope.ch1.enabled ? 'ON' : 'OFF'} active={scope.ch1.enabled} color={C.ch1}
-                            onClick={() => updateCh('ch1', { enabled: !scope.ch1.enabled })} />
-                        <div className="flex flex-col gap-1">
-                            <Stepper label="V/div" value={`${scope.ch1.vdiv}V`}
-                                onUp={() => updateCh('ch1', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch1.vdiv, 1) })}
-                                onDown={() => updateCh('ch1', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch1.vdiv, -1) })} />
-                            <Stepper label="Offset" value={`${scope.ch1.offset >= 0 ? '+' : ''}${scope.ch1.offset.toFixed(1)}V`}
-                                onUp={() => updateCh('ch1', { offset: Math.min(5, scope.ch1.offset + 0.5) })}
-                                onDown={() => updateCh('ch1', { offset: Math.max(-5, scope.ch1.offset - 0.5) })} />
+                    <div className="flex-1 relative">
+                        <canvas ref={canvasRef}
+                            className="w-full cursor-crosshair touch-none focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-500/40"
+                            style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}` }}
+                            tabIndex={0} role="img"
+                            aria-label="CAN bus physical layer oscilloscope — scroll to zoom, right-drag to pan"
+                            onWheel={handleWheel}
+                            onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
+                            onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
+                            onContextMenu={e => e.preventDefault()} onKeyDown={handleKeyDown} />
+                        <div className="absolute bottom-1.5 left-1.5 flex gap-1.5 pointer-events-none">
+                            <Hint text="Scroll: Zoom" /><Hint text="Ctrl/Shift+Scroll: Axis" /><Hint text="Right-drag: Pan" /><Hint text="C: Cursors" />
                         </div>
-                    </CtrlGroup>
-                    <Sep />
-                    <CtrlGroup label="CH2 CANL" color={C.ch2}>
-                        <ScopeBtn label={scope.ch2.enabled ? 'ON' : 'OFF'} active={scope.ch2.enabled} color={C.ch2}
-                            onClick={() => updateCh('ch2', { enabled: !scope.ch2.enabled })} />
-                        <div className="flex flex-col gap-1">
-                            <Stepper label="V/div" value={`${scope.ch2.vdiv}V`}
-                                onUp={() => updateCh('ch2', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch2.vdiv, 1) })}
-                                onDown={() => updateCh('ch2', { vdiv: stepOpt(VDIV_OPTIONS, scope.ch2.vdiv, -1) })} />
-                            <Stepper label="Offset" value={`${scope.ch2.offset >= 0 ? '+' : ''}${scope.ch2.offset.toFixed(1)}V`}
-                                onUp={() => updateCh('ch2', { offset: Math.min(5, scope.ch2.offset + 0.5) })}
-                                onDown={() => updateCh('ch2', { offset: Math.max(-5, scope.ch2.offset - 0.5) })} />
-                        </div>
-                    </CtrlGroup>
-                    <Sep />
-                    <CtrlGroup label="Diff">
-                        <ScopeBtn label="VDIFF" active={scope.math} color={C.diff}
-                            onClick={() => setScope(p => ({ ...p, math: !p.math }))} />
-                    </CtrlGroup>
-                    <Sep />
-                    <CtrlGroup label="Horizontal">
-                        <Stepper label="Time/div" value={`${scope.tdiv}µs`}
-                            onUp={() => setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, 1) }))}
-                            onDown={() => setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, -1) }))} />
-                    </CtrlGroup>
-                    <Sep />
-                    <CtrlGroup label="Trigger">
-                        <ScopeBtn label={scope.triggerMode} active color={C.trigger}
-                            onClick={() => setScope(p => ({
-                                ...p, triggerMode: ({ auto: 'SOF', SOF: 'error', error: 'ID', ID: 'auto' } as const)[p.triggerMode],
-                            }))} />
-                        <Stepper label="Level" value={`${scope.triggerLevel.toFixed(1)}V`}
-                            onUp={() => setScope(p => ({ ...p, triggerLevel: clamp(p.triggerLevel + 0.1, 0, 5) }))}
-                            onDown={() => setScope(p => ({ ...p, triggerLevel: clamp(p.triggerLevel - 0.1, 0, 5) }))} />
-                    </CtrlGroup>
-                    <Sep />
-                    <CtrlGroup label="Cursors">
-                        <ScopeBtn label={scope.cursorMode === 'off' ? 'Off' : 'ΔT/ΔV'} active={scope.cursorMode !== 'off'} color={C.cursor}
-                            onClick={() => setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' }))} />
-                    </CtrlGroup>
-                    <Sep />
-                    <CtrlGroup label="Persist">
-                        <ScopeBtn label={scope.persistence ? 'ON' : 'OFF'} active={scope.persistence} color="#8855ff"
-                            onClick={() => setScope(p => ({ ...p, persistence: !p.persistence }))} />
-                    </CtrlGroup>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1126,22 +1065,18 @@ export const VoltageScope: React.FC = () => {
 // ═══════════════════════════════════════════════════════════════
 // Sub-components
 // ═══════════════════════════════════════════════════════════════
+
 const Hint: React.FC<{ text: string }> = ({ text }) => (
-    <span className="text-[7px] font-mono text-gray-700 bg-black/50 px-1 py-0.5 rounded">{text}</span>
+    <span className="text-[7px] font-mono text-gray-700 bg-black/50 px-1 py-0.5 rounded whitespace-nowrap">{text}</span>
 );
+
 const SmallBtn: React.FC<{ label: string; onClick: () => void; title: string }> = ({ label, onClick, title }) => (
     <button onClick={onClick} title={title}
         className="w-5 h-5 flex items-center justify-center text-[10px] font-mono text-gray-500 hover:text-white bg-[#0e0e18] border border-[#1a1a2e] rounded transition-colors hover:bg-[#14142a]">
         {label}
     </button>
 );
-const CtrlGroup: React.FC<{ label: string; color?: string; children: React.ReactNode }> = ({ label, color, children }) => (
-    <div className="flex flex-col gap-1">
-        <span className="text-[7px] font-mono font-semibold uppercase tracking-widest" style={{ color: color || '#555' }}>{label}</span>
-        <div className="flex items-center gap-1">{children}</div>
-    </div>
-);
-const Sep: React.FC = () => <div className="hidden lg:block w-px self-stretch bg-[#14142a] mx-0.5" />;
+
 const ScopeBtn: React.FC<{ label: string; active: boolean; color: string; onClick: () => void }> = ({ label, active, color, onClick }) => (
     <button onClick={onClick}
         className="relative px-2.5 py-1 rounded text-[8px] font-mono font-bold uppercase tracking-wider transition-all active:scale-95"
@@ -1156,6 +1091,7 @@ const ScopeBtn: React.FC<{ label: string; active: boolean; color: string; onClic
         {label}
     </button>
 );
+
 const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown: () => void }> = ({ label, value, onUp, onDown }) => (
     <div className="flex items-center">
         <button onClick={onDown} className="w-5 h-6 flex items-center justify-center bg-[#0a0a12] border border-[#1a1a2e] rounded-l text-gray-600 hover:text-white hover:bg-[#14142a] transition-all text-[9px] font-mono">◀</button>
@@ -1166,31 +1102,22 @@ const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown
         <button onClick={onUp} className="w-5 h-6 flex items-center justify-center bg-[#0a0a12] border border-[#1a1a2e] rounded-r text-gray-600 hover:text-white hover:bg-[#14142a] transition-all text-[9px] font-mono">▶</button>
     </div>
 );
-const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode }> = ({ title, icon, children }) => (
-    <div className="p-2 rounded-lg bg-[#0a0a14] border border-[#14142a] min-w-[140px]">
-        <div className="text-[8px] font-mono font-semibold text-gray-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-            <span className="text-[10px]">{icon}</span> {title}
+
+const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string }> = ({ title, icon, children, color }) => (
+    <div className="p-2.5 rounded-lg bg-[#0a0a14] border border-[#14142a] min-w-[160px]" style={{ borderLeftColor: color, borderLeftWidth: color ? '3px' : '1px' }}>
+        <div className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+            <span className="text-[11px]">{icon}</span> {title}
         </div>
-        <div className="space-y-0.5">{children}</div>
+        <div className="space-y-1">{children}</div>
     </div>
 );
+
 const MetricRow: React.FC<{ label: string; value: string; color?: string; status?: 'pass' | 'warn' | 'fail' }> = ({ label, value, color, status }) => (
-    <div className="flex justify-between items-baseline">
-        <span className="text-[8px] font-mono text-gray-600">{label}</span>
-        <div className="flex items-center gap-1">
-            {status && <span className={`w-1.5 h-1.5 rounded-full ${status === 'pass' ? 'bg-emerald-400' : status === 'warn' ? 'bg-amber-400' : 'bg-red-400'}`} />}
-            <span className="text-[9px] font-mono font-bold" style={{ color: color || '#d1d5db' }}>{value}</span>
-        </div>
-    </div>
-);
-const ComplianceRow: React.FC<{ label: string; pass: boolean; detail: string }> = ({ label, pass, detail }) => (
     <div className="flex justify-between items-center py-0.5">
-        <span className="text-[8px] font-mono text-gray-600">{label}</span>
+        <span className="text-[9px] font-mono text-gray-500">{label}</span>
         <div className="flex items-center gap-1.5">
-            <span className="text-[7px] font-mono text-gray-700">{detail}</span>
-            <span className={`text-[7px] font-mono font-bold px-1 py-0.5 rounded ${pass ? 'text-emerald-400 bg-emerald-400/10' : 'text-red-400 bg-red-400/10'}`}>
-                {pass ? '✓ PASS' : '✗ FAIL'}
-            </span>
+            {status && <span className={`w-2 h-2 rounded-full shadow-sm ${status === 'pass' ? 'bg-emerald-400 shadow-emerald-400/20' : status === 'warn' ? 'bg-amber-400 shadow-amber-400/20' : 'bg-red-400 shadow-red-400/20'}`} />}
+            <span className="text-[10px] font-mono font-bold tracking-tight" style={{ color: color || '#f3f4f6' }}>{value}</span>
         </div>
     </div>
 );
