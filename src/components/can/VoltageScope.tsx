@@ -19,6 +19,7 @@ const DIFF_H = 120;   // Differential voltage
 const EYE_H = 130;    // Eye diagram
 const DECODE_H = 32;  // Protocol decode strip
 const GAP = 8;        // between panels
+const EYE_MAX_OVERLAYS = 200;
 
 // Panel Y positions
 const WAVE_Y = M.top;
@@ -315,11 +316,36 @@ export const VoltageScope: React.FC = () => {
             }
         };
 
+        // ── Helper: time axis ──
+        const drawTimeAxis = (w: number, h: number, cols: number, tdiv: number, v: ViewState) => {
+            ctx.font = '9px monospace';
+            ctx.fillStyle = C.axisText;
+            for (let i = 0; i <= cols; i++) {
+                const bx = (i / cols) * w;
+                const x = (bx - w / 2) * v.zoomX + w / 2 + v.panX;
+                if (x < -20 || x > w + 20) continue;
+                
+                const timeVal = i * tdiv;
+                const label = timeVal === 0 ? '0' : `${timeVal}µs`;
+                
+                if (x < 10) {
+                    ctx.textAlign = 'left';
+                    ctx.fillText(label, x + 2, h - 6);
+                } else if (x > w - 10) {
+                    ctx.textAlign = 'right';
+                    ctx.fillText(label, x - 2, h - 6);
+                } else {
+                    ctx.textAlign = 'center';
+                    ctx.fillText(label, x, h - 6);
+                }
+            }
+        };
+
         // ── Helper: draw panel frame ──
-        const drawPanel = (x: number, y: number, w: number, h: number, title: string, content: () => void) => {
+        const drawPanel = (x: number, y: number, w: number, h: number, title: string, content: () => void, bdrColor?: string) => {
             ctx.fillStyle = C.panelBg;
             ctx.fillRect(x, y, w, h);
-            ctx.strokeStyle = C.panelBdr;
+            ctx.strokeStyle = bdrColor || C.panelBdr;
             ctx.lineWidth = 1;
             ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
             if (title) {
@@ -435,6 +461,7 @@ export const VoltageScope: React.FC = () => {
 
             drawGrid(PLOT_W, WAVE_H, 10, 8, vw);
             drawVAxis(WAVE_H, vMin, vMax, 'V', 1, vw);
+            drawTimeAxis(PLOT_W, WAVE_H, 10, s.tdiv, vw);
 
             if (samples.length < 2) return;
 
@@ -469,27 +496,36 @@ export const VoltageScope: React.FC = () => {
             }
         });
 
+        // Differential dynamic scale
+        const activeVdiv = s.ch1.enabled ? s.ch1.vdiv : s.ch2.vdiv;
+        const diffVdiv = activeVdiv * 1.5;
+        const diffVRange = diffVdiv * 4; // 4 divisions in VDIFF panel
+        const diffVCenter = 1.0;         // Center around typical CAN diff
+        const diffVMin = diffVCenter - diffVRange / 2;
+        const diffVMax = diffVCenter + diffVRange / 2;
+
         // ════════════════════════════════════════════
         // PANEL 2: Differential Voltage
         // ════════════════════════════════════════════
         drawPanel(M.left, DIFF_Y, PLOT_W, DIFF_H, 'VDIFF (CANH − CANL) — Differential', () => {
             // Threshold bands
-            const domLineY = vToPanel(ISO.VDIFF_DOM_MIN, ISO.DIFF_MIN, ISO.DIFF_MAX, DIFF_H, vw);
-            const topY = vToPanel(ISO.DIFF_MAX, ISO.DIFF_MIN, ISO.DIFF_MAX, DIFF_H, vw);
+            const domLineY = vToPanel(ISO.VDIFF_DOM_MIN, diffVMin, diffVMax, DIFF_H, vw);
+            const topY = vToPanel(diffVMax, diffVMin, diffVMax, DIFF_H, vw);
             ctx.fillStyle = 'rgba(0,255,136,0.03)';
             ctx.fillRect(0, topY, PLOT_W, domLineY - topY);
 
-            const recLineY = vToPanel(ISO.VDIFF_REC_MAX, ISO.DIFF_MIN, ISO.DIFF_MAX, DIFF_H, vw);
-            const botY = vToPanel(ISO.DIFF_MIN, ISO.DIFF_MIN, ISO.DIFF_MAX, DIFF_H, vw);
+            const recLineY = vToPanel(ISO.VDIFF_REC_MAX, diffVMin, diffVMax, DIFF_H, vw);
+            const botY = vToPanel(diffVMin, diffVMin, diffVMax, DIFF_H, vw);
             ctx.fillStyle = 'rgba(255,208,0,0.03)';
             ctx.fillRect(0, recLineY, PLOT_W, botY - recLineY);
 
             drawGrid(PLOT_W, DIFF_H, 10, 4, vw);
-            drawVAxis(DIFF_H, ISO.DIFF_MIN, ISO.DIFF_MAX, 'V', 0.5, vw);
+            drawVAxis(DIFF_H, diffVMin, diffVMax, 'V', diffVdiv, vw);
+            drawTimeAxis(PLOT_W, DIFF_H, 10, s.tdiv, vw);
 
             if (samples.length < 2) return;
 
-            drawWaveform(samples, p => p.canh - p.canl, ISO.DIFF_MIN, ISO.DIFF_MAX, DIFF_H, C.diff, C.diffDim, vw);
+            drawWaveform(samples, p => p.canh - p.canl, diffVMin, diffVMax, DIFF_H, C.diff, C.diffDim, vw);
 
             // Threshold labels
             ctx.save();
@@ -510,21 +546,36 @@ export const VoltageScope: React.FC = () => {
         // ════════════════════════════════════════════
         // PANEL 3: Eye Diagram
         // ════════════════════════════════════════════
-        drawPanel(M.left, EYE_Y, PLOT_W, EYE_H, 'Eye Diagram — Signal Integrity', () => {
-            ctx.fillStyle = 'rgba(0,20,40,0.3)';
+        const eyeData = eyeBufferRef.current;
+        const isEyeReady = eyeData.length >= EYE_MAX_OVERLAYS;
+        const eyeTitle = `Eye Diagram — ${isEyeReady ? '✓ READY' : '⟳ BUILDING'} (${eyeData.length}/${EYE_MAX_OVERLAYS}w)`;
+        const eyeBdr = isEyeReady ? '#00ff8888' : '#ffd00088';
+
+        drawPanel(M.left, EYE_Y, PLOT_W, EYE_H, eyeTitle, () => {
+            ctx.fillStyle = 'rgba(0,10,20,0.5)';
             ctx.fillRect(0, 0, PLOT_W, EYE_H);
             drawGrid(PLOT_W, EYE_H, 8, 4, { zoomX: 1, zoomY: 1, panX: 0, panY: 0 });
 
-            const eyeData = eyeBufferRef.current;
+            // Accumulation Progress Bar
+            if (eyeData.length < EYE_MAX_OVERLAYS) {
+                ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                ctx.fillRect(0, 0, PLOT_W, 3);
+                ctx.fillStyle = C.dominant;
+                ctx.fillRect(0, 0, PLOT_W * (eyeData.length / EYE_MAX_OVERLAYS), 3);
+            }
+
             if (eyeData.length < 2) {
-                ctx.fillStyle = 'rgba(255,255,255,0.15)';
-                ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
-                ctx.fillText('Collecting bit transitions...', PLOT_W / 2, EYE_H / 2);
+                ctx.fillStyle = 'rgba(255,255,255,0.25)';
+                ctx.font = '600 10px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('COLLECTING TRANSITIONS...', PLOT_W / 2, EYE_H / 2 + 5);
                 return;
             }
 
             const noZoom: ViewState = { zoomX: 1, zoomY: 1, panX: 0, panY: 0 };
-            ctx.globalAlpha = 0.04;
+            
+            // Brightness boost: higher alpha when building to help visibility
+            ctx.globalAlpha = isEyeReady ? 0.08 : 0.25;
+            
             for (const bitSamples of eyeData) {
                 if (bitSamples.length < 2) continue;
                 // CANH
@@ -547,9 +598,11 @@ export const VoltageScope: React.FC = () => {
                 ctx.stroke();
             }
             ctx.globalAlpha = 1;
-            ctx.font = '8px monospace'; ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.textAlign = 'right';
-            ctx.fillText(`${eyeData.length} overlaid transitions`, PLOT_W - 8, EYE_H - 6);
-        });
+
+            // Measurements
+            ctx.font = '8px monospace'; ctx.fillStyle = isEyeReady ? C.dominant : C.recessive; ctx.textAlign = 'right';
+            ctx.fillText(isEyeReady ? 'SIGNAL STABLE' : 'INTEGRATING...', PLOT_W - 8, EYE_H - 6);
+        }, eyeBdr);
 
         // ════════════════════════════════════════════
         // PANEL 4: Protocol Decode Strip
@@ -726,7 +779,9 @@ export const VoltageScope: React.FC = () => {
             if (samples[i].isDominant !== samples[i - 1].isDominant) {
                 const window = samples.slice(Math.max(0, i - BIT_TIME_SAMPLES), i + BIT_TIME_SAMPLES * 2);
                 eyeBufferRef.current.push(window);
-                if (eyeBufferRef.current.length > 80) eyeBufferRef.current = eyeBufferRef.current.slice(-80);
+                if (eyeBufferRef.current.length > EYE_MAX_OVERLAYS) {
+                    eyeBufferRef.current = eyeBufferRef.current.slice(-EYE_MAX_OVERLAYS);
+                }
             }
         }
     }, []);

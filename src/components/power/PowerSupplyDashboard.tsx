@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { usePower } from '../../context/PowerContext';
+import { useMomentaryAction } from '../../hooks/useMomentaryAction';
 import { BorderBeam } from '../ui/BorderBeam';
 import { cn } from '../../utils/cn';
 
@@ -25,6 +26,16 @@ export const PowerSupplyDashboard: React.FC = () => {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [history, setHistory] = useState<number[]>(new Array(100).fill(0));
+    const shortGndAction = useMomentaryAction({
+        isActive: faultState === 'SHORT_GND',
+        onStart: () => setFaultState('SHORT_GND'),
+        onEnd: () => setFaultState('NONE'),
+    });
+    const openCircuitAction = useMomentaryAction({
+        isActive: faultState === 'OPEN_CIRCUIT',
+        onStart: () => setFaultState('OPEN_CIRCUIT'),
+        onEnd: () => setFaultState('NONE'),
+    });
 
     // Update waveform history
     useEffect(() => {
@@ -114,9 +125,9 @@ export const PowerSupplyDashboard: React.FC = () => {
                         "w-2.5 h-2.5 rounded-full shadow-glow-sm",
                         powerState !== 'OFF' ? "bg-cyber-blue animate-pulse" : "bg-gray-700"
                     )} />
-                    <h2 className="text-sm font-black text-gray-100 font-mono tracking-widest uppercase">
+                    <h2 className="text-sm font-black text-[#f1f1f1] font-mono tracking-widest uppercase">
                         Lab Power Supply
-                        <span className="text-[10px] text-gray-500 ml-3 font-normal tracking-normal uppercase opacity-60">PPS-3005-Cyber</span>
+                        <span className="text-[10px] text-gray-400 ml-3 font-normal tracking-normal uppercase opacity-60">PPS-3005-Cyber</span>
                     </h2>
                 </div>
 
@@ -129,7 +140,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                                 "px-4 py-1 rounded text-[10px] font-bold transition-all uppercase tracking-widest font-mono",
                                 systemVoltage === v
                                     ? "bg-cyber-blue text-dark-950 shadow-neon/20"
-                                    : "text-gray-500 hover:text-gray-300"
+                                    : "text-gray-400 hover:text-gray-200"
                             )}
                         >
                             {v}V Mode
@@ -149,15 +160,15 @@ export const PowerSupplyDashboard: React.FC = () => {
                         )}>CC</span>
                         <span className={cn(
                             "text-[9px] px-2 py-0.5 rounded-full font-black font-mono border",
-                            !isCC && powerState !== 'OFF' ? "bg-cyber-blue/20 text-cyber-blue border-cyber-blue/30" : "text-gray-700 border-transparent"
+                            !isCC && powerState !== 'OFF' ? "bg-cyber-blue/20 text-cyber-blue border-cyber-blue/30" : "text-gray-500 border-transparent"
                         )}>CV</span>
                         <span className={cn(
                             "text-[9px] px-2 py-0.5 rounded-full font-black font-mono border",
-                            isOVP ? "bg-red-500 text-white animate-pulse" : "text-gray-700 border-transparent"
+                            isOVP ? "bg-red-500 text-[#f1f1f1] animate-pulse" : "text-gray-500 border-transparent"
                         )}>OVP</span>
                         <span className={cn(
                             "text-[9px] px-2 py-0.5 rounded-full font-black font-mono border",
-                            rpsEnabled ? "bg-amber-500/20 text-amber-500 border-amber-500/30" : "text-gray-700 border-transparent"
+                            rpsEnabled ? "bg-amber-500/20 text-amber-500 border-amber-500/30" : "text-gray-500 border-transparent"
                         )}>RPS</span>
                     </div>
 
@@ -166,21 +177,21 @@ export const PowerSupplyDashboard: React.FC = () => {
                         <div className="absolute inset-0 bg-cyber-purple/10 flex items-center justify-center pointer-events-none z-10 backdrop-blur-sm">
                             <div className="text-center">
                                 <p className="text-cyber-purple text-[9px] font-black uppercase tracking-[0.2em] mb-1">Power Down</p>
-                                <p className="text-gray-100 text-3xl font-mono font-black">{(rpsCountdown / 1000).toFixed(1)}s</p>
+                                <p className="text-[#f1f1f1] text-3xl font-mono font-black">{(rpsCountdown / 1000).toFixed(1)}s</p>
                             </div>
                         </div>
                     )}
 
                     <div className="space-y-6">
                         <div>
-                            <p className="text-[10px] text-gray-500 uppercase font-mono tracking-widest mb-1">Output Voltage</p>
+                            <p className="text-[10px] text-gray-400 uppercase font-mono tracking-widest mb-1">Output Voltage</p>
                             <div className={cn("text-5xl font-mono font-black tracking-tighter transition-colors", getVoltageColor())}>
                                 {voltage.toFixed(2)}<span className="text-xl ml-1 opacity-40">V</span>
                             </div>
                         </div>
 
                         <div>
-                            <p className="text-[10px] text-gray-500 uppercase font-mono tracking-widest mb-1">Current Draw</p>
+                            <p className="text-[10px] text-gray-400 uppercase font-mono tracking-widest mb-1">Current Draw</p>
                             <div className="text-3xl font-mono font-black text-cyber-purple tracking-tighter">
                                 {current < 1 ? (current * 1000).toFixed(0) : current.toFixed(3)}
                                 <span className="text-sm ml-1 opacity-40">{current < 1 ? 'mA' : 'A'}</span>
@@ -188,8 +199,8 @@ export const PowerSupplyDashboard: React.FC = () => {
                         </div>
 
                         <div>
-                            <p className="text-[10px] text-gray-500 uppercase font-mono tracking-widest mb-1">Total Power</p>
-                            <div className="text-xl font-mono font-black text-white/80">
+                            <p className="text-[10px] text-gray-400 uppercase font-mono tracking-widest mb-1">Total Power</p>
+                            <div className="text-xl font-mono font-black text-[#f1f1f1]/80">
                                 {powerW.toFixed(1)}<span className="text-xs ml-1 opacity-40 font-normal">W</span>
                             </div>
                         </div>
@@ -219,7 +230,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                                     <button
                                         key={v}
                                         onClick={() => setTargetVoltage(v)}
-                                        className="flex-shrink-0 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded text-[9px] font-mono font-bold text-gray-400 hover:text-white transition-all shadow-sm"
+                                        className="flex-shrink-0 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded text-[9px] font-mono font-bold text-gray-400 hover:text-[#f1f1f1] transition-all shadow-sm"
                                     >
                                         {v}V
                                     </button>
@@ -255,12 +266,14 @@ export const PowerSupplyDashboard: React.FC = () => {
                                 <div className="space-y-1">
                                     <p className={cn(
                                         "text-[10px] font-black uppercase tracking-widest font-mono",
-                                        powerState !== 'OFF' ? "text-cyber-blue" : "text-gray-500"
+                                        powerState !== 'OFF' ? "text-cyber-blue" : "text-gray-400"
                                     )}>Ignition Control</p>
-                                    <p className="text-[9px] text-gray-600 font-mono tracking-tighter uppercase">{powerState !== 'OFF' ? 'KL15 ACTIVE' : 'TERMINAL 15 OFF'}</p>
+                                    <p className="text-[9px] text-gray-500 font-mono tracking-tighter uppercase">{powerState !== 'OFF' ? 'KL15 ACTIVE' : 'TERMINAL 15 OFF'}</p>
                                 </div>
                                 <button
                                     onClick={() => setPowerState(powerState === 'OFF' ? 'ON' : 'OFF')}
+                                    aria-pressed={powerState !== 'OFF'}
+                                    aria-label={powerState !== 'OFF' ? 'Turn ignition off' : 'Turn ignition on'}
                                     className={cn(
                                         "w-12 h-6 rounded-full relative transition-all duration-300",
                                         powerState !== 'OFF' ? "bg-cyber-blue" : "bg-gray-800"
@@ -288,11 +301,20 @@ export const PowerSupplyDashboard: React.FC = () => {
                     <div className="space-y-3">
                         <div className="flex gap-3">
                             <button
-                                onMouseDown={() => setFaultState('SHORT_GND')}
-                                onMouseUp={() => setFaultState('NONE')}
-                                onMouseLeave={() => setFaultState('NONE')}
+                                onClick={shortGndAction.handleClick}
+                                onPointerDown={shortGndAction.handlePointerDown}
+                                onPointerUp={shortGndAction.handlePointerUp}
+                                onPointerCancel={shortGndAction.handlePointerUp}
+                                onPointerLeave={shortGndAction.handlePointerUp}
+                                onKeyDown={shortGndAction.handleKeyDown}
+                                onKeyUp={shortGndAction.handleKeyUp}
+                                onBlur={shortGndAction.handleBlur}
+                                aria-pressed={faultState === 'SHORT_GND'}
+                                aria-keyshortcuts="Space Enter"
+                                aria-label={`Short ground fault, ${shortGndAction.interactionHint.toLowerCase()}`}
+                                title={shortGndAction.interactionHint}
                                 className={cn(
-                                    "flex-1 py-3 rounded-lg border text-[10px] font-black uppercase tracking-widest font-mono transition-all",
+                                    "flex-1 min-h-[52px] rounded-lg border py-3 text-[10px] font-black uppercase tracking-widest font-mono transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50",
                                     faultState === 'SHORT_GND'
                                         ? "bg-red-500 text-dark-950 border-red-500 scale-95 shadow-neon-red/40"
                                         : "bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20"
@@ -301,11 +323,20 @@ export const PowerSupplyDashboard: React.FC = () => {
                                 Short GND
                             </button>
                             <button
-                                onMouseDown={() => setFaultState('OPEN_CIRCUIT')}
-                                onMouseUp={() => setFaultState('NONE')}
-                                onMouseLeave={() => setFaultState('NONE')}
+                                onClick={openCircuitAction.handleClick}
+                                onPointerDown={openCircuitAction.handlePointerDown}
+                                onPointerUp={openCircuitAction.handlePointerUp}
+                                onPointerCancel={openCircuitAction.handlePointerUp}
+                                onPointerLeave={openCircuitAction.handlePointerUp}
+                                onKeyDown={openCircuitAction.handleKeyDown}
+                                onKeyUp={openCircuitAction.handleKeyUp}
+                                onBlur={openCircuitAction.handleBlur}
+                                aria-pressed={faultState === 'OPEN_CIRCUIT'}
+                                aria-keyshortcuts="Space Enter"
+                                aria-label={`Open circuit fault, ${openCircuitAction.interactionHint.toLowerCase()}`}
+                                title={openCircuitAction.interactionHint}
                                 className={cn(
-                                    "flex-1 py-3 rounded-lg border text-[10px] font-black uppercase tracking-widest font-mono transition-all",
+                                    "flex-1 min-h-[52px] rounded-lg border py-3 text-[10px] font-black uppercase tracking-widest font-mono transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50",
                                     faultState === 'OPEN_CIRCUIT'
                                         ? "bg-amber-500 text-dark-950 border-amber-500 scale-95 shadow-neon-amber/40"
                                         : "bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20"

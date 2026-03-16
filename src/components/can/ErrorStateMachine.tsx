@@ -181,7 +181,7 @@ const TransitionArrow: React.FC<{
     );
 };
 
-export const ErrorStateMachine: React.FC<ErrorStateMachineProps> = ({ state, tec, rec }) => {
+export const ErrorStateMachine: React.FC<ErrorStateMachineProps> = ({ state }) => {
     const passiveReached = state === 'ERROR_PASSIVE' || state === 'BUS_OFF';
     const busOffReached = state === 'BUS_OFF';
 

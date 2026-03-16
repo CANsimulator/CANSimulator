@@ -6,6 +6,7 @@ import { ErrorStateMachine } from '../components/can/ErrorStateMachine';
 import { ErrorInjectionPanel } from '../components/can/ErrorInjectionPanel';
 import { ErrorLogPanel } from '../components/can/ErrorLogPanel';
 import { TroubleshootingHints } from '../components/can/TroubleshootingHints';
+import { ErrorTypeDeepDive } from '../components/can/ErrorTypeDeepDive';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ErrorPage: React.FC = () => {
@@ -28,7 +29,7 @@ const ErrorPage: React.FC = () => {
 
     const stateColor = errorState.state === 'ERROR_ACTIVE' ? '#00f3ff'
         : errorState.state === 'ERROR_PASSIVE' ? '#bf00ff'
-        : '#ef4444';
+            : '#ef4444';
 
     const stateLabel = errorState.state.replace('_', ' ');
 
@@ -166,6 +167,9 @@ const ErrorPage: React.FC = () => {
                 </AnimatePresence>
             </section>
 
+            {/* === ERROR TYPE DEEP-DIVE (Educational) === */}
+            <ErrorTypeDeepDive />
+
             {/* === GAUGES + INJECTION (Two Columns) === */}
             <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
                 {/* Gauges */}
@@ -197,21 +201,19 @@ const ErrorPage: React.FC = () => {
                     <div className="flex items-center gap-4 mb-4">
                         <button
                             onClick={() => setActiveTab('log')}
-                            className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 border-b-2 transition-all ${
-                                activeTab === 'log'
+                            className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 border-b-2 transition-all ${activeTab === 'log'
                                     ? 'border-cyber-blue text-cyber-blue'
                                     : 'border-transparent text-gray-500 hover:text-gray-300'
-                            }`}
+                                }`}
                         >
                             Error Log
                         </button>
                         <button
                             onClick={() => setActiveTab('hints')}
-                            className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 border-b-2 transition-all ${
-                                activeTab === 'hints'
+                            className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 border-b-2 transition-all ${activeTab === 'hints'
                                     ? 'border-cyber-green text-cyber-green'
                                     : 'border-transparent text-gray-500 hover:text-gray-300'
-                            }`}
+                                }`}
                         >
                             Troubleshooting
                         </button>

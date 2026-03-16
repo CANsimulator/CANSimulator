@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from '../components/ui/Container';
-import { Sword, Zap, Shield, Cpu, RefreshCw, Info, ArrowRight } from 'lucide-react';
+import { Sword, Zap, Shield, Cpu, RefreshCw, Info } from 'lucide-react';
 import { canSimulator } from '../services/can/can-simulator';
 import { cn } from '../utils/cn';
 
@@ -19,7 +19,7 @@ export default function ArbitrationPage() {
         [nodeAId, nodeBId]);
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
+        let timer: ReturnType<typeof setInterval> | undefined;
         if (isFighting) {
             timer = setInterval(() => {
                 setActiveBit(prev => {

@@ -2,7 +2,7 @@
  * Footer Component
  * Ported from UDS-SIMULATION and adapted for CAN-Simulator
  */
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Github, Linkedin, FileText, ArrowRight, Shield, Eye, Users } from 'lucide-react';
 import { useCookieConsent } from '../../context/CookieContext';
@@ -12,8 +12,8 @@ import { supabase } from '../../config/supabase';
 // const CookiePreferenceModal = lazy(() => import('./CookiePreferenceModal').then(m => ({ default: m.CookiePreferenceModal })));
 
 const Footer: React.FC = () => {
-    const { consent } = useCookieConsent();
-    const [isCookieSettingsOpen, setIsCookieSettingsOpen] = useState(false);
+    useCookieConsent();
+    const [, setIsCookieSettingsOpen] = useState(false);
     const currentYear = new Date().getFullYear();
     const location = useLocation();
     const [siteStats, setSiteStats] = useState<{ total_views: number; unique_visitors: number } | null>(null);

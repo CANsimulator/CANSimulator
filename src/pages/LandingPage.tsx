@@ -26,7 +26,6 @@ import {
     Shield,
     Zap,
     ArrowRight,
-    ArrowLeft,
     Cpu,
     Activity,
     Network,
@@ -35,12 +34,10 @@ import {
 } from 'lucide-react';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { useABTest } from '../hooks/useABTest';
-import { useAuth } from '../context/AuthContext';
 import { trackCTAClick, trackConversion } from '../utils/analytics';
 
 
 export const LandingPage: React.FC = () => {
-    const { isAuthenticated } = useAuth();
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const isMobile = useIsMobile();
@@ -50,9 +47,6 @@ export const LandingPage: React.FC = () => {
     const fadeUp = prefersReducedMotion
         ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
         : { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } };
-    const fadeIn = prefersReducedMotion
-        ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
-        : { initial: { opacity: 0 }, animate: { opacity: 1 } };
     const fadeScale = prefersReducedMotion
         ? { initial: { opacity: 1 }, animate: { opacity: 1 } }
         : { initial: { opacity: 0, scale: 0.95 }, animate: { opacity: 1, scale: 1 } };

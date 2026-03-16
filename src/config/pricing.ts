@@ -3,7 +3,7 @@
  * Centralized source of truth for plans, currencies, and regions.
  */
 
-import type { PricingPlan, DisplayCurrency, BillingInterval } from '../types/payment';
+import type { PricingPlan, DisplayCurrency } from '../types/payment';
 
 export type PricingPlanId = 'free' | 'pro' | 'team' | 'enterprise';
 

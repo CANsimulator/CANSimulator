@@ -5,7 +5,22 @@
       "WebFetch(domain:udssimulator.com)",
       "Bash(npx tsc --noEmit --pretty)",
       "Bash(npx tsc --noEmit)",
-      "Bash(npx vite build)"
+      "Bash(npx vite build)",
+      "Bash(npx vite build --mode development)",
+      "WebFetch(domain:agent-tars.com)",
+      "Bash(claude mcp:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh repo:*)",
+      "Bash(gh project:*)",
+      "Bash(gh org:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh label:*)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "mcp__plugin_playwright_playwright__browser_evaluate"
     ]
   }
 }
