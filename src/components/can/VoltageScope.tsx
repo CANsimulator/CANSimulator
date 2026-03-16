@@ -945,16 +945,15 @@ export const VoltageScope: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Main: Sidebar + Canvas */}
                 <div className="flex flex-col xl:flex-row">
-                    {/* Left Rail (Controls & Metrics) */}
-                    <div className="xl:w-64 p-2 xl:border-r border-[#14142a] flex xl:flex-col gap-2 flex-wrap bg-[#08080f] overflow-y-auto max-h-[540px]">
-                        <MetricGroup title="Acquire" icon="⏱">
-                            <div className="flex gap-1.5 px-0.5 py-1">
+                    {/* Left Rail (Controls & Metrics) — Strictly Vertical Stack */}
+                    <div className="xl:w-64 w-full p-2.5 xl:border-r border-[#14142a] flex flex-col gap-3 bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner">
+                        <MetricGroup title="Acquire" icon="⚡">
+                            <div className="grid grid-cols-2 gap-2 p-1">
                                 <ScopeBtn label={scope.runMode === 'run' ? 'Stop' : 'Run'} active={scope.runMode === 'run'}
-                                    color={scope.runMode === 'run' ? '#00ff88' : '#ff4444'}
+                                    color={scope.runMode === 'run' ? '#00ff9f' : '#ff003c'}
                                     onClick={() => setScope(p => ({ ...p, runMode: p.runMode === 'run' ? 'stop' : 'run' }))} />
-                                <ScopeBtn label="Single" active={scope.runMode === 'single'} color="#ffd000"
+                                <ScopeBtn label="Single" active={scope.runMode === 'single'} color="#bf00ff"
                                     onClick={() => { samplesRef.current = []; setScope(p => ({ ...p, runMode: 'single' })); }} />
                             </div>
                         </MetricGroup>
@@ -986,30 +985,32 @@ export const VoltageScope: React.FC = () => {
                         </MetricGroup>
 
                         <MetricGroup title="Horizontal & Trigger" icon="🎯">
-                            <div className="flex flex-col gap-2 p-1">
+                            <div className="flex flex-col gap-3 p-1">
                                 <Stepper label="Time/div" value={`${scope.tdiv}µs`}
                                     onUp={() => setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, 1) }))}
                                     onDown={() => setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, -1) }))} />
-                                <div className="flex items-center justify-between gap-1">
-                                    <span className="text-[7px] font-mono text-gray-600 uppercase">Mode</span>
-                                    <ScopeBtn label={scope.triggerMode} active color={C.trigger}
+                                
+                                <div className="space-y-1">
+                                    <div className="text-[7px] font-mono text-gray-500 uppercase px-0.5">Trigger Mode</div>
+                                    <ScopeBtn label={scope.triggerMode.toUpperCase()} active color={C.trigger}
                                         onClick={() => setScope(p => ({
                                             ...p, triggerMode: ({ auto: 'SOF', SOF: 'error', error: 'ID', ID: 'auto' } as const)[p.triggerMode],
                                         }))} />
                                 </div>
+
                                 <Stepper label="Trig Level" value={`${scope.triggerLevel.toFixed(1)}V`}
                                     onUp={() => setScope(p => ({ ...p, triggerLevel: clamp(p.triggerLevel + 0.1, 0, 5) }))}
                                     onDown={() => setScope(p => ({ ...p, triggerLevel: clamp(p.triggerLevel - 0.1, 0, 5) }))} />
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="Display Tools" icon="🛠">
-                            <div className="flex gap-1.5 flex-wrap p-1">
-                                <ScopeBtn label={scope.math ? 'VDIFF On' : 'VDIFF Off'} active={scope.math} color={C.diff}
+                        <MetricGroup title="Display" icon="🖥️">
+                            <div className="flex flex-col gap-2 p-1">
+                                <ScopeBtn label={scope.math ? 'Differential On' : 'Differential Off'} active={scope.math} color={C.diff}
                                     onClick={() => setScope(p => ({ ...p, math: !p.math }))} />
-                                <ScopeBtn label={scope.cursorMode === 'off' ? 'Cursors Off' : 'Cursors On'} active={scope.cursorMode !== 'off'} color={C.cursor}
+                                <ScopeBtn label={scope.cursorMode === 'off' ? 'Measurement Off' : 'Measurement On'} active={scope.cursorMode !== 'off'} color={C.cursor}
                                     onClick={() => setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' }))} />
-                                <ScopeBtn label={scope.persistence ? 'Persist On' : 'Persist Off'} active={scope.persistence} color="#8855ff"
+                                <ScopeBtn label={scope.persistence ? 'Persistence On' : 'Persistence Off'} active={scope.persistence} color="#8855ff"
                                     onClick={() => setScope(p => ({ ...p, persistence: !p.persistence }))} />
                             </div>
                         </MetricGroup>
@@ -1077,34 +1078,37 @@ const SmallBtn: React.FC<{ label: string; onClick: () => void; title: string }> 
     </button>
 );
 
-const ScopeBtn: React.FC<{ label: string; active: boolean; color: string; onClick: () => void }> = ({ label, active, color, onClick }) => (
+const ScopeBtn: React.FC<{ label: string; active?: boolean; color?: string; onClick: () => void }> = ({ label, active, color, onClick }) => (
     <button onClick={onClick}
-        className="relative px-2.5 py-1 rounded text-[8px] font-mono font-bold uppercase tracking-wider transition-all active:scale-95"
-        style={{
-            backgroundColor: active ? `${color}10` : '#0a0a12',
-            border: `1px solid ${active ? `${color}35` : '#1a1a2e'}`,
-            color: active ? color : '#444',
-            boxShadow: active ? `0 0 8px ${color}08` : 'none',
+        className={`w-full px-2.5 py-1.5 rounded border text-[9px] font-mono font-bold tracking-tighter uppercase transition-all duration-200 active:scale-[0.97] group flex items-center justify-center gap-2 ${
+            active ? 'border-opacity-100 shadow-[0_0_10px_-2px_rgba(0,0,0,0.5)]' : 'bg-[#0a0a12] border-[#1a1a2e] text-gray-600 border-dashed hover:border-gray-700'
+        }`}
+        style={{ 
+            borderColor: active ? color : undefined, 
+            color: active ? color : undefined,
+            backgroundColor: active ? `${color}10` : undefined,
+            boxShadow: active ? `inset 0 0 12px ${color}15, 0 0 5px ${color}10` : undefined
         }}>
-        <span className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full"
-            style={{ backgroundColor: active ? color : '#222', boxShadow: active ? `0 0 3px ${color}` : 'none' }} />
+        <div className={`w-1 h-1 rounded-full transition-all duration-300 ${active ? 'animate-pulse' : 'bg-gray-800'}`} style={{ backgroundColor: active ? color : undefined, boxShadow: active ? `0 0 4px ${color}` : undefined }} />
         {label}
     </button>
 );
 
 const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown: () => void }> = ({ label, value, onUp, onDown }) => (
-    <div className="flex items-center">
-        <button onClick={onDown} className="w-5 h-6 flex items-center justify-center bg-[#0a0a12] border border-[#1a1a2e] rounded-l text-gray-600 hover:text-white hover:bg-[#14142a] transition-all text-[9px] font-mono">◀</button>
-        <div className="h-6 px-1.5 flex flex-col items-center justify-center bg-[#06060c] border-y border-[#1a1a2e] min-w-[44px]">
-            <span className="text-[6px] font-mono text-gray-600 uppercase leading-none">{label}</span>
-            <span className="text-[9px] font-mono font-bold text-gray-300 leading-none">{value}</span>
+    <div className="flex flex-col gap-1 px-1">
+        <span className="text-[7px] font-mono text-gray-500 uppercase tracking-widest">{label}</span>
+        <div className="flex items-center bg-[#0d0d16] border border-[#1a1a2e] rounded-md overflow-hidden shadow-inner group-hover:border-[#2a2a4e] transition-colors">
+            <button onClick={onDown} className="px-2 py-1 flex items-center justify-center text-gray-500 hover:text-white hover:bg-[#ffffff05] transition-all text-xs font-mono border-r border-[#1a1a2e]">˗</button>
+            <div className="flex-1 py-1 px-1.5 flex items-center justify-center min-w-[60px]">
+                <span className="text-[10px] font-mono font-bold text-gray-300 tabular-nums">{value}</span>
+            </div>
+            <button onClick={onUp} className="px-2 py-1 flex items-center justify-center text-gray-500 hover:text-white hover:bg-[#ffffff05] transition-all text-xs font-mono border-l border-[#1a1a2e]">₊</button>
         </div>
-        <button onClick={onUp} className="w-5 h-6 flex items-center justify-center bg-[#0a0a12] border border-[#1a1a2e] rounded-r text-gray-600 hover:text-white hover:bg-[#14142a] transition-all text-[9px] font-mono">▶</button>
     </div>
 );
 
 const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string }> = ({ title, icon, children, color }) => (
-    <div className="p-2.5 rounded-lg bg-[#0a0a14] border border-[#14142a] min-w-[160px]" style={{ borderLeftColor: color, borderLeftWidth: color ? '3px' : '1px' }}>
+    <div className="w-full p-2.5 rounded-lg bg-[#0a0a14] border border-[#14142a]" style={{ borderLeftColor: color, borderLeftWidth: color ? '3px' : '1px' }}>
         <div className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
             <span className="text-[11px]">{icon}</span> {title}
         </div>
