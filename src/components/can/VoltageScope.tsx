@@ -208,6 +208,14 @@ export const VoltageScope: React.FC = () => {
         const vw = viewRef.current;
         const samples = samplesRef.current;
 
+        // Dynamic scales for panels
+        const activeVdiv = s.ch1.enabled ? s.ch1.vdiv : s.ch2.vdiv;
+        const diffVdiv = activeVdiv * 1.5;
+        const diffVRange = diffVdiv * 4; // 4 divisions in VDIFF panel
+        const diffVCenter = 1.0;         // Center around typical CAN diff
+        const diffVMin = diffVCenter - diffVRange / 2;
+        const diffVMax = diffVCenter + diffVRange / 2;
+
         // HiDPI
         const dpr = window.devicePixelRatio || 1;
         const cw = canvas.clientWidth;
@@ -444,14 +452,6 @@ export const VoltageScope: React.FC = () => {
                 drawCur(s.cursorB, C.cursorB, 'B');
             }
         });
-
-        // Differential dynamic scale
-        const activeVdiv = s.ch1.enabled ? s.ch1.vdiv : s.ch2.vdiv;
-        const diffVdiv = activeVdiv * 1.5;
-        const diffVRange = diffVdiv * 4; // 4 divisions in VDIFF panel
-        const diffVCenter = 1.0;         // Center around typical CAN diff
-        const diffVMin = diffVCenter - diffVRange / 2;
-        const diffVMax = diffVCenter + diffVRange / 2;
 
         // ════════════════════════════════════════════
         // PANEL 2: Differential Voltage
