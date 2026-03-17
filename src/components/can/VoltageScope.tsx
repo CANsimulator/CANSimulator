@@ -173,6 +173,10 @@ export const VoltageScope: React.FC = () => {
 
     const getActiveWaveScale = useCallback(() => {
         const s = scopeRef.current;
+        const vdiv = s.ch1.enabled ? s.ch1.vdiv : s.ch2.vdiv;
+        const vRange = vdiv * 8; // 8 divisions total height
+        const centerV = 2.5;    // Center around CAN recessive recessive level
+        
         const o1 = s.ch1.enabled ? s.ch1.offset : 0;
         const o2 = s.ch2.enabled ? s.ch2.offset : 0;
         
@@ -186,8 +190,8 @@ export const VoltageScope: React.FC = () => {
         }
         
         return {
-            vMin: ISO.V_MIN - avgOffset,
-            vMax: ISO.V_MAX - avgOffset,
+            vMin: centerV - vRange / 2 - avgOffset,
+            vMax: centerV + vRange / 2 - avgOffset,
             avgOffset
         };
     }, []);
@@ -203,6 +207,14 @@ export const VoltageScope: React.FC = () => {
         const s = scopeRef.current;
         const vw = viewRef.current;
         const samples = samplesRef.current;
+
+        // Dynamic scales for panels
+        const activeVdiv = s.ch1.enabled ? s.ch1.vdiv : s.ch2.vdiv;
+        const diffVdiv = activeVdiv * 1.5;
+        const diffVRange = diffVdiv * 4; // 4 divisions in VDIFF panel
+        const diffVCenter = 1.0;         // Center around typical CAN diff
+        const diffVMin = diffVCenter - diffVRange / 2;
+        const diffVMax = diffVCenter + diffVRange / 2;
 
         // HiDPI
         const dpr = window.devicePixelRatio || 1;
@@ -405,7 +417,7 @@ export const VoltageScope: React.FC = () => {
             }
 
             drawGrid(PLOT_W, WAVE_H, 10, 8, vw);
-            drawVAxis(WAVE_H, vMin, vMax, 'V', 1, vw);
+            drawVAxis(WAVE_H, vMin, vMax, 'V', activeVdiv, vw);
             drawTimeAxis(PLOT_W, WAVE_H, 10, s.tdiv, vw);
 
             if (samples.length < 2) return;
@@ -440,14 +452,6 @@ export const VoltageScope: React.FC = () => {
                 drawCur(s.cursorB, C.cursorB, 'B');
             }
         });
-
-        // Differential dynamic scale
-        const activeVdiv = s.ch1.enabled ? s.ch1.vdiv : s.ch2.vdiv;
-        const diffVdiv = activeVdiv * 1.5;
-        const diffVRange = diffVdiv * 4; // 4 divisions in VDIFF panel
-        const diffVCenter = 1.0;         // Center around typical CAN diff
-        const diffVMin = diffVCenter - diffVRange / 2;
-        const diffVMax = diffVCenter + diffVRange / 2;
 
         // ════════════════════════════════════════════
         // PANEL 2: Differential Voltage
@@ -654,18 +658,29 @@ export const VoltageScope: React.FC = () => {
 
         // Ground markers
         const { vMin, vMax, avgOffset } = getActiveWaveScale();
+        let ch1gy = -1;
         if (s.ch1.enabled) {
-            const gy = vToPanel(2.5 + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, vw) + WAVE_Y;
-            if (gy > WAVE_Y && gy < WAVE_Y + WAVE_H) {
+            ch1gy = vToPanel(2.5 + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, vw) + WAVE_Y;
+            if (ch1gy > WAVE_Y && ch1gy < WAVE_Y + WAVE_H) {
                 ctx.fillStyle = C.ch1;
-                ctx.beginPath(); ctx.moveTo(M.left, gy); ctx.lineTo(M.left - 8, gy - 5); ctx.lineTo(M.left - 8, gy + 5); ctx.fill();
+                ctx.beginPath(); 
+                ctx.moveTo(M.left, ch1gy); 
+                ctx.lineTo(M.left - 8, ch1gy - 5); 
+                ctx.lineTo(M.left - 8, ch1gy + 5); 
+                ctx.fill();
             }
         }
         if (s.ch2.enabled) {
             const gy = vToPanel(2.5 + (s.ch2.offset - avgOffset), vMin, vMax, WAVE_H, vw) + WAVE_Y;
-            if (gy > WAVE_Y && gy < WAVE_Y + WAVE_H) {
+            // Requirement 17: offset CH2 marker by 12px below CH1 if they overlap
+            const finalGy2 = (s.ch1.enabled && Math.abs(gy - ch1gy) < 2) ? ch1gy + 12 : gy;
+            if (finalGy2 > WAVE_Y && finalGy2 < WAVE_Y + WAVE_H) {
                 ctx.fillStyle = C.ch2;
-                ctx.beginPath(); ctx.moveTo(M.left, gy + 10); ctx.lineTo(M.left - 8, gy + 5); ctx.lineTo(M.left - 8, gy + 15); ctx.fill();
+                ctx.beginPath(); 
+                ctx.moveTo(M.left, finalGy2); 
+                ctx.lineTo(M.left - 8, finalGy2 - 5); 
+                ctx.lineTo(M.left - 8, finalGy2 + 5); 
+                ctx.fill();
             }
         }
 
