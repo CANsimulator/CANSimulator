@@ -1270,7 +1270,12 @@ const MetricGroup: React.FC<{ title: string; icon: string; children: React.React
         }}>
         <div className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-                <span className="text-[11px]">{icon}</span> {title}
+                {color ? (
+                    <span className="text-[11px]" style={{ color: color }}>◆</span>
+                ) : (
+                    <span className="text-[11px]">{icon}</span>
+                )}
+                {title}
             </div>
             {subTitle && <span className="text-[7px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20">{subTitle}</span>}
         </div>
