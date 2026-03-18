@@ -1091,8 +1091,14 @@ export const VoltageScope: React.FC = () => {
                         <MetricGroup title="Horizontal & Trigger" icon="🎯">
                             <div className="flex flex-col gap-3 p-1">
                                 <Stepper label="Time/div" value={`${scope.tdiv}µs`}
-                                    onUp={() => setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, 1) }))}
-                                    onDown={() => setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, -1) }))} />
+                                    onUp={() => { 
+                                        setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, 1) }));
+                                        setView({ zoomX: 1, zoomY: 1, panX: 0, panY: 0 });
+                                    }}
+                                    onDown={() => { 
+                                        setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, -1) }));
+                                        setView({ zoomX: 1, zoomY: 1, panX: 0, panY: 0 });
+                                    }} />
                                 
                                 <div className="space-y-1">
                                     <div className="text-[7px] font-mono text-gray-500 uppercase px-0.5">Trigger Mode</div>
