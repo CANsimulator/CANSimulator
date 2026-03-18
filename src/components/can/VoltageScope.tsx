@@ -648,9 +648,20 @@ export const VoltageScope: React.FC = () => {
         // ════════════════════════════════════════════
         ctx.font = '600 9px monospace'; ctx.textAlign = 'left';
         let hx = M.left;
-        if (s.ch1.enabled) { ctx.fillStyle = C.ch1; ctx.fillText(`CH1 ${s.ch1.vdiv}V/div CANH`, hx, 14); hx += 140; }
-        if (s.ch2.enabled) { ctx.fillStyle = C.ch2; ctx.fillText(`CH2 ${s.ch2.vdiv}V/div CANL`, hx, 14); hx += 140; }
-        if (s.math) { ctx.fillStyle = C.diff; ctx.fillText(`DIFF CH1−CH2`, hx, 14); }
+        if (s.ch1.enabled) { 
+            ctx.fillStyle = C.ch1; 
+            ctx.fillText(`CH1 ${s.ch1.vdiv}V`, hx, 14); 
+            hx += 90; 
+        }
+        if (s.ch2.enabled) { 
+            ctx.fillStyle = C.ch2; 
+            ctx.fillText(`CH2 ${s.ch2.vdiv}V`, hx, 14); 
+            hx += 90; 
+        }
+        if (s.math && hx < CANVAS_W - 280) { 
+            ctx.fillStyle = C.diff; 
+            ctx.fillText('DIFF', hx, 14); 
+        }
 
         ctx.textAlign = 'right';
         ctx.fillStyle = C.axisText; ctx.fillText(`${s.tdiv}µs/div`, CANVAS_W - M.right - 4, 14);
