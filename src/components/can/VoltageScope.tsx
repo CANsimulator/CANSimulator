@@ -659,10 +659,15 @@ export const VoltageScope: React.FC = () => {
         ctx.fillStyle = C.trigger; ctx.globalAlpha = 0.6;
         ctx.fillText(`Trig: ${s.triggerMode} ${s.triggerLevel.toFixed(1)}V`, CANVAS_W - M.right - 130, 14);
         ctx.globalAlpha = 1;
-        if (vw.zoomX !== 1 || vw.zoomY !== 1) {
-            ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.textAlign = 'center';
-            ctx.fillText(`Zoom ${vw.zoomX.toFixed(1)}×${vw.zoomY.toFixed(1)}`, CANVAS_W / 2, 14);
-        }
+        // Always show zoom readout
+        const isZoomed = vw.zoomX !== 1 || vw.zoomY !== 1;
+        ctx.fillStyle = isZoomed ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)';
+        ctx.textAlign = 'center';
+        ctx.fillText(
+            isZoomed ? `${vw.zoomX.toFixed(1)}×${vw.zoomY.toFixed(1)}` : '1:1',
+            CANVAS_W / 2,
+            14
+        );
 
         // Cursor measurements
         if (s.cursorMode === 'time' && samples.length > 2) {
