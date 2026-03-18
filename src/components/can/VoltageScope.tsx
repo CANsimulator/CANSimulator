@@ -62,6 +62,7 @@ interface ScopeState {
     cursorA: number; // 0-1 normalized position
     cursorB: number;
     persistence: boolean;
+    activeCh: 'ch1' | 'ch2';
 }
 
 interface ViewState { zoomX: number; zoomY: number; panX: number; panY: number; }
@@ -129,6 +130,7 @@ export const VoltageScope: React.FC = () => {
         cursorA: 0.3,
         cursorB: 0.7,
         persistence: false,
+        activeCh: 'ch1',
     });
 
     const [view, setView] = useState<ViewState>({ zoomX: 1, zoomY: 1, panX: 0, panY: 0 });
@@ -175,9 +177,6 @@ export const VoltageScope: React.FC = () => {
 
     const getActiveWaveScale = useCallback(() => {
         const s = scopeRef.current;
-        const vdiv = s.ch1.enabled ? s.ch1.vdiv : s.ch2.vdiv;
-        const vRange = vdiv * 8; // 8 divisions total height
-        const centerV = 2.5;    // Center around CAN recessive recessive level
         
         const o1 = s.ch1.enabled ? s.ch1.offset : 0;
         const o2 = s.ch2.enabled ? s.ch2.offset : 0;
@@ -190,11 +189,26 @@ export const VoltageScope: React.FC = () => {
         } else if (s.ch2.enabled) {
             avgOffset = o2;
         }
+
+        const getChParams = (vdiv: number) => {
+            const vRange = vdiv * 8;
+            const centerV = 2.5; 
+            return {
+                vMin: centerV - vRange / 2 - avgOffset,
+                vMax: centerV + vRange / 2 - avgOffset
+            };
+        };
+
+        const ch1 = getChParams(s.ch1.vdiv);
+        const ch2 = getChParams(s.ch2.vdiv);
+        const primary = s.activeCh === 'ch1' ? ch1 : ch2;
         
         return {
-            vMin: centerV - vRange / 2 - avgOffset,
-            vMax: centerV + vRange / 2 - avgOffset,
-            avgOffset
+            vMin: primary.vMin,
+            vMax: primary.vMax,
+            avgOffset,
+            ch1,
+            ch2
         };
     }, []);
 
@@ -211,7 +225,7 @@ export const VoltageScope: React.FC = () => {
         const samples = samplesRef.current;
 
         // Dynamic scales for panels
-        const activeVdiv = s.ch1.enabled ? s.ch1.vdiv : s.ch2.vdiv;
+        const activeVdiv = s[s.activeCh].vdiv;
         const diffVdiv = activeVdiv * 1.5;
         const diffVRange = diffVdiv * 4; // 4 divisions in VDIFF panel
         const diffVCenter = 1.0;         // Center around typical CAN diff
@@ -382,15 +396,15 @@ export const VoltageScope: React.FC = () => {
         // PANEL 1: CANH / CANL Waveform
         // ════════════════════════════════════════════
         drawPanel(M.left, WAVE_Y, PLOT_W, WAVE_H, 'CANH / CANL — Physical Layer', () => {
-            const { vMin, vMax, avgOffset } = getActiveWaveScale();
+            const { vMin, vMax, avgOffset, ch1, ch2 } = getActiveWaveScale();
             // ISO 11898 threshold bands
-            const cahDomTop = vToPanel(ISO.CANH_DOM_MAX + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, vw);
-            const cahDomBot = vToPanel(ISO.CANH_DOM_MIN + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, vw);
+            const cahDomTop = vToPanel(ISO.CANH_DOM_MAX + (s.ch1.offset - avgOffset), ch1.vMin, ch1.vMax, WAVE_H, vw);
+            const cahDomBot = vToPanel(ISO.CANH_DOM_MIN + (s.ch1.offset - avgOffset), ch1.vMin, ch1.vMax, WAVE_H, vw);
             ctx.fillStyle = 'rgba(0,212,255,0.04)';
             ctx.fillRect(0, cahDomTop, PLOT_W, cahDomBot - cahDomTop);
 
-            const calDomTop = vToPanel(ISO.CANL_DOM_MAX + (s.ch2.offset - avgOffset), vMin, vMax, WAVE_H, vw);
-            const calDomBot = vToPanel(ISO.CANL_DOM_MIN + (s.ch2.offset - avgOffset), vMin, vMax, WAVE_H, vw);
+            const calDomTop = vToPanel(ISO.CANL_DOM_MAX + (s.ch2.offset - avgOffset), ch2.vMin, ch2.vMax, WAVE_H, vw);
+            const calDomBot = vToPanel(ISO.CANL_DOM_MIN + (s.ch2.offset - avgOffset), ch2.vMin, ch2.vMax, WAVE_H, vw);
             ctx.fillStyle = 'rgba(200,80,255,0.04)';
             ctx.fillRect(0, calDomTop, PLOT_W, calDomBot - calDomTop);
 
@@ -403,11 +417,11 @@ export const VoltageScope: React.FC = () => {
 
             // ISO threshold labels
             const thresholds = [
-                { v: ISO.CANH_DOM_MIN + (s.ch1.offset - avgOffset), label: 'CANH min 2.75V', color: C.ch1 },
-                { v: ISO.CANL_DOM_MAX + (s.ch2.offset - avgOffset), label: 'CANL max 2.25V', color: C.ch2 },
+                { v: ISO.CANH_DOM_MIN + (s.ch1.offset - avgOffset), label: 'CANH min 2.75V', color: C.ch1, scale: ch1 },
+                { v: ISO.CANL_DOM_MAX + (s.ch2.offset - avgOffset), label: 'CANL max 2.25V', color: C.ch2, scale: ch2 },
             ];
             for (const th of thresholds) {
-                const y = vToPanel(th.v, vMin, vMax, WAVE_H, vw);
+                const y = vToPanel(th.v, th.scale.vMin, th.scale.vMax, WAVE_H, vw);
                 if (y < 0 || y > WAVE_H) continue;
                 ctx.strokeStyle = th.color; ctx.globalAlpha = 0.15;
                 ctx.setLineDash([1, 3]); ctx.lineWidth = 0.5;
@@ -425,8 +439,8 @@ export const VoltageScope: React.FC = () => {
             if (samples.length < 2) return;
 
             // Traces
-            if (s.ch2.enabled) drawWaveform(samples, p => p.canl + (s.ch2.offset - avgOffset), vMin, vMax, WAVE_H, C.ch2, C.ch2Dim, vw);
-            if (s.ch1.enabled) drawWaveform(samples, p => p.canh + (s.ch1.offset - avgOffset), vMin, vMax, WAVE_H, C.ch1, C.ch1Dim, vw);
+            if (s.ch2.enabled) drawWaveform(samples, p => p.canl + (s.ch2.offset - avgOffset), ch2.vMin, ch2.vMax, WAVE_H, C.ch2, C.ch2Dim, vw);
+            if (s.ch1.enabled) drawWaveform(samples, p => p.canh + (s.ch1.offset - avgOffset), ch1.vMin, ch1.vMax, WAVE_H, C.ch1, C.ch1Dim, vw);
 
             // Trigger level
             const trigY = vToPanel(s.triggerLevel, vMin, vMax, WAVE_H, vw);
@@ -745,8 +759,9 @@ export const VoltageScope: React.FC = () => {
             }
         }
 
-        const canh = samples.map(s => s.canh);
-        const canl = samples.map(s => s.canl);
+        const { avgOffset } = getActiveWaveScale();
+        const canh = samples.map(s => s.canh + (scopeVal.ch1.offset - avgOffset));
+        const canl = samples.map(s => s.canl + (scopeVal.ch2.offset - avgOffset));
         const ch1Min = Math.min(...canh), ch1Max = Math.max(...canh);
         const ch2Min = Math.min(...canl), ch2Max = Math.max(...canl);
         const ch1Avg = canh.reduce((a, b) => a + b) / canh.length;
@@ -1016,7 +1031,13 @@ export const VoltageScope: React.FC = () => {
     }, []);
 
     // ─── Controls ───────────────────────────────────────────
-    const updateCh = (ch: 'ch1' | 'ch2', u: Partial<ChannelCfg>) => setScope(p => ({ ...p, [ch]: { ...p[ch], ...u } }));
+    const updateCh = (ch: 'ch1' | 'ch2', vals: Partial<ChannelCfg>) => {
+        setScope(p => ({
+            ...p,
+            activeCh: ch,
+            [ch]: { ...p[ch], ...vals }
+        }));
+    };
     const resetView = () => setView({ zoomX: 1, zoomY: 1, panX: 0, panY: 0 });
     const zoomIn = () => setView(p => ({ ...p, zoomX: clamp(p.zoomX * 1.3, 0.25, 20), zoomY: clamp(p.zoomY * 1.3, 0.25, 20) }));
     const zoomOut = () => setView(p => ({ ...p, zoomX: clamp(p.zoomX / 1.3, 0.25, 20), zoomY: clamp(p.zoomY / 1.3, 0.25, 20) }));
@@ -1073,7 +1094,7 @@ export const VoltageScope: React.FC = () => {
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="CH1 CANH" icon="💠" color={C.ch1}>
+                        <MetricGroup title="CH1 CANH" icon="💠" color={C.ch1} active={scope.activeCh === 'ch1'}>
                             <div className="flex flex-col gap-2 p-1">
                                 <ScopeBtn label={scope.ch1.enabled ? 'Enabled' : 'Disabled'} active={scope.ch1.enabled} color={C.ch1}
                                     onClick={() => updateCh('ch1', { enabled: !scope.ch1.enabled })} />
@@ -1086,7 +1107,7 @@ export const VoltageScope: React.FC = () => {
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="CH2 CANL" icon="💠" color={C.ch2}>
+                        <MetricGroup title="CH2 CANL" icon="💠" color={C.ch2} active={scope.activeCh === 'ch2'}>
                             <div className="flex flex-col gap-2 p-1">
                                 <ScopeBtn label={scope.ch2.enabled ? 'Enabled' : 'Disabled'} active={scope.ch2.enabled} color={C.ch2}
                                     onClick={() => updateCh('ch2', { enabled: !scope.ch2.enabled })} />
@@ -1171,6 +1192,16 @@ export const VoltageScope: React.FC = () => {
                             <MetricRow label="Load" value={`${metrics.busLoad}%`}
                                 status={metrics.busLoad < 70 ? 'pass' : metrics.busLoad < 85 ? 'warn' : 'fail'} />
                             <MetricRow label="Bit Rate" value={`~${metrics.bitRate} kbps`} />
+                            
+                            <div className="pt-2 mt-2 border-t border-white/5 space-y-1">
+                                <div className="text-[7px] font-mono text-gray-500 uppercase px-0.5 mb-1.5">Compliance (ISO 11898)</div>
+                                <MetricRow label="CANH Level" value={metrics.isoCANH ? 'VALID' : 'OUT-OF-SPEC'} 
+                                    status={metrics.isoCANH ? 'pass' : 'fail'} />
+                                <MetricRow label="CANL Level" value={metrics.isoCANL ? 'VALID' : 'OUT-OF-SPEC'} 
+                                    status={metrics.isoCANL ? 'pass' : 'fail'} />
+                                <MetricRow label="Differential" value={metrics.isoDiff ? 'VALID' : 'LOW-SWING!'} 
+                                    status={metrics.isoDiff ? 'pass' : 'fail'} />
+                            </div>
                         </MetricGroup>
                         <MetricGroup title="Eye Diagram" icon="👁">
                             <MetricRow label="Eye Width" value={`${metrics.eyeWidth}%`}
@@ -1229,8 +1260,14 @@ const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown
     </div>
 );
 
-const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string; subTitle?: string }> = ({ title, icon, children, color, subTitle }) => (
-    <div className="w-full p-2.5 rounded-lg bg-[#0a0a14] border border-[#14142a]" style={{ borderLeftColor: color, borderLeftWidth: color ? '3px' : '1px' }}>
+const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string; subTitle?: string; active?: boolean }> = ({ title, icon, children, color, subTitle, active }) => (
+    <div className={`w-full p-2.5 rounded-lg bg-[#0a0a14] border transition-all duration-300 ${active ? 'ring-1 ring-inset ring-white/10 ring-opacity-50' : ''}`} 
+        style={{ 
+            borderLeftColor: color, 
+            borderLeftWidth: color ? '3px' : '1px',
+            borderColor: active ? color : '#14142a',
+            boxShadow: active ? `inset 0 0 15px ${color}10, 0 0 5px ${color}05` : undefined
+        }}>
         <div className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
                 <span className="text-[11px]">{icon}</span> {title}
