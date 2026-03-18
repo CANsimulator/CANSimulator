@@ -1224,7 +1224,7 @@ const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown
             <div className="flex-1 py-1 px-1.5 flex items-center justify-center min-w-[60px]">
                 <span className="text-[10px] font-mono font-bold text-gray-300 tabular-nums">{value}</span>
             </div>
-            <button onClick={onUp} className="px-2 py-1 flex items-center justify-center text-gray-500 hover:text-white hover:bg-[#ffffff05] transition-all text-xs font-mono border-l border-[#1a1a2e]">₊</button>
+            <button onClick={onUp} className="px-2 py-1 flex items-center justify-center text-gray-500 hover:text-white hover:bg-[#ffffff05] transition-all text-xs font-mono border-l border-[#1a1a2e]">+</button>
         </div>
     </div>
 );
