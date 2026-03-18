@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { normToCanvasX, canvasXToNorm } from '../../utils/scope-math';
 import { 
     ISO, 
     BIT_TIME_SAMPLES, 
@@ -113,6 +114,7 @@ export const VoltageScope: React.FC = () => {
     const prevRunMode = useRef<RunMode>('run');
     const isDraggingTrigger = useRef(false);
     const draggingOffset = useRef<'ch1' | 'ch2' | null>(null);
+    const isDraggingCursor = useRef<'A' | 'B' | null>(null);
     const waveStateRef = useRef<WaveState>(createInitialWaveState());
 
     const [scope, setScope] = useState<ScopeState>({
@@ -138,6 +140,7 @@ export const VoltageScope: React.FC = () => {
         symmetry: 0, busLoad: 0, bitRate: 0,
         eyeWidth: 0, eyeHeight: 0,
         isoCANH: true, isoCANL: true, isoDiff: true,
+        isGated: false,
     });
 
     const scopeRef = useRef(scope);
@@ -167,8 +170,7 @@ export const VoltageScope: React.FC = () => {
     }, []);
 
     const sToX = useCallback((i: number, total: number, vw: ViewState) => {
-        const base = (i / Math.max(total - 1, 1)) * PLOT_W;
-        return (base - PLOT_W / 2) * vw.zoomX + PLOT_W / 2 + vw.panX;
+        return normToCanvasX(i / Math.max(total - 1, 1), vw);
     }, []);
 
     const getActiveWaveScale = useCallback(() => {
@@ -441,7 +443,7 @@ export const VoltageScope: React.FC = () => {
             // Cursors
             if (s.cursorMode === 'time') {
                 const drawCur = (pos: number, color: string, label: string) => {
-                    const tx = (pos * PLOT_W - PLOT_W / 2) * vw.zoomX + PLOT_W / 2 + vw.panX;
+                    const tx = normToCanvasX(pos, vw);
                     ctx.strokeStyle = color; ctx.setLineDash([4, 2]); ctx.lineWidth = 1; ctx.globalAlpha = 0.7;
                     ctx.beginPath(); ctx.moveTo(tx, 0); ctx.lineTo(tx, WAVE_H); ctx.stroke();
                     ctx.setLineDash([]); ctx.globalAlpha = 1;
@@ -621,6 +623,24 @@ export const VoltageScope: React.FC = () => {
 
             ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.font = '7px monospace'; ctx.textAlign = 'left';
             ctx.fillText('DECODE', 4, 9);
+
+            // Count frame boundaries in the visible sample buffer
+            let frameCount = 0;
+            for (let i = 1; i < samples.length; i++) {
+                if (samples[i].bitIndex < samples[i - 1].bitIndex) {
+                    frameCount++;
+                }
+            }
+
+            // Frame count readout (right-aligned)
+            ctx.fillStyle = frameCount > 0 ? 'rgba(0,255,136,0.5)' : 'rgba(255,255,255,0.15)';
+            ctx.font = '7px monospace';
+            ctx.textAlign = 'right';
+            ctx.fillText(
+                frameCount === 1 ? '1 frame' : `${frameCount} frames`,
+                PLOT_W - 4,
+                9
+            );
         });
 
         // ════════════════════════════════════════════
@@ -688,8 +708,26 @@ export const VoltageScope: React.FC = () => {
 
     // ─── Compute metrics ────────────────────────────────────
     const computeMetrics = useCallback(() => {
-        const samples = samplesRef.current;
+        let samples = samplesRef.current;
         if (samples.length < 10) return;
+
+        const scopeVal = scopeRef.current;
+        let isGated = false;
+
+        if (scopeVal.cursorMode === 'time') {
+            const startPos = Math.min(scopeVal.cursorA, scopeVal.cursorB);
+            const endPos = Math.max(scopeVal.cursorA, scopeVal.cursorB);
+            
+            // Map normalized cursor positions to sample indices
+            const startIdx = Math.floor(startPos * (samples.length - 1));
+            const endIdx = Math.ceil(endPos * (samples.length - 1));
+            
+            // Require at least 5 samples for valid gated metrics
+            if (endIdx - startIdx > 4) {
+                samples = samples.slice(startIdx, endIdx + 1);
+                isGated = true;
+            }
+        }
 
         const canh = samples.map(s => s.canh);
         const canl = samples.map(s => s.canl);
@@ -727,7 +765,7 @@ export const VoltageScope: React.FC = () => {
             bitRate: Math.round(transitions * 5),
             eyeWidth: 85 + Math.round(Math.random() * 10),
             eyeHeight: Math.round((ch1Max - ch1Min) / 2 * 100),
-            isoCANH, isoCANL, isoDiff,
+            isoCANH, isoCANL, isoDiff, isGated,
         });
     }, []);
 
@@ -790,7 +828,26 @@ export const VoltageScope: React.FC = () => {
             const vw = viewRef.current;
             const scopeVal = scopeRef.current;
 
-            // 1. Trigger Marker/Line (Anywhere on the horizontal line in the panel or the triangle)
+            // 1. Cursors (A / B)
+            if (scopeVal.cursorMode === 'time') {
+                const vw = viewRef.current;
+                const curAX = M.left + normToCanvasX(scopeVal.cursorA, vw);
+                const curBX = M.left + normToCanvasX(scopeVal.cursorB, vw);
+                
+                const tolerance = 12;
+                if (Math.abs(mouseX - curAX) < tolerance) {
+                    isDraggingCursor.current = 'A';
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                    return;
+                }
+                if (Math.abs(mouseX - curBX) < tolerance) {
+                    isDraggingCursor.current = 'B';
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                    return;
+                }
+            }
+
+            // 2. Trigger Marker/Line (Anywhere on the horizontal line in the panel or the triangle)
             const trigY = vToPanel(scopeVal.triggerLevel, vMin, vMax, WAVE_H, vw);
             const isNearTrigLine = mouseX > M.left - 20 && mouseX < CANVAS_W && Math.abs(mouseY - (WAVE_Y + trigY)) < 24;
             if (isNearTrigLine) {
@@ -828,6 +885,19 @@ export const VoltageScope: React.FC = () => {
         const rect = canvasRef.current!.getBoundingClientRect();
         const mouseX = (e.clientX - rect.left) * (CANVAS_W / rect.width);
         const mouseY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
+        const vw = viewRef.current;
+
+        if (isDraggingCursor.current) {
+            const plotX = mouseX - M.left;
+            const normPos = clamp(canvasXToNorm(plotX, vw), 0, 1);
+            
+            if (isDraggingCursor.current === 'A') {
+                setScope(p => ({ ...p, cursorA: normPos }));
+            } else {
+                setScope(p => ({ ...p, cursorB: normPos }));
+            }
+            return;
+        }
 
         if (isDraggingTrigger.current) {
             const { vMin, vMax } = getActiveWaveScale();
@@ -864,6 +934,13 @@ export const VoltageScope: React.FC = () => {
         const trigY = vToPanel(scopeRef.current.triggerLevel, vMin, vMax, WAVE_H, viewRef.current);
         const isNearTrigLine = mouseX > M.left - 20 && mouseX < CANVAS_W && Math.abs(mouseY - (WAVE_Y + trigY)) < 24;
         
+        let isNearCursor = false;
+        if (scopeRef.current.cursorMode === 'time') {
+            const curAX = M.left + normToCanvasX(scopeRef.current.cursorA, viewRef.current);
+            const curBX = M.left + normToCanvasX(scopeRef.current.cursorB, viewRef.current);
+            if (Math.abs(mouseX - curAX) < 8 || Math.abs(mouseX - curBX) < 8) isNearCursor = true;
+        }
+
         let isNearOffset = false;
         if (mouseX < M.left + 30) {
             const g1y = vToPanel(2.5 + (scopeRef.current.ch1.offset - avgOffset), vMin, vMax, WAVE_H, viewRef.current) + WAVE_Y;
@@ -872,7 +949,13 @@ export const VoltageScope: React.FC = () => {
         }
 
         if (canvasRef.current) {
-            canvasRef.current.style.cursor = (isNearTrigLine || isNearOffset) ? 'ns-resize' : 'crosshair';
+            if (isNearCursor) {
+                canvasRef.current.style.cursor = 'ew-resize';
+            } else if (isNearTrigLine || isNearOffset) {
+                canvasRef.current.style.cursor = 'ns-resize';
+            } else {
+                canvasRef.current.style.cursor = 'crosshair';
+            }
         }
     }, [yToV, vToPanel, getActiveWaveScale]);
     const handlePointerUp = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -881,6 +964,7 @@ export const VoltageScope: React.FC = () => {
         const { vMin, vMax, avgOffset } = getActiveWaveScale();
         const panelY = mouseY - WAVE_Y;
 
+        if (isDraggingCursor.current) isDraggingCursor.current = null;
         if (isDraggingTrigger.current) {
             const finalV = yToV(panelY, vMin, vMax, WAVE_H, viewRef.current);
             const snappedV = Math.round(finalV * 10) / 10;
@@ -1048,7 +1132,7 @@ export const VoltageScope: React.FC = () => {
 
                     {/* Right Rail (Metrics only) */}
                     <div className="xl:w-64 w-full p-2.5 xl:border-l border-[#14142a] flex flex-col gap-3 bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner">
-                        <MetricGroup title="Signal Quality" icon="⚡">
+                        <MetricGroup title="Signal Quality" icon="⚡" subTitle={metrics.isGated ? 'Gated' : undefined}>
                             <MetricRow label="CANH Vpp" value={`${metrics.ch1Vpp.toFixed(2)} V`} color={C.ch1} />
                             <MetricRow label="CANH Avg" value={`${metrics.ch1Avg.toFixed(2)} V`} color={C.ch1} />
                             <MetricRow label="CANL Vpp" value={`${metrics.ch2Vpp.toFixed(2)} V`} color={C.ch2} />
@@ -1123,10 +1207,13 @@ const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown
     </div>
 );
 
-const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string }> = ({ title, icon, children, color }) => (
+const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string; subTitle?: string }> = ({ title, icon, children, color, subTitle }) => (
     <div className="w-full p-2.5 rounded-lg bg-[#0a0a14] border border-[#14142a]" style={{ borderLeftColor: color, borderLeftWidth: color ? '3px' : '1px' }}>
-        <div className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-            <span className="text-[11px]">{icon}</span> {title}
+        <div className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+                <span className="text-[11px]">{icon}</span> {title}
+            </div>
+            {subTitle && <span className="text-[7px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20">{subTitle}</span>}
         </div>
         <div className="space-y-1">{children}</div>
     </div>
