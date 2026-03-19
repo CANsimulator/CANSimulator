@@ -445,14 +445,25 @@ export const VoltageScope: React.FC = () => {
 
             // Trigger level
             const trigY = vToPanel(s.triggerLevel, vMin, vMax, WAVE_H, vw);
+            
+            // Trigger mode color and label
+            const trigColors: Record<'auto' | 'SOF' | 'error' | 'ID', string> = {
+                auto:  '#ffd000',   // yellow — always armed
+                SOF:   '#00d4ff',   // cyan — wait for Start Of Frame
+                error: '#ff4444',   // red  — wait for error frame
+                ID:    '#4488ff',   // blue — wait for specific ID
+            };
+            const trigColor = trigColors[s.triggerMode];
+            const trigLabel = s.triggerMode === 'auto' ? 'T' : s.triggerMode.toUpperCase();
+            
             ctx.save();
-            ctx.strokeStyle = C.trigger; ctx.setLineDash([3, 3]); ctx.lineWidth = 0.8; ctx.globalAlpha = 0.5;
+            ctx.strokeStyle = trigColor; ctx.setLineDash([3, 3]); ctx.lineWidth = 0.8; ctx.globalAlpha = 0.5;
             ctx.beginPath(); ctx.moveTo(0, trigY); ctx.lineTo(PLOT_W, trigY); ctx.stroke();
             ctx.setLineDash([]); ctx.globalAlpha = 1;
-            ctx.fillStyle = C.trigger;
+            ctx.fillStyle = trigColor;
             ctx.beginPath(); ctx.moveTo(PLOT_W, trigY); ctx.lineTo(PLOT_W + 6, trigY - 4); ctx.lineTo(PLOT_W + 6, trigY + 4); ctx.fill();
             ctx.font = '600 8px monospace'; ctx.textAlign = 'left';
-            ctx.fillText('T', PLOT_W + 8, trigY + 3);
+            ctx.fillText(trigLabel, PLOT_W + 8, trigY + 3);
             ctx.restore();
 
             // Cursors
