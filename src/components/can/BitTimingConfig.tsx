@@ -644,6 +644,12 @@ const RegisterRow: React.FC<{
     const [isEditing, setIsEditing] = useState(false);
     const [editVal, setEditVal] = useState(hex);
 
+    const isValidHex = (s: string): boolean => {
+        const v = parseInt(s.replace(/^0x/i, ''), 16);
+        return !isNaN(v) && v >= 0 && v <= 255;
+    };
+    const inputIsValid = editVal === '' || isValidHex(editVal);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onEdit(editVal);
@@ -657,13 +663,14 @@ const RegisterRow: React.FC<{
                     <span className="text-[9px] font-mono font-bold text-[#f1f1f1]">{name}</span>
                     {isEditing ? (
                         <form onSubmit={handleSubmit} className="flex items-center">
-                            <input
-                                autoFocus
-                                value={editVal}
-                                onChange={(e) => setEditVal(e.target.value)}
-                                onBlur={() => setIsEditing(false)}
-                                className="bg-[#111] border border-[#00f3ff40] text-[#00f3ff] text-[9px] font-mono font-bold w-12 px-1 rounded outline-none"
-                            />
+                                <input
+                                    autoFocus
+                                    value={editVal}
+                                    placeholder="0xFF"
+                                    onChange={(e) => setEditVal(e.target.value)}
+                                    onBlur={() => setIsEditing(false)}
+                                    className={`bg-[#111] border ${inputIsValid ? 'border-[#00f3ff40]' : 'border-red-500'} text-[#00f3ff] text-[9px] font-mono font-bold w-12 px-1 rounded outline-none`}
+                                />
                         </form>
                     ) : (
                         <button
