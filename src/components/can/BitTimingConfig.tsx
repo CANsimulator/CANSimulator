@@ -244,7 +244,7 @@ export const BitTimingConfig: React.FC = () => {
 
                         <div className="relative">
                             {/* Segment bar */}
-                            <div className="relative h-12 w-full rounded-md overflow-hidden flex bg-[#080808] border border-[#1a1a20]">
+                            <div className="relative h-12 w-full rounded-md flex bg-[#080808] border border-[#1a1a20]">
                                 {[
                                     { key: 'sync', label: 'SYNC', tq: timing.sync, color: '#6b7280', bg: 'rgba(107,114,128,0.15)' },
                                     { key: 'prop', label: 'PROP', tq: timing.prop, color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
@@ -534,7 +534,7 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
                 onPointerUp={handlePointerUp}
                 onPointerLeave={handlePointerUp}
                 onKeyDown={handleKeyDown}
-                className="relative h-8 bg-[#080808] border border-[#1a1a20] rounded cursor-pointer group overflow-hidden"
+                className="relative h-8 bg-[#080808] border border-[#1a1a20] rounded cursor-pointer group"
                 tabIndex={0}
                 role="slider"
                 aria-label={label}
