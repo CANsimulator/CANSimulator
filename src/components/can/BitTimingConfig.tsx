@@ -178,7 +178,7 @@ export const BitTimingConfig: React.FC = () => {
                 <div className="xl:col-span-4 space-y-3">
                     {/* Preset Selection */}
                     <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[7px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BAUD RATE PRESETS</span>
+                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BAUD RATE PRESETS</span>
                         <div className="grid grid-cols-2 gap-1.5">
                             {BIT_TIMING_PRESETS.map(p => (
                                 <button
@@ -197,7 +197,7 @@ export const BitTimingConfig: React.FC = () => {
 
                     {/* Register Display */}
                     <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[7px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">REGISTER VALUES (MCP2515)</span>
+                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">REGISTER VALUES (MCP2515)</span>
 
                         <RegisterRow
                             name="BTR0"
@@ -228,7 +228,7 @@ export const BitTimingConfig: React.FC = () => {
 
                     {/* Timing Summary */}
                     <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[7px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">COMPUTED PARAMETERS</span>
+                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">COMPUTED PARAMETERS</span>
                         {[
                             { k: 'Total TQ/bit', v: `${totalTq}`, u: 'TQ' },
                             { k: 'Sample Point', v: samplePoint.toFixed(1), u: '%', color: analysis.color },
@@ -237,7 +237,7 @@ export const BitTimingConfig: React.FC = () => {
                             { k: 'SJW', v: `${timing.sjw}`, u: 'TQ', color: sjwValid ? undefined : '#ef4444' },
                         ].map(row => (
                             <div key={row.k} className="flex justify-between items-center py-0.5">
-                                <span className="text-[7px] font-mono text-gray-400">{row.k}</span>
+                                <span className="text-[9px] font-mono text-gray-400">{row.k}</span>
                                 <span className="text-[9px] font-mono font-bold" style={{ color: row.color || '#f1f1f1' }}>
                                     {row.v} <span className="text-gray-500 font-normal">{row.u}</span>
                                 </span>
@@ -246,7 +246,7 @@ export const BitTimingConfig: React.FC = () => {
 
                         {!sjwValid && (
                             <div className="mt-2 p-1.5 rounded bg-[#1c0a0a] border border-red-900/30">
-                                <span className="text-[7px] font-mono text-red-400">
+                                <span className="text-[9px] font-mono text-red-400">
                                     SJW ({timing.sjw}) {'>'} min(PH1,PH2) = {Math.min(timing.phase1, timing.phase2)} — ISO violation
                                 </span>
                             </div>
@@ -258,7 +258,7 @@ export const BitTimingConfig: React.FC = () => {
                 <div className="xl:col-span-8 space-y-4">
                     {/* Timing Visual Bar */}
                     <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[7px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BIT TIMING DIAGRAM</span>
+                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BIT TIMING DIAGRAM</span>
 
                         <div className="relative">
                             {/* Segment bar */}
@@ -280,7 +280,7 @@ export const BitTimingConfig: React.FC = () => {
                                         transition={{ type: 'spring', stiffness: 100, damping: 15 }}
                                     >
                                         <span className="text-[8px] font-mono font-bold whitespace-nowrap" style={{ color: seg.color }}>{seg.label}</span>
-                                        <span className="text-[7px] font-mono text-gray-500">{seg.tq}TQ</span>
+                                        <span className="text-[9px] font-mono text-gray-500">{seg.tq}TQ</span>
                                     </motion.div>
                                 ))}
 
@@ -295,7 +295,7 @@ export const BitTimingConfig: React.FC = () => {
                                     }}
                                 >
                                     <div
-                                        className="absolute -top-6 -translate-x-1/2 px-1.5 py-0.5 rounded text-[7px] font-mono font-bold whitespace-nowrap"
+                                        className="absolute -top-6 -translate-x-1/2 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold whitespace-nowrap"
                                         style={{ backgroundColor: analysis.color, color: '#0a0a0f' }}
                                     >
                                         SP {samplePoint.toFixed(1)}%
@@ -324,7 +324,7 @@ export const BitTimingConfig: React.FC = () => {
 
                         {/* SP quality bar */}
                         <div className="mt-3 flex items-center gap-2">
-                            <span className="text-[7px] font-mono text-gray-500">SP RANGE</span>
+                            <span className="text-[9px] font-mono text-gray-500">SP RANGE</span>
                             <div className="flex-1 h-2 rounded-full bg-[#111] relative overflow-hidden">
                                 {/* Optimal zone */}
                                 <div className="absolute h-full bg-green-500/10" style={{ left: '75%', width: '15%' }} />
@@ -347,7 +347,7 @@ export const BitTimingConfig: React.FC = () => {
 
                     {/* ─── Parameter Adjustment (Sliders) ─── */}
                     <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[7px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-3">SEGMENT CONFIGURATION</span>
+                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-3">SEGMENT CONFIGURATION</span>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <SegmentSlider
@@ -388,7 +388,7 @@ export const BitTimingConfig: React.FC = () => {
                                 />
                                 {!sjwValid && (
                                     <div className="mt-2 p-1.5 rounded bg-[#1c0a0a] border border-red-900/30">
-                                        <span className="text-[7px] font-mono text-red-400">
+                                        <span className="text-[9px] font-mono text-red-400">
                                             ⚠ SJW ({timing.sjw}) exceeds min(PH1,PH2) = {sjwMax}
                                         </span>
                                     </div>
@@ -404,7 +404,7 @@ export const BitTimingConfig: React.FC = () => {
                             />
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[7px] font-mono font-bold uppercase tracking-wider text-[#9ca3af]">
+                                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#9ca3af]">
                                         OSCILLATOR FREQUENCY
                                     </span>
                                     <span className="text-[8px] font-mono text-gray-500">Fosc</span>
@@ -453,7 +453,7 @@ const PresetTabStrip: React.FC<{
 
     return (
         <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222] mb-4">
-            <span className="text-[7px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BAUD RATE PRESETS</span>
+            <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BAUD RATE PRESETS</span>
             <div className="relative flex gap-1">
                 <div className="flex gap-1 w-full">
                     {presets.map(preset => (
@@ -468,7 +468,7 @@ const PresetTabStrip: React.FC<{
                         >
                             <div className="leading-none">
                                 <div className="text-[9px] font-bold">{preset.name.split(' ')[0]}</div>
-                                <div className="text-[7px] opacity-60">{preset.clock}</div>
+                                <div className="text-[9px] opacity-60">{preset.clock}</div>
                             </div>
                             {activePreset === preset.name && (
                                 <motion.div
@@ -539,7 +539,7 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between">
-                <span className="text-[7px] font-mono font-bold uppercase tracking-wider" style={{ color }}>
+                <span className="text-[9px] font-mono font-bold uppercase tracking-wider" style={{ color }}>
                     {label}
                 </span>
                 <span className="text-[8px] font-mono text-gray-500">max {max}</span>
