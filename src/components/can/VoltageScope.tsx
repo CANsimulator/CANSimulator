@@ -117,6 +117,7 @@ export const VoltageScope: React.FC = () => {
     const draggingOffset = useRef<'ch1' | 'ch2' | null>(null);
     const isDraggingCursor = useRef<'A' | 'B' | null>(null);
     const waveStateRef = useRef<WaveState>(createInitialWaveState());
+    const singleFlashRef = useRef<number>(-1000);
 
     const [scope, setScope] = useState<ScopeState>({
         ch1: { enabled: true, vdiv: 1, offset: 0 },
@@ -529,7 +530,7 @@ export const VoltageScope: React.FC = () => {
                 ctx.fillRect(0, 0, PLOT_W * (eyeData.length / EYE_MAX_OVERLAYS), 3);
             }
 
-            if (eyeData.length < 2) {
+            if (eyeData.length < 20) {
                 ctx.fillStyle = 'rgba(255,255,255,0.25)';
                 ctx.font = '600 10px sans-serif'; ctx.textAlign = 'center';
                 ctx.fillText('COLLECTING TRANSITIONS...', PLOT_W / 2, EYE_H / 2 + 5);
@@ -734,9 +735,20 @@ export const VoltageScope: React.FC = () => {
             }
         }
 
-    }, [vToPanel, sToX]);
+        // ── Single capture flash overlay ──
+        const flashAge = performance.now() - singleFlashRef.current;
+        const FLASH_DURATION = 400; // ms
+        if (singleFlashRef.current > 0 && flashAge < FLASH_DURATION) {
+            const alpha = Math.max(0, 1 - flashAge / FLASH_DURATION) * 0.5;
+            ctx.fillStyle = `rgba(191,0,255,${alpha.toFixed(3)})`;
+            ctx.fillRect(M.left, WAVE_Y, PLOT_W, WAVE_H);
+            ctx.fillStyle = `rgba(255,255,255,${(alpha * 2).toFixed(3)})`;
+            ctx.font = '700 14px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('▶ ARMED', PLOT_W / 2 + M.left, WAVE_Y + WAVE_H / 2 + 5);
+        }
 
-    // ─── Compute metrics ────────────────────────────────────
+    }, [vToPanel, sToX]);
     const computeMetrics = useCallback(() => {
         let samples = samplesRef.current;
         if (samples.length < 10) return;
@@ -768,11 +780,10 @@ export const VoltageScope: React.FC = () => {
         const ch2Avg = canl.reduce((a, b) => a + b) / canl.length;
         const vdiff = ch1Avg - ch2Avg;
 
-        let transitions = 0, riseSum = 0, fallSum = 0, riseCount = 0, fallCount = 0, domSamples = 0;
+        let riseSum = 0, fallSum = 0, riseCount = 0, fallCount = 0, domSamples = 0;
         for (let i = 1; i < samples.length; i++) {
             if (samples[i].isDominant) domSamples++;
             if (samples[i].isDominant !== samples[i - 1].isDominant) {
-                transitions++;
                 const dv = Math.abs(samples[i].canh - samples[i - 1].canh);
                 if (samples[i].isDominant) { riseSum += dv; riseCount++; }
                 else { fallSum += dv; fallCount++; }
@@ -793,7 +804,7 @@ export const VoltageScope: React.FC = () => {
             ch2Vpp: ch2Max - ch2Min, ch2Avg, ch2Min, ch2Max,
             vdiff, riseTime: Math.round(riseTime), fallTime: Math.round(fallTime),
             symmetry: Math.round(symmetry), busLoad: Math.round(busLoad),
-            bitRate: Math.round(transitions * 5),
+            bitRate: Math.round(1000 / (BIT_TIME_SAMPLES * (scopeVal.tdiv / 4))),
             eyeWidth: 85 + Math.round(Math.random() * 10),
             eyeHeight: Math.round((ch1Max - ch1Min) / 2 * 100),
             isoCANH, isoCANL, isoDiff, isGated,
@@ -1025,7 +1036,7 @@ export const VoltageScope: React.FC = () => {
             case '-': setView(p => ({ ...p, zoomX: clamp(p.zoomX / 1.2, 0.25, 20), zoomY: clamp(p.zoomY / 1.2, 0.25, 20) })); break;
             case 'r': case 'R': setView({ zoomX: 1, zoomY: 1, panX: 0, panY: 0 }); break;
             case ' ': e.preventDefault(); setScope(p => ({ ...p, runMode: p.runMode === 'run' ? 'stop' : 'run' })); break;
-            case 'Enter': e.preventDefault(); samplesRef.current = []; setScope(p => ({ ...p, runMode: 'single' })); break;
+            case 'Enter': e.preventDefault(); samplesRef.current = []; singleFlashRef.current = performance.now(); setScope(p => ({ ...p, runMode: 'single' })); break;
             case 'c': case 'C': setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' })); break;
         }
     }, []);
@@ -1090,7 +1101,7 @@ export const VoltageScope: React.FC = () => {
                                     color={scope.runMode === 'run' ? '#00ff9f' : '#ff003c'}
                                     onClick={() => setScope(p => ({ ...p, runMode: p.runMode === 'run' ? 'stop' : 'run' }))} />
                                 <ScopeBtn label="Single" active={scope.runMode === 'single'} color="#bf00ff"
-                                    onClick={() => { samplesRef.current = []; setScope(p => ({ ...p, runMode: 'single' })); }} />
+                                    onClick={() => { samplesRef.current = []; singleFlashRef.current = performance.now(); setScope(p => ({ ...p, runMode: 'single' })); }} />
                             </div>
                         </MetricGroup>
 
