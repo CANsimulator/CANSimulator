@@ -484,41 +484,43 @@ export const VoltageScope: React.FC = () => {
         // ════════════════════════════════════════════
         // PANEL 2: Differential Voltage
         // ════════════════════════════════════════════
-        drawPanel(M.left, DIFF_Y, PLOT_W, DIFF_H, 'VDIFF (CANH − CANL) — Differential', () => {
-            // Threshold bands
-            const domLineY = vToPanel(ISO.VDIFF_DOM_MIN, diffVMin, diffVMax, DIFF_H, vw);
-            const topY = vToPanel(diffVMax, diffVMin, diffVMax, DIFF_H, vw);
-            ctx.fillStyle = 'rgba(0,255,136,0.03)';
-            ctx.fillRect(0, topY, PLOT_W, domLineY - topY);
+        if (s.math) {
+            drawPanel(M.left, DIFF_Y, PLOT_W, DIFF_H, 'VDIFF (CANH − CANL) — Differential', () => {
+                // Threshold bands
+                const domLineY = vToPanel(ISO.VDIFF_DOM_MIN, diffVMin, diffVMax, DIFF_H, vw);
+                const topY = vToPanel(diffVMax, diffVMin, diffVMax, DIFF_H, vw);
+                ctx.fillStyle = 'rgba(0,255,136,0.03)';
+                ctx.fillRect(0, topY, PLOT_W, domLineY - topY);
 
-            const recLineY = vToPanel(ISO.VDIFF_REC_MAX, diffVMin, diffVMax, DIFF_H, vw);
-            const botY = vToPanel(diffVMin, diffVMin, diffVMax, DIFF_H, vw);
-            ctx.fillStyle = 'rgba(255,208,0,0.03)';
-            ctx.fillRect(0, recLineY, PLOT_W, botY - recLineY);
+                const recLineY = vToPanel(ISO.VDIFF_REC_MAX, diffVMin, diffVMax, DIFF_H, vw);
+                const botY = vToPanel(diffVMin, diffVMin, diffVMax, DIFF_H, vw);
+                ctx.fillStyle = 'rgba(255,208,0,0.03)';
+                ctx.fillRect(0, recLineY, PLOT_W, botY - recLineY);
 
-            drawGrid(PLOT_W, DIFF_H, 10, 4, vw);
-            drawVAxis(DIFF_H, diffVMin, diffVMax, 'V', diffVdiv, vw);
-            drawTimeAxis(PLOT_W, DIFF_H, 10, s.tdiv, vw);
+                drawGrid(PLOT_W, DIFF_H, 10, 4, vw);
+                drawVAxis(DIFF_H, diffVMin, diffVMax, 'V', diffVdiv, vw);
+                drawTimeAxis(PLOT_W, DIFF_H, 10, s.tdiv, vw);
 
-            if (samples.length < 2) return;
+                if (samples.length < 2) return;
 
-            drawWaveform(samples, p => p.canh - p.canl, diffVMin, diffVMax, DIFF_H, C.diff, C.diffDim, vw);
+                drawWaveform(samples, p => p.canh - p.canl, diffVMin, diffVMax, DIFF_H, C.diff, C.diffDim, vw);
 
-            // Threshold labels
-            ctx.save();
-            ctx.setLineDash([2, 2]); ctx.lineWidth = 0.6; ctx.globalAlpha = 0.3;
-            ctx.strokeStyle = C.dominant;
-            ctx.beginPath(); ctx.moveTo(0, domLineY); ctx.lineTo(PLOT_W, domLineY); ctx.stroke();
-            ctx.strokeStyle = C.recessive;
-            ctx.beginPath(); ctx.moveTo(0, recLineY); ctx.lineTo(PLOT_W, recLineY); ctx.stroke();
-            ctx.setLineDash([]);
-            ctx.font = '7px monospace'; ctx.globalAlpha = 0.5; ctx.textAlign = 'right';
-            ctx.fillStyle = C.dominant;
-            ctx.fillText('DOM ≥1.5V', PLOT_W - 4, clamp(domLineY - 3, 8, DIFF_H - 4));
-            ctx.fillStyle = C.recessive;
-            ctx.fillText('REC ≤0.5V', PLOT_W - 4, clamp(recLineY + 9, 8, DIFF_H - 4));
-            ctx.restore();
-        });
+                // Threshold labels
+                ctx.save();
+                ctx.setLineDash([2, 2]); ctx.lineWidth = 0.6; ctx.globalAlpha = 0.3;
+                ctx.strokeStyle = C.dominant;
+                ctx.beginPath(); ctx.moveTo(0, domLineY); ctx.lineTo(PLOT_W, domLineY); ctx.stroke();
+                ctx.strokeStyle = C.recessive;
+                ctx.beginPath(); ctx.moveTo(0, recLineY); ctx.lineTo(PLOT_W, recLineY); ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.font = '7px monospace'; ctx.globalAlpha = 0.5; ctx.textAlign = 'right';
+                ctx.fillStyle = C.dominant;
+                ctx.fillText('DOM ≥1.5V', PLOT_W - 4, clamp(domLineY - 3, 8, DIFF_H - 4));
+                ctx.fillStyle = C.recessive;
+                ctx.fillText('REC ≤0.5V', PLOT_W - 4, clamp(recLineY + 9, 8, DIFF_H - 4));
+                ctx.restore();
+            });
+        }
 
         // ════════════════════════════════════════════
         // PANEL 3: Eye Diagram
