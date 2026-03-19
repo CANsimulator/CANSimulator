@@ -90,6 +90,8 @@ const DEFAULT_NODES: ECUNode[] = [
 ];
 
 const BAUD_OPTIONS = ['125k', '250k', '500k', '1M'] as const;
+const STORAGE_KEY = 'canscope-bus-nodes';
+type PersistedNode = Omit<ECUNode, 'txCount' | 'rxCount' | 'errorCount'>;
 const RANDOM_DATA = () => Array.from({ length: 8 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase());
 
 let _nextId = 100;
@@ -99,7 +101,18 @@ let _txId = 0;
    BusTopology — Main Component
    ═══════════════════════════════════════════════════════════════ */
 export const BusTopology: React.FC = () => {
-    const [nodes, setNodes] = useState<ECUNode[]>(DEFAULT_NODES);
+    const [nodes, setNodes] = useState<ECUNode[]>(() => {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return DEFAULT_NODES;
+            const parsed: PersistedNode[] = JSON.parse(raw);
+            if (!Array.isArray(parsed) || parsed.length === 0) return DEFAULT_NODES;
+            // Re-attach volatile counters
+            return parsed.map(n => ({ ...n, txCount: 0, rxCount: 0, errorCount: 0 }));
+        } catch {
+            return DEFAULT_NODES;
+        }
+    });
     const [selectedNode, setSelectedNode] = useState<string | null>(null);
     const [showAddDialog, setShowAddDialog] = useState(false);
     const [busLoad, setBusLoad] = useState(0);
@@ -137,6 +150,11 @@ export const BusTopology: React.FC = () => {
 
     useEffect(() => {
         nodesRef.current = nodes;
+        // Persist to localStorage whenever nodes change
+        try {
+            const toSave: PersistedNode[] = nodes.map(({ txCount, rxCount, errorCount, ...rest }) => rest);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+        } catch { /* quota exceeded — silently ignore */ }
     }, [nodes]);
 
     useEffect(() => {
@@ -415,6 +433,18 @@ export const BusTopology: React.FC = () => {
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#00f3ff10] border border-[#00f3ff30] text-[#00f3ff] text-[8px] font-mono font-bold uppercase tracking-wider hover:bg-[#00f3ff20] active:scale-95 transition-all">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                         Add ECU
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (window.confirm('Reset topology to defaults? This will clear all custom nodes.')) {
+                                localStorage.removeItem(STORAGE_KEY);
+                                setNodes(DEFAULT_NODES);
+                                setSelectedNode(null);
+                            }
+                        }}
+                        className="px-3 py-1.5 rounded-md bg-[#ef444410] border border-[#ef444430] text-[#ef4444] text-[8px] font-mono font-bold uppercase tracking-wider hover:bg-[#ef444420] active:scale-95 transition-all"
+                    >
+                        Reset
                     </button>
                 </div>
             </div>
