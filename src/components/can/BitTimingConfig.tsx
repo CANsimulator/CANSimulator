@@ -419,7 +419,7 @@ export const BitTimingConfig: React.FC = () => {
                                     </span>
                                     <span className="text-[8px] font-mono text-gray-500">Fosc</span>
                                 </div>
-                                <div className="grid grid-cols-3 gap-1">
+                                <div className="grid grid-cols-5 gap-1">
                                     {[8, 16, 20, 24, 40].map(f => (
                                         <button
                                             key={f}
