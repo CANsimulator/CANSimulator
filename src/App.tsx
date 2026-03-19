@@ -11,8 +11,8 @@ import Footer from './components/common/Footer';
 // Lazy load pages for better performance
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const SimulatorPage = lazy(() => import('./pages/SimulatorPage'));
-const PricingPage = lazy(() => import('./components/pages/PricingPage').then(m => ({ default: m.PricingPage })));
-const ContactPage = lazy(() => import('./components/pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const PricingPage = lazy(() => import('./pages/PricingPage').then(m => ({ default: m.PricingPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const ErrorPage = lazy(() => import('./pages/ErrorPage'));
 const PhysicalPage = lazy(() => import('./pages/PhysicalPage'));
 const GenerationsPage = lazy(() => import('./pages/GenerationsPage'));

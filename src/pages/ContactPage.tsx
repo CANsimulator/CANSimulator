@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CyberButton } from '../ui/CyberButton';
-import { sendContactEmail } from '../../services/emailService';
-import { supabase } from '../../config/supabase';
-import { useAuth } from '../../context/AuthContext';
+import { CyberButton } from '../components/ui/CyberButton';
+import { sendContactEmail } from '../services/emailService';
+import { supabase } from '../config/supabase';
+import { useAuth } from '../context/AuthContext';
 
 export const ContactPage: React.FC = () => {
     const { user } = useAuth();
