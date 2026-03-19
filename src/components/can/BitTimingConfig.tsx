@@ -553,7 +553,7 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider" style={{ color }}>
                     {label}
                 </span>
-                <span className="text-[8px] font-mono text-gray-500">max {max}</span>
+                <span className="text-[8px] font-mono text-gray-500">1 – {max}</span>
             </div>
 
             <div
