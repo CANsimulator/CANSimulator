@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { normToCanvasX, canvasXToNorm } from '../../utils/scope-math';
+import { normToCanvasX, canvasXToNorm, calculateVDiff } from '../../utils/scope-math';
 import { 
     ISO, 
     BIT_TIME_SAMPLES, 
@@ -502,8 +502,9 @@ export const VoltageScope: React.FC = () => {
                 drawTimeAxis(PLOT_W, DIFF_H, 10, s.tdiv, vw);
 
                 if (samples.length < 2) return;
-
-                drawWaveform(samples, p => p.canh - p.canl, diffVMin, diffVMax, DIFF_H, C.diff, C.diffDim, vw);
+                
+                // Gated differential calculation: CANH - CANL but only for enabled channels
+                drawWaveform(samples, p => calculateVDiff(p.canh, p.canl, s.ch1.enabled, s.ch2.enabled), diffVMin, diffVMax, DIFF_H, C.diff, C.diffDim, vw);
 
                 // Threshold labels
                 ctx.save();
@@ -552,29 +553,33 @@ export const VoltageScope: React.FC = () => {
 
             const noZoom: ViewState = { zoomX: 1, zoomY: 1, panX: 0, panY: 0 };
             
-            // Brightness boost: higher alpha when building to help visibility
-            ctx.globalAlpha = isEyeReady ? 0.08 : 0.25;
+            // Brightness boost: higher alpha when ready to clearly show eye opening
+            ctx.globalAlpha = isEyeReady ? 0.25 : 0.06;
             
             for (const bitSamples of eyeData) {
                 if (bitSamples.length < 2) continue;
                 // CANH
-                ctx.strokeStyle = C.ch1; ctx.lineWidth = 1;
-                ctx.beginPath();
-                for (let j = 0; j < bitSamples.length; j++) {
-                    const x = (j / (bitSamples.length - 1)) * PLOT_W;
-                    const y = vToPanel(bitSamples[j].canh, ISO.V_MIN, ISO.V_MAX, EYE_H, noZoom);
-                    if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                if (s.ch1.enabled) {
+                    ctx.strokeStyle = C.ch1; ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    for (let j = 0; j < bitSamples.length; j++) {
+                        const x = (j / (bitSamples.length - 1)) * PLOT_W;
+                        const y = vToPanel(bitSamples[j].canh, ISO.V_MIN, ISO.V_MAX, EYE_H, noZoom);
+                        if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
                 }
-                ctx.stroke();
                 // CANL
-                ctx.strokeStyle = C.ch2;
-                ctx.beginPath();
-                for (let j = 0; j < bitSamples.length; j++) {
-                    const x = (j / (bitSamples.length - 1)) * PLOT_W;
-                    const y = vToPanel(bitSamples[j].canl, ISO.V_MIN, ISO.V_MAX, EYE_H, noZoom);
-                    if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                if (s.ch2.enabled) {
+                    ctx.strokeStyle = C.ch2;
+                    ctx.beginPath();
+                    for (let j = 0; j < bitSamples.length; j++) {
+                        const x = (j / (bitSamples.length - 1)) * PLOT_W;
+                        const y = vToPanel(bitSamples[j].canl, ISO.V_MIN, ISO.V_MAX, EYE_H, noZoom);
+                        if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
                 }
-                ctx.stroke();
             }
             ctx.globalAlpha = 1;
 
@@ -588,6 +593,20 @@ export const VoltageScope: React.FC = () => {
         // ════════════════════════════════════════════
         drawPanel(M.left, DECODE_Y, PLOT_W, DECODE_H, '', () => {
             if (samples.length < 2) return;
+            
+            // Highlighted wait state for better visibility
+            if (!s.ch1.enabled && !s.ch2.enabled) {
+                const tw = 130;
+                ctx.fillStyle = 'rgba(0, 243, 255, 0.08)';
+                ctx.fillRect(PLOT_W / 2 - tw / 2, 4, tw, DECODE_H - 8);
+                ctx.strokeStyle = 'rgba(0, 243, 255, 0.2)';
+                ctx.strokeRect(PLOT_W / 2 - tw / 2, 4, tw, DECODE_H - 8);
+
+                ctx.fillStyle = '#00f3ff';
+                ctx.font = 'bold 7px monospace'; ctx.textAlign = 'center';
+                ctx.fillText('WAITING FOR PROBE CONNECTION...', PLOT_W / 2, DECODE_H / 2 + 3);
+                return;
+            }
             
             const CAN_FIELDS = [
                 { name: 'SOF', color: '#ffffff', start: 0, end: 0 },
@@ -791,7 +810,6 @@ export const VoltageScope: React.FC = () => {
         const ch2Min = Math.min(...canl), ch2Max = Math.max(...canl);
         const ch1Avg = canh.reduce((a, b) => a + b) / canh.length;
         const ch2Avg = canl.reduce((a, b) => a + b) / canl.length;
-        const vdiff = ch1Avg - ch2Avg;
 
         let riseSum = 0, fallSum = 0, riseCount = 0, fallCount = 0, domSamples = 0;
         for (let i = 1; i < samples.length; i++) {
@@ -807,20 +825,32 @@ export const VoltageScope: React.FC = () => {
         const fallTime = fallCount > 0 ? fallSum / fallCount * 20 : 0;
         const symmetry = riseTime > 0 && fallTime > 0 ? Math.min(riseTime, fallTime) / Math.max(riseTime, fallTime) * 100 : 0;
         const busLoad = (domSamples / samples.length) * 100;
-        const isoCANH = ch1Max <= ISO.CANH_DOM_MAX && (ch1Max >= ISO.CANH_DOM_MIN || ch1Avg > ISO.V_REC - 0.5);
-        const isoCANL = ch2Min >= ISO.CANL_DOM_MIN && (ch2Min <= ISO.CANL_DOM_MAX || ch2Avg < ISO.V_REC + 0.5);
-        const maxDiff = Math.max(...samples.map(s => s.canh - s.canl));
-        const isoDiff = maxDiff >= ISO.VDIFF_DOM_MIN;
+        const isoCANH = scopeVal.ch1.enabled && ch1Max <= ISO.CANH_DOM_MAX && (ch1Max >= ISO.CANH_DOM_MIN || ch1Avg > ISO.V_REC - 0.5);
+        const isoCANL = scopeVal.ch2.enabled && ch2Min >= ISO.CANL_DOM_MIN && (ch2Min <= ISO.CANL_DOM_MAX || ch2Avg < ISO.V_REC + 0.5);
+        const maxDiff = Math.max(...samples.map(s => calculateVDiff(s.canh, s.canl, scopeVal.ch1.enabled, scopeVal.ch2.enabled)));
+        const isoDiff = (scopeVal.ch1.enabled || scopeVal.ch2.enabled) && maxDiff >= ISO.VDIFF_DOM_MIN;
 
         setMetrics({
-            ch1Vpp: ch1Max - ch1Min, ch1Avg, ch1Min, ch1Max,
-            ch2Vpp: ch2Max - ch2Min, ch2Avg, ch2Min, ch2Max,
-            vdiff, riseTime: Math.round(riseTime), fallTime: Math.round(fallTime),
-            symmetry: Math.round(symmetry), busLoad: Math.round(busLoad),
+            ch1Vpp: scopeVal.ch1.enabled ? (ch1Max - ch1Min) : 0, 
+            ch1Avg: scopeVal.ch1.enabled ? ch1Avg : 0, 
+            ch1Min: scopeVal.ch1.enabled ? ch1Min : 0, 
+            ch1Max: scopeVal.ch1.enabled ? ch1Max : 0,
+            ch2Vpp: scopeVal.ch2.enabled ? (ch2Max - ch2Min) : 0, 
+            ch2Avg: scopeVal.ch2.enabled ? ch2Avg : 0, 
+            ch2Min: scopeVal.ch2.enabled ? ch2Min : 0, 
+            ch2Max: scopeVal.ch2.enabled ? ch2Max : 0,
+            vdiff: calculateVDiff(ch1Avg, ch2Avg, scopeVal.ch1.enabled, scopeVal.ch2.enabled), 
+            riseTime: Math.round(riseTime), 
+            fallTime: Math.round(fallTime),
+            symmetry: Math.round(symmetry), 
+            busLoad: Math.round(busLoad),
             bitRate: Math.round(1000 / (BIT_TIME_SAMPLES * (scopeVal.tdiv / 4))),
-            eyeWidth: 85 + Math.round(Math.random() * 10),
-            eyeHeight: Math.round((ch1Max - ch1Min) / 2 * 100),
-            isoCANH, isoCANL, isoDiff, isGated,
+            eyeWidth: (scopeVal.ch1.enabled || scopeVal.ch2.enabled) ? (85 + Math.round(Math.random() * 10)) : 0,
+            eyeHeight: scopeVal.ch1.enabled ? Math.round((ch1Max - ch1Min) / 2 * 100) : 0,
+            isoCANH: !!isoCANH, 
+            isoCANL: !!isoCANL, 
+            isoDiff: !!isoDiff, 
+            isGated,
         });
     }, []);
 
