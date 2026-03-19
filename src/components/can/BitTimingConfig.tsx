@@ -377,14 +377,41 @@ export const BitTimingConfig: React.FC = () => {
                                     </div>
                                 )}
                             </motion.div>
-                            <SegmentSlider
-                                label="BITRATE PRESCALER (BRP)"
-                                color="#6b7280"
-                                value={timing.brp}
-                                max={64}
-                                onChange={(v) => handleChange('brp', v)}
-                                description="Baud rate prescaler (Tq = 2 * BRP / Fosc)"
-                            />
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#6b7280]">
+                                        BITRATE PRESCALER (BRP)
+                                    </span>
+                                    <span className="text-[9px] font-mono text-gray-500">1 – 64</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => handleChange('brp', Math.max(1, timing.brp - 1))}
+                                        disabled={timing.brp <= 1}
+                                        className="w-8 h-8 flex items-center justify-center rounded bg-[#111] border border-[#222] text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                        aria-label="Decrease BRP"
+                                    >−</button>
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        max={64}
+                                        value={timing.brp}
+                                        onChange={(e) => {
+                                            const v = parseInt(e.target.value, 10);
+                                            if (!isNaN(v)) handleChange('brp', Math.max(1, Math.min(64, v)));
+                                        }}
+                                        className="flex-1 h-8 text-center bg-[#111] border border-[#222] rounded text-[#f1f1f1] font-mono text-[11px] font-bold outline-none focus:border-[#6b7280] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                        aria-label="BRP value"
+                                    />
+                                    <button
+                                        onClick={() => handleChange('brp', Math.min(64, timing.brp + 1))}
+                                        disabled={timing.brp >= 64}
+                                        className="w-8 h-8 flex items-center justify-center rounded bg-[#111] border border-[#222] text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                        aria-label="Increase BRP"
+                                    >+</button>
+                                </div>
+                                <span className="text-[9px] font-mono text-gray-500 block">Baud rate prescaler (Tq = 2 × BRP / Fosc)</span>
+                            </div>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#9ca3af]">
