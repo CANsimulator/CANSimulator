@@ -204,7 +204,7 @@ export const BitTimingConfig: React.FC = () => {
                             hex={toHex(regs.btr1)}
                             binary={toBin(regs.btr1)}
                             fields={[
-                                { bits: '7', name: 'SAM', value: 0, color: '#6b7280' },
+                                { bits: '7', name: 'SAM (single)', value: 0, color: '#6b7280', tooltip: 'Sample Mode: SAM=0 = single sample. Triple sampling (SAM=1) improves noise immunity at ≤125 kbit/s but is not currently supported in the simulation.' },
                                 { bits: '6:4', name: 'TSEG2', value: timing.phase2 - 1, color: '#bf00ff' },
                                 { bits: '3:0', name: 'TSEG1', value: timing.prop + timing.phase1 - 1, color: '#00f3ff' },
                             ]}
@@ -641,7 +641,7 @@ const RegisterRow: React.FC<{
     name: string;
     hex: string;
     binary: string;
-    fields: { bits: string; name: string; value: number; color: string }[];
+    fields: { bits: string; name: string; value: number; color: string; tooltip?: string }[];
     onCopy: (reg: string, value: number) => void;
     onEdit: (hex: string) => void;
     isCopied: boolean;
@@ -725,7 +725,12 @@ const RegisterRow: React.FC<{
             {/* Field labels */}
             <div className="flex gap-2 flex-wrap">
                 {fields.map(f => (
-                    <span key={f.name} className="text-[9px] font-mono" style={{ color: f.color }}>
+                    <span
+                        key={f.name}
+                        className="text-[9px] font-mono cursor-help"
+                        style={{ color: f.color }}
+                        title={f.tooltip ?? ''}
+                    >
                         [{f.bits}] {f.name}={f.value}
                     </span>
                 ))}
