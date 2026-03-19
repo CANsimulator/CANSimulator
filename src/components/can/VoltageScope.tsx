@@ -1156,10 +1156,19 @@ export const VoltageScope: React.FC = () => {
                                 
                                 <div className="space-y-1">
                                     <div className="text-[7px] font-mono text-gray-500 uppercase px-0.5">Trigger Mode</div>
-                                    <ScopeBtn label={scope.triggerMode.toUpperCase()} active color={C.trigger}
-                                        onClick={() => setScope(p => ({
-                                            ...p, triggerMode: ({ auto: 'SOF', SOF: 'error', error: 'ID', ID: 'auto' } as const)[p.triggerMode],
-                                        }))} />
+                                    {(() => {
+                                        const trigColors: Record<'auto' | 'SOF' | 'error' | 'ID', string> = {
+                                            auto:  '#ffd000',   // yellow
+                                            SOF:   '#00d4ff',   // cyan
+                                            error: '#ff4444',   // red
+                                            ID:    '#4488ff',   // blue
+                                        };
+                                        const buttonColor = trigColors[scope.triggerMode];
+                                        return <ScopeBtn label={scope.triggerMode.toUpperCase()} active color={buttonColor}
+                                            onClick={() => setScope(p => ({
+                                                ...p, triggerMode: ({ auto: 'SOF', SOF: 'error', error: 'ID', ID: 'auto' } as const)[p.triggerMode],
+                                            }))} />;
+                                    })()}
                                 </div>
 
                                 <Stepper label="Trig Level" value={`${scope.triggerLevel.toFixed(1)}V`}
