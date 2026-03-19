@@ -926,6 +926,11 @@ export const VoltageScope: React.FC = () => {
                     return;
                 }
             }
+            
+            // Left-click on empty canvas: start pan
+            isPanning.current = true;
+            panOrigin.current = { x: e.clientX, y: e.clientY, vx: viewRef.current.panX, vy: viewRef.current.panY };
+            e.currentTarget.setPointerCapture(e.pointerId);
         }
 
         if (e.button === 1 || e.button === 2) {
@@ -1200,7 +1205,7 @@ export const VoltageScope: React.FC = () => {
                             onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
                             onContextMenu={e => e.preventDefault()} onKeyDown={handleKeyDown} />
                         <div className="absolute bottom-1.5 left-1.5 flex gap-1.5 pointer-events-none">
-                            <Hint text="Scroll: Zoom" /><Hint text="Ctrl/Shift+Scroll: Axis" /><Hint text="Right-drag: Pan" /><Hint text="C: Cursors" />
+                            <Hint text="Scroll: Zoom" /><Hint text="Ctrl/Shift+Scroll: Axis" /><Hint text="Drag: Pan" /><Hint text="C: Cursors" />
                         </div>
                     </div>
 

@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CAN Scope Concept</title>
+    <style>
+        :root {
+            --bg: #06070a;
+            --bg-elevated: #0d1016;
+            --panel: rgba(13, 18, 28, 0.88);
+            --panel-strong: rgba(9, 13, 20, 0.96);
+            --line: rgba(129, 157, 188, 0.18);
+            --line-strong: rgba(134, 173, 214, 0.34);
+            --text: #edf4ff;
+            --muted: #8ea0bb;
+            --cyan: #4cc9ff;
+            --green: #4dffb3;
+            --amber: #ffc857;
+            --pink: #ef5cff;
+            --danger: #ff6b6b;
+            --glow: 0 0 0 1px rgba(255,255,255,0.03), 0 20px 80px rgba(0,0,0,0.45);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background:
+                radial-gradient(circle at 20% 15%, rgba(76, 201, 255, 0.18), transparent 26%),
+                radial-gradient(circle at 82% 10%, rgba(239, 92, 255, 0.14), transparent 22%),
+                radial-gradient(circle at 50% 120%, rgba(77, 255, 179, 0.12), transparent 35%),
+                linear-gradient(180deg, #05070a 0%, #0a0c11 55%, #06070a 100%);
+            color: var(--text);
+            font-family: "Bahnschrift", "Segoe UI", sans-serif;
+            letter-spacing: 0.01em;
+        }
+
+        .frame {
+            width: 1520px;
+            padding: 26px;
+            border-radius: 36px;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015)),
+                linear-gradient(180deg, rgba(17, 22, 33, 0.96), rgba(7, 10, 16, 0.98));
+            border: 1px solid rgba(203, 220, 244, 0.14);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.06),
+                inset 0 0 0 1px rgba(255,255,255,0.03),
+                0 30px 90px rgba(0,0,0,0.58);
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: 1.4fr auto;
+            gap: 18px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 16px 20px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(18, 24, 36, 0.9), rgba(10, 13, 20, 0.92));
+            border: 1px solid var(--line);
+            box-shadow: var(--glow);
+        }
+
+        .brand-mark {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background:
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent 45%),
+                linear-gradient(135deg, rgba(76, 201, 255, 0.25), rgba(239, 92, 255, 0.15));
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--cyan);
+            font: 700 22px/1 "Consolas", monospace;
+            text-shadow: 0 0 20px rgba(76, 201, 255, 0.7);
+        }
+
+        .brand-copy h1,
+        .brand-copy p,
+        .cluster p,
+        .cluster strong,
+        .tile h3,
+        .tile p,
+        .display-meta span,
+        .channel-card strong,
+        .channel-card span,
+        .wave-badge,
+        .soft-key span,
+        .metric-row span,
+        .rail-card h3,
+        .rail-card span {
+            margin: 0;
+        }
+
+        .brand-copy h1 {
+            font-size: 32px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+        .brand-copy p {
+            margin-top: 8px;
+            color: var(--muted);
+            text-transform: uppercase;
+            font: 600 11px/1.4 "Consolas", monospace;
+            letter-spacing: 0.24em;
+        }
+
+        .status-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .tile {
+            min-width: 180px;
+            padding: 14px 16px;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(14, 18, 27, 0.94), rgba(9, 12, 19, 0.94));
+            border: 1px solid var(--line);
+            box-shadow: var(--glow);
+        }
+
+        .tile h3 {
+            color: var(--muted);
+            text-transform: uppercase;
+            font: 600 10px/1 "Consolas", monospace;
+            letter-spacing: 0.18em;
+        }
+
+        .tile p {
+            margin-top: 10px;
+            font-size: 22px;
+            font-weight: 750;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 210px 1fr 320px;
+            gap: 18px;
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .rail-card,
+        .panel,
+        .screen-shell,
+        .bottom-dock {
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--line);
+            background: var(--panel);
+            box-shadow: var(--glow);
+            backdrop-filter: blur(12px);
+        }
+
+        .rail-card {
+            padding: 16px;
+            background:
+                linear-gradient(180deg, rgba(15, 20, 30, 0.96), rgba(9, 13, 20, 0.98));
+        }
+
+        .rail-card h3,
+        .section-title {
+            color: var(--text);
+            text-transform: uppercase;
+            font: 700 11px/1 "Consolas", monospace;
+            letter-spacing: 0.22em;
+        }
+
+        .rail-card small,
+        .section-sub,
+        .muted {
+            display: block;
+            margin-top: 7px;
+            color: var(--muted);
+            font: 500 11px/1.45 "Consolas", monospace;
+        }
+
+        .meter {
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.025);
+        }
+
+        .meter-head,
+        .metric-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .meter-head {
+            color: var(--muted);
+            font: 600 10px/1 "Consolas", monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+        }
+
+        .meter-bar {
+            margin-top: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, rgba(76, 201, 255, 0.35), rgba(77, 255, 179, 0.88));
+            box-shadow: 0 0 18px rgba(76, 201, 255, 0.45);
+        }
+
+        .screen-shell {
+            padding: 18px;
+            border-radius: var(--radius-xl);
+            background:
+                linear-gradient(180deg, rgba(17, 23, 35, 0.96), rgba(7, 10, 16, 0.98));
+        }
+
+        .display-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+
+        .display-meta span {
+            color: var(--muted);
+            text-transform: uppercase;
+            font: 600 10px/1 "Consolas", monospace;
+            letter-spacing: 0.18em;
+        }
+
+        .wave-stage {
+            padding: 14px;
+            border-radius: 22px;
+            background:
+                linear-gradient(180deg, rgba(6, 10, 17, 0.96), rgba(3, 5, 10, 0.98));
+            border: 1px solid rgba(120, 151, 192, 0.16);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wave-stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(84, 112, 146, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(84, 112, 146, 0.08) 1px, transparent 1px);
+            background-size: 100% 36px, 72px 100%;
+            mask-image: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.75));
+            pointer-events: none;
+        }
+
+        .wave-strip {
+            display: grid;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .wave-panel {
+            height: 164px;
+            border-radius: 18px;
+            border: 1px solid rgba(117, 151, 194, 0.12);
+            background:
+                radial-gradient(circle at 0% 50%, rgba(76, 201, 255, 0.06), transparent 18%),
+                linear-gradient(180deg, rgba(9, 13, 21, 0.95), rgba(5, 8, 13, 0.95));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wave-panel.small {
+            height: 112px;
+        }
+
+        .wave-labels {
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--muted);
+            font: 600 10px/1 "Consolas", monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        .wave-badge {
+            padding: 5px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.035);
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .screen-footer {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .channel-card {
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .channel-card strong {
+            display: block;
+            font: 700 11px/1 "Consolas", monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+        }
+
+        .channel-card span {
+            display: block;
+            margin-top: 10px;
+            font-size: 28px;
+            font-weight: 760;
+        }
+
+        .right-panel {
+            padding: 16px;
+            background:
+                linear-gradient(180deg, rgba(14, 19, 28, 0.95), rgba(9, 13, 21, 0.98));
+        }
+
+        .cluster {
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .cluster:first-child {
+            padding-top: 0;
+        }
+
+        .cluster:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .cluster p {
+            color: var(--muted);
+            text-transform: uppercase;
+            font: 600 10px/1 "Consolas", monospace;
+            letter-spacing: 0.16em;
+        }
+
+        .cluster strong {
+            display: block;
+            margin-top: 9px;
+            font-size: 26px;
+            font-weight: 780;
+        }
+
+        .metric-list {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .metric-row {
+            color: var(--text);
+            font: 600 11px/1 "Consolas", monospace;
+            letter-spacing: 0.02em;
+        }
+
+        .metric-row span:first-child {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .metric-ok {
+            color: var(--green);
+        }
+
+        .metric-warn {
+            color: var(--amber);
+        }
+
+        .metric-fail {
+            color: var(--danger);
+        }
+
+        .bottom-dock {
+            margin-top: 18px;
+            padding: 14px;
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 12px;
+            background:
+                linear-gradient(180deg, rgba(12, 17, 25, 0.94), rgba(8, 11, 18, 0.96));
+        }
+
+        .soft-key {
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));
+        }
+
+        .soft-key em {
+            display: inline-block;
+            padding: 5px 7px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            color: var(--muted);
+            text-transform: uppercase;
+            font: 700 10px/1 "Consolas", monospace;
+            letter-spacing: 0.12em;
+            font-style: normal;
+        }
+
+        .soft-key strong {
+            display: block;
+            margin-top: 12px;
+            font-size: 17px;
+            font-weight: 760;
+        }
+
+        .soft-key span {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font: 500 11px/1.45 "Consolas", monospace;
+        }
+
+        .cyan { color: var(--cyan); }
+        .green { color: var(--green); }
+        .amber { color: var(--amber); }
+        .pink { color: var(--pink); }
+    </style>
+</head>
+<body>
+    <main class="frame">
+        <section class="header">
+            <div class="brand">
+                <div class="brand-mark">CS</div>
+                <div class="brand-copy">
+                    <h1>CAN-SCOPE / OSCILLOSCOPE MODE</h1>
+                    <p>physical layer diagnostics • lab acquisition shell • differential signal integrity</p>
+                </div>
+            </div>
+            <div class="status-row">
+                <div class="tile">
+                    <h3>Acquisition</h3>
+                    <p class="green">RUN / LIVE</p>
+                </div>
+                <div class="tile">
+                    <h3>Compliance</h3>
+                    <p class="amber">SYNC + WARN</p>
+                </div>
+                <div class="tile">
+                    <h3>Bench</h3>
+                    <p>500 kbit/s</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="layout">
+            <aside class="stack">
+                <div class="rail-card">
+                    <h3>Acquisition Rail</h3>
+                    <small>Fast lab controls stay pinned at the left edge to mimic a benchtop scope instead of a website card.</small>
+                    <div class="meter">
+                        <div class="meter-head"><span>Trigger</span><strong class="amber">SOF</strong></div>
+                        <div class="meter-bar"><div class="meter-fill" style="width: 72%"></div></div>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-head"><span>Noise Gate</span><strong class="cyan">0.18V</strong></div>
+                        <div class="meter-bar"><div class="meter-fill" style="width: 42%"></div></div>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-head"><span>Persistence</span><strong class="green">12 ms</strong></div>
+                        <div class="meter-bar"><div class="meter-fill" style="width: 58%"></div></div>
+                    </div>
+                </div>
+                <div class="rail-card">
+                    <h3>Channel Stack</h3>
+                    <small>Vertical cards make CANH, CANL, and VDIFF feel like actual instrument channels instead of generic stat blocks.</small>
+                    <div class="metric-list">
+                        <div class="metric-row"><span>CH1 / CANH</span><span class="cyan">1.00 V/div</span></div>
+                        <div class="metric-row"><span>CH2 / CANL</span><span class="pink">1.00 V/div</span></div>
+                        <div class="metric-row"><span>MATH / VDIFF</span><span class="green">0.50 V/div</span></div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="screen-shell">
+                <div class="display-meta">
+                    <span>signal stage / physical layer</span>
+                    <span>timebase 20 us/div • sample 100 ms/s • dual differential</span>
+                </div>
+                <div class="wave-stage">
+                    <div class="wave-strip">
+                        <div class="wave-panel">
+                            <div class="wave-labels">
+                                <span>main analog overlay</span>
+                                <span class="wave-badge">CH1 CANH • CH2 CANL</span>
+                            </div>
+                            <svg viewBox="0 0 920 164" preserveAspectRatio="none" aria-hidden="true">
+                                <defs>
+                                    <linearGradient id="fadeCyan" x1="0" x2="1">
+                                        <stop offset="0%" stop-color="#4cc9ff" stop-opacity="0.10"/>
+                                        <stop offset="100%" stop-color="#4cc9ff" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                    <linearGradient id="fadePink" x1="0" x2="1">
+                                        <stop offset="0%" stop-color="#ef5cff" stop-opacity="0.08"/>
+                                        <stop offset="100%" stop-color="#ef5cff" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M0 56 L90 56 L104 50 L114 36 L126 82 L138 54 L220 54 L232 51 L242 120 L256 70 L330 70 L344 64 L354 42 L368 97 L382 57 L460 57 L470 53 L482 98 L494 71 L574 71 L586 65 L598 42 L610 88 L624 56 L710 56 L722 50 L734 100 L748 69 L826 69 L840 64 L852 40 L864 88 L920 88" fill="none" stroke="#4cc9ff" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>
+                                <path d="M0 112 L90 112 L104 114 L114 124 L126 92 L138 110 L220 110 L232 112 L242 45 L256 92 L330 92 L344 94 L354 120 L368 66 L382 108 L460 108 L470 110 L482 70 L494 95 L574 95 L586 97 L598 126 L610 78 L624 112 L710 112 L722 114 L734 70 L748 96 L826 96 L840 98 L852 124 L864 80 L920 80" fill="none" stroke="#ef5cff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+                                <path d="M0 56 L90 56 L104 50 L114 36 L126 82 L138 54 L220 54 L232 51 L242 120 L256 70 L330 70 L344 64 L354 42 L368 97 L382 57 L460 57 L470 53 L482 98 L494 71 L574 71 L586 65 L598 42 L610 88 L624 56 L710 56 L722 50 L734 100 L748 69 L826 69 L840 64 L852 40 L864 88 L920 88" fill="url(#fadeCyan)" opacity="0.55"/>
+                                <path d="M0 112 L90 112 L104 114 L114 124 L126 92 L138 110 L220 110 L232 112 L242 45 L256 92 L330 92 L344 94 L354 120 L368 66 L382 108 L460 108 L470 110 L482 70 L494 95 L574 95 L586 97 L598 126 L610 78 L624 112 L710 112 L722 114 L734 70 L748 96 L826 96 L840 98 L852 124 L864 80 L920 80" fill="url(#fadePink)" opacity="0.45"/>
+                                <line x1="0" y1="82" x2="920" y2="82" stroke="rgba(255,255,255,0.12)" stroke-dasharray="3 7"/>
+                            </svg>
+                        </div>
+                        <div class="wave-panel small">
+                            <div class="wave-labels">
+                                <span>differential math</span>
+                                <span class="wave-badge">VDIFF / eye gate</span>
+                            </div>
+                            <svg viewBox="0 0 920 112" preserveAspectRatio="none" aria-hidden="true">
+                                <path d="M0 82 L88 82 L104 72 L114 22 L126 88 L140 84 L218 84 L232 76 L244 18 L256 84 L336 84 L348 80 L360 24 L374 82 L460 82 L476 76 L488 18 L500 84 L578 84 L592 76 L604 22 L616 84 L700 84 L716 76 L728 16 L742 82 L820 82 L836 76 L850 22 L866 84 L920 84" fill="none" stroke="#4dffb3" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+                                <line x1="0" y1="46" x2="920" y2="46" stroke="rgba(255,200,87,0.16)" stroke-dasharray="4 6"/>
+                                <line x1="0" y1="82" x2="920" y2="82" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3 7"/>
+                            </svg>
+                        </div>
+                        <div class="wave-panel small">
+                            <div class="wave-labels">
+                                <span>eye + decode</span>
+                                <span class="wave-badge">phase aligned</span>
+                            </div>
+                            <svg viewBox="0 0 920 112" preserveAspectRatio="none" aria-hidden="true">
+                                <ellipse cx="250" cy="56" rx="135" ry="34" fill="none" stroke="#4cc9ff" stroke-opacity="0.42" stroke-width="2.2"/>
+                                <ellipse cx="250" cy="56" rx="98" ry="24" fill="none" stroke="#ef5cff" stroke-opacity="0.35" stroke-width="1.8"/>
+                                <ellipse cx="250" cy="56" rx="72" ry="17" fill="none" stroke="#4dffb3" stroke-opacity="0.65" stroke-width="2"/>
+                                <rect x="515" y="24" width="72" height="62" rx="12" fill="rgba(77,255,179,0.10)" stroke="rgba(77,255,179,0.26)"/>
+                                <rect x="591" y="24" width="72" height="62" rx="12" fill="rgba(255,200,87,0.08)" stroke="rgba(255,200,87,0.22)"/>
+                                <rect x="667" y="24" width="72" height="62" rx="12" fill="rgba(77,255,179,0.10)" stroke="rgba(77,255,179,0.26)"/>
+                                <rect x="743" y="24" width="72" height="62" rx="12" fill="rgba(255,200,87,0.08)" stroke="rgba(255,200,87,0.22)"/>
+                                <text x="551" y="61" fill="#4dffb3" font-size="15" font-family="Consolas, monospace">D</text>
+                                <text x="626" y="61" fill="#ffc857" font-size="15" font-family="Consolas, monospace">R</text>
+                                <text x="703" y="61" fill="#4dffb3" font-size="15" font-family="Consolas, monospace">D</text>
+                                <text x="779" y="61" fill="#ffc857" font-size="15" font-family="Consolas, monospace">R</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-footer">
+                    <div class="channel-card">
+                        <strong class="cyan">CANH</strong>
+                        <span class="cyan">3.46 V</span>
+                    </div>
+                    <div class="channel-card">
+                        <strong class="pink">CANL</strong>
+                        <span class="pink">1.54 V</span>
+                    </div>
+                    <div class="channel-card">
+                        <strong class="green">VDIFF</strong>
+                        <span class="green">1.92 V</span>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="right-panel panel">
+                <div class="cluster">
+                    <p>Session</p>
+                    <strong>Physical Layer / Capture</strong>
+                    <span class="section-sub">Right-side diagnostics become the operator panel: clear, dense, and scan-friendly while the waveform stays dominant.</span>
+                </div>
+                <div class="cluster">
+                    <p>Compliance Snapshot</p>
+                    <div class="metric-list">
+                        <div class="metric-row"><span>CANH dominant</span><span class="metric-ok">PASS / 3.46V</span></div>
+                        <div class="metric-row"><span>CANL dominant</span><span class="metric-ok">PASS / 1.54V</span></div>
+                        <div class="metric-row"><span>Recessive diff</span><span class="metric-ok">PASS / 0.08V</span></div>
+                        <div class="metric-row"><span>Eye opening</span><span class="metric-warn">SYNCING / 68%</span></div>
+                    </div>
+                </div>
+                <div class="cluster">
+                    <p>Signal Integrity</p>
+                    <div class="metric-list">
+                        <div class="metric-row"><span>Rise time</span><span>82 ns</span></div>
+                        <div class="metric-row"><span>Fall time</span><span>79 ns</span></div>
+                        <div class="metric-row"><span>Ringing</span><span class="metric-warn">Moderate</span></div>
+                        <div class="metric-row"><span>Termination</span><span class="metric-ok">120Ω / OK</span></div>
+                    </div>
+                </div>
+                <div class="cluster">
+                    <p>Operator Notes</p>
+                    <span class="section-sub">Shift controls into compact “instrument tiles,” reduce website-card feel, and make the waveform stage read like a dedicated lab display with a pinned diagnostics rail.</span>
+                </div>
+            </aside>
+        </section>
+
+        <section class="bottom-dock">
+            <div class="soft-key">
+                <em>Acquire</em>
+                <strong class="green">RUN / SINGLE</strong>
+                <span>Primary live controls stay grouped and chunky for touch + mouse.</span>
+            </div>
+            <div class="soft-key">
+                <em>Scale</em>
+                <strong class="cyan">CH1 / CH2 / VDIFF</strong>
+                <span>Horizontal and vertical controls become consistent soft keys.</span>
+            </div>
+            <div class="soft-key">
+                <em>Trigger</em>
+                <strong class="amber">SOF / LEVEL</strong>
+                <span>Trigger state is promoted out of the utility strip into first-class UI.</span>
+            </div>
+            <div class="soft-key">
+                <em>Analysis</em>
+                <strong class="pink">CURSORS / DECODE</strong>
+                <span>Analysis tools sit beside acquisition instead of feeling bolted on.</span>
+            </div>
+            <div class="soft-key">
+                <em>Bench</em>
+                <strong>FAULT / POWER / BAUD</strong>
+                <span>Bench coupling is visible but visually subordinate to the waveform stage.</span>
+            </div>
+            <div class="soft-key">
+                <em>Health</em>
+                <strong class="amber">ISO / EYE / NOISE</strong>
+                <span>Status chips can animate here without taking focus from the signal.</span>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

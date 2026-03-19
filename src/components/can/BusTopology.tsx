@@ -108,7 +108,15 @@ export const BusTopology: React.FC = () => {
     const [messageLog, setMessageLog] = useState<MessageLogEntry[]>([]);
     const [showFrameBuilder, setShowFrameBuilder] = useState(false);
     const [frameSendFrom, setFrameSendFrom] = useState<string | null>(null);
-    const [showEducation, setShowEducation] = useState(true);
+    const [showEducation, setShowEducation] = useState(() => {
+        try {
+            const stored = localStorage.getItem('canscope-bus-education');
+            return stored === null ? true : stored === 'true';
+        } catch {
+            return true;
+        }
+    });
+    const [activeDomain, setActiveDomain] = useState<ECUDomain | null>(null);
     const svgRef = useRef<SVGSVGElement>(null);
     const transmissionRef = useRef<TransmissionState | null>(null);
     const nodesRef = useRef(nodes);
@@ -188,7 +196,7 @@ export const BusTopology: React.FC = () => {
                 const err = n.errorCount + (hasTermIssue && Math.random() > 0.7 ? 1 : 0);
                 return { ...n, txCount: tx, rxCount: rx, errorCount: err };
             }));
-            setBusLoad(Math.min(100, 15 + onlineCount * 4 + Math.random() * 12));
+            setBusLoad(() => Math.min(100, Math.max(0, 15 + onlineCount * 4 + (Math.random() * 4 - 2))));
         }, 1200);
         return () => clearInterval(iv);
     }, [hasTermIssue, onlineCount]);
@@ -395,7 +403,11 @@ export const BusTopology: React.FC = () => {
                         <StatusBadge label="OFFLINE" value={offlineCount} color={offlineCount > 0 ? '#ef4444' : '#333'} />
                         <StatusBadge label="LOAD" value={`${busLoad.toFixed(0)}%`} color={busLoad > 70 ? '#f59e0b' : '#22c55e'} />
                     </div>
-                    <button onClick={() => setShowEducation(!showEducation)}
+                    <button onClick={() => {
+                        const next = !showEducation;
+                        setShowEducation(next);
+                        try { localStorage.setItem('canscope-bus-education', String(next)); } catch { /* ignore */ }
+                    }}
                         className={`px-2 py-1 rounded-md text-[7px] font-mono font-bold uppercase border transition-all ${showEducation ? 'bg-[#f59e0b15] text-[#f59e0b] border-[#f59e0b40]' : 'text-gray-600 border-[#222]'}`}>
                         Learn
                     </button>
@@ -458,6 +470,7 @@ export const BusTopology: React.FC = () => {
                             ? (bench.baudRate >= 1_000_000 ? '1M' : `${bench.baudRate / 1_000}k`)
                             : '500k'
                         }
+                        activeDomain={activeDomain}
                     />
                 ) : (
                     <ListView nodes={nodes} selectedNode={selectedNode} setSelectedNode={setSelectedNode} toggleNode={toggleNode} removeNode={removeNode} />
@@ -469,13 +482,22 @@ export const BusTopology: React.FC = () => {
                 <span className="text-[7px] font-mono text-gray-400 uppercase tracking-widest">Domains:</span>
                 {Object.entries(DOMAIN_META).map(([key, meta]) => {
                     const count = nodes.filter(n => n.domain === key).length;
+                    const isActive = activeDomain === key;
                     return (
-                        <div key={key} className="flex items-center gap-1.5">
+                        <button key={key} onClick={() => setActiveDomain(isActive ? null : key as ECUDomain)}
+                            className={`flex items-center gap-1.5 transition-opacity cursor-pointer ${
+                                activeDomain !== null && !isActive ? 'opacity-40' : 'opacity-100'
+                            }`}>
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: meta.color, boxShadow: `0 0 4px ${meta.glow}` }} />
                             <span className="text-[7px] font-mono text-gray-300 uppercase tracking-wider">{meta.label} ({count})</span>
-                        </div>
+                        </button>
                     );
                 })}
+                {activeDomain !== null && (
+                    <button onClick={() => setActiveDomain(null)} className="text-[8px] font-mono text-gray-500 hover:text-gray-300 transition-colors">
+                        Clear ×
+                    </button>
+                )}
             </div>
 
             {/* ═══ Selected Node Detail Panel ═══ */}
@@ -721,7 +743,8 @@ const TopologyView: React.FC<{
     svgRef: React.RefObject<SVGSVGElement | null>;
     transmission: TransmissionState | null;
     controllerBaudStr: string;
-}> = ({ nodes, selectedNode, setSelectedNode, termLeft, termRight, setTermLeft, setTermRight, hasTermIssue, onlineCount, svgRef, transmission, controllerBaudStr }) => {
+    activeDomain: ECUDomain | null;
+}> = ({ nodes, selectedNode, setSelectedNode, termLeft, termRight, setTermLeft, setTermRight, hasTermIssue, onlineCount, svgRef, transmission, controllerBaudStr, activeDomain }) => {
 
     const BUS_Y_H = 44;
     const BUS_Y_L = 56;
@@ -836,7 +859,16 @@ const TopologyView: React.FC<{
                             <circle cx={`${node.x}%`} cy={`${BUS_Y_L}%`} r={isTx || isRx ? 5 : isSelected ? 4 : 3}
                                 fill={isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#333'} opacity={node.online ? (node.isLocal ? 0.9 : 0.6) : 0.3} />
                             {isSelected && (
-                                <text x={`${node.x + 1.2}%`} y={`${(NODE_TOP + NODE_BOX_H + BUS_Y_H) / 2}%`} fill={dm.color} fontSize="7" fontFamily="monospace" opacity="0.7">{node.stubLength}m</text>
+                                <text
+                                    x={`${node.x}%`}
+                                    y={`${NODE_TOP + NODE_BOX_H + 2}%`}
+                                    fill={dm.color}
+                                    fontSize="9"
+                                    fontFamily="monospace"
+                                    opacity="0.8"
+                                    textAnchor="middle">
+                                    {node.stubLength}m
+                                </text>
                             )}
                             {/* TX glow ring */}
                             {isTx && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="8" fill="none" stroke="#22c55e" strokeWidth="1" opacity="0.4"><animate attributeName="r" values="8;16;8" dur="1s" repeatCount="indefinite" /><animate attributeName="opacity" values="0.4;0.1;0.4" dur="1s" repeatCount="indefinite" /></circle>}
@@ -932,8 +964,8 @@ const TopologyView: React.FC<{
             </svg>
 
             {/* Wire labels */}
-            <div className="absolute text-[7px] font-mono font-black tracking-widest pointer-events-none" style={{ left: '1%', top: `${BUS_Y_H - 4}%`, color: '#00f3ff40' }}>CANH</div>
-            <div className="absolute text-[7px] font-mono font-black tracking-widest pointer-events-none" style={{ left: '1%', top: `${BUS_Y_L + 1}%`, color: '#bf00ff40' }}>CANL</div>
+            <div className="absolute text-[9px] font-mono font-black tracking-widest pointer-events-none" style={{ left: '1%', top: `${BUS_Y_H - 4}%`, color: '#00f3ff99' }}>CANH</div>
+            <div className="absolute text-[9px] font-mono font-black tracking-widest pointer-events-none" style={{ left: '1%', top: `${BUS_Y_L + 1}%`, color: '#bf00ff99' }}>CANL</div>
 
             {/* ─── Floating data packet label between wires ─── */}
             {txActive && sourceNode && transmission && (
@@ -1025,7 +1057,8 @@ const TopologyView: React.FC<{
                         onSelect={() => setSelectedNode(selectedNode === node.id ? null : node.id)}
                         topPercent={NODE_TOP} isTx={isTx} isRx={isRx}
                         txPhase={txActive ? transmission?.phase ?? null : null}
-                        controllerBaudStr={controllerBaudStr} />
+                        controllerBaudStr={controllerBaudStr}
+                        activeDomain={activeDomain} />
                 );
             })}
 
@@ -1070,17 +1103,19 @@ const ECUBox: React.FC<{
     node: ECUNode; isSelected: boolean; onSelect: () => void; topPercent: number;
     isTx: boolean; isRx: boolean; txPhase: FramePhase | null;
     controllerBaudStr: string;
-}> = ({ node, isSelected, onSelect, topPercent, isTx, isRx, txPhase, controllerBaudStr }) => {
+    activeDomain: ECUDomain | null;
+}> = ({ node, isSelected, onSelect, topPercent, isTx, isRx, txPhase, controllerBaudStr, activeDomain }) => {
     const dm = DOMAIN_META[node.domain];
     const borderGlow = isTx ? '#22c55e' : isRx ? '#3b82f6' : isSelected ? dm.color : undefined;
     const hasBaudMismatch = node.online && node.baudRate !== controllerBaudStr;
+    const isDimmed = activeDomain !== null && node.domain !== activeDomain;
 
     return (
         <div className="absolute flex flex-col items-center"
-            style={{ left: `${node.x}%`, top: `${topPercent}%`, transform: 'translateX(-50%)', width: '80px', zIndex: isSelected || isTx || isRx ? 20 : 10 }}>
+            style={{ left: `${node.x}%`, top: `${topPercent}%`, transform: 'translateX(-50%)', width: '80px', zIndex: isSelected || isTx || isRx ? 20 : 10, opacity: isDimmed ? 0.25 : 1, transition: 'opacity 200ms' }}>
             <motion.button onClick={onSelect}
                 whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
-                className={`w-full rounded-lg border text-center transition-all duration-200 cursor-pointer relative overflow-hidden ${isSelected ? 'ring-1 ring-offset-1 ring-offset-[#0a0a0d]' : ''}`}
+                className={`w-full rounded-lg border text-center transition-all duration-200 cursor-pointer relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-1 focus-visible:ring-offset-[#0a0a0d] ${isSelected ? 'ring-1 ring-offset-1 ring-offset-[#0a0a0d]' : ''}`}
                 animate={{
                     borderColor: borderGlow ? borderGlow + '80' : (node.online ? '#222230' : '#1a0a0a'),
                     boxShadow: isTx ? `0 0 20px #22c55e40, inset 0 1px 0 #22c55e15` : isRx ? `0 0 16px #3b82f640, inset 0 1px 0 #3b82f615` : isSelected ? `0 0 16px ${dm.glow}, inset 0 1px 0 ${dm.color}15` : node.online ? 'inset 0 1px 0 #f1f1f106' : 'none',
@@ -1145,8 +1180,12 @@ const ECUBox: React.FC<{
                 </span>
 
                 {!node.online && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-lg">
-                        <span className="text-[6px] font-mono text-red-500 font-bold uppercase">OFF</span>
+                    <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center rounded-lg gap-1">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                        <span className="text-[9px] font-mono text-red-500 font-bold uppercase">OFF</span>
                     </div>
                 )}
             </motion.button>
@@ -1369,7 +1408,11 @@ const MessageLogPanel: React.FC<{ log: MessageLogEntry[]; onClear: () => void }>
                                     </span>
                                     <span className="text-gray-500">{entry.dlc}B</span>
                                     <span className="text-gray-600 flex-1 truncate">[{entry.data.join(' ')}]</span>
-                                    {entry.error && <span className="text-red-400 text-[7px] truncate max-w-32">{entry.error}</span>}
+                                    {entry.error && (
+                                        <span className="text-red-400 text-[8px] truncate max-w-[160px] cursor-help" title={entry.error}>
+                                            {entry.error}
+                                        </span>
+                                    )}
                                 </motion.div>
                             ))}
                         </div>

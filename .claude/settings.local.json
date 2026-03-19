@@ -20,7 +20,11 @@
       "mcp__plugin_playwright_playwright__browser_take_screenshot",
       "mcp__plugin_playwright_playwright__browser_wait_for",
       "mcp__plugin_playwright_playwright__browser_resize",
-      "mcp__plugin_playwright_playwright__browser_evaluate"
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "Bash(xargs ls:*)",
+      "Bash(gh milestone:*)",
+      "Bash(ls \"C:\\\\Users\\\\sudul\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\e--projects-UDS-Simulator-CAN-Simulator\\\\1939c80f-a8d1-43d2-aeb0-b732dc411b46\\\\tasks\"\" 2>/dev/null || echo \"no tasks dir \")",
+      "Bash(wc -c /c/Users/sudul/AppData/Local/Temp/claude/e--projects-UDS-Simulator-CAN-Simulator/1939c80f-a8d1-43d2-aeb0-b732dc411b46/tasks/*.output)"
     ]
   }
 }
