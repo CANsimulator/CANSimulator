@@ -176,24 +176,6 @@ export const BitTimingConfig: React.FC = () => {
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
                 {/* ─── Left: Register View ─── */}
                 <div className="xl:col-span-4 space-y-3">
-                    {/* Preset Selection */}
-                    <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BAUD RATE PRESETS</span>
-                        <div className="grid grid-cols-2 gap-1.5">
-                            {BIT_TIMING_PRESETS.map(p => (
-                                <button
-                                    key={p.name}
-                                    onClick={() => applyPreset(p)}
-                                    className={`px-2 py-1.5 rounded text-[8px] font-mono font-bold transition-all active:scale-95 ${activePreset === p.name
-                                        ? 'bg-[#00f3ff15] text-[#00f3ff] border border-[#00f3ff40]'
-                                        : 'bg-[#111] text-gray-500 border border-[#222] hover:text-gray-300'
-                                        }`}
-                                >
-                                    {p.name}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
 
                     {/* Register Display */}
                     <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
