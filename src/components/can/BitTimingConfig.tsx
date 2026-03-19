@@ -508,6 +508,7 @@ interface SegmentSliderProps {
 
 const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max, onChange, description }) => {
     const [isDragging, setIsDragging] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
     const trackRef = useRef<HTMLDivElement>(null);
 
     const handlePointerDown = (e: React.PointerEvent) => {
@@ -562,9 +563,12 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
                 onPointerUp={handlePointerUp}
                 onPointerLeave={handlePointerUp}
                 onKeyDown={handleKeyDown}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 className="relative h-8 bg-[#080808] border border-[#1a1a20] rounded cursor-pointer group"
                 tabIndex={0}
                 role="slider"
+                style={{ outline: isFocused ? `2px solid ${color}` : 'none', outlineOffset: '2px' }}
                 aria-label={label}
                 aria-valuenow={value}
                 aria-valuemin={1}
