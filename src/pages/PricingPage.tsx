@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CyberButton } from '../ui/CyberButton';
-import { BorderBeam } from '../ui/BorderBeam';
-import { PLANS, type PlanId } from '../../services/razorpayService';
-import { useAuth } from '../../context/AuthContext';
-import { cn } from '../../utils/cn';
+import { CyberButton } from '../components/ui/CyberButton';
+import { BorderBeam } from '../components/ui/BorderBeam';
+import { PLANS, type PlanId } from '../services/razorpayService';
+import { useAuth } from '../context/AuthContext';
+import { cn } from '../utils/cn';
 
 const PLAN_FEATURES: Record<PlanId, string[]> = {
     free: [
