@@ -212,6 +212,7 @@ export const BitTimingConfig: React.FC = () => {
                     <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
                         <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">COMPUTED PARAMETERS</span>
                         {[
+                            { k: 'Baud Rate', v: ((bench?.baudRate ?? 0) / 1000).toFixed(0), u: 'kbit/s' },
                             { k: 'Total TQ/bit', v: `${totalTq}`, u: 'TQ' },
                             { k: 'Sample Point', v: samplePoint.toFixed(1), u: '%', color: analysis.color },
                             { k: 'TSEG1 (PROP+PH1)', v: `${timing.prop + timing.phase1}`, u: 'TQ' },
