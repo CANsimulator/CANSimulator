@@ -6,8 +6,6 @@
 import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from "framer-motion";
-import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
 import { useTheme } from '../context/ThemeContext';
 import { cn } from '../utils/cn';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -149,9 +147,7 @@ export const LandingPage: React.FC = () => {
             <div className="scanline" aria-hidden="true" />
 
             <div className="relative z-10 font-sans">
-                <Header />
-
-                <main id="main-content">
+                <div id="landing-hero-container">
                     {/* Hero Section */}
                     <div className="container mx-auto px-4 pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pt-40 lg:pb-32">
                         <div className="text-center max-w-7xl mx-auto">
@@ -379,9 +375,7 @@ export const LandingPage: React.FC = () => {
                             </Link>
                         </motion.div>
                     </section>
-                </main>
-
-                <Footer />
+                </div>
             </div>
         </div>
     );

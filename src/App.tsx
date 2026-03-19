@@ -30,7 +30,7 @@ function AppLayout() {
   const withLayout = (Component: React.ElementType) => (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <Suspense fallback={
           <div className="flex-1 flex items-center justify-center bg-dark-950/50">
             <LoadingSpinner />
@@ -47,7 +47,7 @@ function AppLayout() {
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'dark bg-dark-950' : 'bg-light-50'} text-gray-900 dark:text-gray-100 selection:bg-cyber-blue/30 font-sans transition-colors duration-300`}>
       <ErrorBoundary>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={withLayout(LandingPage)} />
           <Route path="/simulator" element={withLayout(SimulatorPage)} />
           <Route path="/pricing" element={withLayout(PricingPage)} />
           <Route path="/contact" element={withLayout(ContactPage)} />
