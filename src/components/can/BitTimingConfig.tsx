@@ -123,6 +123,12 @@ export const BitTimingConfig: React.FC = () => {
         const nextRegs = { ...currentRegs, [reg.toLowerCase()]: val };
         const nextTiming = decodeRegisters(nextRegs.btr0, nextRegs.btr1, timing.oscillator);
         bench?.setBitTiming(nextTiming);
+
+        const nextSjwMax = Math.min(nextTiming.phase1, nextTiming.phase2);
+        if (nextTiming.sjw > nextSjwMax) {
+            setConstraintViolation(true);
+            setTimeout(() => setConstraintViolation(false), 500);
+        }
     };
 
     const handleReset = () => {
