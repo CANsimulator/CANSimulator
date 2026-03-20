@@ -368,11 +368,17 @@ export const LandingPage: React.FC = () => {
                                 Jointhousands of engineers mastering the automotive grid.
                             </p>
 
-                            <Link to="/simulator">
-                                <ShinyButton className="px-16 py-8 text-3xl font-black rounded-[2rem] shadow-neon-blue uppercase italic">
-                                    <span className="flex items-center gap-6">GET STARTED NOW <ArrowRight size={36} strokeWidth={4} /></span>
-                                </ShinyButton>
-                            </Link>
+                            <div className="flex flex-col items-center gap-8">
+                                <Link to="/simulator">
+                                    <ShinyButton className="px-16 py-8 text-3xl font-black rounded-[2rem] shadow-neon-blue uppercase italic">
+                                        <span className="flex items-center gap-6">GET STARTED NOW <ArrowRight size={36} strokeWidth={4} /></span>
+                                    </ShinyButton>
+                                </Link>
+                                
+                                <p className="text-lg font-bold text-gray-500 italic">
+                                    Have specific requirements? <Link to="/contact" className="text-cyber-blue hover:text-cyber-blue/80 transition-colors underline decoration-2 underline-offset-4">Get in touch with us</Link>
+                                </p>
+                            </div>
                         </motion.div>
                     </section>
                 </div>
