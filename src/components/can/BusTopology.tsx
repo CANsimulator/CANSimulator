@@ -679,7 +679,7 @@ const TransmissionPanel: React.FC<{
                                             transition={{ duration: 0.15 }}
                                         />
                                     </motion.div>
-                                    <span className={`text-[5px] font-mono uppercase tracking-wider truncate w-full text-center ${isActive ? 'font-bold' : ''}`}
+                                    <span className={`text-[9px] font-mono uppercase tracking-wider truncate w-full text-center ${isActive ? 'font-bold' : ''}`}
                                         style={{ color: isActive ? phaseColor : isCompleted ? phaseColor + '80' : '#333' }}>
                                         {PHASE_INFO[phase].label}
                                     </span>
@@ -716,7 +716,7 @@ const TransmissionPanel: React.FC<{
                                         ))}
                                     </div>
                                 )}
-                                <span className="text-[6px] font-mono font-bold uppercase z-10 relative" style={{ color: isActive ? phaseColor : isCompleted ? phaseColor + '80' : '#555' }}>
+                                <span className="text-[8px] font-mono font-bold uppercase z-10 relative" style={{ color: isActive ? phaseColor : isCompleted ? phaseColor + '80' : '#555' }}>
                                     {phase === 'data' ? `${transmission.dlc}B` : PHASE_INFO[phase].label}
                                 </span>
                                 {/* ACK indicator */}
