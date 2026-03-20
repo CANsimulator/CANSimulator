@@ -1411,6 +1411,30 @@ const NodeDetailPanel: React.FC<{
 const MessageLogPanel: React.FC<{ log: MessageLogEntry[]; onClear: () => void }> = ({ log, onClear }) => {
     const [expanded, setExpanded] = useState(true);
 
+    const downloadFile = (content: string, filename: string, mimeType: string) => {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const exportCSV = () => {
+        const header = 'Timestamp,From,To,Type,DLC,Data,Success,Error';
+        const rows = log.map(e =>
+            [new Date(e.timestamp).toISOString(), e.fromLabel, e.toLabel,
+             e.messageType, e.dlc, `"[${e.data.join(' ')}]"` ,
+             e.success, e.error ?? ''].join(',')
+        );
+        downloadFile([header, ...rows].join('\n'), `can-log-${Date.now()}.csv`, 'text/csv');
+    };
+
+    const exportJSON = () => {
+        downloadFile(JSON.stringify(log, null, 2), `can-log-${Date.now()}.json`, 'application/json');
+    };
+
     return (
         <div className="bg-[#0a0a0e]">
             <div className="w-full flex items-center justify-between px-5 py-2 hover:bg-[#0e0e12] transition-colors">
@@ -1420,8 +1444,18 @@ const MessageLogPanel: React.FC<{ log: MessageLogEntry[]; onClear: () => void }>
                     <span className="text-[10px] font-mono text-gray-400">({log.length})</span>
                     <span className="text-gray-600 text-[10px]">{expanded ? '\u25B2' : '\u25BC'}</span>
                 </button>
-                <button onClick={onClear}
-                    className="text-[10px] font-mono text-gray-400 hover:text-red-400 uppercase">Clear</button>
+                <div className="flex items-center gap-2">
+                    <button onClick={exportCSV} disabled={log.length === 0}
+                        className="text-[10px] font-mono text-gray-400 hover:text-[#00f3ff] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                        CSV
+                    </button>
+                    <button onClick={exportJSON} disabled={log.length === 0}
+                        className="text-[10px] font-mono text-gray-400 hover:text-[#a855f7] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                        JSON
+                    </button>
+                    <button onClick={onClear}
+                        className="text-[10px] font-mono text-gray-400 hover:text-red-400 uppercase transition-colors">Clear</button>
+                </div>
             </div>
             <AnimatePresence>
                 {expanded && (
