@@ -37,3 +37,12 @@ export function canvasXToNorm(x: number, vw: ViewState): number {
 export function clamp(v: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, v));
 }
+
+/**
+ * Calculates the differential voltage with gating based on channel enable states.
+ */
+export function calculateVDiff(canh: number, canl: number, ch1Enabled: boolean, ch2Enabled: boolean): number {
+    const v1 = ch1Enabled ? canh : 0;
+    const v2 = ch2Enabled ? canl : 0;
+    return v1 - v2;
+}

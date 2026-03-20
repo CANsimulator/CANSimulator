@@ -153,6 +153,7 @@ const Footer: React.FC = () => {
                                     {[
                                         { label: 'About Us', to: '/about' },
                                         { label: 'Contact', to: '/contact' },
+                                        { label: 'Pricing', to: '/pricing' },
                                         { label: 'Privacy Policy', to: '/privacy-policy' },
                                         { label: 'Terms of Use', to: '/terms' }
                                     ].map((l) => (

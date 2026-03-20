@@ -12,7 +12,7 @@ export const PricingTeaser: React.FC = () => {
     const paidPlans = PRICING_PLANS.filter(plan => plan.id !== 'free');
 
     return (
-        <section className="relative py-24 overflow-hidden">
+        <section id="pricing" className="relative py-24 overflow-hidden">
             {/* Background elements */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[400px] bg-cyber-blue/5 dark:bg-cyber-blue/10 blur-[100px] rounded-full pointer-events-none" />
 
