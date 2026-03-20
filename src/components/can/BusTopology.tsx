@@ -428,13 +428,21 @@ export const BusTopology: React.FC = () => {
                         <StatusBadge label="OFFLINE" value={offlineCount} color={offlineCount > 0 ? '#ef4444' : '#333'} />
                         <StatusBadge label="LOAD" value={`${busLoad.toFixed(0)}%`} color={busLoad > 70 ? '#f59e0b' : '#22c55e'} />
                     </div>
-                    <button onClick={() => {
-                        const next = !showEducation;
-                        setShowEducation(next);
-                        try { localStorage.setItem('canscope-bus-education', String(next)); } catch { /* ignore */ }
-                    }}
-                        className={`px-2 py-1 rounded-md text-[7px] font-mono font-bold uppercase border transition-all ${showEducation ? 'bg-[#f59e0b15] text-[#f59e0b] border-[#f59e0b40]' : 'text-gray-600 border-[#222]'}`}>
-                        Learn
+                    <button
+                        onClick={() => {
+                            const next = !showEducation;
+                            setShowEducation(next);
+                            try { localStorage.setItem('canscope-bus-education', String(next)); } catch { /* ignore */ }
+                        }}
+                        aria-pressed={showEducation}
+                        title="Toggle educational descriptions for each CAN frame phase"
+                        className={`px-2 py-1 rounded-md text-[7px] font-mono font-bold uppercase border transition-all ${
+                            showEducation
+                                ? 'bg-[#f59e0b15] text-[#f59e0b] border-[#f59e0b40]'
+                                : 'text-gray-600 border-[#222] hover:text-gray-400'
+                        }`}
+                    >
+                        {showEducation ? '✓ Learn Mode' : 'Learn Mode'}
                     </button>
                     <button onClick={() => setShowAddDialog(true)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#00f3ff10] border border-[#00f3ff30] text-[#00f3ff] text-[8px] font-mono font-bold uppercase tracking-wider hover:bg-[#00f3ff20] active:scale-95 transition-all">
