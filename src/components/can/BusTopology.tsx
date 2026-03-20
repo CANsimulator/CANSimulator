@@ -380,12 +380,19 @@ export const BusTopology: React.FC = () => {
 
     const toggleNode = (id: string) => setNodes(prev => prev.map(n => n.id === id ? { ...n, online: !n.online } : n));
     const removeNode = (id: string) => { if (selectedNode === id) setSelectedNode(null); setNodes(prev => prev.filter(n => n.id !== id)); };
+    const updateNode = useCallback((id: string, updates: Partial<ECUNode>) => {
+        setNodes(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n));
+    }, []);
     const addNode = (node: Omit<ECUNode, 'id' | 'txCount' | 'rxCount' | 'errorCount'>) => {
         const id = `ecu_${++_nextId}`;
         setNodes(prev => [...prev, { ...node, id, txCount: 0, rxCount: 0, errorCount: 0 }].sort((a, b) => a.x - b.x));
         setShowAddDialog(false);
     };
-    const updateNodeBaud = (id: string, baud: string) => setNodes(prev => prev.map(n => n.id === id ? { ...n, baudRate: baud } : n));
+    const updateNodeBaud = (id: string, baud: string) => updateNode(id, { baudRate: baud });
+
+    const resetNodeCounters = useCallback((id: string) => {
+        setNodes(prev => prev.map(n => n.id === id ? { ...n, txCount: 0, rxCount: 0, errorCount: 0 } : n));
+    }, []);
 
     const selected = nodes.find(n => n.id === selectedNode) ?? null;
     const isBusy = !!transmission && transmission.phase !== 'idle' && transmission.phase !== 'done';
@@ -541,9 +548,12 @@ export const BusTopology: React.FC = () => {
                             onClose={() => setSelectedNode(null)}
                             onSendSignal={sendSignal}
                             onBaudChange={(b) => updateNodeBaud(selected.id, b)}
+                            onUpdateNode={(u) => updateNode(selected.id, u)}
                             allNodes={nodes}
+                            existingNodes={nodes}
                             isBusy={isBusy}
                             onOpenFrameBuilder={() => { setFrameSendFrom(selected.id); setShowFrameBuilder(true); }}
+                            onResetCounters={() => resetNodeCounters(selected.id)}
                         />
                     </motion.div>
                 )}
@@ -558,7 +568,14 @@ export const BusTopology: React.FC = () => {
 
             {/* ═══ Add ECU Dialog ═══ */}
             <AnimatePresence>
-                {showAddDialog && <AddECUDialog onAdd={addNode} onClose={() => setShowAddDialog(false)} existingPositions={nodes.map(n => n.x)} />}
+                {showAddDialog && (
+                    <AddECUDialog
+                        onAdd={addNode}
+                        onClose={() => setShowAddDialog(false)}
+                        existingPositions={nodes.map(n => n.x)}
+                        existingNodes={nodes}
+                    />
+                )}
             </AnimatePresence>
 
             {/* ═══ Frame Builder Dialog ═══ */}
@@ -1301,21 +1318,91 @@ const ListView: React.FC<{
    Node Detail Panel
    ═══════════════════════════════════════════════════════════════ */
 const NodeDetailPanel: React.FC<{
-    node: ECUNode; onToggle: () => void; onRemove: () => void; onClose: () => void;
+    node: ECUNode;
+    onToggle: () => void;
+    onRemove: () => void;
+    onClose: () => void;
     onSendSignal: (from: string, to: string | 'broadcast', msgType?: MessageType) => void;
-    onBaudChange: (baud: string) => void; allNodes: ECUNode[];
-    isBusy: boolean; onOpenFrameBuilder: () => void;
-}> = ({ node, onToggle, onRemove, onClose, onSendSignal, onBaudChange, allNodes, isBusy, onOpenFrameBuilder }) => {
+    onBaudChange: (baud: string) => void;
+    onUpdateNode: (updates: Partial<Pick<ECUNode, 'label' | 'canId' | 'domain' | 'stubLength'>>) => void;
+    allNodes: ECUNode[];
+    existingNodes: ECUNode[];
+    isBusy: boolean;
+    onOpenFrameBuilder: () => void;
+    onResetCounters: () => void;
+}> = ({ node, onToggle, onRemove, onClose, onSendSignal, onBaudChange, onUpdateNode, allNodes, existingNodes, isBusy, onOpenFrameBuilder, onResetCounters }) => {
+    const [editing, setEditing] = useState(false);
+    const [draft, setDraft] = useState({
+        label: node.label,
+        canId: node.canId,
+        domain: node.domain,
+        stubLength: String(node.stubLength)
+    });
+
+    useEffect(() => {
+        setDraft({
+            label: node.label,
+            canId: node.canId,
+            domain: node.domain,
+            stubLength: String(node.stubLength)
+        });
+        setEditing(false);
+    }, [node.id]);
+
+    const duplicateNode = existingNodes.find(
+        n => n.id !== node.id && n.canId.toLowerCase() === draft.canId.toLowerCase() && draft.canId.length >= 4
+    );
+
+    const handleSave = () => {
+        if (!draft.label.trim() || draft.canId.length < 4 || duplicateNode) return;
+        onUpdateNode({
+            label: draft.label.trim(),
+            canId: draft.canId,
+            domain: draft.domain as ECUDomain,
+            stubLength: parseFloat(draft.stubLength) || node.stubLength
+        });
+        setEditing(false);
+    };
+
+    const handleCancel = () => {
+        setDraft({
+            label: node.label,
+            canId: node.canId,
+            domain: node.domain,
+            stubLength: String(node.stubLength)
+        });
+        setEditing(false);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleSave();
+        if (e.key === 'Escape') handleCancel();
+    };
+
     const dm = DOMAIN_META[node.domain];
 
     return (
-        <div className="bg-[#0c0c0f] px-5 py-4">
+        <div className="bg-[#0c0c0f] px-5 py-4" onKeyDown={editing ? handleKeyDown : undefined}>
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                     <motion.div className="w-3 h-3 rounded-full" animate={{ backgroundColor: node.online ? dm.color : '#ef4444', boxShadow: `0 0 8px ${node.online ? dm.glow : '#ef444460'}` }} />
-                    <div>
-                        <h3 className="text-sm font-mono font-black text-[#f1f1f1] uppercase tracking-tight">{node.label}</h3>
-                        <p className="text-[8px] font-mono text-gray-500">{node.canId} &middot; {dm.label} &middot; {node.isLocal ? 'LOCAL' : 'REMOTE'}</p>
+                    <div className="flex items-center gap-2 group">
+                        <div>
+                            <h3 className="text-sm font-mono font-black text-[#f1f1f1] uppercase tracking-tight">
+                                {node.label}
+                                {node.isLocal && <span className="ml-2 text-[7px] text-gray-600 font-bold border border-gray-600/30 px-1 rounded uppercase tracking-tighter">Local Controller</span>}
+                            </h3>
+                            <p className="text-[8px] font-mono text-gray-500">{node.canId} &middot; {dm.label} &middot; {node.baudRate}</p>
+                        </div>
+                        {!editing && (
+                            <button onClick={() => setEditing(true)} aria-label="Edit ECU"
+                                className="opacity-0 group-hover:opacity-100 p-1.5 rounded transition-all hover:bg-white/5 text-gray-600 hover:text-gray-300">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                        )}
                     </div>
                 </div>
                 <button onClick={onClose} className="text-gray-600 hover:text-gray-400 p-1">
@@ -1323,22 +1410,88 @@ const NodeDetailPanel: React.FC<{
                 </button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 mb-4">
-                {[
-                    { k: 'State', v: node.online ? 'ONLINE' : 'OFFLINE', c: node.online ? '#22c55e' : '#ef4444' },
-                    { k: 'Baud Rate', v: node.baudRate, c: '#888' },
-                    { k: 'Stub Length', v: `${node.stubLength}m`, c: '#888' },
-                    { k: 'TX Frames', v: node.txCount.toLocaleString(), c: '#22c55e' },
-                    { k: 'RX Frames', v: node.rxCount.toLocaleString(), c: '#3b82f6' },
-                    { k: 'Errors', v: node.errorCount.toLocaleString(), c: node.errorCount > 0 ? '#ef4444' : '#333' },
-                    { k: 'Domain', v: dm.label.toUpperCase(), c: dm.color },
-                ].map(s => (
-                    <div key={s.k} className="px-3 py-2 rounded-md bg-[#111116] border border-[#1a1a22]">
-                        <span className="text-[9px] font-mono text-gray-400 uppercase tracking-wider block mb-0.5">{s.k}</span>
-                        <span className="text-[10px] font-mono font-bold" style={{ color: s.c }}>{s.v}</span>
+            {/* Editing Form OR Stats Display */}
+            <div className="mb-4">
+                {editing ? (
+                    <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                        className="p-4 rounded-lg bg-[#111116] border border-[#2a2a32] shadow-xl space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
+                                <input value={draft.label} onChange={e => setDraft({ ...draft, label: e.target.value })} autoFocus
+                                    className="w-full bg-[#0a0a0e] border border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-[#f1f1f1] focus:outline-none focus:border-[#00f3ff40]" />
+                            </div>
+                            <div>
+                                <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
+                                <input value={draft.canId} onChange={e => setDraft({ ...draft, canId: e.target.value })}
+                                    className={`w-full bg-[#0a0a0e] border rounded-md px-2.5 py-1.5 text-[10px] font-mono text-[#f1f1f1] focus:outline-none transition-colors ${duplicateNode ? 'border-red-500/50 focus:border-red-400' : 'border-[#222] focus:border-[#00f3ff40]'}`} />
+                                {duplicateNode && <p className="text-[7px] font-mono text-red-400 mt-1 uppercase">CAN ID already in use by {duplicateNode.label}</p>}
+                            </div>
+                            <div>
+                                <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">Stub Length (m)</label>
+                                <input type="number" step="0.01" value={draft.stubLength} onChange={e => setDraft({ ...draft, stubLength: e.target.value })}
+                                    className="w-full bg-[#0a0a0e] border border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-[#f1f1f1] focus:outline-none focus:border-[#00f3ff40]" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1.5">Network Domain</label>
+                            <div className="flex flex-wrap gap-1">
+                                {(Object.entries(DOMAIN_META) as [ECUDomain, typeof DOMAIN_META[ECUDomain]][]).map(([key, meta]) => (
+                                    <button key={key} onClick={() => setDraft({ ...draft, domain: key })}
+                                        className={`px-2 py-1 rounded text-[7px] font-mono font-bold uppercase border transition-all ${draft.domain === key ? '' : 'border-[#222] text-gray-600 hover:text-gray-400'}`}
+                                        style={draft.domain === key ? { backgroundColor: meta.color + '15', color: meta.color, borderColor: meta.color + '50' } : undefined}>
+                                        {meta.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2 pt-1">
+                            <button onClick={handleCancel}
+                                className="px-3 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] transition-all">
+                                Cancel
+                            </button>
+                            <button onClick={handleSave}
+                                disabled={!draft.label.trim() || draft.canId.length < 4 || !!duplicateNode}
+                                className="px-4 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-[#00f3ff15] border border-[#00f3ff40] text-[#00f3ff] hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                                Save Changes
+                            </button>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <div className="flex flex-col gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                            {[
+                                { k: 'State', v: node.online ? 'ONLINE' : 'OFFLINE', c: node.online ? '#22c55e' : '#ef4444' },
+                                { k: 'Baud Rate', v: node.baudRate, c: '#888' },
+                                { k: 'Stub Length', v: `${node.stubLength}m`, c: '#888' },
+                                { k: 'TX Frames', v: node.txCount.toLocaleString(), c: '#22c55e' },
+                                { k: 'RX Frames', v: node.rxCount.toLocaleString(), c: '#3b82f6' },
+                                { k: 'Errors', v: node.errorCount.toLocaleString(), c: node.errorCount > 0 ? '#ef4444' : '#333' },
+                                { k: 'Domain', v: dm.label.toUpperCase(), c: dm.color },
+                            ].map(s => (
+                                <div key={s.k} className="px-3 py-2 rounded-md bg-[#111116] border border-[#1a1a22]">
+                                    <span className="text-[9px] font-mono text-gray-400 uppercase tracking-wider block mb-0.5">{s.k}</span>
+                                    <span className="text-[10px] font-mono font-bold" style={{ color: s.c }}>{s.v}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex items-center justify-end">
+                            <button
+                                onClick={onResetCounters}
+                                className="flex items-center gap-1.5 px-2 py-1 rounded text-[7px] font-mono font-bold text-gray-500 border border-[#1a1a22] hover:text-[#f1f1f1] hover:border-[#333] transition-all active:scale-95"
+                                title="Reset TX, RX, and error counters for this node"
+                            >
+                                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                    <path d="M3 3v5h5" />
+                                </svg>
+                                Reset Counters
+                            </button>
+                        </div>
                     </div>
-                ))}
+                )}
             </div>
 
             {/* Controls */}
@@ -1357,9 +1510,9 @@ const NodeDetailPanel: React.FC<{
                 <div className="w-px h-5 bg-[#222]" />
 
                 {/* Quick send buttons */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-wrap">
                     <span className="text-[10px] font-mono text-gray-400 uppercase mr-1">Send to:</span>
-                    {allNodes.filter(n => n.id !== node.id && n.online).slice(0, 3).map(target => (
+                    {allNodes.filter(n => n.id !== node.id && n.online).map(target => (
                         <button key={target.id} onClick={() => onSendSignal(node.id, target.id)}
                             disabled={isBusy || !node.online}
                             className="px-2 py-1 rounded text-[7px] font-mono font-bold text-gray-500 border border-[#222] hover:text-[#00f3ff] hover:border-[#00f3ff40] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
@@ -1587,13 +1740,19 @@ const FrameBuilderDialog: React.FC<{
    ═══════════════════════════════════════════════════════════════ */
 const AddECUDialog: React.FC<{
     onAdd: (node: Omit<ECUNode, 'id' | 'txCount' | 'rxCount' | 'errorCount'>) => void;
-    onClose: () => void; existingPositions: number[];
-}> = ({ onAdd, onClose, existingPositions }) => {
+    onClose: () => void;
+    existingPositions: number[];
+    existingNodes: Pick<ECUNode, 'id' | 'label' | 'canId'>[];
+}> = ({ onAdd, onClose, existingPositions, existingNodes }) => {
     const [label, setLabel] = useState('');
     const [canId, setCanId] = useState('0x');
     const [domain, setDomain] = useState<ECUDomain>('body');
     const [stubLength, setStubLength] = useState('0.20');
     const [baudRate, setBaudRate] = useState('500k');
+
+    const duplicateNode = existingNodes.find(
+        n => n.canId.toLowerCase() === canId.toLowerCase() && canId.length >= 4
+    );
 
     const findFreePosition = (): number => {
         for (let x = 10; x <= 90; x += 5) { if (!existingPositions.some(p => Math.abs(p - x) < 8)) return x; }
@@ -1601,7 +1760,7 @@ const AddECUDialog: React.FC<{
     };
 
     const handleSubmit = () => {
-        if (!label.trim() || canId.length < 4) return;
+        if (!label.trim() || canId.length < 4 || duplicateNode) return;
         onAdd({ label: label.trim(), canId, x: findFreePosition(), online: true, domain, stubLength: parseFloat(stubLength) || 0.20, baudRate });
     };
 
@@ -1616,12 +1775,27 @@ const AddECUDialog: React.FC<{
                     <div>
                         <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
                         <input value={label} onChange={e => setLabel(e.target.value)} placeholder="e.g. Airbag SRS"
-                            className="w-full bg-[#0a0a0e] border border-[#222] rounded-md px-3 py-2 text-xs font-mono text-[#f1f1f1] placeholder:text-gray-700 focus:outline-none focus:border-[#00f3ff40]" />
+                            className={`w-full bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-[#f1f1f1] placeholder:text-gray-700 focus:outline-none transition-colors ${!label.trim() && label.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-[#222] focus:border-[#00f3ff40]'}`} />
+                        {!label.trim() && label.length > 0 && (
+                            <p className="text-[8px] font-mono text-red-400 mt-1">
+                                ECU name is required.
+                            </p>
+                        )}
                     </div>
                     <div>
                         <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
                         <input value={canId} onChange={e => setCanId(e.target.value)} placeholder="0x7E2"
-                            className="w-full bg-[#0a0a0e] border border-[#222] rounded-md px-3 py-2 text-xs font-mono text-[#f1f1f1] placeholder:text-gray-700 focus:outline-none focus:border-[#00f3ff40]" />
+                            className={`w-full bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-[#f1f1f1] placeholder:text-gray-700 focus:outline-none transition-colors ${canId.length < 4 && canId.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-[#222] focus:border-[#00f3ff40]'}`} />
+                        {duplicateNode && (
+                            <p className="text-[8px] font-mono text-red-400 mt-1">
+                                CAN ID {canId} is already in use by {duplicateNode.label}
+                            </p>
+                        )}
+                        {canId.length < 4 && canId.length > 0 && !duplicateNode && (
+                            <p className="text-[8px] font-mono text-gray-500 mt-1 uppercase tracking-tighter">
+                                ID must be 4+ characters (e.g., 0x7E0)
+                            </p>
+                        )}
                     </div>
                     <div>
                         <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">Domain</label>
@@ -1654,7 +1828,7 @@ const AddECUDialog: React.FC<{
                 </div>
                 <div className="flex justify-end gap-2 mt-5">
                     <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] transition-all">Cancel</button>
-                    <button onClick={handleSubmit} disabled={!label.trim() || canId.length < 4}
+                    <button onClick={handleSubmit} disabled={!label.trim() || canId.length < 4 || !!duplicateNode}
                         className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-[#00f3ff15] border border-[#00f3ff40] text-[#00f3ff] hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">Add to Bus</button>
                 </div>
             </motion.div>
