@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTestBench } from '../../context/TestBenchContext';
+import { useTheme } from '../../context/ThemeContext';
 import {
     BIT_TIMING_PRESETS,
     DEFAULT_BIT_TIMING_PRESET,
@@ -69,9 +70,12 @@ function toBin(n: number) {
     return n.toString(2).padStart(8, '0');
 }
 
-export const BitTimingConfig: React.FC = () => {
+export function BitTimingConfig() {
     const [copiedReg, setCopiedReg] = useState<string | null>(null);
     const [constraintViolation, setConstraintViolation] = useState(false);
+
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
     const bench = useTestBench();
     const timing = bench?.bitTiming ?? DEFAULT_BIT_TIMING_PRESET.timing;
@@ -138,12 +142,12 @@ export const BitTimingConfig: React.FC = () => {
     };
 
     return (
-        <div className="bg-[#1a1a1e] rounded-2xl border border-[#2a2a30] p-4 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]">
+        <div className="bg-white dark:bg-[#1a1a1e] rounded-2xl border border-black/10 dark:border-[#2a2a30] p-4 shadow-sm dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] transition-colors">
             {/* Equipment label */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-mono font-black text-[#f1f1f1] tracking-widest uppercase">CAN-CTRL</span>
-                    <span className="text-[8px] font-mono text-gray-500 tracking-wider">BIT TIMING REGISTER CONFIG</span>
+                    <span className="text-[10px] font-mono font-black text-dark-950 dark:text-[#f1f1f1] tracking-widest uppercase transition-colors">CAN-CTRL</span>
+                    <span className="text-[8px] font-mono text-light-500 dark:text-gray-500 tracking-wider transition-colors">BIT TIMING REGISTER CONFIG</span>
                 </div>
                 <div className="flex items-center gap-3">
                     <motion.button
@@ -184,8 +188,8 @@ export const BitTimingConfig: React.FC = () => {
                 <div className="xl:col-span-4 space-y-3">
 
                     {/* Register Display */}
-                    <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">REGISTER VALUES (MCP2515)</span>
+                    <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
+                        <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">REGISTER VALUES (MCP2515)</span>
 
                         <RegisterRow
                             name="BTR0"
@@ -215,8 +219,8 @@ export const BitTimingConfig: React.FC = () => {
                     </div>
 
                     {/* Timing Summary */}
-                    <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">COMPUTED PARAMETERS</span>
+                    <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
+                        <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">COMPUTED PARAMETERS</span>
                         {[
                             { k: 'Baud Rate', v: ((bench?.baudRate ?? 0) / 1000).toFixed(0), u: 'kbit/s' },
                             { k: 'Total TQ/bit', v: `${totalTq}`, u: 'TQ' },
@@ -226,9 +230,9 @@ export const BitTimingConfig: React.FC = () => {
                             { k: 'SJW', v: `${timing.sjw}`, u: 'TQ', color: sjwValid ? undefined : '#ef4444' },
                         ].map(row => (
                             <div key={row.k} className="flex justify-between items-center py-0.5">
-                                <span className="text-[9px] font-mono text-gray-400">{row.k}</span>
-                                <span className="text-[9px] font-mono font-bold" style={{ color: row.color || '#f1f1f1' }}>
-                                    {row.v} <span className="text-gray-500 font-normal">{row.u}</span>
+                                <span className="text-[9px] font-mono text-light-500 dark:text-gray-400 transition-colors">{row.k}</span>
+                                <span className="text-[9px] font-mono font-bold transition-colors" style={{ color: row.color || (isDark ? '#f1f1f1' : '#0a0a0f') }}>
+                                    {row.v} <span className="text-light-400 dark:text-gray-500 font-normal transition-colors">{row.u}</span>
                                 </span>
                             </div>
                         ))}
@@ -246,12 +250,12 @@ export const BitTimingConfig: React.FC = () => {
                 {/* ─── Center+Right: Visual + Sliders ─── */}
                 <div className="xl:col-span-8 space-y-4">
                     {/* Timing Visual Bar */}
-                    <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BIT TIMING DIAGRAM</span>
+                    <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
+                        <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">BIT TIMING DIAGRAM</span>
 
                         <div className="relative">
                             {/* Segment bar */}
-                            <div className="relative h-12 w-full rounded-md flex bg-[#080808] border border-[#1a1a20]">
+                            <div className="relative h-12 w-full rounded-md flex bg-white dark:bg-[#080808] border border-black/5 dark:border-[#1a1a20] overflow-hidden transition-colors">
                                 {[
                                     { key: 'sync', label: 'SYNC', tq: timing.sync, color: '#6b7280', bg: 'rgba(107,114,128,0.15)' },
                                     { key: 'prop', label: 'PROP', tq: timing.prop, color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
@@ -268,8 +272,8 @@ export const BitTimingConfig: React.FC = () => {
                                         animate={{ width: `${(seg.tq / totalTq) * 100}%` }}
                                         transition={{ type: 'spring', stiffness: 100, damping: 15 }}
                                     >
-                                        <span className="text-[8px] font-mono font-bold whitespace-nowrap" style={{ color: seg.color }}>{seg.label}</span>
-                                        <span className="text-[9px] font-mono text-gray-500">{seg.tq}TQ</span>
+                                        <span className="text-[8px] font-mono font-bold whitespace-nowrap transition-colors" style={{ color: seg.color }}>{seg.label}</span>
+                                        <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 transition-colors">{seg.tq}TQ</span>
                                     </motion.div>
                                 ))}
 
@@ -285,7 +289,7 @@ export const BitTimingConfig: React.FC = () => {
                                 >
                                     <div
                                         className="absolute -top-6 -translate-x-1/2 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold whitespace-nowrap"
-                                        style={{ backgroundColor: analysis.color, color: '#0a0a0f' }}
+                                        style={{ backgroundColor: analysis.color, color: isDark ? '#0a0a0f' : '#fff' }}
                                     >
                                         SP {samplePoint.toFixed(1)}%
                                     </div>
@@ -304,8 +308,8 @@ export const BitTimingConfig: React.FC = () => {
                             <div className="flex mt-1">
                                 {Array.from({ length: totalTq }, (_, i) => (
                                     <div key={i} className="flex-1 text-center">
-                                        <div className="w-px h-1 bg-gray-800 mx-auto" />
-                                        <span className="text-[8px] font-mono text-gray-600">{i + 1}</span>
+                                        <div className="w-px h-1 bg-gray-200 dark:bg-gray-800 mx-auto transition-colors" />
+                                        <span className="text-[8px] font-mono text-light-400 dark:text-gray-600 transition-colors">{i + 1}</span>
                                     </div>
                                 ))}
                             </div>
@@ -313,8 +317,8 @@ export const BitTimingConfig: React.FC = () => {
 
                         {/* SP quality bar */}
                         <div className="mt-3 flex items-center gap-2">
-                            <span className="text-[9px] font-mono text-gray-500">SP RANGE</span>
-                            <div className="flex-1 h-2 rounded-full bg-[#111] relative overflow-hidden">
+                            <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 transition-colors uppercase tracking-tight">SP RANGE</span>
+                            <div className="flex-1 h-2 rounded-full bg-gray-200 dark:bg-[#111] relative overflow-hidden transition-colors">
                                 {/* Optimal zone */}
                                 <div className="absolute h-full bg-green-500/10" style={{ left: '75%', width: '15%' }} />
                                 {/* Current SP marker */}
@@ -325,7 +329,7 @@ export const BitTimingConfig: React.FC = () => {
                                     transition={{ type: 'spring', stiffness: 100, damping: 15 }}
                                 />
                             </div>
-                            <div className="flex gap-2 text-[9px] font-mono text-gray-400">
+                            <div className="flex gap-2 text-[9px] font-mono text-light-400 dark:text-gray-400 transition-colors">
                                 <span>0%</span>
                                 <span className="text-green-500/60">75%</span>
                                 <span className="text-green-500/60">90%</span>
@@ -335,8 +339,8 @@ export const BitTimingConfig: React.FC = () => {
                     </div>
 
                     {/* ─── Parameter Adjustment (Sliders) ─── */}
-                    <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222]">
-                        <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-3">SEGMENT CONFIGURATION</span>
+                    <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
+                        <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-3 transition-colors">SEGMENT CONFIGURATION</span>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <SegmentSlider
@@ -385,16 +389,16 @@ export const BitTimingConfig: React.FC = () => {
                             </motion.div>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#6b7280]">
+                                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-light-500 dark:text-[#6b7280] transition-colors">
                                         BITRATE PRESCALER (BRP)
                                     </span>
-                                    <span className="text-[9px] font-mono text-gray-500">1 – 64</span>
+                                    <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 transition-colors">1 – 64</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => handleChange('brp', Math.max(1, timing.brp - 1))}
                                         disabled={timing.brp <= 1}
-                                        className="w-8 h-8 flex items-center justify-center rounded bg-[#111] border border-[#222] text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                        className="w-8 h-8 flex items-center justify-center rounded bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-light-600 dark:hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                                         aria-label="Decrease BRP"
                                     >−</button>
                                     <input
@@ -406,24 +410,24 @@ export const BitTimingConfig: React.FC = () => {
                                             const v = parseInt(e.target.value, 10);
                                             if (!isNaN(v)) handleChange('brp', Math.max(1, Math.min(64, v)));
                                         }}
-                                        className="flex-1 h-8 text-center bg-[#111] border border-[#222] rounded text-[#f1f1f1] font-mono text-[11px] font-bold outline-none focus:border-[#6b7280] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                        className="flex-1 h-8 text-center bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[11px] font-bold outline-none focus:border-light-600 dark:focus:border-[#6b7280] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-colors"
                                         aria-label="BRP value"
                                     />
                                     <button
                                         onClick={() => handleChange('brp', Math.min(64, timing.brp + 1))}
                                         disabled={timing.brp >= 64}
-                                        className="w-8 h-8 flex items-center justify-center rounded bg-[#111] border border-[#222] text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                        className="w-8 h-8 flex items-center justify-center rounded bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-light-600 dark:hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                                         aria-label="Increase BRP"
                                     >+</button>
                                 </div>
-                                <span className="text-[9px] font-mono text-gray-500 block">Baud rate prescaler (Tq = 2 × BRP / Fosc)</span>
+                                <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 block transition-colors">Baud rate prescaler (Tq = 2 × BRP / Fosc)</span>
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#9ca3af]">
+                                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-light-600 dark:text-[#9ca3af] transition-colors">
                                         OSCILLATOR FREQUENCY
                                     </span>
-                                    <span className="text-[8px] font-mono text-gray-500">Fosc</span>
+                                    <span className="text-[8px] font-mono text-light-400 dark:text-gray-500 transition-colors">Fosc</span>
                                 </div>
                                 <div className="grid grid-cols-5 gap-1">
                                     {[8, 16, 20, 24, 40].map(f => (
@@ -431,15 +435,15 @@ export const BitTimingConfig: React.FC = () => {
                                             key={f}
                                             onClick={() => handleChange('oscillator', f * 1_000_000)}
                                             className={`px-1 py-1.5 rounded text-[8px] font-mono font-bold border transition-all ${timing.oscillator === f * 1_000_000
-                                                ? 'bg-[#00f3ff10] text-[#00f3ff] border-[#00f3ff40]'
-                                                : 'bg-[#111] text-gray-400 border-[#222] hover:border-gray-600'
+                                                ? 'bg-cyan-500/10 dark:bg-[#00f3ff10] text-cyan-600 dark:text-[#00f3ff] border-cyan-500/30 dark:border-[#00f3ff40]'
+                                                : 'bg-white dark:bg-[#111] text-light-500 dark:text-gray-400 border-black/10 dark:border-[#222] hover:border-light-600 dark:hover:border-gray-600'
                                                 }`}
                                         >
                                             {f} MHz
                                         </button>
                                     ))}
                                 </div>
-                                <span className="text-[9px] font-mono text-gray-500 block">Controller clock source</span>
+                                <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 block transition-colors">Controller clock source</span>
                             </div>
                         </div>
                     </div>
@@ -461,24 +465,26 @@ export const BitTimingConfig: React.FC = () => {
 };
 
 // ─── Preset Tab Strip Component ─────────────────────────────
-const PresetTabStrip: React.FC<{
+function PresetTabStrip({ presets, activePreset, onApply }: {
     presets: readonly Preset[];
     activePreset: string | null;
     onApply: (preset: Preset) => void;
-}> = ({ presets, activePreset, onApply }) => {
+}) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
     return (
-        <div className="p-3 rounded-lg bg-[#0c0c0e] border border-[#222] mb-4">
-            <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest block mb-2">BAUD RATE PRESETS</span>
+        <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] mb-4 transition-colors">
+            <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">BAUD RATE PRESETS</span>
             <div className="relative flex gap-1">
                 <div className="flex gap-1 w-full">
                     {presets.map(preset => (
                         <button
                             key={preset.name}
                             onClick={() => onApply(preset)}
-                            className="relative flex-1 px-2 py-2 rounded text-[8px] font-mono font-bold transition-all active:scale-95"
+                            className="relative flex-1 px-2 py-2 rounded text-[8px] font-mono font-bold transition-all active:scale-95 transition-colors"
                             style={{
-                                color: activePreset === preset.name ? '#00f3ff' : '#888',
+                                color: activePreset === preset.name ? (isDark ? '#00f3ff' : '#0891b2') : (isDark ? '#888' : '#666'),
                                 zIndex: activePreset === preset.name ? 1 : 0,
                             }}
                         >
@@ -489,7 +495,7 @@ const PresetTabStrip: React.FC<{
                             {activePreset === preset.name && (
                                 <motion.div
                                     layoutId="preset-pill"
-                                    className="absolute inset-0 rounded bg-[#00f3ff08] border border-[#00f3ff40]"
+                                    className="absolute inset-0 rounded bg-cyan-500/5 dark:bg-[#00f3ff08] border border-cyan-500/30 dark:border-[#00f3ff40]"
                                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                                     style={{ zIndex: -1 }}
                                 />
@@ -500,7 +506,7 @@ const PresetTabStrip: React.FC<{
             </div>
         </div>
     );
-};
+}
 
 // ─── Segment Slider Component ─────────────────────────────
 interface SegmentSliderProps {
@@ -512,10 +518,13 @@ interface SegmentSliderProps {
     description: string;
 }
 
-const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max, onChange, description }) => {
+function SegmentSlider({ label, color, value, max, onChange, description }: SegmentSliderProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const trackRef = useRef<HTMLDivElement>(null);
+
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
     const handlePointerDown = (e: React.PointerEvent) => {
         if (!trackRef.current) return;
@@ -556,10 +565,10 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono font-bold uppercase tracking-wider" style={{ color }}>
+                <span className="text-[9px] font-mono font-bold uppercase tracking-wider transition-colors" style={{ color }}>
                     {label}
                 </span>
-                <span className="text-[8px] font-mono text-gray-500">1 – {max}</span>
+                <span className="text-[8px] font-mono text-light-400 dark:text-gray-500 transition-colors">1 – {max}</span>
             </div>
 
             <div
@@ -571,7 +580,7 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
                 onKeyDown={handleKeyDown}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                className="relative h-8 bg-[#080808] border border-[#1a1a20] rounded cursor-pointer group"
+                className="relative h-8 bg-white dark:bg-[#080808] border border-black/5 dark:border-[#1a1a20] rounded cursor-pointer group transition-colors"
                 tabIndex={0}
                 role="slider"
                 style={{ outline: isFocused ? `2px solid ${color}` : 'none', outlineOffset: '2px' }}
@@ -582,20 +591,20 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
             >
                 {/* Filled track */}
                 <motion.div
-                    className="absolute h-full rounded-l"
-                    style={{ backgroundColor: `${color}15`, width: `${percent}%` }}
+                    className="absolute h-full rounded-l transition-colors"
+                    style={{ backgroundColor: isDark ? `${color}15` : `${color}25`, width: `${percent}%` }}
                     animate={{ width: `${percent}%` }}
                     transition={{ type: 'spring', stiffness: 200, damping: 25 }}
                 />
 
                 {/* Tick marks */}
-                <div className="absolute inset-0 flex">
+                <div className="absolute inset-0 flex pointer-events-none">
                     {Array.from({ length: max }, (_, i) => (
                         <div
                             key={i}
-                            className="flex-1 border-r border-[#1a1a2e]/50"
+                            className="flex-1 border-r border-black/5 dark:border-white/5 transition-colors"
                             style={{
-                                opacity: (i + 1) % 2 === 0 ? 0.5 : 0,
+                                opacity: (i + 1) % 2 === 0 ? 0.3 : 0,
                             }}
                         />
                     ))}
@@ -617,10 +626,10 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
 
                 {/* Value badge */}
                 <motion.div
-                    className="absolute -top-7 px-2 py-0.5 rounded text-[8px] font-mono font-bold whitespace-nowrap pointer-events-none"
+                    className="absolute -top-7 px-2 py-0.5 rounded text-[8px] font-mono font-bold whitespace-nowrap pointer-events-none transition-colors"
                     style={{
                         backgroundColor: color,
-                        color: '#000',
+                        color: isDark ? '#000' : '#fff',
                         left: `${percent}%`,
                         transform: 'translateX(-50%)',
                     }}
@@ -631,13 +640,13 @@ const SegmentSlider: React.FC<SegmentSliderProps> = ({ label, color, value, max,
                 </motion.div>
             </div>
 
-            <span className="text-[9px] font-mono text-gray-500 block">{description}</span>
+            <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 block transition-colors leading-tight">{description}</span>
         </div>
     );
-};
+}
 
 // ─── Register Row Component (Enhanced) ─────────────────────────────
-const RegisterRow: React.FC<{
+function RegisterRow({ name, hex, binary, fields, onCopy, onEdit, isCopied }: {
     name: string;
     hex: string;
     binary: string;
@@ -645,96 +654,110 @@ const RegisterRow: React.FC<{
     onCopy: (reg: string, value: number) => void;
     onEdit: (hex: string) => void;
     isCopied: boolean;
-}> = ({ name, hex, binary, fields, onCopy, onEdit, isCopied }) => {
+}) {
     const hexValue = parseInt(hex, 16);
     const [isEditing, setIsEditing] = useState(false);
     const [editVal, setEditVal] = useState(hex);
+
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
     const isValidHex = (s: string): boolean => {
         const v = parseInt(s.replace(/^0x/i, ''), 16);
         return !isNaN(v) && v >= 0 && v <= 255;
     };
-    const inputIsValid = editVal === '' || isValidHex(editVal);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onEdit(editVal);
-        setIsEditing(false);
-    };
 
     return (
-        <div className="mb-3 last:mb-0">
-            <div className="flex items-center justify-between gap-2 mb-1">
+        <div className="mb-3 last:mb-0 transition-colors">
+            <div className="flex items-center justify-between mb-1.5 px-1">
                 <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-mono font-bold text-[#f1f1f1]">{name}</span>
-                    {isEditing ? (
-                        <form onSubmit={handleSubmit} className="flex items-center">
-                                <input
-                                    autoFocus
-                                    value={editVal}
-                                    placeholder="0xFF"
-                                    onChange={(e) => setEditVal(e.target.value)}
-                                    onBlur={() => setIsEditing(false)}
-                                    className={`bg-[#111] border ${inputIsValid ? 'border-[#00f3ff40]' : 'border-red-500'} text-[#00f3ff] text-[9px] font-mono font-bold w-12 px-1 rounded outline-none`}
-                                />
-                        </form>
-                    ) : (
-                        <button
-                            onClick={() => { setIsEditing(true); setEditVal(hex); }}
-                            className="text-[9px] font-mono font-bold text-[#00f3ff] hover:bg-[#00f3ff10] px-1 rounded transition-colors"
-                        >
-                            {hex}
-                        </button>
-                    )}
-                </div>
-                <div className="flex items-center gap-1">
-                    <motion.button
-                        onClick={() => onCopy(name, hexValue)}
-                        className="p-1 rounded text-[8px] font-mono transition-colors"
-                        style={{
-                            color: isCopied ? '#00ff9f' : '#888',
-                            backgroundColor: isCopied ? '#00ff9f10' : 'transparent',
-                        }}
-                        animate={{
-                            backgroundColor: isCopied ? '#00ff9f10' : 'transparent',
-                        }}
-                    >
-                        {isCopied ? '✓' : '⎘'}
-                    </motion.button>
-                </div>
-            </div>
-
-            {/* Binary display */}
-            <div className="flex gap-px mb-1.5">
-                {binary.split('').map((bit, i) => (
-                    <div
-                        key={i}
-                        className="w-5 h-5 flex items-center justify-center rounded-sm text-[8px] font-mono font-bold border cursor-help transition-colors"
-                        style={{
-                            backgroundColor: bit === '1' ? '#00f3ff10' : '#0a0a0a',
-                            borderColor: bit === '1' ? '#00f3ff30' : '#1a1a20',
-                            color: bit === '1' ? '#00f3ff' : '#444',
-                        }}
-                        title={`Bit ${7 - i}`}
-                    >
-                        {bit}
+                    <span className="text-[10px] font-mono font-black text-light-600 dark:text-[#f1f1f1] transition-colors">{name}</span>
+                    <div className="text-[9px] font-mono text-light-400 dark:text-gray-500 transition-colors">
+                        {isEditing ? (
+                            <input
+                                autoFocus
+                                value={editVal}
+                                onChange={e => setEditVal(e.target.value)}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter') {
+                                        if (isValidHex(editVal)) {
+                                            const clean = editVal.replace(/^0x/i, '').padStart(2, '0');
+                                            onEdit(clean.toUpperCase());
+                                            setIsEditing(false);
+                                        }
+                                    }
+                                    if (e.key === 'Escape') {
+                                        setEditVal(hex);
+                                        setIsEditing(false);
+                                    }
+                                }}
+                                onBlur={() => setIsEditing(false)}
+                                className="w-10 bg-white dark:bg-[#111] border border-cyan-500 text-cyan-600 dark:text-[#00f3ff] outline-none px-1 rounded transition-colors"
+                            />
+                        ) : (
+                            <span
+                                onClick={() => { setEditVal(hex); setIsEditing(true); }}
+                                className="cursor-pointer hover:text-cyan-600 dark:hover:text-[#00f3ff] transition-colors"
+                            >
+                                0x{hex}
+                            </span>
+                        )}
                     </div>
-                ))}
+                </div>
+                <button
+                    onClick={() => onCopy(name, hexValue)}
+                    className={`text-[8px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded transition-all transition-colors ${isCopied ? 'bg-cyan-500/20 text-cyan-600 dark:text-[#00f3ff]' : 'text-light-400 dark:text-gray-500 hover:text-light-600 dark:hover:text-[#f1f1f1]'
+                        }`}
+                >
+                    {isCopied ? 'COPIED' : 'COPY HEX'}
+                </button>
             </div>
 
-            {/* Field labels */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex h-7 bg-white dark:bg-[#080808] border border-black/5 dark:border-[#1a1a20] rounded-md overflow-hidden transition-colors">
+                {binary.split('').map((bit, i) => {
+                    const field = fields.find(f => {
+                        const [start, end] = f.bits.includes('-') ? f.bits.split('-').map(Number) : [Number(f.bits), Number(f.bits)];
+                        const bitIndex = 7 - i;
+                        const min = Math.min(start, end);
+                        const max = Math.max(start, end);
+                        return bitIndex >= min && bitIndex <= max;
+                    });
+
+                    return (
+                        <div
+                            key={i}
+                            className={`flex-1 flex flex-col items-center justify-center border-r border-black/5 dark:border-white/5 last:border-0 relative group transition-colors ${bit === '1' ? 'bg-black/[0.02] dark:bg-white/[0.02]' : ''
+                                }`}
+                        >
+                            <span className={`text-[11px] font-mono font-bold transition-colors ${bit === '1'
+                                    ? (isDark ? 'text-[#f1f1f1]' : 'text-dark-900')
+                                    : (isDark ? 'text-gray-700' : 'text-light-300')
+                                }`}>
+                                {bit}
+                            </span>
+                            {field && (
+                                <div
+                                    className="absolute bottom-0 left-0 w-full h-[2px] opacity-60 transition-colors"
+                                    style={{ backgroundColor: field.color }}
+                                />
+                            )}
+                            <span className="absolute -top-4 text-[7px] font-mono text-light-400 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity transition-colors">
+                                {7 - i}
+                            </span>
+                        </div>
+                    );
+                })}
+            </div>
+
+            <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5 px-1">
                 {fields.map(f => (
-                    <span
-                        key={f.name}
-                        className="text-[9px] font-mono cursor-help"
-                        style={{ color: f.color }}
-                        title={f.tooltip ?? ''}
-                    >
-                        [{f.bits}] {f.name}={f.value}
-                    </span>
+                    <div key={f.name} className="flex items-center gap-1.5 group cursor-help transition-colors">
+                        <div className="w-1.5 h-1.5 rounded-full transition-colors" style={{ backgroundColor: f.color }} />
+                        <span className="text-[8px] font-mono font-bold text-light-500 dark:text-gray-400 transition-colors">{f.name}</span>
+                        <span className="text-[8px] font-mono text-light-400 dark:text-gray-600 transition-colors">{f.bits}</span>
+                    </div>
                 ))}
             </div>
         </div>
     );
-};
+}

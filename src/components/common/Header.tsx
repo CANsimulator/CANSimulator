@@ -3,7 +3,7 @@
  * Redesigned for CAN Simulator - Master the Bus
  */
 
-import React, { useState, useRef, useEffect, memo } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 import { Link, useNavigate, NavLink } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -22,7 +22,7 @@ const NAV_LINKS = [
     { to: '/pricing', label: 'Pricing', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
 ] as const;
 
-const Header: React.FC = memo(() => {
+export function Header() {
     const { theme, toggleTheme } = useTheme();
     const isDark = theme === 'dark';
     const { isAuthenticated, user, logout } = useAuth();
@@ -49,7 +49,7 @@ const Header: React.FC = memo(() => {
     };
 
     const navContainerClass = cn(
-        "hidden lg:flex items-center gap-1 p-1 rounded-xl border backdrop-blur-sm",
+        "hidden lg:flex items-center gap-1 p-1 rounded-xl border backdrop-blur-sm transition-colors",
         isDark
             ? "bg-dark-800/50 border-dark-700/50"
             : "bg-white/80 border-light-200/70 shadow-[0_4px_20px_rgba(15,23,42,0.06)]",
@@ -72,7 +72,10 @@ const Header: React.FC = memo(() => {
         : "text-slate-600 hover:text-cyan-700 hover:bg-cyan-500/10";
 
     return (
-        <header className="header-container border-b sticky top-0 z-50 bg-dark-950/80 backdrop-blur-xl">
+        <header className={cn(
+            "header-container border-b sticky top-0 z-50 transition-colors backdrop-blur-xl",
+            isDark ? "bg-dark-950/80 border-white/5" : "bg-white/80 border-black/5"
+        )}>
             <div className="px-4 sm:px-6 py-3">
                 <div className="flex items-center justify-between gap-4">
                     {/* Left: Logo & Branding */}
@@ -116,7 +119,15 @@ const Header: React.FC = memo(() => {
                             className={cn(iconButtonBase, iconButtonInactive)}
                             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
                         >
-                            {theme === 'dark' ? '☀' : '☾'}
+                            {theme === 'dark' ? (
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                                </svg>
+                            ) : (
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                                </svg>
+                            )}
                         </button>
 
                         {/* User Profile */}
@@ -128,7 +139,7 @@ const Header: React.FC = memo(() => {
                                         "flex items-center gap-2 pl-2 pr-1 py-1 text-xs font-medium border rounded-full transition-all",
                                         isDark
                                             ? "bg-dark-800/50 hover:bg-dark-700/50 border-dark-700/50"
-                                            : "bg-white/80 hover:bg-light-100 border-light-200 shadow-sm",
+                                            : "bg-white hover:bg-light-100 border-light-200 shadow-sm",
                                     )}
                                 >
                                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyber-blue to-cyber-purple flex items-center justify-center text-white text-xs font-bold ring-2 ring-dark-900">
@@ -140,15 +151,21 @@ const Header: React.FC = memo(() => {
                                 </button>
 
                                 {showUserMenu && (
-                                    <div className="absolute right-0 mt-3 w-56 py-2 rounded-2xl shadow-2xl z-50 border animate-slide-in-down overflow-hidden bg-dark-950 border-dark-700 shadow-cyan-900/20">
-                                        <div className="px-4 py-3 border-b border-white/5 mb-1">
-                                            <p className="text-sm font-bold text-white">{user.name}</p>
+                                    <div className={cn(
+                                        "absolute right-0 mt-3 w-56 py-2 rounded-2xl shadow-2xl z-50 border animate-slide-in-down overflow-hidden transition-colors",
+                                        isDark ? "bg-dark-950 border-dark-700 shadow-cyan-900/20" : "bg-white border-light-200 shadow-slate-200/50"
+                                    )}>
+                                        <div className={cn(
+                                            "px-4 py-3 border-b mb-1",
+                                            isDark ? "border-white/5" : "border-black/5"
+                                        )}>
+                                            <p className={cn("text-sm font-bold", isDark ? "text-white" : "text-slate-900")}>{user.name}</p>
                                             <p className="text-xs text-gray-400 truncate">{user.email}</p>
                                         </div>
                                         <div className="p-1">
                                             <button
                                                 onClick={handleLogout}
-                                                className="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 rounded-xl flex items-center gap-3 transition-colors"
+                                                className="w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-500/10 rounded-xl flex items-center gap-3 transition-colors font-medium"
                                             >
                                                 Sign Out
                                             </button>
@@ -169,7 +186,7 @@ const Header: React.FC = memo(() => {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className="lg:hidden p-2 text-gray-400 rounded-lg"
+                        className={cn("lg:hidden p-2 rounded-lg transition-colors", isDark ? "text-gray-400" : "text-slate-600")}
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             {mobileMenuOpen ? (
@@ -183,13 +200,19 @@ const Header: React.FC = memo(() => {
 
                 {/* Mobile Menu */}
                 {mobileMenuOpen && (
-                    <div className="lg:hidden mt-4 pt-4 border-t border-white/5 space-y-2 pb-4">
+                    <div className={cn(
+                        "lg:hidden mt-4 pt-4 border-t space-y-2 pb-4 transition-colors",
+                        isDark ? "border-white/5" : "border-black/5"
+                    )}>
                         {NAV_LINKS.map((link) => (
                             <Link
                                 key={link.to}
                                 to={link.to}
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 rounded-lg border border-transparent hover:border-white/5"
+                                className={cn(
+                                    "block px-4 py-3 text-sm rounded-lg border border-transparent transition-colors",
+                                    isDark ? "text-gray-300 hover:bg-white/5 hover:border-white/5" : "text-slate-600 hover:bg-black/5 hover:border-black/5"
+                                )}
                             >
                                 {link.label}
                             </Link>
@@ -208,6 +231,6 @@ const Header: React.FC = memo(() => {
             </div>
         </header>
     );
-});
+}
 
-export default Header;
+export default memo(Header);

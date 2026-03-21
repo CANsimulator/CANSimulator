@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTestBench } from '../../context/TestBenchContext';
+import { useTheme } from '../../context/ThemeContext';
 
 /* ═══════════════════════════════════════════════════════════════
    Types & Constants
@@ -100,7 +101,7 @@ let _txId = 0;
 /* ═══════════════════════════════════════════════════════════════
    BusTopology — Main Component
    ═══════════════════════════════════════════════════════════════ */
-export const BusTopology: React.FC = () => {
+export function BusTopology() {
     const [nodes, setNodes] = useState<ECUNode[]>(() => {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
@@ -136,8 +137,10 @@ export const BusTopology: React.FC = () => {
     const completedTransmissionIdsRef = useRef<Set<number>>(new Set());
 
     const bench = useTestBench();
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
-    // Read termination from context (owned by TestBenchContext, also settable by FaultScenarioPanel)
+    // Read termination from context (owned by TestBenchContext, also settable by Fault Scenario Panel)
     const termLeft = bench?.terminationLeft ?? true;
     const termRight = bench?.terminationRight ?? true;
     const setTermLeft = (v: boolean) => bench?.setTerminationLeft(v);
@@ -398,27 +401,27 @@ export const BusTopology: React.FC = () => {
     const isBusy = !!transmission && transmission.phase !== 'idle' && transmission.phase !== 'done';
 
     return (
-        <div className="bg-[#111114] rounded-2xl border border-[#1e1e24] shadow-[inset_0_2px_6px_rgba(0,0,0,0.6)] overflow-hidden">
+        <div className="bg-white dark:bg-[#111114] rounded-2xl border border-black/10 dark:border-[#1e1e24] shadow-[inset_0_2px_6px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_2px_6px_rgba(0,0,0,0.6)] overflow-hidden transition-colors">
 
             {/* ═══ Header Bar ═══ */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-[#1a1a20] bg-[#0e0e12] flex-wrap gap-2">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-black/5 dark:border-[#1a1a20] bg-gray-50/50 dark:bg-[#0e0e12] flex-wrap gap-2 transition-colors">
                 <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-md bg-[#1a1a1e] border border-[#2a2a30] flex items-center justify-center">
+                    <div className="w-7 h-7 rounded-md bg-gray-100 dark:bg-[#1a1a1e] border border-black/10 dark:border-[#2a2a30] flex items-center justify-center transition-colors">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00f3ff" strokeWidth="2" strokeLinecap="round">
                             <path d="M4 12h16M12 4v16M7 8h10M7 16h10" />
                         </svg>
                     </div>
                     <div>
-                        <h2 className="text-xs font-mono font-black text-[#f1f1f1] uppercase tracking-wider leading-none">CAN Bus Wiring Harness</h2>
-                        <p className="text-[7px] font-mono text-gray-400 uppercase tracking-widest mt-0.5">ISO 11898-2 Physical Topology</p>
+                        <h2 className="text-xs font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider leading-none transition-colors">CAN Bus Wiring Harness</h2>
+                        <p className="text-[7px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest mt-0.5 transition-colors">ISO 11898-2 Physical Topology</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
-                    <div className="flex bg-[#0a0a0e] border border-[#222] rounded-md overflow-hidden">
+                    <div className="flex bg-black/5 dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md overflow-hidden transition-colors">
                         {(['topology', 'list'] as const).map(m => (
                             <button key={m} onClick={() => setViewMode(m)}
-                                className={`px-2.5 py-1 text-[7px] font-mono font-bold uppercase tracking-wider transition-all ${viewMode === m ? 'bg-[#1a1a20] text-[#00f3ff]' : 'text-gray-400 hover:text-gray-200'}`}>
+                                className={`px-2.5 py-1 text-[7px] font-mono font-bold uppercase tracking-wider transition-all ${viewMode === m ? 'bg-white/10 dark:bg-[#1a1a20] text-cyber-blue' : 'text-light-400 dark:text-gray-400 hover:text-dark-950 dark:hover:text-gray-200'}`}>
                                 {m}
                             </button>
                         ))}
@@ -523,8 +526,8 @@ export const BusTopology: React.FC = () => {
             </div>
 
             {/* ═══ Domain Legend ═══ */}
-            <div className="px-5 py-2 border-t border-[#1a1a20] bg-[#0c0c0f] flex items-center gap-4 flex-wrap">
-                <span className="text-[7px] font-mono text-gray-400 uppercase tracking-widest">Domains:</span>
+            <div className="px-5 py-2 border-t border-black/5 dark:border-[#1a1a20] bg-gray-50/80 dark:bg-[#0c0c0f] flex items-center gap-4 flex-wrap transition-colors">
+                <span className="text-[7px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest">Domains:</span>
                 {Object.entries(DOMAIN_META).map(([key, meta]) => {
                     const count = nodes.filter(n => n.domain === key).length;
                     const isActive = activeDomain === key;
@@ -533,8 +536,8 @@ export const BusTopology: React.FC = () => {
                             className={`flex items-center gap-1.5 transition-opacity cursor-pointer ${
                                 activeDomain !== null && !isActive ? 'opacity-40' : 'opacity-100'
                             }`}>
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: meta.color, boxShadow: `0 0 4px ${meta.glow}` }} />
-                            <span className="text-[7px] font-mono text-gray-300 uppercase tracking-wider">{meta.label} ({count})</span>
+                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: meta.color, boxShadow: isDark ? `0 0 4px ${meta.glow}` : 'none' }} />
+                            <span className="text-[7px] font-mono text-light-600 dark:text-gray-300 uppercase tracking-wider transition-colors">{meta.label} ({count})</span>
                         </button>
                     );
                 })}
@@ -605,12 +608,12 @@ export const BusTopology: React.FC = () => {
 /* ═══════════════════════════════════════════════════════════════
    Transmission Panel — Phase-by-phase CAN frame lifecycle
    ═══════════════════════════════════════════════════════════════ */
-const TransmissionPanel: React.FC<{
+function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
     transmission: TransmissionState;
     nodes: ECUNode[];
     showEducation: boolean;
     onDismiss: () => void;
-}> = ({ transmission, nodes, showEducation, onDismiss }) => {
+}) {
     const fromNode = nodes.find(n => n.id === transmission.fromId);
     const toNode = transmission.toId === 'broadcast' ? null : nodes.find(n => n.id === transmission.toId);
     const pi = PHASE_INFO[transmission.phase];
@@ -787,31 +790,42 @@ const TransmissionPanel: React.FC<{
 /* ═══════════════════════════════════════════════════════════════
    Topology View — SVG wiring diagram
    ═══════════════════════════════════════════════════════════════ */
-const TopologyView: React.FC<{
+function TopologyView({
+    nodes, selectedNode, setSelectedNode, termLeft, termRight,
+    setTermLeft, setTermRight, hasTermIssue, onlineCount, svgRef,
+    transmission, controllerBaudStr, activeDomain
+}: {
     nodes: ECUNode[];
     selectedNode: string | null;
     setSelectedNode: (id: string | null) => void;
-    termLeft: boolean; termRight: boolean;
-    setTermLeft: (v: boolean) => void; setTermRight: (v: boolean) => void;
+    termLeft: boolean;
+    termRight: boolean;
+    setTermLeft: (v: boolean) => void;
+    setTermRight: (v: boolean) => void;
     hasTermIssue: boolean;
     onlineCount: number;
     svgRef: React.RefObject<SVGSVGElement | null>;
     transmission: TransmissionState | null;
     controllerBaudStr: string;
     activeDomain: ECUDomain | null;
-}> = ({ nodes, selectedNode, setSelectedNode, termLeft, termRight, setTermLeft, setTermRight, hasTermIssue, onlineCount, svgRef, transmission, controllerBaudStr, activeDomain }) => {
+}) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
+    const nodeCount = nodes.length;
+    const boxScale = nodeCount > 9 ? Math.max(0.65, 9 / nodeCount) : 1;
+    const boxWidth = 80 * boxScale;
+    
     const BUS_Y_H = 44;
     const BUS_Y_L = 56;
     const BUS_MID = 50;
-    const NODE_TOP = 8;
-    const NODE_BOX_H = 30;
+
+    const STUB_OFFSET = 12; // Standard distance box edge is from the line
 
     const txActive = transmission && transmission.phase !== 'idle' && transmission.phase !== 'done';
     const sourceNode = txActive ? nodes.find(n => n.id === transmission.fromId) : null;
     const targetNode = txActive && transmission.toId !== 'broadcast' ? nodes.find(n => n.id === transmission.toId) : null;
     const isAckPhase = transmission?.phase === 'ack';
-    const isDataPhase = transmission?.phase === 'data';
     const isCrcPhase = transmission?.phase === 'crc';
     const isEofPhase = transmission?.phase === 'eof';
 
@@ -834,11 +848,12 @@ const TopologyView: React.FC<{
     }
 
     return (
-        <div className="relative bg-[#0a0a0d] rounded-xl border border-[#161620] overflow-hidden" style={{ minHeight: '420px' }}>
+        <div className="overflow-x-auto rounded-xl">
+            <div className="relative bg-gray-50 dark:bg-[#0a0a0d] rounded-xl border border-black/10 dark:border-[#161620] overflow-hidden transition-colors" style={{ minHeight: '420px', minWidth: `${Math.max(900, nodes.length * 90)}px` }}>
 
             {/* Background grid */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.04 }}>
-                <defs><pattern id="bg-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#fff" strokeWidth="0.5" /></pattern></defs>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: isDark ? 0.04 : 0.08 }}>
+                <defs><pattern id="bg-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke={isDark ? "#fff" : "#000"} strokeWidth="0.5" /></pattern></defs>
                 <rect width="100%" height="100%" fill="url(#bg-grid)" />
             </svg>
 
@@ -895,19 +910,25 @@ const TopologyView: React.FC<{
                 {/* Twist marks */}
                 {Array.from({ length: 16 }, (_, i) => {
                     const cx = 6 + i * 5.5;
-                    return <g key={`tw${i}`} opacity="0.12"><line x1={`${cx}%`} y1={`${BUS_Y_H - 1}%`} x2={`${cx + 0.8}%`} y2={`${BUS_Y_L + 1}%`} stroke="#666" strokeWidth="0.5" /></g>;
+                    return <g key={`tw${i}`} opacity={isDark ? "0.12" : "0.25"}><line x1={`${cx}%`} y1={`${BUS_Y_H - 1}%`} x2={`${cx + 0.8}%`} y2={`${BUS_Y_L + 1}%`} stroke={isDark ? "#666" : "#444"} strokeWidth="0.5" /></g>;
                 })}
 
                 {/* Drop stubs */}
-                {nodes.map(node => {
+
+                {nodes.map((node, i) => {
                     const dm = DOMAIN_META[node.domain];
                     const isSelected = selectedNode === node.id;
                     const isTx = txActive && transmission?.fromId === node.id;
                     const isRx = receivingIds.has(node.id);
                     const stubColor = isTx ? '#22c55eaa' : isRx ? (isAckPhase ? '#14b8a6aa' : '#3b82f6aa') : node.online ? (isSelected ? dm.color + 'aa' : dm.color + '30') : '#ef444420';
+                    const isTop = (i % 2 === 0);
+                    const y1 = isTop ? (BUS_Y_H - STUB_OFFSET) : (BUS_Y_L + STUB_OFFSET);
+                    const connectY = isTop ? BUS_Y_H : BUS_Y_L;
+                    const isDataPhase = transmission?.phase === 'data' || transmission?.phase === 'control';
+
                     return (
                         <g key={node.id}>
-                            <line x1={`${node.x}%`} y1={`${NODE_TOP + NODE_BOX_H}%`} x2={`${node.x}%`} y2={`${BUS_Y_H}%`}
+                            <line x1={`${node.x}%`} y1={`${y1}%`} x2={`${node.x}%`} y2={`${connectY}%`}
                                 stroke={stubColor} strokeWidth={isTx || isRx ? 2.5 : isSelected ? 2 : 1.5} strokeDasharray={node.online ? 'none' : '4 3'} />
                             <circle cx={`${node.x}%`} cy={`${BUS_Y_H}%`} r={isTx || isRx ? 5 : isSelected ? 4 : 3}
                                 fill={isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#333'} opacity={node.online ? 1 : 0.3} />
@@ -916,13 +937,14 @@ const TopologyView: React.FC<{
                             {isSelected && (
                                 <text
                                     x={`${node.x}%`}
-                                    y={`${NODE_TOP + NODE_BOX_H + 2}%`}
+                                    y={isTop ? `${BUS_Y_H - STUB_OFFSET - 24}%` : `${BUS_Y_L + STUB_OFFSET + 30}%`}
                                     fill={dm.color}
-                                    fontSize="9"
+                                    fontSize="8"
                                     fontFamily="monospace"
+                                    fontWeight="bold"
                                     opacity="0.8"
                                     textAnchor="middle">
-                                    {node.stubLength}m
+                                    {(isTx || isRx) && (isTx ? (isAckPhase ? 'ACK RECEIVED' : 'TRANSMITTING') : 'RECEIVING')}
                                 </text>
                             )}
                             {/* TX glow ring */}
@@ -1019,8 +1041,8 @@ const TopologyView: React.FC<{
             </svg>
 
             {/* Wire labels */}
-            <div className="absolute text-[9px] font-mono font-black tracking-widest pointer-events-none" style={{ left: '1%', top: `${BUS_Y_H - 4}%`, color: '#00f3ff99' }}>CANH</div>
-            <div className="absolute text-[9px] font-mono font-black tracking-widest pointer-events-none" style={{ left: '1%', top: `${BUS_Y_L + 1}%`, color: '#bf00ff99' }}>CANL</div>
+            <div className="absolute text-[9px] font-mono font-black tracking-widest pointer-events-none transition-colors" style={{ left: '5.5%', top: `${BUS_Y_H - 4.5}%`, color: isDark ? '#00f3ff70' : '#00b4ccdd' }}>CANH</div>
+            <div className="absolute text-[9px] font-mono font-black tracking-widest pointer-events-none transition-colors" style={{ left: '5.5%', top: `${BUS_Y_L + 1.5}%`, color: isDark ? '#bf00ff70' : '#9d00ccdd' }}>CANL</div>
 
             {/* ─── Floating data packet label between wires ─── */}
             {txActive && sourceNode && transmission && (
@@ -1066,12 +1088,12 @@ const TopologyView: React.FC<{
                     className="absolute pointer-events-none z-30"
                     style={{ top: `${BUS_Y_L + 4}%`, left: `${(segLeft + segRight) / 2}%`, transform: 'translateX(-50%)' }}
                     initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0a0a0f]/90 border border-[#222] backdrop-blur-sm">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" style={{ boxShadow: '0 0 4px #22c55e80' }} />
-                        <span className="text-[7px] font-mono font-bold text-green-400">{sourceNode.label}</span>
-                        <span className="text-[8px] text-gray-600">{isAckPhase ? '\u2190' : '\u2192'}</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" style={{ boxShadow: '0 0 4px #3b82f680' }} />
-                        <span className="text-[7px] font-mono font-bold text-blue-400">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 dark:bg-[#0a0a0f]/90 border border-black/10 dark:border-[#222] backdrop-blur-sm transition-colors">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" style={{ boxShadow: isDark ? '0 0 4px #22c55e80' : 'none' }} />
+                        <span className="text-[7px] font-mono font-bold text-green-600 dark:text-green-400">{sourceNode.label}</span>
+                        <span className="text-[8px] text-light-400 dark:text-gray-600">{isAckPhase ? '\u2190' : '\u2192'}</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500" style={{ boxShadow: isDark ? '0 0 4px #3b82f680' : 'none' }} />
+                        <span className="text-[7px] font-mono font-bold text-blue-600 dark:text-blue-400">
                             {transmission.toId === 'broadcast' ? 'ALL' : (targetNode?.label ?? '?')}
                         </span>
                     </div>
@@ -1103,17 +1125,21 @@ const TopologyView: React.FC<{
             <TermResistor side="right" isOn={termRight} onToggle={() => setTermRight(!termRight)} busYH={BUS_Y_H} busYL={BUS_Y_L} />
 
             {/* ECU Node Boxes */}
-            {nodes.map(node => {
+            {nodes.map((node, i) => {
                 const isTx = !!(txActive && transmission?.fromId === node.id);
                 const isRx = !!(receivingIds.has(node.id) && txActive);
+                const isTop = i % 2 === 0;
                 return (
                     <ECUBox key={node.id} node={node}
                         isSelected={selectedNode === node.id}
                         onSelect={() => setSelectedNode(selectedNode === node.id ? null : node.id)}
-                        topPercent={NODE_TOP} isTx={isTx} isRx={isRx}
+                        anchorY={isTop ? (BUS_Y_H - STUB_OFFSET) : (BUS_Y_L + STUB_OFFSET)}
+                        isBottom={!isTop}
+                        isTx={isTx} isRx={isRx}
                         txPhase={txActive ? transmission?.phase ?? null : null}
                         controllerBaudStr={controllerBaudStr}
-                        activeDomain={activeDomain} />
+                        activeDomain={activeDomain}
+                        boxWidth={boxWidth} />
                 );
             })}
 
@@ -1142,10 +1168,11 @@ const TopologyView: React.FC<{
             )}
 
             {/* Bus info strip */}
-            <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-gradient-to-t from-[#0a0a0d] to-transparent">
-                <span className="text-[10px] font-mono text-gray-400">R1 120{'\u03A9'} {termLeft ? 'ON' : 'OFF'}</span>
-                <span className="text-[10px] font-mono text-gray-400">Twisted-pair differential bus &middot; ISO 11898-2 &middot; Z₀ = 120{'\u03A9'}</span>
-                <span className="text-[10px] font-mono text-gray-400">R2 120{'\u03A9'} {termRight ? 'ON' : 'OFF'}</span>
+            <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-gradient-to-t from-gray-100 dark:from-[#0a0a0d] to-transparent transition-colors">
+                <span className="text-[10px] font-mono text-light-500 dark:text-gray-400">R1 120{'\u03A9'} {termLeft ? 'ON' : 'OFF'}</span>
+                <span className="text-[10px] font-mono text-light-500 dark:text-gray-400">Twisted-pair differential bus &middot; ISO 11898-2 &middot; Z₀ = 120{'\u03A9'}</span>
+                <span className="text-[10px] font-mono text-light-500 dark:text-gray-400">R2 120{'\u03A9'} {termRight ? 'ON' : 'OFF'}</span>
+            </div>
             </div>
         </div>
     );
@@ -1154,36 +1181,61 @@ const TopologyView: React.FC<{
 /* ═══════════════════════════════════════════════════════════════
    ECU Box
    ═══════════════════════════════════════════════════════════════ */
-const ECUBox: React.FC<{
-    node: ECUNode; isSelected: boolean; onSelect: () => void; topPercent: number;
-    isTx: boolean; isRx: boolean; txPhase: FramePhase | null;
+function ECUBox({
+    node, isSelected, onSelect, anchorY, isBottom,
+    isTx, isRx, txPhase,
+    controllerBaudStr,
+    activeDomain,
+    boxWidth = 80
+}: {
+    node: ECUNode;
+    isSelected: boolean;
+    onSelect: () => void;
+    anchorY: number;
+    isBottom: boolean;
+    isTx: boolean;
+    isRx: boolean;
+    txPhase: FramePhase | null;
     controllerBaudStr: string;
     activeDomain: ECUDomain | null;
-}> = ({ node, isSelected, onSelect, topPercent, isTx, isRx, txPhase, controllerBaudStr, activeDomain }) => {
+    boxWidth?: number;
+}) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const dm = DOMAIN_META[node.domain];
     const borderGlow = isTx ? '#22c55e' : isRx ? '#3b82f6' : isSelected ? dm.color : undefined;
     const hasBaudMismatch = node.online && node.baudRate !== controllerBaudStr;
     const isDimmed = activeDomain !== null && node.domain !== activeDomain;
 
+    const scale = boxWidth / 80;
+    const isSmall = scale < 0.8;
+
     return (
-        <div className="absolute flex flex-col items-center"
-            style={{ left: `${node.x}%`, top: `${topPercent}%`, transform: 'translateX(-50%)', width: '80px', zIndex: isSelected || isTx || isRx ? 20 : 10, opacity: isDimmed ? 0.25 : 1, transition: 'opacity 200ms' }}>
+        <div className="absolute flex flex-col items-center transition-all duration-300"
+            style={{ 
+                left: `${node.x}%`, 
+                top: isBottom ? `${anchorY}%` : undefined,
+                bottom: !isBottom ? `${100 - anchorY}%` : undefined,
+                transform: 'translateX(-50%)', 
+                width: `${boxWidth}px`, 
+                zIndex: isSelected || isTx || isRx ? 20 : 10, 
+                opacity: isDimmed ? 0.25 : 1 
+            }}>
             <motion.button onClick={onSelect}
                 whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
-                className={`w-full rounded-lg border text-center transition-all duration-200 cursor-pointer relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-1 focus-visible:ring-offset-[#0a0a0d] ${isSelected ? 'ring-1 ring-offset-1 ring-offset-[#0a0a0d]' : ''}`}
+                className={`w-full rounded-lg border text-center transition-all duration-200 cursor-pointer relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0a0a0d] ${isSelected ? 'ring-1 ring-offset-1 ring-offset-white dark:ring-offset-[#0a0a0d]' : ''}`}
                 animate={{
-                    borderColor: borderGlow ? borderGlow + '80' : (node.online ? '#222230' : '#1a0a0a'),
-                    boxShadow: isTx ? `0 0 20px #22c55e40, inset 0 1px 0 #22c55e15` : isRx ? `0 0 16px #3b82f640, inset 0 1px 0 #3b82f615` : isSelected ? `0 0 16px ${dm.glow}, inset 0 1px 0 ${dm.color}15` : node.online ? 'inset 0 1px 0 #f1f1f106' : 'none',
+                    borderColor: borderGlow ? borderGlow + '80' : (node.online ? (isDark ? '#222230' : '#e5e7eb') : (isDark ? '#1a0a0a' : '#fee2e2')),
+                    boxShadow: isTx ? `0 0 20px #22c55e40, inset 0 1px 0 #22c55e15` : isRx ? `0 0 16px #3b82f640, inset 0 1px 0 #3b82f615` : isSelected ? `0 0 16px ${dm.glow}, inset 0 1px 0 ${dm.color}15` : node.online ? 'inset 0 1px 0 rgba(255,255,255,0.06)' : 'none',
                 }}
-                style={{ backgroundColor: isTx ? '#0a1a0a' : isRx ? '#0a0a1a' : node.online ? '#0d0d12' : '#0c0a0a', padding: '8px 6px 6px' }}>
-
-                {/* Top color bar */}
-                <div className="absolute top-0 left-0 right-0 h-[2px]"
-                    style={{ backgroundColor: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#333', opacity: isTx || isRx ? 1 : node.online ? 0.6 : 0.2 }} />
+                style={{
+                    backgroundColor: isTx ? (isDark ? '#0a1a0a' : '#f0fdf4') : isRx ? (isDark ? '#0a0a1a' : '#eff6ff') : node.online ? (isDark ? '#0d0d12' : '#ffffff') : (isDark ? '#0c0a0a' : '#fef2f2'),
+                    padding: isSmall ? '4px 2px 3px' : '8px 6px 6px'
+                }}>
 
                 {/* TX/RX badge */}
                 <AnimatePresence>
-                    {(isTx || isRx) && (
+                    {(isTx || isRx) && !isSmall && (
                         <motion.div className="absolute -top-1 -right-1 px-1 py-[1px] rounded text-[5px] font-mono font-black uppercase z-10"
                             initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
                             style={{ backgroundColor: isTx ? '#22c55e' : '#3b82f6', color: '#000' }}>
@@ -1194,7 +1246,7 @@ const ECUBox: React.FC<{
 
                 {/* Baud mismatch badge */}
                 <AnimatePresence>
-                    {hasBaudMismatch && !isTx && !isRx && (
+                    {hasBaudMismatch && !isTx && !isRx && !isSmall && (
                         <motion.div
                             className="absolute -top-1 -left-1 px-1 py-[1px] rounded text-[5px] font-mono font-black uppercase z-10"
                             initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
@@ -1206,7 +1258,7 @@ const ECUBox: React.FC<{
                 </AnimatePresence>
 
                 {/* Phase indicator on TX node */}
-                {isTx && txPhase && (
+                {isTx && txPhase && !isSmall && (
                     <motion.div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-[1px] rounded text-[5px] font-mono font-bold uppercase z-10 whitespace-nowrap"
                         key={txPhase}
                         initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
@@ -1216,31 +1268,37 @@ const ECUBox: React.FC<{
                 )}
 
                 {/* Status LED */}
-                <div className="flex items-center justify-center mb-1">
-                    <motion.div className="w-2 h-2 rounded-full"
-                        animate={{
-                            backgroundColor: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#ef4444',
-                            boxShadow: isTx ? '0 0 8px #22c55e80' : isRx ? '0 0 8px #3b82f680' : node.online ? `0 0 6px ${dm.glow}` : '0 0 4px #ef444460',
-                        }} />
-                </div>
+                {!isSmall && (
+                    <div className="flex items-center justify-center mb-1">
+                        <motion.div className="w-2 h-2 rounded-full"
+                            animate={{
+                                backgroundColor: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#ef4444',
+                                boxShadow: isTx ? '0 0 8px #22c55e80' : isRx ? '0 0 8px #3b82f680' : node.online ? `0 0 6px ${dm.glow}` : '0 0 4px #ef444460',
+                            }} />
+                    </div>
+                )}
 
-                <span className="text-[8px] font-mono font-black uppercase tracking-tight block leading-tight"
-                    style={{ color: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#555' }}>
+                <span className="font-mono font-black uppercase tracking-tight block leading-tight truncate px-1"
+                    style={{
+                        color: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#555',
+                        fontSize: isSmall ? '7px' : '8px'
+                    }}>
                     {node.label}
                 </span>
-                <span className="text-[9px] font-mono text-gray-400 block mt-0.5">{node.canId}</span>
-                <span className="text-[5px] font-mono uppercase tracking-wider block mt-1 px-1 py-[1px] rounded-sm mx-auto w-fit"
-                    style={{ backgroundColor: dm.color + '10', color: dm.color + '90', border: `1px solid ${dm.color}20` }}>
-                    {dm.label}
-                </span>
+
+                {!isSmall && (
+                    <>
+                        <span className="text-[9px] font-mono text-light-500 dark:text-gray-400 block mt-0.5 transition-colors">{node.canId}</span>
+                        <span className="text-[5px] font-mono uppercase tracking-wider block mt-1 px-1 py-[1px] rounded-sm mx-auto w-fit"
+                            style={{ backgroundColor: dm.color + '10', color: dm.color + '90', border: `1px solid ${dm.color}20` }}>
+                            {dm.label}
+                        </span>
+                    </>
+                )}
 
                 {!node.online && (
-                    <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center rounded-lg gap-1">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                        <span className="text-[9px] font-mono text-red-500 font-bold uppercase">OFF</span>
+                    <div className="absolute inset-0 bg-white/70 dark:bg-black/70 flex flex-col items-center justify-center rounded-lg backdrop-blur-[1px] transition-colors">
+                        <span className="text-[8px] font-mono text-red-600 dark:text-red-500 font-bold uppercase transition-colors">OFF</span>
                     </div>
                 )}
             </motion.button>
@@ -1251,7 +1309,15 @@ const ECUBox: React.FC<{
 /* ═══════════════════════════════════════════════════════════════
    Termination Resistor
    ═══════════════════════════════════════════════════════════════ */
-const TermResistor: React.FC<{ side: 'left' | 'right'; isOn: boolean; onToggle: () => void; busYH: number; busYL: number }> = ({ side, isOn, onToggle, busYH, busYL }) => {
+function TermResistor({ side, isOn, onToggle, busYH, busYL }: {
+    side: 'left' | 'right';
+    isOn: boolean;
+    onToggle: () => void;
+    busYH: number;
+    busYL: number;
+}) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const isLeft = side === 'left';
     const midY = (busYH + busYL) / 2;
     return (
@@ -1264,30 +1330,36 @@ const TermResistor: React.FC<{ side: 'left' | 'right'; isOn: boolean; onToggle: 
             aria-label={`Toggle ${isLeft ? 'R1' : 'R2'} termination resistor`}
         >
             <div className={`relative w-8 h-14 rounded-md border flex flex-col items-center justify-center gap-[2px] transition-all duration-300 group-hover:scale-105 ${isOn ? '' : 'opacity-50'}`}
-                style={{ borderColor: isOn ? (isLeft ? '#00f3ff40' : '#bf00ff40') : '#333', backgroundColor: '#0a0a0f', boxShadow: isOn ? `0 0 12px ${isLeft ? '#00f3ff15' : '#bf00ff15'}` : 'none' }}>
-                {[0, 1, 2, 3, 4].map(i => <div key={i} className="w-5 h-[1.5px] rounded-full transition-colors duration-300" style={{ backgroundColor: isOn ? (isLeft ? '#00f3ff35' : '#bf00ff35') : '#1a1a20' }} />)}
+                style={{ borderColor: isOn ? (isLeft ? '#00f3ff40' : '#bf00ff40') : (isDark ? '#333' : '#e5e7eb'), backgroundColor: isDark ? '#0a0a0f' : '#ffffff', boxShadow: (isOn && isDark) ? `0 0 12px ${isLeft ? '#00f3ff15' : '#bf00ff15'}` : 'none' }}>
+                {[0, 1, 2, 3, 4].map(i => <div key={i} className="w-5 h-[1.5px] rounded-full transition-colors duration-300" style={{ backgroundColor: isOn ? (isLeft ? '#00f3ff35' : '#bf00ff35') : (isDark ? '#1a1a20' : '#f1f5f9') }} />)}
                 <motion.div className="absolute -bottom-2.5 w-3.5 h-3.5 rounded-full border-2"
-                    animate={{ backgroundColor: isOn ? '#22c55e' : '#111', borderColor: isOn ? '#22c55e60' : '#333', boxShadow: isOn ? '0 0 8px #22c55e50' : 'none' }} />
+                    animate={{ backgroundColor: isOn ? '#22c55e' : (isDark ? '#111' : '#f8fafc'), borderColor: isOn ? '#22c55e60' : (isDark ? '#333' : '#e2e8f0'), boxShadow: (isOn && isDark) ? '0 0 8px #22c55e50' : 'none' }} />
             </div>
-            <span className="mt-3 text-[7px] font-mono font-bold uppercase tracking-wider" style={{ color: isOn ? (isLeft ? '#00f3ff' : '#bf00ff') : '#444' }}>{isLeft ? 'R1' : 'R2'}</span>
-            <span className="text-[6px] font-mono font-bold" style={{ color: isOn ? '#888' : '#ef444480' }}>120{'\u03A9'}</span>
-            <span className="text-[6px] font-mono font-bold mt-0.5" style={{ color: isOn ? '#22c55e' : '#ef4444' }}>{isOn ? 'ON' : 'OFF'}</span>
+            <span className="mt-2 text-[7px] font-mono font-bold uppercase tracking-wider transition-colors" style={{ color: isOn ? (isLeft ? '#00f3ff' : '#bf00ff') : (isDark ? '#444' : '#94a3b8') }}>{isLeft ? 'R1' : 'R2'}</span>
+            <span className="text-[6px] font-mono font-bold" style={{ color: isOn ? (isDark ? '#888' : '#64748b') : '#ef444480' }}>120{'\u03A9'}</span>
+            <span className="text-[6px] font-mono font-bold" style={{ color: isOn ? '#22c55e' : '#ef4444' }}>{isOn ? 'ON' : 'OFF'}</span>
         </button>
     );
-};
+}
 
 /* ═══════════════════════════════════════════════════════════════
    List View
    ═══════════════════════════════════════════════════════════════ */
-const ListView: React.FC<{
-    nodes: ECUNode[]; selectedNode: string | null; setSelectedNode: (id: string | null) => void;
-    toggleNode: (id: string) => void; removeNode: (id: string) => void;
-}> = ({ nodes, selectedNode, setSelectedNode, toggleNode, removeNode }) => (
-    <div className="overflow-x-auto">
+function ListView({ nodes, selectedNode, setSelectedNode, toggleNode, removeNode }: {
+    nodes: ECUNode[];
+    selectedNode: string | null;
+    setSelectedNode: (id: string | null) => void;
+    toggleNode: (id: string) => void;
+    removeNode: (id: string) => void;
+}) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+    return (
+        <div className="overflow-x-auto">
         <table className="w-full text-[8px] font-mono">
-            <thead><tr className="border-b border-[#1a1a20]">
+            <thead><tr className="border-b border-black/5 dark:border-[#1a1a20] transition-colors">
                 {['Status', 'ECU Name', 'CAN ID', 'Domain', 'Baud', 'Stub', 'TX', 'RX', 'Errors', 'Actions'].map(h => (
-                    <th key={h} className="text-left py-2 px-3 text-gray-600 font-bold uppercase tracking-wider">{h}</th>
+                    <th key={h} className="text-left py-2 px-3 text-light-400 dark:text-gray-600 font-bold uppercase tracking-wider">{h}</th>
                 ))}
             </tr></thead>
             <tbody>{nodes.map(node => {
@@ -1295,42 +1367,46 @@ const ListView: React.FC<{
                 const isSel = selectedNode === node.id;
                 return (
                     <tr key={node.id} onClick={() => setSelectedNode(isSel ? null : node.id)}
-                        className={`border-b border-[#111118] cursor-pointer transition-colors ${isSel ? 'bg-[#111118]' : 'hover:bg-[#0d0d12]'}`}>
-                        <td className="py-2 px-3"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: node.online ? '#22c55e' : '#ef4444', boxShadow: `0 0 4px ${node.online ? '#22c55e60' : '#ef444460'}` }} /></td>
-                        <td className="py-2 px-3 font-bold text-gray-300 uppercase">{node.label}</td>
-                        <td className="py-2 px-3 text-gray-500">{node.canId}</td>
+                        className={`border-b border-black/[0.03] dark:border-[#111118] cursor-pointer transition-colors ${isSel ? 'bg-gray-100 dark:bg-[#111118]' : 'hover:bg-gray-50 dark:hover:bg-[#0d0d12]'}`}>
+                        <td className="py-2 px-3"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: node.online ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${node.online ? '#22c55e60' : '#ef444460'}` : 'none' }} /></td>
+                        <td className="py-2 px-3 font-bold text-dark-900 dark:text-gray-300 uppercase transition-colors">{node.label}</td>
+                        <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.canId}</td>
                         <td className="py-2 px-3"><span className="px-1.5 py-0.5 rounded-sm text-[7px]" style={{ backgroundColor: dm.color + '15', color: dm.color, border: `1px solid ${dm.color}25` }}>{dm.label}</span></td>
-                        <td className="py-2 px-3 text-gray-500">{node.baudRate}</td>
-                        <td className="py-2 px-3 text-gray-500">{node.stubLength}m</td>
+                        <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.baudRate}</td>
+                        <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.stubLength}m</td>
                         <td className="py-2 px-3 text-green-500">{node.txCount}</td>
                         <td className="py-2 px-3 text-blue-400">{node.rxCount}</td>
-                        <td className="py-2 px-3" style={{ color: node.errorCount > 0 ? '#ef4444' : '#333' }}>{node.errorCount}</td>
+                        <td className="py-2 px-3" style={{ color: node.errorCount > 0 ? '#ef4444' : (isDark ? '#333' : '#cbd5e1') }}>{node.errorCount}</td>
                         <td className="py-2 px-3">
                             <div className="flex items-center gap-2">
                                 <button onClick={(e) => { e.stopPropagation(); toggleNode(node.id); }}
-                                    className={`px-2 py-0.5 rounded text-[7px] font-bold border ${node.online ? 'text-red-400 border-red-500/30 hover:bg-red-500/10' : 'text-green-400 border-green-500/30 hover:bg-green-500/10'}`}>
+                                    className={`px-2 py-0.5 rounded text-[7px] font-bold border transition-colors ${node.online ? 'text-red-400 border-red-500/30 hover:bg-red-500/10' : 'text-green-600 dark:text-green-400 border-green-500/30 hover:bg-green-500/10'}`}>
                                     {node.online ? 'OFF' : 'ON'}
                                 </button>
                                 <button onClick={(e) => { e.stopPropagation(); removeNode(node.id); }}
-                                    className="px-2 py-0.5 rounded text-[7px] font-bold text-gray-600 border border-[#222] hover:text-red-400 hover:border-red-500/30">DEL</button>
+                                    className="px-2 py-0.5 rounded text-[7px] font-bold text-light-400 dark:text-gray-600 border border-black/10 dark:border-[#222] hover:text-red-400 hover:border-red-500/30 transition-colors">DEL</button>
                             </div>
                         </td>
                     </tr>
                 );
             })}</tbody>
         </table>
-    </div>
-);
+        </div>
+    );
+};
 
 /* ═══════════════════════════════════════════════════════════════
    Node Detail Panel
    ═══════════════════════════════════════════════════════════════ */
-const NodeDetailPanel: React.FC<{
+function NodeDetailPanel({
+    node, onToggle, onRemove, onClose, onSendSignal, onBaudChange, onUpdateNode,
+    allNodes, existingNodes, isBusy, onOpenFrameBuilder, onResetCounters
+}: {
     node: ECUNode;
     onToggle: () => void;
     onRemove: () => void;
     onClose: () => void;
-    onSendSignal: (from: string, to: string | 'broadcast', msgType?: MessageType) => void;
+    onSendSignal: (from: string, to: string | 'broadcast', msgType?: MessageType, dlc?: number, data?: string[]) => void;
     onBaudChange: (baud: string) => void;
     onUpdateNode: (updates: Partial<Pick<ECUNode, 'label' | 'canId' | 'domain' | 'stubLength'>>) => void;
     allNodes: ECUNode[];
@@ -1338,7 +1414,9 @@ const NodeDetailPanel: React.FC<{
     isBusy: boolean;
     onOpenFrameBuilder: () => void;
     onResetCounters: () => void;
-}> = ({ node, onToggle, onRemove, onClose, onSendSignal, onBaudChange, onUpdateNode, allNodes, existingNodes, isBusy, onOpenFrameBuilder, onResetCounters }) => {
+}) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const [editing, setEditing] = useState(false);
     const [draft, setDraft] = useState({
         label: node.label,
@@ -1388,23 +1466,25 @@ const NodeDetailPanel: React.FC<{
     };
 
     const dm = DOMAIN_META[node.domain];
+    const onlineColor = node.online ? dm.color : '#ef4444';
+    const onlineGlow = node.online ? dm.glow : '#ef444460';
 
     return (
-        <div className="bg-[#0c0c0f] px-5 py-4" onKeyDown={editing ? handleKeyDown : undefined}>
+        <div className="bg-white dark:bg-[#0c0c0f] px-5 py-4 transition-colors" onKeyDown={editing ? handleKeyDown : undefined}>
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                    <motion.div className="w-3 h-3 rounded-full" animate={{ backgroundColor: node.online ? dm.color : '#ef4444', boxShadow: `0 0 8px ${node.online ? dm.glow : '#ef444460'}` }} />
+                    <motion.div className="w-3 h-3 rounded-full" animate={{ backgroundColor: onlineColor, boxShadow: isDark ? `0 0 8px ${onlineGlow}` : 'none' }} />
                     <div className="flex items-center gap-2 group">
                         <div>
-                            <h3 className="text-sm font-mono font-black text-[#f1f1f1] uppercase tracking-tight">
+                            <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-tight transition-colors">
                                 {node.label}
-                                {node.isLocal && <span className="ml-2 text-[7px] text-gray-600 font-bold border border-gray-600/30 px-1 rounded uppercase tracking-tighter">Local Controller</span>}
+                                {node.isLocal && <span className="ml-2 text-[7px] text-light-400 dark:text-gray-600 font-bold border border-black/10 dark:border-gray-600/30 px-1 rounded uppercase tracking-tighter transition-colors">Local Controller</span>}
                             </h3>
-                            <p className="text-[8px] font-mono text-gray-500">{node.canId} &middot; {dm.label} &middot; {node.baudRate}</p>
+                            <p className="text-[8px] font-mono text-light-500 dark:text-gray-500 transition-colors">{node.canId} &middot; {dm.label} &middot; {node.baudRate}</p>
                         </div>
                         {!editing && (
                             <button onClick={() => setEditing(true)} aria-label="Edit ECU"
-                                className="opacity-0 group-hover:opacity-100 p-1.5 rounded transition-all hover:bg-white/5 text-gray-600 hover:text-gray-300">
+                                className="opacity-0 group-hover:opacity-100 p-1.5 rounded transition-all hover:bg-black/5 dark:hover:bg-white/5 text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-300">
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path>
                                     <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -1413,7 +1493,7 @@ const NodeDetailPanel: React.FC<{
                         )}
                     </div>
                 </div>
-                <button onClick={onClose} className="text-gray-600 hover:text-gray-400 p-1">
+                <button onClick={onClose} className="text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400 p-1 transition-colors">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                 </button>
             </div>
@@ -1422,32 +1502,32 @@ const NodeDetailPanel: React.FC<{
             <div className="mb-4">
                 {editing ? (
                     <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                        className="p-4 rounded-lg bg-[#111116] border border-[#2a2a32] shadow-xl space-y-4">
+                        className="p-4 rounded-lg bg-gray-50 dark:bg-[#111116] border border-black/10 dark:border-[#2a2a32] shadow-xl space-y-4 transition-colors">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
-                                <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
+                                <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
                                 <input value={draft.label} onChange={e => setDraft({ ...draft, label: e.target.value })} autoFocus
-                                    className="w-full bg-[#0a0a0e] border border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-[#f1f1f1] focus:outline-none focus:border-[#00f3ff40]" />
+                                    className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                             </div>
                             <div>
-                                <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
+                                <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
                                 <input value={draft.canId} onChange={e => setDraft({ ...draft, canId: e.target.value })}
-                                    className={`w-full bg-[#0a0a0e] border rounded-md px-2.5 py-1.5 text-[10px] font-mono text-[#f1f1f1] focus:outline-none transition-colors ${duplicateNode ? 'border-red-500/50 focus:border-red-400' : 'border-[#222] focus:border-[#00f3ff40]'}`} />
-                                {duplicateNode && <p className="text-[7px] font-mono text-red-400 mt-1 uppercase">CAN ID already in use by {duplicateNode.label}</p>}
+                                    className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none transition-colors ${duplicateNode ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40]'}`} />
+                                {duplicateNode && <p className="text-[7px] font-mono text-red-500 dark:text-red-400 mt-1 uppercase">CAN ID already in use by {duplicateNode.label}</p>}
                             </div>
                             <div>
-                                <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">Stub Length (m)</label>
+                                <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">Stub Length (m)</label>
                                 <input type="number" step="0.01" value={draft.stubLength} onChange={e => setDraft({ ...draft, stubLength: e.target.value })}
-                                    className="w-full bg-[#0a0a0e] border border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-[#f1f1f1] focus:outline-none focus:border-[#00f3ff40]" />
+                                    className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                             </div>
                         </div>
 
                         <div>
-                            <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1.5">Network Domain</label>
+                            <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5">Network Domain</label>
                             <div className="flex flex-wrap gap-1">
                                 {(Object.entries(DOMAIN_META) as [ECUDomain, typeof DOMAIN_META[ECUDomain]][]).map(([key, meta]) => (
                                     <button key={key} onClick={() => setDraft({ ...draft, domain: key })}
-                                        className={`px-2 py-1 rounded text-[7px] font-mono font-bold uppercase border transition-all ${draft.domain === key ? '' : 'border-[#222] text-gray-600 hover:text-gray-400'}`}
+                                        className={`px-2 py-1 rounded text-[7px] font-mono font-bold uppercase border transition-all ${draft.domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400'}`}
                                         style={draft.domain === key ? { backgroundColor: meta.color + '15', color: meta.color, borderColor: meta.color + '50' } : undefined}>
                                         {meta.label}
                                     </button>
@@ -1457,7 +1537,7 @@ const NodeDetailPanel: React.FC<{
 
                         <div className="flex justify-end gap-2 pt-1">
                             <button onClick={handleCancel}
-                                className="px-3 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] transition-all">
+                                className="px-3 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">
                                 Cancel
                             </button>
                             <button onClick={handleSave}
@@ -1477,10 +1557,10 @@ const NodeDetailPanel: React.FC<{
                                 { k: 'TX Frames', v: node.txCount.toLocaleString(), c: '#22c55e' },
                                 { k: 'RX Frames', v: node.rxCount.toLocaleString(), c: '#3b82f6' },
                                 { k: 'Errors', v: node.errorCount.toLocaleString(), c: node.errorCount > 0 ? '#ef4444' : '#333' },
-                                { k: 'Domain', v: dm.label.toUpperCase(), c: dm.color },
+                                { v: dm.label.toUpperCase(), c: dm.color, k: 'Domain' },
                             ].map(s => (
-                                <div key={s.k} className="px-3 py-2 rounded-md bg-[#111116] border border-[#1a1a22]">
-                                    <span className="text-[9px] font-mono text-gray-400 uppercase tracking-wider block mb-0.5">{s.k}</span>
+                                <div key={s.k} className="px-3 py-2 rounded-md bg-gray-50 dark:bg-[#111116] border border-black/5 dark:border-[#1a1a22] transition-colors">
+                                    <span className="text-[9px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-wider block mb-0.5 transition-colors">{s.k}</span>
                                     <span className="text-[10px] font-mono font-bold" style={{ color: s.c }}>{s.v}</span>
                                 </div>
                             ))}
@@ -1488,7 +1568,7 @@ const NodeDetailPanel: React.FC<{
                         <div className="flex items-center justify-end">
                             <button
                                 onClick={onResetCounters}
-                                className="flex items-center gap-1.5 px-2 py-1 rounded text-[7px] font-mono font-bold text-gray-500 border border-[#1a1a22] hover:text-[#f1f1f1] hover:border-[#333] transition-all active:scale-95"
+                                className="flex items-center gap-1.5 px-2 py-1 rounded text-[7px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#1a1a22] hover:text-dark-950 dark:hover:text-[#f1f1f1] hover:border-black/20 dark:hover:border-[#333] transition-all active:scale-95"
                                 title="Reset TX, RX, and error counters for this node"
                             >
                                 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -1506,35 +1586,35 @@ const NodeDetailPanel: React.FC<{
             <div className="flex items-center gap-3 flex-wrap">
                 {/* Baud selector */}
                 <div className="flex items-center gap-1">
-                    <span className="text-[10px] font-mono text-gray-400 uppercase mr-1">Baud:</span>
+                    <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 uppercase mr-1 transition-colors">Baud:</span>
                     {BAUD_OPTIONS.map(b => (
                         <button key={b} onClick={() => onBaudChange(b)}
-                            className={`px-2 py-1 rounded text-[7px] font-mono font-bold border transition-all ${node.baudRate === b ? 'bg-[#00f3ff15] text-[#00f3ff] border-[#00f3ff40]' : 'text-gray-600 border-[#222] hover:border-[#333]'}`}>
+                            className={`px-2 py-1 rounded text-[7px] font-mono font-bold border transition-all ${node.baudRate === b ? 'bg-cyber-blue/15 text-cyber-blue border-cyber-blue/40 dark:bg-[#00f3ff15] dark:text-[#00f3ff] dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:border-black/20 dark:hover:border-[#333]'}`}>
                             {b}
                         </button>
                     ))}
                 </div>
 
-                <div className="w-px h-5 bg-[#222]" />
+                <div className="w-px h-5 bg-black/5 dark:bg-[#222] transition-colors" />
 
                 {/* Quick send buttons */}
                 <div className="flex items-center gap-1 flex-wrap">
-                    <span className="text-[10px] font-mono text-gray-400 uppercase mr-1">Send to:</span>
+                    <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 uppercase mr-1 transition-colors">Send to:</span>
                     {allNodes.filter(n => n.id !== node.id && n.online).map(target => (
                         <button key={target.id} onClick={() => onSendSignal(node.id, target.id)}
                             disabled={isBusy || !node.online}
-                            className="px-2 py-1 rounded text-[7px] font-mono font-bold text-gray-500 border border-[#222] hover:text-[#00f3ff] hover:border-[#00f3ff40] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                            className="px-2 py-1 rounded text-[7px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#222] hover:text-cyber-blue dark:hover:text-[#00f3ff] hover:border-cyber-blue/40 dark:hover:border-[#00f3ff40] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                             {target.label}
                         </button>
                     ))}
                     <button onClick={() => onSendSignal(node.id, 'broadcast')}
                         disabled={isBusy || !node.online}
-                        className="px-2 py-1 rounded text-[7px] font-mono font-bold text-yellow-500/70 border border-yellow-500/20 hover:text-yellow-400 hover:border-yellow-500/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                        className="px-2 py-1 rounded text-[7px] font-mono font-bold text-yellow-600 dark:text-yellow-500/70 border border-yellow-500/20 hover:text-yellow-500 dark:hover:text-yellow-400 hover:border-yellow-500/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                         ALL
                     </button>
                 </div>
 
-                <div className="w-px h-5 bg-[#222]" />
+                <div className="w-px h-5 bg-black/5 dark:bg-[#222] transition-colors" />
 
                 {/* Frame builder */}
                 <button onClick={onOpenFrameBuilder}
@@ -1550,7 +1630,7 @@ const NodeDetailPanel: React.FC<{
                     {node.online ? 'Disconnect' : 'Connect'}
                 </button>
                 <button onClick={onRemove}
-                    className="px-4 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-600 hover:text-red-400 hover:border-red-500/30 transition-all active:scale-95">
+                    className="px-4 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-600 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 hover:border-red-500/30 transition-all active:scale-95">
                     Remove
                 </button>
             </div>
@@ -1561,7 +1641,9 @@ const NodeDetailPanel: React.FC<{
 /* ═══════════════════════════════════════════════════════════════
    Message Log Panel
    ═══════════════════════════════════════════════════════════════ */
-const MessageLogPanel: React.FC<{ log: MessageLogEntry[]; onClear: () => void }> = ({ log, onClear }) => {
+function MessageLogPanel({ log, onClear }: { log: MessageLogEntry[]; onClear: () => void }) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const [expanded, setExpanded] = useState(true);
 
     const downloadFile = (content: string, filename: string, mimeType: string) => {
@@ -1589,41 +1671,41 @@ const MessageLogPanel: React.FC<{ log: MessageLogEntry[]; onClear: () => void }>
     };
 
     return (
-        <div className="bg-[#0a0a0e]">
-            <div className="w-full flex items-center justify-between px-5 py-2 hover:bg-[#0e0e12] transition-colors">
+        <div className="bg-white dark:bg-[#0a0a0e] transition-colors">
+            <div className="w-full flex items-center justify-between px-5 py-2 hover:bg-gray-50 dark:hover:bg-[#0e0e12] transition-colors">
                 <button onClick={() => setExpanded(!expanded)}
                     className="flex items-center gap-2">
-                    <span className="text-[8px] font-mono font-bold text-gray-400 uppercase tracking-wider">Message Log</span>
-                    <span className="text-[10px] font-mono text-gray-400">({log.length})</span>
-                    <span className="text-gray-600 text-[10px]">{expanded ? '\u25B2' : '\u25BC'}</span>
+                    <span className="text-[8px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-wider transition-colors">Message Log</span>
+                    <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 transition-colors">({log.length})</span>
+                    <span className="text-light-400 dark:text-gray-600 text-[10px] transition-colors">{expanded ? '\u25B2' : '\u25BC'}</span>
                 </button>
                 <div className="flex items-center gap-2">
                     <button onClick={exportCSV} disabled={log.length === 0}
-                        className="text-[10px] font-mono text-gray-400 hover:text-[#00f3ff] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                        className="text-[10px] font-mono text-light-500 dark:text-gray-400 hover:text-cyber-blue dark:hover:text-[#00f3ff] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                         CSV
                     </button>
                     <button onClick={exportJSON} disabled={log.length === 0}
-                        className="text-[10px] font-mono text-gray-400 hover:text-[#a855f7] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                        className="text-[10px] font-mono text-light-500 dark:text-gray-400 hover:text-cyber-purple dark:hover:text-[#a855f7] uppercase disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                         JSON
                     </button>
                     <button onClick={onClear}
-                        className="text-[10px] font-mono text-gray-400 hover:text-red-400 uppercase transition-colors">Clear</button>
+                        className="text-[10px] font-mono text-light-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 uppercase transition-colors">Clear</button>
                 </div>
             </div>
             <AnimatePresence>
                 {expanded && (
                     <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
                         <div className="max-h-48 overflow-y-auto px-5 pb-3 space-y-1">
-                            {log.map((entry, i) => (
-                                <motion.div key={`${entry.id}-${entry.timestamp}-${i}`}
-                                    initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.02 }}
-                                    className={`flex items-center gap-3 px-3 py-1.5 rounded-md text-[8px] font-mono ${entry.success ? 'bg-[#111116]' : 'bg-[#1a0808]'}`}>
+                            {log.map((entry) => (
+                                <motion.div key={`${entry.id}-${entry.timestamp}`}
+                                    initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}
+                                    className={`flex items-center gap-3 px-3 py-1.5 rounded-md text-[8px] font-mono transition-colors ${entry.success ? 'bg-gray-50 dark:bg-[#111116]' : 'bg-red-50 dark:bg-[#1a0808]'}`}>
                                     <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                                        style={{ backgroundColor: entry.success ? '#22c55e' : '#ef4444', boxShadow: `0 0 4px ${entry.success ? '#22c55e60' : '#ef444460'}` }} />
-                                    <span className="text-gray-600 w-16 flex-shrink-0">{new Date(entry.timestamp).toLocaleTimeString()}</span>
-                                    <span className="text-gray-300 font-bold w-14 flex-shrink-0">{entry.fromLabel}</span>
-                                    <span className="text-gray-600">{'\u2192'}</span>
-                                    <span className="text-gray-300 font-bold w-14 flex-shrink-0">{entry.toLabel}</span>
+                                        style={{ backgroundColor: entry.success ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${entry.success ? '#22c55e60' : '#ef444460'}` : 'none' }} />
+                                    <span className="text-light-400 dark:text-gray-600 w-16 flex-shrink-0 transition-colors uppercase">{new Date(entry.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                                    <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.fromLabel}</span>
+                                    <span className="text-light-400 dark:text-gray-600 transition-colors">{'\u2192'}</span>
+                                    <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.toLabel}</span>
                                     <span className="px-1 py-[1px] rounded border text-[6px] uppercase"
                                         style={{
                                             color: entry.messageType === 'diagnostic' ? '#00f3ff' : entry.messageType === 'remote' ? '#f59e0b' : '#a855f7',
@@ -1631,8 +1713,8 @@ const MessageLogPanel: React.FC<{ log: MessageLogEntry[]; onClear: () => void }>
                                         }}>
                                         {entry.messageType}
                                     </span>
-                                    <span className="text-gray-500">{entry.dlc}B</span>
-                                    <span className="text-gray-600 flex-1 truncate">[{entry.data.join(' ')}]</span>
+                                    <span className="text-light-400 dark:text-gray-500 transition-colors">{entry.dlc}B</span>
+                                    <span className="text-light-400 dark:text-gray-600 flex-1 truncate transition-colors">[{entry.data.join(' ')}]</span>
                                     {entry.error && (
                                         <span className="text-red-400 text-[8px] truncate max-w-[160px] cursor-help" title={entry.error}>
                                             {entry.error}
@@ -1651,11 +1733,15 @@ const MessageLogPanel: React.FC<{ log: MessageLogEntry[]; onClear: () => void }>
 /* ═══════════════════════════════════════════════════════════════
    Frame Builder Dialog
    ═══════════════════════════════════════════════════════════════ */
-const FrameBuilderDialog: React.FC<{
-    fromNode: ECUNode; allNodes: ECUNode[];
+function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
+    fromNode: ECUNode;
+    allNodes: ECUNode[];
     onSend: (toId: string | 'broadcast', msgType: MessageType, dlc: number, data: string[]) => void;
-    onClose: () => void; isBusy: boolean;
-}> = ({ fromNode, allNodes, onSend, onClose, isBusy }) => {
+    onClose: () => void;
+    isBusy: boolean;
+}) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const [toId, setToId] = useState<string | 'broadcast'>('broadcast');
     const [msgType, setMsgType] = useState<MessageType>('data');
     const [dlc, setDlc] = useState(8);
@@ -1668,26 +1754,26 @@ const FrameBuilderDialog: React.FC<{
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-colors" onClick={onClose}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
                 onClick={e => e.stopPropagation()}
-                className="bg-[#111116] border border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-lg">
+                className="bg-white dark:bg-[#111116] border border-black/10 dark:border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-lg transition-colors">
 
-                <h3 className="text-sm font-mono font-black text-[#f1f1f1] uppercase tracking-wider mb-1">Build CAN Frame</h3>
-                <p className="text-[8px] font-mono text-gray-500 mb-4">Transmitting from <span className="text-[#00f3ff] font-bold">{fromNode.label}</span> ({fromNode.canId})</p>
+                <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider mb-1 transition-colors">Build CAN Frame</h3>
+                <p className="text-[8px] font-mono text-light-500 dark:text-gray-500 mb-4 transition-colors">Transmitting from <span className="text-cyber-blue dark:text-[#00f3ff] font-bold">{fromNode.label}</span> ({fromNode.canId})</p>
 
                 <div className="space-y-4">
                     {/* Target */}
                     <div>
-                        <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1.5">Target Node</label>
+                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Target Node</label>
                         <div className="flex flex-wrap gap-1.5">
                             <button onClick={() => setToId('broadcast')}
-                                className={`px-2.5 py-1.5 rounded text-[7px] font-mono font-bold uppercase border transition-all ${toId === 'broadcast' ? 'bg-[#f59e0b15] text-[#f59e0b] border-[#f59e0b50]' : 'text-gray-600 border-[#222]'}`}>
+                                className={`px-2.5 py-1.5 rounded text-[7px] font-mono font-bold uppercase border transition-all ${toId === 'broadcast' ? 'bg-orange-500/15 text-orange-600 dark:text-[#f59e0b] border-orange-500/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                 Broadcast (All)
                             </button>
                             {allNodes.filter(n => n.id !== fromNode.id && n.online).map(n => (
                                 <button key={n.id} onClick={() => setToId(n.id)}
-                                    className={`px-2.5 py-1.5 rounded text-[7px] font-mono font-bold uppercase border transition-all ${toId === n.id ? 'bg-[#00f3ff15] text-[#00f3ff] border-[#00f3ff50]' : 'text-gray-600 border-[#222]'}`}>
+                                    className={`px-2.5 py-1.5 rounded text-[7px] font-mono font-bold uppercase border transition-all ${toId === n.id ? 'bg-cyber-blue/15 text-cyber-blue dark:text-[#00f3ff] border-cyber-blue/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                     {n.label}
                                 </button>
                             ))}
@@ -1696,13 +1782,13 @@ const FrameBuilderDialog: React.FC<{
 
                     {/* Message Type */}
                     <div>
-                        <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1.5">Frame Type</label>
+                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Frame Type</label>
                         <div className="flex gap-1.5">
                             {([['data', 'Data Frame', 'Standard data payload'], ['remote', 'Remote Frame', 'Request data from target'], ['diagnostic', 'Diagnostic', 'UDS/OBD request']] as const).map(([type, label, desc]) => (
                                 <button key={type} onClick={() => setMsgType(type)}
-                                    className={`flex-1 px-3 py-2 rounded border text-left transition-all ${msgType === type ? 'border-[#00f3ff40] bg-[#00f3ff08]' : 'border-[#222] hover:border-[#333]'}`}>
-                                    <span className={`text-[8px] font-mono font-bold block ${msgType === type ? 'text-[#00f3ff]' : 'text-gray-400'}`}>{label}</span>
-                                    <span className="text-[9px] font-mono text-gray-400 block mt-0.5">{desc}</span>
+                                    className={`flex-1 px-3 py-2 rounded border text-left transition-all ${msgType === type ? 'border-cyber-blue/40 bg-cyber-blue/5 dark:border-[#00f3ff40] dark:bg-[#00f3ff08]' : 'border-black/10 dark:border-[#222] hover:border-black/20 dark:hover:border-[#333]'}`}>
+                                    <span className={`text-[8px] font-mono font-bold block transition-colors ${msgType === type ? 'text-cyber-blue dark:text-[#00f3ff]' : 'text-light-400 dark:text-gray-400'}`}>{label}</span>
+                                    <span className="text-[9px] font-mono text-light-400 dark:text-gray-400 block mt-0.5 transition-colors">{desc}</span>
                                 </button>
                             ))}
                         </div>
@@ -1710,11 +1796,11 @@ const FrameBuilderDialog: React.FC<{
 
                     {/* DLC */}
                     <div>
-                        <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1.5">Data Length Code (DLC): {dlc} bytes</label>
+                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Data Length Code (DLC): {dlc} bytes</label>
                         <div className="flex gap-1">
                             {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(d => (
                                 <button key={d} onClick={() => setDlc(d)}
-                                    className={`w-8 h-8 rounded text-[8px] font-mono font-bold border transition-all ${dlc === d ? 'bg-[#a855f715] text-[#a855f7] border-[#a855f750]' : 'text-gray-600 border-[#222]'}`}>
+                                    className={`w-8 h-8 rounded text-[8px] font-mono font-bold border transition-all ${dlc === d ? 'bg-cyber-purple/15 text-cyber-purple border-cyber-purple/50 dark:bg-[#a855f715] dark:text-[#a855f7] dark:border-[#a855f750]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                     {d}
                                 </button>
                             ))}
@@ -1725,15 +1811,15 @@ const FrameBuilderDialog: React.FC<{
                     {dlc > 0 && (
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
-                                <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider">Data Bytes (hex)</label>
-                                <button onClick={() => setDataBytes(RANDOM_DATA())} className="text-[10px] font-mono text-gray-400 hover:text-[#a855f7] transition-colors">Randomize</button>
+                                <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider transition-colors">Data Bytes (hex)</label>
+                                <button onClick={() => setDataBytes(RANDOM_DATA())} className="text-[10px] font-mono text-light-400 dark:text-gray-400 hover:text-cyber-purple dark:hover:text-[#a855f7] transition-colors">Randomize</button>
                             </div>
                             <div className="flex gap-1.5">
                                 {Array.from({ length: dlc }, (_, i) => (
                                     <div key={i} className="flex flex-col items-center gap-0.5">
-                                        <span className="text-[5px] font-mono text-gray-700">D{i}</span>
+                                        <span className="text-[5px] font-mono text-light-300 dark:text-gray-700 transition-colors">D{i}</span>
                                         <input value={dataBytes[i] ?? '00'} onChange={e => updateByte(i, e.target.value)}
-                                            className="w-9 h-8 text-center bg-[#0a0a0e] border border-[#222] rounded text-[9px] font-mono font-bold text-[#a855f7] focus:outline-none focus:border-[#a855f740] uppercase"
+                                            className="w-9 h-8 text-center bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded text-[9px] font-mono font-bold text-cyber-purple dark:text-[#a855f7] focus:outline-none focus:border-cyber-purple/40 dark:focus:border-[#a855f740] uppercase transition-colors"
                                             maxLength={2} />
                                     </div>
                                 ))}
@@ -1742,8 +1828,8 @@ const FrameBuilderDialog: React.FC<{
                     )}
 
                     {/* Frame preview */}
-                    <div className="p-3 rounded-md bg-[#0a0a0e] border border-[#1a1a20]">
-                        <span className="text-[9px] font-mono text-gray-400 uppercase tracking-wider block mb-1">Frame Preview</span>
+                    <div className="p-3 rounded-md bg-gray-50 dark:bg-[#0a0a0e] border border-black/10 dark:border-[#1a1a20] transition-colors">
+                        <span className="text-[9px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-wider block mb-1 transition-colors">Frame Preview</span>
                         <div className="flex gap-[2px] rounded overflow-hidden">
                             {[
                                 { label: 'SOF', color: '#22c55e', w: 'w-4' },
@@ -1754,9 +1840,9 @@ const FrameBuilderDialog: React.FC<{
                                 { label: 'ACK', color: '#14b8a6', w: 'w-6' },
                                 { label: 'EOF', color: '#00f3ff', w: 'w-6' },
                             ].map((seg, i) => (
-                                <div key={i} className={`${seg.w} h-6 flex items-center justify-center px-1`}
-                                    style={{ backgroundColor: seg.color + '15', borderBottom: `2px solid ${seg.color}40` }}>
-                                    <span className="text-[8px] font-mono font-bold truncate" style={{ color: seg.color }}>{seg.label}</span>
+                                <div key={i} className={`${seg.w} h-6 flex items-center justify-center px-1 transition-colors`}
+                                    style={{ backgroundColor: seg.color + (isDark ? '15' : '10'), borderBottom: `2px solid ${seg.color}${isDark ? '40' : '60'}` }}>
+                                    <span className="text-[8px] font-mono font-bold truncate transition-colors" style={{ color: seg.color }}>{seg.label}</span>
                                 </div>
                             ))}
                         </div>
@@ -1765,10 +1851,10 @@ const FrameBuilderDialog: React.FC<{
 
                 {/* Actions */}
                 <div className="flex justify-end gap-2 mt-5">
-                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] transition-all">Cancel</button>
+                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
                     <button onClick={() => onSend(toId, msgType, dlc, dataBytes.slice(0, dlc))}
                         disabled={isBusy}
-                        className="px-5 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-[#22c55e15] border border-[#22c55e40] text-[#22c55e] hover:bg-[#22c55e25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                        className="px-5 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-green-500/10 dark:bg-[#22c55e15] border border-green-500/30 dark:border-[#22c55e40] text-green-600 dark:text-[#22c55e] hover:bg-green-500/20 dark:hover:bg-[#22c55e25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                         Transmit Frame
                     </button>
                 </div>
@@ -1780,12 +1866,12 @@ const FrameBuilderDialog: React.FC<{
 /* ═══════════════════════════════════════════════════════════════
    Add ECU Dialog
    ═══════════════════════════════════════════════════════════════ */
-const AddECUDialog: React.FC<{
+function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
     onAdd: (node: Omit<ECUNode, 'id' | 'txCount' | 'rxCount' | 'errorCount'>) => void;
     onClose: () => void;
     existingPositions: number[];
     existingNodes: Pick<ECUNode, 'id' | 'label' | 'canId'>[];
-}> = ({ onAdd, onClose, existingPositions, existingNodes }) => {
+}) {
     const [label, setLabel] = useState('');
     const [canId, setCanId] = useState('0x');
     const [domain, setDomain] = useState<ECUDomain>('body');
@@ -1797,8 +1883,13 @@ const AddECUDialog: React.FC<{
     );
 
     const findFreePosition = (): number => {
-        for (let x = 10; x <= 90; x += 5) { if (!existingPositions.some(p => Math.abs(p - x) < 8)) return x; }
-        return 50;
+        // Try to find a balanced spot with 8% gap first (optimal for visual)
+        for (let x = 10; x <= 90; x += 2) { if (!existingPositions.some(p => Math.abs(p - x) < 8)) return x; }
+        // If crowded, reduce gap to 5% (minimal for clarity)
+        for (let x = 5; x <= 95; x += 2) { if (!existingPositions.some(p => Math.abs(p - x) < 5)) return x; }
+        // Still no? Just append after the rightmost node
+        const maxPos = existingPositions.length > 0 ? Math.max(...existingPositions) : 50;
+        return Math.min(98, maxPos + 2);
     };
 
     const handleSubmit = () => {
@@ -1811,40 +1902,40 @@ const AddECUDialog: React.FC<{
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
                 onClick={e => e.stopPropagation()}
-                className="bg-[#111116] border border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-md">
-                <h3 className="text-sm font-mono font-black text-[#f1f1f1] uppercase tracking-wider mb-4">Add ECU Node</h3>
+                className="bg-white dark:bg-[#111116] border border-black/10 dark:border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-md transition-colors">
+                <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider mb-4 transition-colors">Add ECU Node</h3>
                 <div className="space-y-3">
                     <div>
-                        <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
+                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">ECU Name</label>
                         <input value={label} onChange={e => setLabel(e.target.value)} placeholder="e.g. Airbag SRS"
-                            className={`w-full bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-[#f1f1f1] placeholder:text-gray-700 focus:outline-none transition-colors ${!label.trim() && label.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-[#222] focus:border-[#00f3ff40]'}`} />
+                            className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none transition-colors ${!label.trim() && label.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyan-500/50 dark:focus:border-[#00f3ff40]'}`} />
                         {!label.trim() && label.length > 0 && (
-                            <p className="text-[8px] font-mono text-red-400 mt-1">
+                            <p className="text-[8px] font-mono text-red-500 dark:text-red-400 mt-1">
                                 ECU name is required.
                             </p>
                         )}
                     </div>
                     <div>
-                        <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
+                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">CAN ID</label>
                         <input value={canId} onChange={e => setCanId(e.target.value)} placeholder="0x7E2"
-                            className={`w-full bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-[#f1f1f1] placeholder:text-gray-700 focus:outline-none transition-colors ${canId.length < 4 && canId.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-[#222] focus:border-[#00f3ff40]'}`} />
+                            className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none transition-colors ${canId.length < 4 && canId.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyan-500/50 dark:focus:border-[#00f3ff40]'}`} />
                         {duplicateNode && (
-                            <p className="text-[8px] font-mono text-red-400 mt-1">
+                            <p className="text-[8px] font-mono text-red-500 dark:text-red-400 mt-1">
                                 CAN ID {canId} is already in use by {duplicateNode.label}
                             </p>
                         )}
                         {canId.length < 4 && canId.length > 0 && !duplicateNode && (
-                            <p className="text-[8px] font-mono text-gray-500 mt-1 uppercase tracking-tighter">
+                            <p className="text-[8px] font-mono text-light-400 dark:text-gray-500 mt-1 uppercase tracking-tighter transition-colors">
                                 ID must be 4+ characters (e.g., 0x7E0)
                             </p>
                         )}
                     </div>
                     <div>
-                        <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">Domain</label>
+                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Domain</label>
                         <div className="flex flex-wrap gap-1.5">
                             {(Object.entries(DOMAIN_META) as [ECUDomain, typeof DOMAIN_META[ECUDomain]][]).map(([key, meta]) => (
                                 <button key={key} onClick={() => setDomain(key)}
-                                    className={`px-2.5 py-1 rounded text-[7px] font-mono font-bold uppercase border transition-all ${domain === key ? '' : 'border-[#222] text-gray-600 hover:text-gray-400'}`}
+                                    className={`px-2.5 py-1 rounded text-[7px] font-mono font-bold uppercase border transition-all ${domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-900 dark:hover:text-gray-400'}`}
                                     style={domain === key ? { backgroundColor: meta.color + '15', color: meta.color, borderColor: meta.color + '50' } : undefined}>
                                     {meta.label}
                                 </button>
@@ -1853,25 +1944,25 @@ const AddECUDialog: React.FC<{
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">Stub Length (m)</label>
+                            <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Stub Length (m)</label>
                             <input value={stubLength} onChange={e => setStubLength(e.target.value)} placeholder="0.20"
-                                className="w-full bg-[#0a0a0e] border border-[#222] rounded-md px-3 py-2 text-xs font-mono text-[#f1f1f1] placeholder:text-gray-700 focus:outline-none focus:border-[#00f3ff40]" />
+                                className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none focus:border-cyan-500/50 dark:focus:border-[#00f3ff40] transition-colors" />
                         </div>
                         <div>
-                            <label className="text-[7px] font-mono text-gray-500 uppercase tracking-wider block mb-1">Baud Rate</label>
+                            <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Baud Rate</label>
                             <div className="flex gap-1">
                                 {BAUD_OPTIONS.map(b => (
                                     <button key={b} onClick={() => setBaudRate(b)}
-                                        className={`px-2 py-1.5 rounded text-[7px] font-mono font-bold border transition-all flex-1 ${baudRate === b ? 'bg-[#00f3ff15] text-[#00f3ff] border-[#00f3ff40]' : 'text-gray-600 border-[#222]'}`}>{b}</button>
+                                        className={`px-2 py-1.5 rounded text-[7px] font-mono font-bold border transition-all flex-1 ${baudRate === b ? 'bg-cyan-500/10 dark:bg-[#00f3ff15] text-cyan-600 dark:text-[#00f3ff] border-cyan-500/30 dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:text-dark-900 dark:hover:text-gray-400 transition-colors'}`}>{b}</button>
                                 ))}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="flex justify-end gap-2 mt-5">
-                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] transition-all">Cancel</button>
+                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
                     <button onClick={handleSubmit} disabled={!label.trim() || canId.length < 4 || !!duplicateNode}
-                        className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-[#00f3ff15] border border-[#00f3ff40] text-[#00f3ff] hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">Add to Bus</button>
+                        className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-cyan-500/10 dark:bg-[#00f3ff15] border border-cyan-500/30 dark:border-[#00f3ff40] text-cyan-600 dark:text-[#00f3ff] hover:bg-cyan-500/20 dark:hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">Add to Bus</button>
                 </div>
             </motion.div>
         </motion.div>
@@ -1879,10 +1970,14 @@ const AddECUDialog: React.FC<{
 };
 
 /* ─── Small helpers ─── */
-const StatusBadge: React.FC<{ label: string; value: string | number; color: string }> = ({ label, value, color }) => (
-    <div className="flex items-center gap-1.5 px-2 py-1 bg-[#0a0a0e] border border-[#1a1a20] rounded-md">
-        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color, boxShadow: `0 0 4px ${color}60` }} />
-        <span className="text-[9px] font-mono text-gray-400 uppercase tracking-wider">{label}</span>
-        <span className="text-[11px] font-mono font-bold" style={{ color }}>{value}</span>
-    </div>
-);
+function StatusBadge({ label, value, color }: { label: string; value: string | number; color: string }) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+    return (
+        <div className="flex items-center gap-1.5 px-2 py-1 bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#1a1a20] rounded-md transition-colors">
+            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color, boxShadow: isDark ? `0 0 4px ${color}60` : 'none' }} />
+            <span className="text-[9px] font-mono text-light-500 dark:text-gray-400 uppercase tracking-wider transition-colors">{label}</span>
+            <span className="text-[11px] font-mono font-bold transition-colors" style={{ color }}>{value}</span>
+        </div>
+    );
+}

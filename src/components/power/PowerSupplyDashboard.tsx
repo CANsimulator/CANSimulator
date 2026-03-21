@@ -4,8 +4,11 @@ import { usePower } from '../../context/PowerContext';
 import { useMomentaryAction } from '../../hooks/useMomentaryAction';
 import { BorderBeam } from '../ui/BorderBeam';
 import { cn } from '../../utils/cn';
+import { useTheme } from '../../context/ThemeContext';
 
 export const PowerSupplyDashboard: React.FC = () => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const {
         voltage,
         current,
@@ -125,13 +128,13 @@ export const PowerSupplyDashboard: React.FC = () => {
                         "w-2.5 h-2.5 rounded-full shadow-glow-sm",
                         powerState !== 'OFF' ? "bg-cyber-blue animate-pulse" : "bg-gray-700"
                     )} />
-                    <h2 className="text-sm font-black text-[#f1f1f1] font-mono tracking-widest uppercase">
+                    <h2 className="text-sm font-black text-dark-950 dark:text-[#f1f1f1] font-mono tracking-widest uppercase transition-colors">
                         Lab Power Supply
-                        <span className="text-[10px] text-gray-400 ml-3 font-normal tracking-normal uppercase opacity-60">PPS-3005-Cyber</span>
+                        <span className="text-[10px] text-light-400 dark:text-gray-400 ml-3 font-normal tracking-normal uppercase opacity-60">PPS-3005-Cyber</span>
                     </h2>
                 </div>
 
-                <div className="flex bg-white/5 p-1 rounded-lg border border-white/5">
+                <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-lg border border-black/5 dark:border-white/5 transition-colors">
                     {[12, 24].map(v => (
                         <button
                             key={v}
@@ -151,7 +154,7 @@ export const PowerSupplyDashboard: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* 1. Monitoring Display (Left) */}
-                <div className="lg:col-span-1 bg-black/40 rounded-xl p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden shadow-inner">
+                <div className="lg:col-span-1 bg-white/40 dark:bg-black/40 rounded-xl p-5 border border-black/5 dark:border-white/5 flex flex-col justify-between relative overflow-hidden shadow-inner transition-colors">
                     {/* Status Badges */}
                     <div className="absolute top-4 right-4 flex gap-2">
                         <span className={cn(
@@ -199,8 +202,8 @@ export const PowerSupplyDashboard: React.FC = () => {
                         </div>
 
                         <div>
-                            <p className="text-[10px] text-gray-400 uppercase font-mono tracking-widest mb-1">Total Power</p>
-                            <div className="text-xl font-mono font-black text-[#f1f1f1]/80">
+                            <p className="text-[10px] text-light-400 dark:text-gray-400 uppercase font-mono tracking-widest mb-1">Total Power</p>
+                            <div className="text-xl font-mono font-black text-dark-950/80 dark:text-[#f1f1f1]/80 transition-colors">
                                 {powerW.toFixed(1)}<span className="text-xs ml-1 opacity-40 font-normal">W</span>
                             </div>
                         </div>
@@ -223,14 +226,14 @@ export const PowerSupplyDashboard: React.FC = () => {
                                 step="0.1"
                                 value={targetVoltage}
                                 onChange={(e) => setTargetVoltage(parseFloat(e.target.value))}
-                                className="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyber-blue"
+                                className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyber-blue transition-colors"
                             />
                             <div className="flex gap-2 mt-3 overflow-x-auto pb-1 no-scrollbar">
                                 {[3.3, 5.0, 12.0, 13.8, 24.0].map(v => (
                                     <button
                                         key={v}
                                         onClick={() => setTargetVoltage(v)}
-                                        className="flex-shrink-0 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded text-[9px] font-mono font-bold text-gray-400 hover:text-[#f1f1f1] transition-all shadow-sm"
+                                        className="flex-shrink-0 px-3 py-1.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 rounded text-[9px] font-mono font-bold text-light-400 dark:text-gray-400 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all shadow-sm"
                                     >
                                         {v}V
                                     </button>
@@ -251,7 +254,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                                 step="0.1"
                                 value={currentLimit}
                                 onChange={(e) => setCurrentLimit(parseFloat(e.target.value))}
-                                className="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyber-purple"
+                                className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyber-purple transition-colors"
                             />
                         </div>
 
@@ -260,7 +263,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                             "mt-6 p-4 rounded-xl border transition-all duration-500",
                             powerState !== 'OFF'
                                 ? "bg-cyber-blue/10 border-cyber-blue/30 shadow-[0_0_20px_rgba(0,243,255,0.05)]"
-                                : "bg-white/5 border-white/10"
+                                : "bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10"
                         )}>
                             <div className="flex items-center justify-between">
                                 <div className="space-y-1">
@@ -276,7 +279,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                                     aria-label={powerState !== 'OFF' ? 'Turn ignition off' : 'Turn ignition on'}
                                     className={cn(
                                         "w-12 h-6 rounded-full relative transition-all duration-300",
-                                        powerState !== 'OFF' ? "bg-cyber-blue" : "bg-gray-800"
+                                        powerState !== 'OFF' ? "bg-cyber-blue" : (isDark ? "bg-gray-800" : "bg-gray-300")
                                     )}
                                 >
                                     <motion.div
@@ -292,7 +295,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                 {/* 3. Advanced Features (Right) */}
                 <div className="lg:col-span-1 flex flex-col gap-6">
                     {/* Viewport Monitor */}
-                    <div className="flex-1 bg-black/40 rounded-xl border border-white/5 p-4 relative min-h-[140px] shadow-inner">
+                    <div className="flex-1 bg-white/40 dark:bg-black/40 rounded-xl border border-black/5 dark:border-white/5 p-4 relative min-h-[140px] shadow-inner transition-colors">
                         <p className="absolute top-3 left-4 text-[9px] text-gray-600 font-black uppercase tracking-widest font-mono">V-OUT Oscillo</p>
                         <canvas ref={canvasRef} width={400} height={140} className="w-full h-full rounded-lg" />
                     </div>

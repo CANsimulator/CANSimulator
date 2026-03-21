@@ -1,14 +1,10 @@
-/**
- * FaultScenarioPanel
- * Master fault injection console for the physical test bench.
- */
-
 import React, { useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePower } from '../../context/PowerContext';
 import { useTestBench } from '../../context/TestBenchContext';
 import { findBitTimingPresetByBaudRate } from '../../types/testbench';
 import { useMomentaryAction } from '../../hooks/useMomentaryAction';
+import { useTheme } from '../../context/ThemeContext';
 
 type ScenarioId =
     | 'power-off'
@@ -74,6 +70,8 @@ const SCENARIOS: ScenarioConfig[] = [
 ] as const;
 
 export const FaultScenarioPanel: React.FC = () => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const bench = useTestBench();
     const power = usePower();
 
@@ -160,11 +158,11 @@ export const FaultScenarioPanel: React.FC = () => {
 
     return (
         <div
-            className="overflow-hidden rounded-2xl border border-[#1a1a22] bg-[#0c0c10] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+            className="overflow-hidden rounded-2xl border border-black/10 dark:border-[#1a1a22] bg-white dark:bg-[#0c0c10] shadow-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-colors"
             role="region"
             aria-label="Fault Scenario Injector"
         >
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#14141e] bg-[#09090d] px-4 py-2">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 dark:border-[#14141e] bg-gray-50/50 dark:bg-[#09090d] px-4 py-2 transition-colors">
                 <div className="flex items-center gap-3">
                     <motion.div
                         className="h-2 w-2 rounded-full"
@@ -173,10 +171,10 @@ export const FaultScenarioPanel: React.FC = () => {
                             boxShadow: xcvrOk ? '0 0 6px #22c55e60' : '0 0 6px #ef444460',
                         }}
                     />
-                    <span className="text-[10px] font-mono font-black uppercase tracking-widest text-[#f1f1f1]">
+                    <span className="text-[10px] font-mono font-black uppercase tracking-widest text-dark-950 dark:text-[#f1f1f1] transition-colors">
                         FAULT-INJECTOR
                     </span>
-                    <span className="text-[8px] font-mono tracking-wider text-gray-500">
+                    <span className="text-[8px] font-mono tracking-wider text-light-500 dark:text-gray-500 transition-colors">
                         SCENARIO CONSOLE · RACK 1.5
                     </span>
                 </div>
@@ -225,8 +223,8 @@ export const FaultScenarioPanel: React.FC = () => {
                                         onBlur={shortGndAction.handleBlur}
                                         className="relative flex min-h-[88px] select-none flex-col items-center justify-center gap-1 rounded-lg px-2 py-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
                                         animate={{
-                                            backgroundColor: active ? `${scenario.color}12` : '#0e0e14',
-                                            borderColor: active ? `${scenario.color}50` : '#1a1a22',
+                                            backgroundColor: active ? `${scenario.color}12` : (isDark ? '#0e0e14' : '#f8f9fa'),
+                                            borderColor: active ? `${scenario.color}50` : (isDark ? '#1a1a22' : '#e5e7eb'),
                                             boxShadow: active ? `0 0 20px ${scenario.color}40` : 'none',
                                         }}
                                         style={{ border: '1px solid' }}
@@ -264,8 +262,8 @@ export const FaultScenarioPanel: React.FC = () => {
                                     onClick={() => toggleScenario(scenario.id)}
                                     className="relative flex min-h-[88px] flex-col items-center justify-center gap-1 rounded-lg px-2 py-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
                                     animate={{
-                                        backgroundColor: active ? `${scenario.color}12` : '#0e0e14',
-                                        borderColor: active ? `${scenario.color}50` : '#1a1a22',
+                                        backgroundColor: active ? `${scenario.color}12` : (isDark ? '#0e0e14' : '#f8f9fa'),
+                                        borderColor: active ? `${scenario.color}50` : (isDark ? '#1a1a22' : '#e5e7eb'),
                                         boxShadow: active ? `0 0 14px ${scenario.color}25` : 'none',
                                     }}
                                     style={{ border: '1px solid' }}
@@ -299,7 +297,7 @@ export const FaultScenarioPanel: React.FC = () => {
                                     <motion.div
                                         className="z-10 h-1.5 w-1.5 rounded-full"
                                         animate={{
-                                            backgroundColor: active ? scenario.color : '#333',
+                                            backgroundColor: active ? scenario.color : (isDark ? '#333' : '#cbd5e1'),
                                             boxShadow: active ? `0 0 4px ${scenario.color}` : 'none',
                                         }}
                                     />
@@ -316,14 +314,14 @@ export const FaultScenarioPanel: React.FC = () => {
 
 const LivePill: React.FC<{ label: string; value: string; ok: boolean }> = ({ label, value, ok }) => (
     <div
-        className="flex items-center gap-1 rounded border px-2 py-0.5 text-[7px] font-mono"
+        className="flex items-center gap-1 rounded border px-2 py-0.5 text-[7px] font-mono transition-colors"
         style={{
             borderColor: ok ? '#22c55e30' : '#ef444430',
             backgroundColor: ok ? '#22c55e08' : '#ef444408',
         }}
     >
-        <span className="text-gray-500">{label}</span>
-        <span className="font-bold" style={{ color: ok ? '#22c55e' : '#ef4444' }}>{value}</span>
+        <span className="text-light-500 dark:text-gray-500 transition-colors">{label}</span>
+        <span className="font-bold transition-colors" style={{ color: ok ? '#22c55e' : '#ef4444' }}>{value}</span>
     </div>
 );
 

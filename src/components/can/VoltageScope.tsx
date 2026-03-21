@@ -733,7 +733,7 @@ export const VoltageScope: React.FC = () => {
             const idxB = Math.floor(s.cursorB * (samples.length - 1));
             const sA = samples[clamp(idxA, 0, samples.length - 1)];
             const sB = samples[clamp(idxB, 0, samples.length - 1)];
-            const dt = Math.abs(idxB - idxA) * (s.tdiv / 10);
+            const dt = Math.abs(idxB - idxA) * (s.tdiv / 20);
             const dv = Math.abs(sA.canh - sB.canh);
             ctx.fillStyle = C.cursor; ctx.textAlign = 'left'; ctx.font = '600 8px monospace';
             ctx.fillText(`ΔT=${dt.toFixed(1)}µs  ΔV=${dv.toFixed(2)}V`, M.left, CANVAS_H - 4);
