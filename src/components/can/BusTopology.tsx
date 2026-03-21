@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTestBench } from '../../context/TestBenchContext';
 import { useTheme } from '../../context/ThemeContext';
+import { Tooltip } from '../ui';
 
 /* ═══════════════════════════════════════════════════════════════
    Types & Constants
@@ -9,6 +10,7 @@ import { useTheme } from '../../context/ThemeContext';
 interface ECUNode {
     id: string;
     label: string;
+    description?: string;
     canId: string;
     x: number;
     online: boolean;
@@ -80,14 +82,14 @@ const PHASE_INFO: Record<FramePhase, { label: string; color: string; description
 const PHASE_ORDER: FramePhase[] = ['sof', 'arbitration', 'control', 'data', 'crc', 'ack', 'eof', 'done'];
 
 const DEFAULT_NODES: ECUNode[] = [
-    { id: 'ecu1', label: 'ECM', canId: '0x7E0', x: 10, online: true, domain: 'powertrain', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.15, baudRate: '500k' },
-    { id: 'ecu2', label: 'TCU', canId: '0x7E1', x: 20, online: true, domain: 'powertrain', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.20, baudRate: '500k' },
-    { id: 'ecu3', label: 'ABS/ESP', canId: '0x740', x: 30, online: true, domain: 'chassis', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.18, baudRate: '500k' },
-    { id: 'ecu4', label: 'EPS', canId: '0x742', x: 40, online: true, domain: 'chassis', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.12, baudRate: '500k' },
-    { id: 'ecu5', label: 'BCM', canId: '0x650', x: 50, online: true, domain: 'body', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.25, baudRate: '500k' },
-    { id: 'ecu6', label: 'IC', canId: '0x660', x: 60, online: true, domain: 'infotainment', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.30, baudRate: '500k' },
-    { id: 'ecu7', label: 'ADAS', canId: '0x680', x: 70, online: true, domain: 'adas', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.10, baudRate: '500k' },
-    { id: 'ecu8', label: 'OBD-GW', canId: '0x7DF', x: 82, online: true, isLocal: true, domain: 'diagnostic', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.05, baudRate: '500k' },
+    { id: 'ecu1', label: 'ECM', description: 'Engine ECU - ECM', canId: '0x7E0', x: 10, online: true, domain: 'powertrain', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.15, baudRate: '500k' },
+    { id: 'ecu2', label: 'TCU', description: 'Transmission ECU - TCU', canId: '0x7E1', x: 20, online: true, domain: 'powertrain', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.20, baudRate: '500k' },
+    { id: 'ecu3', label: 'ABS/ESP', description: 'Anti-lock Braking System - ABS/ESP', canId: '0x740', x: 30, online: true, domain: 'chassis', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.18, baudRate: '500k' },
+    { id: 'ecu4', label: 'EPS', description: 'Electric Power Steering - EPS', canId: '0x742', x: 40, online: true, domain: 'chassis', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.12, baudRate: '500k' },
+    { id: 'ecu5', label: 'BCM', description: 'Body Control Module - BCM', canId: '0x650', x: 50, online: true, domain: 'body', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.25, baudRate: '500k' },
+    { id: 'ecu6', label: 'IC', description: 'Instrument Cluster - IC', canId: '0x660', x: 60, online: true, domain: 'infotainment', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.30, baudRate: '500k' },
+    { id: 'ecu7', label: 'ADAS', description: 'Advanced Driver Assistance - ADAS', canId: '0x680', x: 70, online: true, domain: 'adas', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.10, baudRate: '500k' },
+    { id: 'ecu8', label: 'OBD-GW', description: 'OBD Diagnostic Gateway - OBD-GW', canId: '0x7DF', x: 82, online: true, isLocal: true, domain: 'diagnostic', txCount: 0, rxCount: 0, errorCount: 0, stubLength: 0.05, baudRate: '500k' },
 ];
 
 const BAUD_OPTIONS = ['125k', '250k', '500k', '1M'] as const;
@@ -1288,13 +1290,15 @@ function ECUBox({
                     </div>
                 )}
 
-                <span className="font-mono font-black uppercase tracking-tight block leading-tight truncate px-1"
-                    style={{
-                        color: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#555',
-                        fontSize: isSmall ? '8px' : '9px'
-                    }}>
-                    {node.label}
-                </span>
+                <Tooltip content={node.description || `ECU: ${node.label}`} side={isBottom ? 'bottom' : 'top'}>
+                    <span className="font-mono font-black uppercase tracking-tight block leading-tight truncate px-1"
+                        style={{
+                            color: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#555',
+                            fontSize: isSmall ? '8px' : '9px'
+                        }}>
+                        {node.label}
+                    </span>
+                </Tooltip>
 
                 {!isSmall && (
                     <>
@@ -1418,7 +1422,7 @@ function NodeDetailPanel({
     onClose: () => void;
     onSendSignal: (from: string, to: string | 'broadcast', msgType?: MessageType, dlc?: number, data?: string[]) => void;
     onBaudChange: (baud: string) => void;
-    onUpdateNode: (updates: Partial<Pick<ECUNode, 'label' | 'canId' | 'domain' | 'stubLength'>>) => void;
+    onUpdateNode: (updates: Partial<Pick<ECUNode, 'label' | 'description' | 'canId' | 'domain' | 'stubLength'>>) => void;
     allNodes: ECUNode[];
     existingNodes: ECUNode[];
     isBusy: boolean;
@@ -1430,6 +1434,7 @@ function NodeDetailPanel({
     const [editing, setEditing] = useState(false);
     const [draft, setDraft] = useState({
         label: node.label,
+        description: node.description || '',
         canId: node.canId,
         domain: node.domain,
         stubLength: String(node.stubLength)
@@ -1438,6 +1443,7 @@ function NodeDetailPanel({
     useEffect(() => {
         setDraft({
             label: node.label,
+            description: node.description || '',
             canId: node.canId,
             domain: node.domain,
             stubLength: String(node.stubLength)
@@ -1453,6 +1459,7 @@ function NodeDetailPanel({
         if (!draft.label.trim() || draft.canId.length < 4 || duplicateNode) return;
         onUpdateNode({
             label: draft.label.trim(),
+            description: draft.description.trim() || undefined,
             canId: draft.canId,
             domain: draft.domain as ECUDomain,
             stubLength: parseFloat(draft.stubLength) || node.stubLength
@@ -1463,6 +1470,7 @@ function NodeDetailPanel({
     const handleCancel = () => {
         setDraft({
             label: node.label,
+            description: node.description || '',
             canId: node.canId,
             domain: node.domain,
             stubLength: String(node.stubLength)
@@ -1530,6 +1538,12 @@ function NodeDetailPanel({
                                 <input type="number" step="0.01" value={draft.stubLength} onChange={e => setDraft({ ...draft, stubLength: e.target.value })}
                                     className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                             </div>
+                        </div>
+                        <div>
+                            <label className="text-[8px] font-mono text-light-500 dark:text-gray-400 uppercase tracking-wider block mb-1">Description (Tooltip)</label>
+                            <input value={draft.description} onChange={e => setDraft({ ...draft, description: e.target.value })}
+                                placeholder="e.g. Engine ECU - ECM"
+                                className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                         </div>
 
                         <div>
@@ -1890,12 +1904,13 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
    Add ECU Dialog
    ═══════════════════════════════════════════════════════════════ */
 function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
-    onAdd: (node: Omit<ECUNode, 'id' | 'txCount' | 'rxCount' | 'errorCount'>) => void;
+    onAdd: (node: Omit<ECUNode, 'id' | 'description' | 'txCount' | 'rxCount' | 'errorCount'> & { description?: string }) => void;
     onClose: () => void;
     existingPositions: number[];
     existingNodes: Pick<ECUNode, 'id' | 'label' | 'canId'>[];
 }) {
     const [label, setLabel] = useState('');
+    const [description, setDescription] = useState('');
     const [canId, setCanId] = useState('0x');
     const [domain, setDomain] = useState<ECUDomain>('body');
     const [stubLength, setStubLength] = useState('0.20');
@@ -1917,7 +1932,7 @@ function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
 
     const handleSubmit = () => {
         if (!label.trim() || canId.length < 4 || duplicateNode) return;
-        onAdd({ label: label.trim(), canId, x: findFreePosition(), online: true, domain, stubLength: parseFloat(stubLength) || 0.20, baudRate });
+        onAdd({ label: label.trim(), description: description.trim() || undefined, canId, x: findFreePosition(), online: true, domain, stubLength: parseFloat(stubLength) || 0.20, baudRate });
     };
 
     return (
@@ -1937,6 +1952,11 @@ function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
                                 ECU name is required.
                             </p>
                         )}
+                    </div>
+                    <div>
+                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Description (Tooltip)</label>
+                        <input value={description} onChange={e => setDescription(e.target.value)} placeholder="e.g. Engine ECU - ECM"
+                            className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none focus:border-cyan-500/50 dark:focus:border-[#00f3ff40] transition-colors" />
                     </div>
                     <div>
                         <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">CAN ID</label>
