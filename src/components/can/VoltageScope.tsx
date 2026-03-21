@@ -830,6 +830,39 @@ export const VoltageScope: React.FC = () => {
         const maxDiff = Math.max(...samples.map(s => calculateVDiff(s.canh, s.canl, scopeVal.ch1.enabled, scopeVal.ch2.enabled)));
         const isoDiff = (scopeVal.ch1.enabled || scopeVal.ch2.enabled) && maxDiff >= ISO.VDIFF_DOM_MIN;
 
+        // ── Compute real Eye Width from eye diagram data ──
+        let eyeWidth = 0;
+        const eyeWins = eyeBufferRef.current;
+        if ((scopeVal.ch1.enabled || scopeVal.ch2.enabled) && eyeWins.length >= 10) {
+            const COLS = 20;
+            const CROSS_THRESHOLD_V = 0.3;   // ±0.3V around 2.5V counts as a crossing
+            const CROSS_RATIO = 0.3;          // >30% of windows crossing = column is blocked
+
+            const crossCount = new Array(COLS).fill(0);
+            for (const win of eyeWins) {
+                if (win.length < 2) continue;
+                for (let col = 0; col < COLS; col++) {
+                    const idx = Math.round((col / (COLS - 1)) * (win.length - 1));
+                    const v = win[idx].canh;
+                    if (Math.abs(v - ISO.V_REC) <= CROSS_THRESHOLD_V) {
+                        crossCount[col]++;
+                    }
+                }
+            }
+
+            // Find longest contiguous run of clear (non-crossing) columns
+            let maxRun = 0, curRun = 0;
+            for (let col = 0; col < COLS; col++) {
+                if (crossCount[col] / eyeWins.length <= CROSS_RATIO) {
+                    curRun++;
+                    if (curRun > maxRun) maxRun = curRun;
+                } else {
+                    curRun = 0;
+                }
+            }
+            eyeWidth = Math.round((maxRun / COLS) * 100);
+        }
+
         setMetrics({
             ch1Vpp: scopeVal.ch1.enabled ? (ch1Max - ch1Min) : 0, 
             ch1Avg: scopeVal.ch1.enabled ? ch1Avg : 0, 
@@ -845,7 +878,7 @@ export const VoltageScope: React.FC = () => {
             symmetry: Math.round(symmetry), 
             busLoad: Math.round(busLoad),
             bitRate: Math.round(1000 / (BIT_TIME_SAMPLES * (scopeVal.tdiv / 4))),
-            eyeWidth: (scopeVal.ch1.enabled || scopeVal.ch2.enabled) ? (85 + Math.round(Math.random() * 10)) : 0,
+            eyeWidth,
             eyeHeight: scopeVal.ch1.enabled ? Math.round((ch1Max - ch1Min) / 2 * 100) : 0,
             isoCANH: !!isoCANH, 
             isoCANL: !!isoCANL, 
