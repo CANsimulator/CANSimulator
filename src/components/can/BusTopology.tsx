@@ -414,7 +414,7 @@ export function BusTopology() {
                     </div>
                     <div>
                         <h2 className="text-xs font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider leading-none transition-colors">CAN Bus Wiring Harness</h2>
-                        <p className="text-[7px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest mt-0.5 transition-colors">ISO 11898-2 Physical Topology</p>
+                        <p className="text-[8px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest mt-0.5 transition-colors">ISO 11898-2 Physical Topology</p>
                     </div>
                 </div>
 
@@ -422,7 +422,7 @@ export function BusTopology() {
                     <div className="flex bg-black/5 dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md overflow-hidden transition-colors">
                         {(['topology', 'list'] as const).map(m => (
                             <button key={m} onClick={() => setViewMode(m)}
-                                className={`px-2.5 py-1 text-[7px] font-mono font-bold uppercase tracking-wider transition-all ${viewMode === m ? 'bg-white/10 dark:bg-[#1a1a20] text-cyber-blue' : 'text-light-400 dark:text-gray-400 hover:text-dark-950 dark:hover:text-gray-200'}`}>
+                                className={`px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider transition-all ${viewMode === m ? 'bg-white/10 dark:bg-[#1a1a20] text-cyber-blue' : 'text-light-400 dark:text-gray-400 hover:text-dark-950 dark:hover:text-gray-200'}`}>
                                 {m}
                             </button>
                         ))}
@@ -440,7 +440,7 @@ export function BusTopology() {
                         }}
                         aria-pressed={showEducation}
                         title="Toggle educational descriptions for each CAN frame phase"
-                        className={`px-2 py-1 rounded-md text-[7px] font-mono font-bold uppercase border transition-all ${
+                        className={`px-2 py-1 rounded-md text-[9px] font-mono font-bold uppercase border transition-all ${
                             showEducation
                                 ? 'bg-[#f59e0b15] text-[#f59e0b] border-[#f59e0b40]'
                                 : 'text-gray-600 border-[#222] hover:text-gray-400'
@@ -528,7 +528,7 @@ export function BusTopology() {
 
             {/* ═══ Domain Legend ═══ */}
             <div className="px-5 py-2 border-t border-black/5 dark:border-[#1a1a20] bg-gray-50/80 dark:bg-[#0c0c0f] flex items-center gap-4 flex-wrap transition-colors">
-                <span className="text-[7px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest">Domains:</span>
+                <span className="text-[8px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest">Domains:</span>
                 {Object.entries(DOMAIN_META).map(([key, meta]) => {
                     const count = nodes.filter(n => n.domain === key).length;
                     const isActive = activeDomain === key;
@@ -538,7 +538,7 @@ export function BusTopology() {
                                 activeDomain !== null && !isActive ? 'opacity-40' : 'opacity-100'
                             }`}>
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: meta.color, boxShadow: isDark ? `0 0 4px ${meta.glow}` : 'none' }} />
-                            <span className="text-[7px] font-mono text-light-600 dark:text-gray-300 uppercase tracking-wider transition-colors">{meta.label} ({count})</span>
+                            <span className="text-[9px] font-mono text-light-600 dark:text-gray-300 uppercase tracking-wider transition-colors">{meta.label} ({count})</span>
                         </button>
                     );
                 })}
@@ -642,7 +642,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                                 animate={{ backgroundColor: pi.color, boxShadow: `0 0 8px ${pi.color}80` }}
                                 transition={{ duration: 0.3 }} />
                             <span className="text-[10px] font-mono font-black uppercase tracking-wider" style={{ color: pi.color }}>{pi.label}</span>
-                            {pi.bits && <span className="text-[7px] font-mono text-gray-400 ml-1">({pi.bits})</span>}
+                            {pi.bits && <span className="text-[8px] font-mono text-gray-400 ml-1">({pi.bits})</span>}
                         </div>
                         <span className="text-[8px] font-mono text-gray-500 mx-2">|</span>
                         <span className="text-[8px] font-mono text-gray-300">
@@ -650,13 +650,13 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                             <span className="text-gray-400 mx-1">{'\u2192'}</span>
                             <span className="text-[#f1f1f1] font-bold">{transmission.toId === 'broadcast' ? 'ALL NODES' : toNode?.label ?? '?'}</span>
                         </span>
-                        <span className="text-[7px] font-mono px-1.5 py-0.5 rounded border ml-1"
+                        <span className="text-[8px] font-mono px-1.5 py-0.5 rounded border ml-1"
                             style={{ color: pi.color, borderColor: pi.color + '30', backgroundColor: pi.color + '08' }}>
                             {transmission.messageType.toUpperCase()}
                         </span>
                     </div>
                     <button onClick={onDismiss}
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[7px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] hover:border-[#444] transition-all active:scale-95">
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] hover:border-[#444] transition-all active:scale-95">
                         <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                         {isDone ? 'Dismiss' : 'Cancel'}
                     </button>
@@ -737,7 +737,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                 {/* Data bytes display */}
                 {(transmission.phase === 'data' || PHASE_ORDER.indexOf(transmission.phase) > PHASE_ORDER.indexOf('data')) && (
                     <div className="flex items-center gap-1 mb-3">
-                        <span className="text-[7px] font-mono text-gray-400 uppercase mr-1">Data:</span>
+                        <span className="text-[8px] font-mono text-gray-400 uppercase mr-1">Data:</span>
                         {transmission.dataBytes.map((b, i) => (
                             <motion.span key={i} className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border"
                                 initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
@@ -940,7 +940,7 @@ function TopologyView({
                                     x={`${node.x}%`}
                                     y={isTop ? `${BUS_Y_H - STUB_OFFSET - 24}%` : `${BUS_Y_L + STUB_OFFSET + 30}%`}
                                     fill={dm.color}
-                                    fontSize="8"
+                                    fontSize="9"
                                     fontFamily="monospace"
                                     fontWeight="bold"
                                     opacity="0.8"
@@ -1071,7 +1071,7 @@ function TopologyView({
                                 : (goesRight ? '\u2192' : '\u2190')
                             }
                         </span>
-                        <span className="text-[7px] font-mono font-bold uppercase whitespace-nowrap" style={{ color: isAckPhase ? '#14b8a6' : '#00f3ff' }}>
+                        <span className="text-[8px] font-mono font-bold uppercase whitespace-nowrap" style={{ color: isAckPhase ? '#14b8a6' : '#00f3ff' }}>
                             {isAckPhase
                                 ? 'ACK'
                                 : isEofPhase
@@ -1091,10 +1091,10 @@ function TopologyView({
                     initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 dark:bg-[#0a0a0f]/90 border border-black/10 dark:border-[#222] backdrop-blur-sm transition-colors">
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" style={{ boxShadow: isDark ? '0 0 4px #22c55e80' : 'none' }} />
-                        <span className="text-[7px] font-mono font-bold text-green-600 dark:text-green-400">{sourceNode.label}</span>
+                        <span className="text-[8px] font-mono font-bold text-green-600 dark:text-green-400">{sourceNode.label}</span>
                         <span className="text-[8px] text-light-400 dark:text-gray-600">{isAckPhase ? '\u2190' : '\u2192'}</span>
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500" style={{ boxShadow: isDark ? '0 0 4px #3b82f680' : 'none' }} />
-                        <span className="text-[7px] font-mono font-bold text-blue-600 dark:text-blue-400">
+                        <span className="text-[8px] font-mono font-bold text-blue-600 dark:text-blue-400">
                             {transmission.toId === 'broadcast' ? 'ALL' : (targetNode?.label ?? '?')}
                         </span>
                     </div>
@@ -1237,7 +1237,7 @@ function ECUBox({
                 {/* TX/RX badge */}
                 <AnimatePresence>
                     {(isTx || isRx) && !isSmall && (
-                        <motion.div className="absolute -top-1 -right-1 px-1 py-[1px] rounded text-[5px] font-mono font-black uppercase z-10"
+                        <motion.div className="absolute -top-1 -right-1 px-1 py-[1px] rounded text-[8px] font-mono font-black uppercase z-10"
                             initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
                             style={{ backgroundColor: isTx ? '#22c55e' : '#3b82f6', color: '#000' }}>
                             {isTx ? 'TX' : 'RX'}
@@ -1249,7 +1249,7 @@ function ECUBox({
                 <AnimatePresence>
                     {hasBaudMismatch && !isTx && !isRx && !isSmall && (
                         <motion.div
-                            className="absolute -top-1 -left-1 px-1 py-[1px] rounded text-[5px] font-mono font-black uppercase z-10"
+                            className="absolute -top-1 -left-1 px-1 py-[1px] rounded text-[8px] font-mono font-black uppercase z-10"
                             initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
                             title={`Node baud: ${node.baudRate}, controller: ${controllerBaudStr}`}
                             style={{ backgroundColor: '#f59e0b', color: '#000' }}>
@@ -1260,7 +1260,7 @@ function ECUBox({
 
                 {/* Phase indicator on TX node */}
                 {isTx && txPhase && !isSmall && (
-                    <motion.div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-[1px] rounded text-[5px] font-mono font-bold uppercase z-10 whitespace-nowrap"
+                    <motion.div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-[1px] rounded text-[8px] font-mono font-bold uppercase z-10 whitespace-nowrap"
                         key={txPhase}
                         initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
                         style={{ backgroundColor: PHASE_INFO[txPhase].color + '20', color: PHASE_INFO[txPhase].color, border: `1px solid ${PHASE_INFO[txPhase].color}40` }}>
@@ -1282,7 +1282,7 @@ function ECUBox({
                 <span className="font-mono font-black uppercase tracking-tight block leading-tight truncate px-1"
                     style={{
                         color: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#555',
-                        fontSize: isSmall ? '7px' : '8px'
+                        fontSize: isSmall ? '8px' : '9px'
                     }}>
                     {node.label}
                 </span>
@@ -1290,7 +1290,7 @@ function ECUBox({
                 {!isSmall && (
                     <>
                         <span className="text-[9px] font-mono text-light-500 dark:text-gray-400 block mt-0.5 transition-colors">{node.canId}</span>
-                        <span className="text-[5px] font-mono uppercase tracking-wider block mt-1 px-1 py-[1px] rounded-sm mx-auto w-fit"
+                        <span className="text-[8px] font-mono uppercase tracking-wider block mt-1 px-1 py-[1px] rounded-sm mx-auto w-fit"
                             style={{ backgroundColor: dm.color + '10', color: dm.color + '90', border: `1px solid ${dm.color}20` }}>
                             {dm.label}
                         </span>
@@ -1336,9 +1336,9 @@ function TermResistor({ side, isOn, onToggle, busYH, busYL }: {
                 <motion.div className="absolute -bottom-2.5 w-3.5 h-3.5 rounded-full border-2"
                     animate={{ backgroundColor: isOn ? '#22c55e' : (isDark ? '#111' : '#f8fafc'), borderColor: isOn ? '#22c55e60' : (isDark ? '#333' : '#e2e8f0'), boxShadow: (isOn && isDark) ? '0 0 8px #22c55e50' : 'none' }} />
             </div>
-            <span className="mt-2 text-[7px] font-mono font-bold uppercase tracking-wider transition-colors" style={{ color: isOn ? (isLeft ? '#00f3ff' : '#bf00ff') : (isDark ? '#444' : '#94a3b8') }}>{isLeft ? 'R1' : 'R2'}</span>
-            <span className="text-[6px] font-mono font-bold" style={{ color: isOn ? (isDark ? '#888' : '#64748b') : '#ef444480' }}>120{'\u03A9'}</span>
-            <span className="text-[6px] font-mono font-bold" style={{ color: isOn ? '#22c55e' : '#ef4444' }}>{isOn ? 'ON' : 'OFF'}</span>
+            <span className="mt-2 text-[8px] font-mono font-bold uppercase tracking-wider transition-colors" style={{ color: isOn ? (isLeft ? '#00f3ff' : '#bf00ff') : (isDark ? '#444' : '#94a3b8') }}>{isLeft ? 'R1' : 'R2'}</span>
+            <span className="text-[8px] font-mono font-bold" style={{ color: isOn ? (isDark ? '#888' : '#64748b') : '#ef444480' }}>120{'\u03A9'}</span>
+            <span className="text-[8px] font-mono font-bold" style={{ color: isOn ? '#22c55e' : '#ef4444' }}>{isOn ? 'ON' : 'OFF'}</span>
         </button>
     );
 }
@@ -1372,7 +1372,7 @@ function ListView({ nodes, selectedNode, setSelectedNode, toggleNode, removeNode
                         <td className="py-2 px-3"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: node.online ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${node.online ? '#22c55e60' : '#ef444460'}` : 'none' }} /></td>
                         <td className="py-2 px-3 font-bold text-dark-900 dark:text-gray-300 uppercase transition-colors">{node.label}</td>
                         <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.canId}</td>
-                        <td className="py-2 px-3"><span className="px-1.5 py-0.5 rounded-sm text-[7px]" style={{ backgroundColor: dm.color + '15', color: dm.color, border: `1px solid ${dm.color}25` }}>{dm.label}</span></td>
+                        <td className="py-2 px-3"><span className="px-1.5 py-0.5 rounded-sm text-[8px]" style={{ backgroundColor: dm.color + '15', color: dm.color, border: `1px solid ${dm.color}25` }}>{dm.label}</span></td>
                         <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.baudRate}</td>
                         <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.stubLength}m</td>
                         <td className="py-2 px-3 text-green-500">{node.txCount}</td>
@@ -1381,11 +1381,11 @@ function ListView({ nodes, selectedNode, setSelectedNode, toggleNode, removeNode
                         <td className="py-2 px-3">
                             <div className="flex items-center gap-2">
                                 <button onClick={(e) => { e.stopPropagation(); toggleNode(node.id); }}
-                                    className={`px-2 py-0.5 rounded text-[7px] font-bold border transition-colors ${node.online ? 'text-red-400 border-red-500/30 hover:bg-red-500/10' : 'text-green-600 dark:text-green-400 border-green-500/30 hover:bg-green-500/10'}`}>
+                                    className={`px-2 py-0.5 rounded text-[9px] font-bold border transition-colors ${node.online ? 'text-red-400 border-red-500/30 hover:bg-red-500/10' : 'text-green-600 dark:text-green-400 border-green-500/30 hover:bg-green-500/10'}`}>
                                     {node.online ? 'OFF' : 'ON'}
                                 </button>
                                 <button onClick={(e) => { e.stopPropagation(); removeNode(node.id); }}
-                                    className="px-2 py-0.5 rounded text-[7px] font-bold text-light-400 dark:text-gray-600 border border-black/10 dark:border-[#222] hover:text-red-400 hover:border-red-500/30 transition-colors">DEL</button>
+                                    className="px-2 py-0.5 rounded text-[9px] font-bold text-light-400 dark:text-gray-600 border border-black/10 dark:border-[#222] hover:text-red-400 hover:border-red-500/30 transition-colors">DEL</button>
                             </div>
                         </td>
                     </tr>
@@ -1479,7 +1479,7 @@ function NodeDetailPanel({
                         <div>
                             <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-tight transition-colors">
                                 {node.label}
-                                {node.isLocal && <span className="ml-2 text-[7px] text-light-400 dark:text-gray-600 font-bold border border-black/10 dark:border-gray-600/30 px-1 rounded uppercase tracking-tighter transition-colors">Local Controller</span>}
+                                {node.isLocal && <span className="ml-2 text-[8px] text-light-400 dark:text-gray-600 font-bold border border-black/10 dark:border-gray-600/30 px-1 rounded uppercase tracking-tighter transition-colors">Local Controller</span>}
                             </h3>
                             <p className="text-[8px] font-mono text-light-500 dark:text-gray-500 transition-colors">{node.canId} &middot; {dm.label} &middot; {node.baudRate}</p>
                         </div>
@@ -1506,29 +1506,29 @@ function NodeDetailPanel({
                         className="p-4 rounded-lg bg-gray-50 dark:bg-[#111116] border border-black/10 dark:border-[#2a2a32] shadow-xl space-y-4 transition-colors">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
-                                <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
+                                <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
                                 <input value={draft.label} onChange={e => setDraft({ ...draft, label: e.target.value })} autoFocus
                                     className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                             </div>
                             <div>
-                                <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
+                                <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
                                 <input value={draft.canId} onChange={e => setDraft({ ...draft, canId: e.target.value })}
                                     className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none transition-colors ${duplicateNode ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40]'}`} />
-                                {duplicateNode && <p className="text-[7px] font-mono text-red-500 dark:text-red-400 mt-1 uppercase">CAN ID already in use by {duplicateNode.label}</p>}
+                                {duplicateNode && <p className="text-[8px] font-mono text-red-500 dark:text-red-400 mt-1 uppercase">CAN ID already in use by {duplicateNode.label}</p>}
                             </div>
                             <div>
-                                <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">Stub Length (m)</label>
+                                <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">Stub Length (m)</label>
                                 <input type="number" step="0.01" value={draft.stubLength} onChange={e => setDraft({ ...draft, stubLength: e.target.value })}
                                     className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                             </div>
                         </div>
 
                         <div>
-                            <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5">Network Domain</label>
+                            <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5">Network Domain</label>
                             <div className="flex flex-wrap gap-1">
                                 {(Object.entries(DOMAIN_META) as [ECUDomain, typeof DOMAIN_META[ECUDomain]][]).map(([key, meta]) => (
                                     <button key={key} onClick={() => setDraft({ ...draft, domain: key })}
-                                        className={`px-2 py-1 rounded text-[7px] font-mono font-bold uppercase border transition-all ${draft.domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400'}`}
+                                        className={`px-2 py-1 rounded text-[9px] font-mono font-bold uppercase border transition-all ${draft.domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400'}`}
                                         style={draft.domain === key ? { backgroundColor: meta.color + '15', color: meta.color, borderColor: meta.color + '50' } : undefined}>
                                         {meta.label}
                                     </button>
@@ -1569,7 +1569,7 @@ function NodeDetailPanel({
                         <div className="flex items-center justify-end">
                             <button
                                 onClick={onResetCounters}
-                                className="flex items-center gap-1.5 px-2 py-1 rounded text-[7px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#1a1a22] hover:text-dark-950 dark:hover:text-[#f1f1f1] hover:border-black/20 dark:hover:border-[#333] transition-all active:scale-95"
+                                className="flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#1a1a22] hover:text-dark-950 dark:hover:text-[#f1f1f1] hover:border-black/20 dark:hover:border-[#333] transition-all active:scale-95"
                                 title="Reset TX, RX, and error counters for this node"
                             >
                                 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -1590,7 +1590,7 @@ function NodeDetailPanel({
                     <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 uppercase mr-1 transition-colors">Baud:</span>
                     {BAUD_OPTIONS.map(b => (
                         <button key={b} onClick={() => onBaudChange(b)}
-                            className={`px-2 py-1 rounded text-[7px] font-mono font-bold border transition-all ${node.baudRate === b ? 'bg-cyber-blue/15 text-cyber-blue border-cyber-blue/40 dark:bg-[#00f3ff15] dark:text-[#00f3ff] dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:border-black/20 dark:hover:border-[#333]'}`}>
+                            className={`px-2 py-1 rounded text-[9px] font-mono font-bold border transition-all ${node.baudRate === b ? 'bg-cyber-blue/15 text-cyber-blue border-cyber-blue/40 dark:bg-[#00f3ff15] dark:text-[#00f3ff] dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:border-black/20 dark:hover:border-[#333]'}`}>
                             {b}
                         </button>
                     ))}
@@ -1609,13 +1609,13 @@ function NodeDetailPanel({
                     {allNodes.filter(n => n.id !== node.id && n.online).map(target => (
                         <button key={target.id} onClick={() => onSendSignal(node.id, target.id)}
                             disabled={isBusy || !node.online}
-                            className="px-2 py-1 rounded text-[7px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#222] hover:text-cyber-blue dark:hover:text-[#00f3ff] hover:border-cyber-blue/40 dark:hover:border-[#00f3ff40] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                            className="px-2 py-1 rounded text-[9px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#222] hover:text-cyber-blue dark:hover:text-[#00f3ff] hover:border-cyber-blue/40 dark:hover:border-[#00f3ff40] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                             {target.label}
                         </button>
                     ))}
                     <button onClick={() => onSendSignal(node.id, 'broadcast')}
                         disabled={isBusy || !node.online}
-                        className="px-2 py-1 rounded text-[7px] font-mono font-bold text-yellow-600 dark:text-yellow-500/70 border border-yellow-500/20 hover:text-yellow-500 dark:hover:text-yellow-400 hover:border-yellow-500/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                        className="px-2 py-1 rounded text-[9px] font-mono font-bold text-yellow-600 dark:text-yellow-500/70 border border-yellow-500/20 hover:text-yellow-500 dark:hover:text-yellow-400 hover:border-yellow-500/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                         ALL
                     </button>
                 </div>
@@ -1625,7 +1625,7 @@ function NodeDetailPanel({
                 {/* Frame builder */}
                 <button onClick={onOpenFrameBuilder}
                     disabled={isBusy || !node.online}
-                    className="px-3 py-1 rounded text-[7px] font-mono font-bold text-[#a855f7] border border-[#a855f730] hover:bg-[#a855f710] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                    className="px-3 py-1 rounded text-[9px] font-mono font-bold text-[#a855f7] border border-[#a855f730] hover:bg-[#a855f710] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                     Build Frame...
                 </button>
 
@@ -1712,7 +1712,7 @@ function MessageLogPanel({ log, onClear }: { log: MessageLogEntry[]; onClear: ()
                                     <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.fromLabel}</span>
                                     <span className="text-light-400 dark:text-gray-600 transition-colors">{'\u2192'}</span>
                                     <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.toLabel}</span>
-                                    <span className="px-1 py-[1px] rounded border text-[6px] uppercase"
+                                    <span className="px-1 py-[1px] rounded border text-[8px] uppercase"
                                         style={{
                                             color: entry.messageType === 'diagnostic' ? '#00f3ff' : entry.messageType === 'remote' ? '#f59e0b' : '#a855f7',
                                             borderColor: entry.messageType === 'diagnostic' ? '#00f3ff20' : entry.messageType === 'remote' ? '#f59e0b20' : '#a855f720'
@@ -1771,15 +1771,15 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                 <div className="space-y-4">
                     {/* Target */}
                     <div>
-                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Target Node</label>
+                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Target Node</label>
                         <div className="flex flex-wrap gap-1.5">
                             <button onClick={() => setToId('broadcast')}
-                                className={`px-2.5 py-1.5 rounded text-[7px] font-mono font-bold uppercase border transition-all ${toId === 'broadcast' ? 'bg-orange-500/15 text-orange-600 dark:text-[#f59e0b] border-orange-500/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
+                                className={`px-2.5 py-1.5 rounded text-[9px] font-mono font-bold uppercase border transition-all ${toId === 'broadcast' ? 'bg-orange-500/15 text-orange-600 dark:text-[#f59e0b] border-orange-500/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                 Broadcast (All)
                             </button>
                             {allNodes.filter(n => n.id !== fromNode.id && n.online).map(n => (
                                 <button key={n.id} onClick={() => setToId(n.id)}
-                                    className={`px-2.5 py-1.5 rounded text-[7px] font-mono font-bold uppercase border transition-all ${toId === n.id ? 'bg-cyber-blue/15 text-cyber-blue dark:text-[#00f3ff] border-cyber-blue/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
+                                    className={`px-2.5 py-1.5 rounded text-[9px] font-mono font-bold uppercase border transition-all ${toId === n.id ? 'bg-cyber-blue/15 text-cyber-blue dark:text-[#00f3ff] border-cyber-blue/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                     {n.label}
                                 </button>
                             ))}
@@ -1788,7 +1788,7 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
 
                     {/* Message Type */}
                     <div>
-                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Frame Type</label>
+                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Frame Type</label>
                         <div className="flex gap-1.5">
                             {([['data', 'Data Frame', 'Standard data payload'], ['remote', 'Remote Frame', 'Request data from target'], ['diagnostic', 'Diagnostic', 'UDS/OBD request']] as const).map(([type, label, desc]) => (
                                 <button key={type} onClick={() => setMsgType(type)}
@@ -1802,7 +1802,7 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
 
                     {/* DLC */}
                     <div>
-                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Data Length Code (DLC): {dlc} bytes</label>
+                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Data Length Code (DLC): {dlc} bytes</label>
                         <div className="flex gap-1">
                             {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(d => (
                                 <button key={d} onClick={() => setDlc(d)}
@@ -1817,13 +1817,13 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                     {dlc > 0 && msgType !== 'remote' && (
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
-                                <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider transition-colors">Data Bytes (hex)</label>
+                                <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider transition-colors">Data Bytes (hex)</label>
                                 <button onClick={() => setDataBytes(RANDOM_DATA())} className="text-[10px] font-mono text-light-400 dark:text-gray-400 hover:text-cyber-purple dark:hover:text-[#a855f7] transition-colors">Randomize</button>
                             </div>
                             <div className="flex gap-1.5">
                                 {Array.from({ length: dlc }, (_, i) => (
                                     <div key={i} className="flex flex-col items-center gap-0.5">
-                                        <span className="text-[5px] font-mono text-light-300 dark:text-gray-700 transition-colors">D{i}</span>
+                                        <span className="text-[8px] font-mono text-light-300 dark:text-gray-700 transition-colors">D{i}</span>
                                         <input value={dataBytes[i] ?? '00'} onChange={e => updateByte(i, e.target.value)}
                                             className="w-9 h-8 text-center bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded text-[9px] font-mono font-bold text-cyber-purple dark:text-[#a855f7] focus:outline-none focus:border-cyber-purple/40 dark:focus:border-[#a855f740] uppercase transition-colors"
                                             maxLength={2} />
@@ -1919,7 +1919,7 @@ function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
                 <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider mb-4 transition-colors">Add ECU Node</h3>
                 <div className="space-y-3">
                     <div>
-                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">ECU Name</label>
+                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">ECU Name</label>
                         <input value={label} onChange={e => setLabel(e.target.value)} placeholder="e.g. Airbag SRS"
                             className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none transition-colors ${!label.trim() && label.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyan-500/50 dark:focus:border-[#00f3ff40]'}`} />
                         {!label.trim() && label.length > 0 && (
@@ -1929,7 +1929,7 @@ function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
                         )}
                     </div>
                     <div>
-                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">CAN ID</label>
+                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">CAN ID</label>
                         <input value={canId} onChange={e => setCanId(e.target.value)} placeholder="0x7E2"
                             className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none transition-colors ${canId.length < 4 && canId.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyan-500/50 dark:focus:border-[#00f3ff40]'}`} />
                         {duplicateNode && (
@@ -1944,11 +1944,11 @@ function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
                         )}
                     </div>
                     <div>
-                        <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Domain</label>
+                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Domain</label>
                         <div className="flex flex-wrap gap-1.5">
                             {(Object.entries(DOMAIN_META) as [ECUDomain, typeof DOMAIN_META[ECUDomain]][]).map(([key, meta]) => (
                                 <button key={key} onClick={() => setDomain(key)}
-                                    className={`px-2.5 py-1 rounded text-[7px] font-mono font-bold uppercase border transition-all ${domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-900 dark:hover:text-gray-400'}`}
+                                    className={`px-2.5 py-1 rounded text-[9px] font-mono font-bold uppercase border transition-all ${domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-900 dark:hover:text-gray-400'}`}
                                     style={domain === key ? { backgroundColor: meta.color + '15', color: meta.color, borderColor: meta.color + '50' } : undefined}>
                                     {meta.label}
                                 </button>
@@ -1957,25 +1957,25 @@ function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Stub Length (m)</label>
+                            <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Stub Length (m)</label>
                             <input value={stubLength} onChange={e => setStubLength(e.target.value)} placeholder="0.20"
                                 className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none focus:border-cyan-500/50 dark:focus:border-[#00f3ff40] transition-colors" />
                         </div>
                         <div>
-                            <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Baud Rate</label>
+                            <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Baud Rate</label>
                             <div className="flex gap-1">
                                 {BAUD_OPTIONS.map(b => (
                                     <button key={b} onClick={() => setBaudRate(b)}
-                                        className={`px-2 py-1.5 rounded text-[7px] font-mono font-bold border transition-all flex-1 ${baudRate === b ? 'bg-cyan-500/10 dark:bg-[#00f3ff15] text-cyan-600 dark:text-[#00f3ff] border-cyan-500/30 dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:text-dark-900 dark:hover:text-gray-400 transition-colors'}`}>{b}</button>
+                                        className={`px-2 py-1.5 rounded text-[9px] font-mono font-bold border transition-all flex-1 ${baudRate === b ? 'bg-cyan-500/10 dark:bg-[#00f3ff15] text-cyan-600 dark:text-[#00f3ff] border-cyan-500/30 dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:text-dark-900 dark:hover:text-gray-400 transition-colors'}`}>{b}</button>
                                 ))}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="flex justify-end gap-2 mt-5">
-                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
+                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
                     <button onClick={handleSubmit} disabled={!label.trim() || canId.length < 4 || !!duplicateNode}
-                        className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-cyan-500/10 dark:bg-[#00f3ff15] border border-cyan-500/30 dark:border-[#00f3ff40] text-cyan-600 dark:text-[#00f3ff] hover:bg-cyan-500/20 dark:hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">Add to Bus</button>
+                        className="px-4 py-2 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider bg-cyan-500/10 dark:bg-[#00f3ff15] border border-cyan-500/30 dark:border-[#00f3ff40] text-cyan-600 dark:text-[#00f3ff] hover:bg-cyan-500/20 dark:hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">Add to Bus</button>
                 </div>
             </motion.div>
         </motion.div>
