@@ -298,7 +298,7 @@ export const LandingPage: React.FC = () => {
                                     <div className={cn("cyber-glass p-8 sm:p-16 rounded-[3.5rem] border-0 w-full", glassSurface)}>
                                         <div className="text-center mb-16">
                                             <h2 className="text-5xl sm:text-6xl font-black mb-6 text-light-600 dark:text-white tracking-tighter uppercase italic">
-                                                BUS TRAICE ANALYTICS
+                                                BUS TRACE ANALYTICS
                                             </h2>
                                             <p className="text-2xl font-black text-light-400 dark:text-gray-400 italic">
                                                 Microsecond precision trace analysis with real-time arbitration visualization.
@@ -365,7 +365,7 @@ export const LandingPage: React.FC = () => {
                                 READY TO<br />SIMULATE?
                             </h2>
                             <p className="text-3xl font-black text-light-600 dark:text-gray-400 mb-16 max-w-3xl mx-auto italic leading-tight">
-                                Jointhousands of engineers mastering the automotive grid.
+                                Join thousands of engineers mastering the automotive grid.
                             </p>
 
                             <div className="flex flex-col items-center gap-8">
