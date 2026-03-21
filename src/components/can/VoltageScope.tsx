@@ -846,10 +846,14 @@ export const VoltageScope: React.FC = () => {
         const { avgOffset } = getActiveWaveScale();
         const canh = samples.map(s => s.canh + (scopeVal.ch1.offset - avgOffset));
         const canl = samples.map(s => s.canl + (scopeVal.ch2.offset - avgOffset));
-        const ch1Min = Math.min(...canh), ch1Max = Math.max(...canh);
-        const ch2Min = Math.min(...canl), ch2Max = Math.max(...canl);
-        const ch1Avg = canh.reduce((a, b) => a + b) / canh.length;
-        const ch2Avg = canl.reduce((a, b) => a + b) / canl.length;
+        
+        const ch1Min = canh.reduce((min, v) => v < min ? v : min, canh[0] ?? 0);
+        const ch1Max = canh.reduce((max, v) => v > max ? v : max, canh[0] ?? 0);
+        const ch2Min = canl.reduce((min, v) => v < min ? v : min, canl[0] ?? 0);
+        const ch2Max = canl.reduce((max, v) => v > max ? v : max, canl[0] ?? 0);
+        
+        const ch1Avg = canh.length > 0 ? canh.reduce((a, b) => a + b, 0) / canh.length : 0;
+        const ch2Avg = canl.length > 0 ? canl.reduce((a, b) => a + b, 0) / canl.length : 0;
 
         let riseSum = 0, fallSum = 0, riseCount = 0, fallCount = 0, domSamples = 0;
         for (let i = 1; i < samples.length; i++) {
@@ -867,7 +871,8 @@ export const VoltageScope: React.FC = () => {
         const busLoad = (domSamples / samples.length) * 100;
         const isoCANH = scopeVal.ch1.enabled && ch1Max <= ISO.CANH_DOM_MAX && (ch1Max >= ISO.CANH_DOM_MIN || ch1Avg > ISO.V_REC - 0.5);
         const isoCANL = scopeVal.ch2.enabled && ch2Min >= ISO.CANL_DOM_MIN && (ch2Min <= ISO.CANL_DOM_MAX || ch2Avg < ISO.V_REC + 0.5);
-        const maxDiff = Math.max(...samples.map(s => calculateVDiff(s.canh, s.canl, scopeVal.ch1.enabled, scopeVal.ch2.enabled)));
+        const diffValues = samples.map(s => calculateVDiff(s.canh, s.canl, scopeVal.ch1.enabled, scopeVal.ch2.enabled));
+        const maxDiff = diffValues.reduce((max, v) => v > max ? v : max, diffValues[0] ?? 0);
         const isoDiff = (scopeVal.ch1.enabled || scopeVal.ch2.enabled) && maxDiff >= ISO.VDIFF_DOM_MIN;
 
         // ── Compute real Eye Width from eye diagram data ──
@@ -985,7 +990,8 @@ export const VoltageScope: React.FC = () => {
     useEffect(() => { const i1 = setInterval(computeMetrics, 500); const i2 = setInterval(updateEyeBuffer, 800); return () => { clearInterval(i1); clearInterval(i2); }; }, [computeMetrics, updateEyeBuffer]);
 
     // ─── Zoom ───────────────────────────────────────────────
-    const handleWheel = useCallback((e: React.WheelEvent) => {
+    const handleWheel = useCallback((e: WheelEvent) => {
+        // Prevent default here is now safe because we attach with { passive: false }
         e.preventDefault();
         const f = e.deltaY < 0 ? 1.15 : 1 / 1.15;
         setView(p => {
@@ -995,9 +1001,18 @@ export const VoltageScope: React.FC = () => {
         });
     }, []);
 
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        canvas.addEventListener('wheel', handleWheel, { passive: false });
+        return () => canvas.removeEventListener('wheel', handleWheel);
+    }, [handleWheel]);
+
     // ─── Pan ────────────────────────────────────────────────
     const handlePointerDown = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-        const rect = canvasRef.current!.getBoundingClientRect();
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
         const mouseX = (e.clientX - rect.left) * (CANVAS_W / rect.width);
         const mouseY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
 
@@ -1066,7 +1081,9 @@ export const VoltageScope: React.FC = () => {
         }
     }, [vToPanel, getActiveWaveScale]);
     const handlePointerMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-        const rect = canvasRef.current!.getBoundingClientRect();
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
         const mouseX = (e.clientX - rect.left) * (CANVAS_W / rect.width);
         const mouseY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
         const vw = viewRef.current;
@@ -1143,7 +1160,9 @@ export const VoltageScope: React.FC = () => {
         }
     }, [yToV, vToPanel, getActiveWaveScale]);
     const handlePointerUp = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
-        const rect = canvasRef.current!.getBoundingClientRect();
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
         const mouseY = (e.clientY - rect.top) * (CANVAS_H / rect.height);
         const { vMin, vMax, avgOffset } = getActiveWaveScale();
         const panelY = mouseY - WAVE_Y;
@@ -1326,7 +1345,7 @@ export const VoltageScope: React.FC = () => {
                             style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}` }}
                             tabIndex={0} role="img"
                             aria-label="CAN bus physical layer oscilloscope — scroll to zoom, right-drag to pan"
-                            onWheel={handleWheel}
+
                             onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
                             onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
                             onContextMenu={e => e.preventDefault()} onKeyDown={handleKeyDown} />
