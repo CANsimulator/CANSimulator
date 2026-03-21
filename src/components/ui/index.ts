@@ -4,3 +4,4 @@ export * from './CyberStatCard';
 export * from './LoadingSpinner';
 export * from './BorderBeam';
 export * from './PricingTeaser';
+export * from './Tooltip';
