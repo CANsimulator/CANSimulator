@@ -187,6 +187,8 @@ export function Header() {
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         className={cn("lg:hidden p-2 rounded-lg transition-colors", isDark ? "text-gray-400" : "text-slate-600")}
+                        aria-label="Toggle mobile menu"
+                        aria-expanded={mobileMenuOpen}
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             {mobileMenuOpen ? (

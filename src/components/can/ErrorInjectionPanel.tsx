@@ -103,12 +103,14 @@ export const ErrorInjectionPanel: React.FC = () => {
     const [lastInjected, setLastInjected] = useState<string | null>(null);
     const [clickCounts, setClickCounts] = useState<Record<string, number>>({});
     const [hoveredCode, setHoveredCode] = useState<string | null>(null);
+    const [selectedCode, setSelectedCode] = useState<string | null>(null);
     const [role, setRole] = useState<ErrorRole>('transmitter');
 
     const handleError = useCallback((code: CANErrorCode) => {
         canSimulator.injectError(code, role);
         setLastInjected(code);
         setClickCounts(prev => ({ ...prev, [code]: (prev[code] || 0) + 1 }));
+        setSelectedCode(code); // Select on click for persistent info
 
         setTimeout(() => setLastInjected(null), 600);
     }, [role]);
@@ -140,6 +142,7 @@ export const ErrorInjectionPanel: React.FC = () => {
                     const isActive = lastInjected === err.code;
                     const count = clickCounts[err.code] || 0;
                     const isHovered = hoveredCode === err.code;
+                    const isSelected = selectedCode === err.code;
 
                     return (
                         <motion.button
@@ -147,11 +150,13 @@ export const ErrorInjectionPanel: React.FC = () => {
                             onClick={() => handleError(err.code)}
                             onMouseEnter={() => setHoveredCode(err.code)}
                             onMouseLeave={() => setHoveredCode(null)}
+                            onFocus={() => setHoveredCode(err.code)}
+                            onBlur={() => setHoveredCode(null)}
                             whileTap={{ scale: 0.95 }}
                             className="group relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 bg-dark-900/50 transition-all duration-300 overflow-hidden"
                             style={{
-                                borderColor: isActive ? err.colorHex : isHovered ? `${err.colorHex}60` : '#1a1a24',
-                                boxShadow: isActive ? `0 0 25px ${err.colorHex}40` : 'none',
+                                borderColor: isActive ? err.colorHex : isSelected ? `${err.colorHex}A0` : isHovered ? `${err.colorHex}60` : '#1a1a24',
+                                boxShadow: isActive ? `0 0 25px ${err.colorHex}40` : (isSelected ? `0 0 10px ${err.colorHex}20` : 'none'),
                             }}
                         >
                             {/* Ripple effect on click */}
@@ -219,21 +224,22 @@ export const ErrorInjectionPanel: React.FC = () => {
                 })}
             </div>
 
-            {/* Detail tooltip for hovered error */}
-            <AnimatePresence>
-                {hoveredCode && (
+            {/* Detail tooltip for hovered or selected error */}
+            <AnimatePresence mode="wait">
+                {(hoveredCode || selectedCode) && (
                     <motion.div
+                        key={hoveredCode || selectedCode}
                         initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -4 }}
                         transition={{ duration: 0.15 }}
-                        className="px-4 py-2.5 rounded-xl bg-dark-800/80 border border-dark-700 backdrop-blur-sm"
+                        className="px-4 py-3 rounded-xl bg-dark-800/80 border border-dark-700 backdrop-blur-sm"
                     >
-                        <p className="text-[10px] leading-relaxed text-gray-400 font-medium">
+                        <p className="text-[11px] leading-relaxed text-gray-400 font-medium">
                             <span className="font-black text-white uppercase tracking-wider">
-                                {errors.find(e => e.code === hoveredCode)?.label}:
+                                {errors.find(e => e.code === (hoveredCode || selectedCode))?.label}:
                             </span>{' '}
-                            {errors.find(e => e.code === hoveredCode)?.detail}
+                            {errors.find(e => e.code === (hoveredCode || selectedCode))?.detail}
                         </p>
                     </motion.div>
                 )}

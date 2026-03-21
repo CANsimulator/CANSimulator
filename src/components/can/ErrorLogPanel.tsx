@@ -150,7 +150,7 @@ export const ErrorLogPanel: React.FC = () => {
                                             </td>
                                             <td className="py-1.5 px-3">
                                                 <span className={`font-black tracking-wider ${stateColor}`}>
-                                                    {entry.newState.replace('_', ' ')}
+                                                    {entry.newState.replace(/_/g, ' ')}
                                                     {entry.stateChanged && (
                                                         <span className="ml-1 text-yellow-400 animate-pulse">*</span>
                                                     )}

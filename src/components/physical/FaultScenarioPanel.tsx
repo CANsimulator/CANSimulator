@@ -118,11 +118,13 @@ export const FaultScenarioPanel: React.FC = () => {
                 bench.resetEyeBuffer();
                 break;
 
-            case 'no-term':
-                bench.setTerminationLeft(!bench.terminationLeft || !bench.terminationRight);
-                bench.setTerminationRight(!bench.terminationLeft || !bench.terminationRight);
+            case 'no-term': {
+                const willActivate = !isScenarioActive('no-term');
+                bench.setTerminationLeft(!willActivate);
+                bench.setTerminationRight(!willActivate);
                 bench.resetEyeBuffer();
                 break;
+            }
 
             case 'baud-1m':
                 bench.applyBitTimingPreset(isScenarioActive('baud-1m') ? '500k' : '1m');

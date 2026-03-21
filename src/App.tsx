@@ -5,6 +5,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { initVirtualNetwork } from './services/can/mockNodes';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import { PowerProvider } from './context/PowerContext';
+import { useScrollToTop } from './hooks/useScrollToTop';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 
@@ -19,9 +20,11 @@ const GenerationsPage = lazy(() => import('./pages/GenerationsPage'));
 const InspectorPage = lazy(() => import('./pages/InspectorPage'));
 const SignalsPage = lazy(() => import('./pages/SignalsPage'));
 const ArbitrationPage = lazy(() => import('./pages/ArbitrationPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 function AppLayout() {
   const { theme } = useTheme();
+  useScrollToTop();
 
   useEffect(() => {
     initVirtualNetwork();
@@ -57,6 +60,7 @@ function AppLayout() {
           <Route path="/inspector" element={withLayout(InspectorPage)} />
           <Route path="/signals" element={withLayout(SignalsPage)} />
           <Route path="/arbitration" element={withLayout(ArbitrationPage)} />
+          <Route path="*" element={withLayout(() => <NotFoundPage />)} />
         </Routes>
       </ErrorBoundary>
     </div>

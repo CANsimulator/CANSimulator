@@ -61,8 +61,9 @@ export const CANFrameBuilder: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label className="text-[10px] text-gray-500 uppercase font-mono">Message ID (Hex)</label>
+                    <label htmlFor="frame-id" className="text-[10px] text-gray-500 uppercase font-mono cursor-pointer">Message ID (Hex)</label>
                     <input
+                        id="frame-id"
                         value={id}
                         onChange={e => setId(e.target.value.toUpperCase())}
                         className="w-full bg-dark-950 border border-white/10 rounded px-3 py-2 text-cyber-blue font-mono focus:border-cyber-blue outline-none transition-colors"
@@ -80,8 +81,9 @@ export const CANFrameBuilder: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-                <label className="text-[10px] text-gray-500 uppercase font-mono">Payload (Hex Bytes)</label>
+                <label htmlFor="frame-payload" className="text-[10px] text-gray-500 uppercase font-mono cursor-pointer">Payload (Hex Bytes)</label>
                 <textarea
+                    id="frame-payload"
                     value={dataStr}
                     onChange={e => setDataStr(e.target.value.toUpperCase())}
                     rows={2}

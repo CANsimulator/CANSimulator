@@ -31,7 +31,7 @@ const ErrorPage: React.FC = () => {
         : errorState.state === 'ERROR_PASSIVE' ? '#bf00ff'
             : '#ef4444';
 
-    const stateLabel = errorState.state.replace('_', ' ');
+    const stateLabel = errorState.state.replace(/_/g, ' ');
 
     return (
         <div className="container mx-auto px-4 py-6 space-y-6 max-w-[1600px]">
