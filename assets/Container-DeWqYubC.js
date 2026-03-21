@@ -1,0 +1,1 @@
+import{j as o}from"./vendor-react-BVJoEnt8.js";import{a as r}from"./index-CmEWsGO7.js";const l=({children:a,className:x,variant:t="default"})=>{const m={default:"max-w-7xl",narrow:"max-w-5xl",wide:"max-w-[1440px]"}[t];return o.jsx("div",{className:r("mx-auto px-4 sm:px-6 lg:px-8 w-full",m,x),children:a})};export{l as C};
