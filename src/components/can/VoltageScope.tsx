@@ -8,6 +8,7 @@ import {
     generateSample, 
     createInitialWaveState 
 } from '../../services/can/waveform-generator';
+import { useTheme } from '../../context/ThemeContext';
 
 /* ═══════════════════════════════════════════════════════════════
    CAN-SCOPE CSO-2000 — Physical Layer Oscilloscope
@@ -69,26 +70,7 @@ interface ViewState { zoomX: number; zoomY: number; panX: number; panY: number; 
 
 // Types imported from waveform-generator service or defined here
 
-// ─── Color Palette ──────────────────────────────────────────
-const C = {
-    bg:        '#06060c',
-    panelBg:   '#08080f',
-    panelBdr:  '#14142a',
-    gridFine:  'rgba(255,255,255,0.04)',
-    gridMajor: 'rgba(255,255,255,0.09)',
-    axisText:  'rgba(255,255,255,0.50)',
-    ch1:       '#00d4ff',  // CANH — cyan
-    ch1Dim:    'rgba(0,212,255,0.12)',
-    ch2:       '#c850ff',  // CANL — magenta
-    ch2Dim:    'rgba(200,80,255,0.12)',
-    diff:      '#00ff88',  // VDIFF — green
-    diffDim:   'rgba(0,255,136,0.10)',
-    trigger:   '#ffd000',
-    cursor:    '#ff6b35',
-    cursorB:   '#35b0ff',
-    dominant:  '#00ff88',
-    recessive: '#ffd000',
-};
+// Waveform generator moved to src/services/can/waveform-generator.ts
 
 // Waveform generator moved to src/services/can/waveform-generator.ts
 
@@ -104,6 +86,29 @@ function clamp(v: number, lo: number, hi: number) { return Math.min(hi, Math.max
 // Component
 // ═══════════════════════════════════════════════════════════════
 export const VoltageScope: React.FC = () => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
+    const C = useMemo(() => ({
+        bg:        isDark ? '#06060c' : '#ffffff',
+        panelBg:   isDark ? '#08080f' : '#f8f9fa',
+        panelBdr:  isDark ? '#14142a' : '#e5e7eb',
+        gridFine:  isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+        gridMajor: isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.09)',
+        axisText:  isDark ? 'rgba(255,255,255,0.50)' : 'rgba(0,0,0,0.50)',
+        ch1:       '#00d4ff',  
+        ch1Dim:    'rgba(0,212,255,0.12)',
+        ch2:       '#c850ff',  
+        ch2Dim:    'rgba(200,80,255,0.12)',
+        diff:      '#00ff88',  
+        diffDim:   'rgba(0,255,136,0.10)',
+        trigger:   '#ffd000',
+        cursor:    '#ff6b35',
+        cursorB:   '#35b0ff',
+        dominant:  '#00ff88',
+        recessive: '#ffd000',
+    }), [isDark]);
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const samplesRef = useRef<Sample[]>([]);
     const eyeBufferRef = useRef<Sample[][]>([]);
@@ -719,7 +724,7 @@ export const VoltageScope: React.FC = () => {
         ctx.globalAlpha = 1;
         // Always show zoom readout
         const isZoomed = vw.zoomX !== 1 || vw.zoomY !== 1;
-        ctx.fillStyle = isZoomed ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)';
+        ctx.fillStyle = isZoomed ? (isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)') : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)');
         ctx.textAlign = 'center';
         ctx.fillText(
             isZoomed ? `${vw.zoomX.toFixed(1)}×${vw.zoomY.toFixed(1)}` : '1:1',
@@ -774,13 +779,13 @@ export const VoltageScope: React.FC = () => {
             const alpha = Math.max(0, 1 - flashAge / FLASH_DURATION) * 0.5;
             ctx.fillStyle = `rgba(191,0,255,${alpha.toFixed(3)})`;
             ctx.fillRect(M.left, WAVE_Y, PLOT_W, WAVE_H);
-            ctx.fillStyle = `rgba(255,255,255,${(alpha * 2).toFixed(3)})`;
+            ctx.fillStyle = isDark ? `rgba(255,255,255,${(alpha * 2).toFixed(3)})` : `rgba(0,0,0,${(alpha * 2).toFixed(3)})`;
             ctx.font = '700 14px monospace';
             ctx.textAlign = 'center';
             ctx.fillText('▶ ARMED', PLOT_W / 2 + M.left, WAVE_Y + WAVE_H / 2 + 5);
         }
 
-    }, [vToPanel, sToX]);
+    }, [vToPanel, sToX, C, isDark]);
     const computeMetrics = useCallback(() => {
         let samples = samplesRef.current;
         if (samples.length < 10) return;
@@ -863,6 +868,27 @@ export const VoltageScope: React.FC = () => {
             eyeWidth = Math.round((maxRun / COLS) * 100);
         }
 
+        // ── Compute real Eye Height from eye diagram data ──
+        let eyeHeight = 0;
+        const eyeWinsH = eyeBufferRef.current;
+        if ((scopeVal.ch1.enabled || scopeVal.ch2.enabled) && eyeWinsH.length >= 10) {
+            let canhSum = 0, canlSum = 0, validCount = 0;
+            for (const win of eyeWinsH) {
+                if (win.length < 2) continue;
+                const centerIdx = Math.round(0.5 * (win.length - 1));
+                canhSum += win[centerIdx].canh;
+                canlSum += win[centerIdx].canl;
+                validCount++;
+            }
+            if (validCount > 0) {
+                const avgCANH = canhSum / validCount;
+                const avgCANL = canlSum / validCount;
+                const verticalGap = avgCANH - avgCANL;
+                const voltRange = ISO.V_MAX - ISO.V_MIN; // 5.0
+                eyeHeight = clamp(Math.round((verticalGap / voltRange) * 100), 0, 100);
+            }
+        }
+
         setMetrics({
             ch1Vpp: scopeVal.ch1.enabled ? (ch1Max - ch1Min) : 0, 
             ch1Avg: scopeVal.ch1.enabled ? ch1Avg : 0, 
@@ -879,7 +905,7 @@ export const VoltageScope: React.FC = () => {
             busLoad: Math.round(busLoad),
             bitRate: Math.round(1000 / (BIT_TIME_SAMPLES * (scopeVal.tdiv / 4))),
             eyeWidth,
-            eyeHeight: scopeVal.ch1.enabled ? Math.round((ch1Max - ch1Min) / 2 * 100) : 0,
+            eyeHeight,
             isoCANH: !!isoCANH, 
             isoCANL: !!isoCANL, 
             isoDiff: !!isoDiff, 
@@ -1144,19 +1170,19 @@ export const VoltageScope: React.FC = () => {
     // ═════════════════════════════════════════════════════════
     return (
         <div className="space-y-0">
-            <div className="bg-[#0a0a12] rounded-xl border border-[#14142a] shadow-lg overflow-hidden">
+            <div className="bg-white dark:bg-[#0a0a12] rounded-xl border border-black/10 dark:border-[#14142a] shadow-lg overflow-hidden transition-colors">
                 {/* Top Bar */}
-                <div className="flex items-center justify-between px-4 py-2 bg-[#0c0c16] border-b border-[#14142a]">
+                <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-[#0c0c16] border-b border-black/5 dark:border-[#14142a] transition-colors">
                     <div className="flex items-center gap-3">
-                        <span className="text-xs font-bold text-gray-300 tracking-wide">CAN-SCOPE</span>
-                        <span className="text-[8px] text-gray-600 font-mono">CSO-2000 SERIES</span>
-                        <span className="text-[8px] text-gray-700 font-mono border border-[#1a1a2e] px-1.5 py-0.5 rounded">ISO 11898</span>
+                        <span className="text-xs font-bold text-light-600 dark:text-gray-300 tracking-wide">CAN-SCOPE</span>
+                        <span className="text-[8px] text-light-400 dark:text-gray-600 font-mono">CSO-2000 SERIES</span>
+                        <span className="text-[8px] text-light-500 dark:text-gray-700 font-mono border border-black/10 dark:border-[#1a1a2e] px-1.5 py-0.5 rounded">ISO 11898</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-0.5 mr-2">
                             <SmallBtn label="−" onClick={zoomOut} title="Zoom out" />
                             <button onClick={resetView} title="Reset view (R)"
-                                className="px-2 py-0.5 text-[8px] font-mono text-gray-500 hover:text-white bg-[#0e0e18] border border-[#1a1a2e] transition-colors rounded">
+                                className="px-2 py-0.5 text-[8px] font-mono text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/5 dark:border-[#1a1a2e] transition-colors rounded">
                                 {view.zoomX !== 1 || view.zoomY !== 1 ? `${view.zoomX.toFixed(1)}×${view.zoomY.toFixed(1)}` : '1:1'}
                             </button>
                             <SmallBtn label="+" onClick={zoomIn} title="Zoom in" />
@@ -1175,7 +1201,7 @@ export const VoltageScope: React.FC = () => {
 
                 <div className="flex flex-col xl:flex-row gap-0">
                     {/* Left Rail (Controls only) */}
-                    <div className="xl:w-64 w-full p-2.5 xl:border-r border-[#14142a] flex flex-col gap-3 bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner">
+                    <div className="xl:w-64 w-full p-2.5 xl:border-r border-black/5 dark:border-[#14142a] flex flex-col gap-3 bg-gray-100 dark:bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner transition-colors">
                         <MetricGroup title="Acquire" icon="⚡">
                             <div className="grid grid-cols-2 gap-2 p-1">
                                 <ScopeBtn label={scope.runMode === 'run' ? 'Stop' : 'Run'} active={scope.runMode === 'run'}
@@ -1225,7 +1251,7 @@ export const VoltageScope: React.FC = () => {
                                     }} />
                                 
                                 <div className="space-y-1">
-                                    <div className="text-[7px] font-mono text-gray-500 uppercase px-0.5">Trigger Mode</div>
+                                    <div className="text-[7px] font-mono text-light-400 dark:text-gray-500 uppercase px-0.5">Trigger Mode</div>
                                     {(() => {
                                         const trigColors: Record<'auto' | 'SOF' | 'error' | 'ID', string> = {
                                             auto:  '#ffd000',   // yellow
@@ -1275,7 +1301,7 @@ export const VoltageScope: React.FC = () => {
                     </div>
 
                     {/* Right Rail (Metrics only) */}
-                    <div className="xl:w-64 w-full p-2.5 xl:border-l border-[#14142a] flex flex-col gap-3 bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner">
+                    <div className="xl:w-64 w-full p-2.5 xl:border-l border-black/5 dark:border-[#14142a] flex flex-col gap-3 bg-gray-100 dark:bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner transition-colors">
                         <MetricGroup title="Signal Quality" icon="⚡" subTitle={metrics.isGated ? 'Gated' : undefined}>
                             <MetricRow label="CANH Vpp" value={`${metrics.ch1Vpp.toFixed(2)} V`} color={C.ch1} />
                             <MetricRow label="CANH Avg" value={`${metrics.ch1Avg.toFixed(2)} V`} color={C.ch1} />
@@ -1294,8 +1320,8 @@ export const VoltageScope: React.FC = () => {
                                 status={metrics.busLoad < 70 ? 'pass' : metrics.busLoad < 85 ? 'warn' : 'fail'} />
                             <MetricRow label="Bit Rate" value={`~${metrics.bitRate} kbps`} />
                             
-                            <div className="pt-2 mt-2 border-t border-white/5 space-y-1">
-                                <div className="text-[7px] font-mono text-gray-500 uppercase px-0.5 mb-1.5">Compliance (ISO 11898)</div>
+                            <div className="pt-2 mt-2 border-t border-black/5 dark:border-white/5 space-y-1">
+                                <div className="text-[7px] font-mono text-light-400 dark:text-gray-500 uppercase px-0.5 mb-1.5">Compliance (ISO 11898)</div>
                                 <MetricRow label="CANH Level" value={metrics.isoCANH ? 'VALID' : 'OUT-OF-SPEC'} 
                                     status={metrics.isoCANH ? 'pass' : 'fail'} />
                                 <MetricRow label="CANL Level" value={metrics.isoCANL ? 'VALID' : 'OUT-OF-SPEC'} 
@@ -1321,75 +1347,89 @@ export const VoltageScope: React.FC = () => {
 // Sub-components
 // ═══════════════════════════════════════════════════════════════
 
-const Hint: React.FC<{ text: string }> = ({ text }) => (
-    <span className="text-[7px] font-mono text-gray-700 bg-black/50 px-1 py-0.5 rounded whitespace-nowrap">{text}</span>
-);
+const Hint: React.FC<{ text: string }> = ({ text }) => {
+    return (
+        <span className="text-[7px] font-mono text-light-500 dark:text-gray-700 bg-black/5 dark:bg-black/50 px-1 py-0.5 rounded whitespace-nowrap transition-colors">{text}</span>
+    );
+};
 
-const SmallBtn: React.FC<{ label: string; onClick: () => void; title: string }> = ({ label, onClick, title }) => (
-    <button onClick={onClick} title={title}
-        className="w-5 h-5 flex items-center justify-center text-[10px] font-mono text-gray-500 hover:text-white bg-[#0e0e18] border border-[#1a1a2e] rounded transition-colors hover:bg-[#14142a]">
-        {label}
-    </button>
-);
+const SmallBtn: React.FC<{ label: string; onClick: () => void; title: string }> = ({ label, onClick, title }) => {
+    return (
+        <button onClick={onClick} title={title}
+            className="w-5 h-5 flex items-center justify-center text-[10px] font-mono text-light-400 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/5 dark:border-[#1a1a2e] rounded transition-colors hover:bg-gray-200 dark:hover:bg-[#14142a]">
+            {label}
+        </button>
+    );
+};
 
-const ScopeBtn: React.FC<{ label: string; active?: boolean; color?: string; onClick: () => void }> = ({ label, active, color, onClick }) => (
-    <button onClick={onClick}
-        className={`w-full px-2.5 py-1.5 rounded border text-[9px] font-mono font-bold tracking-tighter uppercase transition-all duration-200 active:scale-[0.97] group flex items-center justify-center gap-2 ${
-            active ? 'border-opacity-100 shadow-[0_0_10px_-2px_rgba(0,0,0,0.5)]' : 'bg-[#0a0a12] border-[#1a1a2e] text-gray-600 border-dashed hover:border-gray-700'
-        }`}
-        style={{ 
-            borderColor: active ? color : undefined, 
-            color: active ? color : undefined,
-            backgroundColor: active ? `${color}10` : undefined,
-            boxShadow: active ? `inset 0 0 12px ${color}15, 0 0 5px ${color}10` : undefined
-        }}>
-        <div className={`w-1 h-1 rounded-full transition-all duration-300 ${active ? 'animate-pulse' : 'bg-gray-800'}`} style={{ backgroundColor: active ? color : undefined, boxShadow: active ? `0 0 4px ${color}` : undefined }} />
-        {label}
-    </button>
-);
+const ScopeBtn: React.FC<{ label: string; active?: boolean; color?: string; onClick: () => void }> = ({ label, active, color, onClick }) => {
+    return (
+        <button onClick={onClick}
+            className={`w-full px-2.5 py-1.5 rounded border text-[9px] font-mono font-bold tracking-tighter uppercase transition-all duration-200 active:scale-[0.97] group flex items-center justify-center gap-2 ${
+                active ? 'border-opacity-100 shadow-[0_0_10px_-2px_rgba(0,0,0,0.5)]' : 'bg-gray-50 dark:bg-[#0a0a12] border-black/5 dark:border-[#1a1a2e] text-light-400 dark:text-gray-600 border-dashed hover:border-light-600 dark:hover:border-gray-700'
+            }`}
+            style={{ 
+                borderColor: active ? color : undefined, 
+                color: active ? color : undefined,
+                backgroundColor: active ? `${color}10` : undefined,
+                boxShadow: active ? `inset 0 0 12px ${color}15, 0 0 5px ${color}10` : undefined
+            }}>
+            <div className={`w-1 h-1 rounded-full transition-all duration-300 ${active ? 'animate-pulse' : 'bg-gray-300 dark:bg-gray-800'}`} style={{ backgroundColor: active ? color : undefined, boxShadow: active ? `0 0 4px ${color}` : undefined }} />
+            {label}
+        </button>
+    );
+};
 
-const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown: () => void }> = ({ label, value, onUp, onDown }) => (
-    <div className="flex flex-col gap-1 px-1">
-        <span className="text-[7px] font-mono text-gray-500 uppercase tracking-widest">{label}</span>
-        <div className="flex items-center bg-[#0d0d16] border border-[#1a1a2e] rounded-md overflow-hidden shadow-inner group-hover:border-[#2a2a4e] transition-colors">
-            <button onClick={onDown} className="px-2 py-1 flex items-center justify-center text-gray-500 hover:text-white hover:bg-[#ffffff05] transition-all text-xs font-mono border-r border-[#1a1a2e]">˗</button>
-            <div className="flex-1 py-1 px-1.5 flex items-center justify-center min-w-[60px]">
-                <span className="text-[10px] font-mono font-bold text-gray-300 tabular-nums">{value}</span>
+const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown: () => void }> = ({ label, value, onUp, onDown }) => {
+    return (
+        <div className="flex flex-col gap-1 px-1">
+            <span className="text-[7px] font-mono text-light-400 dark:text-gray-500 uppercase tracking-widest">{label}</span>
+            <div className="flex items-center bg-gray-100 dark:bg-[#0d0d16] border border-black/5 dark:border-[#1a1a2e] rounded-md overflow-hidden shadow-inner group-hover:border-black/10 dark:group-hover:border-[#2a2a4e] transition-colors">
+                <button onClick={onDown} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-r border-black/5 dark:border-[#1a1a2e]">˗</button>
+                <div className="flex-1 py-1 px-1.5 flex items-center justify-center min-w-[60px]">
+                    <span className="text-[10px] font-mono font-bold text-dark-950 dark:text-gray-300 tabular-nums">{value}</span>
+                </div>
+                <button onClick={onUp} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-l border-black/5 dark:border-[#1a1a2e]">+</button>
             </div>
-            <button onClick={onUp} className="px-2 py-1 flex items-center justify-center text-gray-500 hover:text-white hover:bg-[#ffffff05] transition-all text-xs font-mono border-l border-[#1a1a2e]">+</button>
         </div>
-    </div>
-);
+    );
+};
 
-const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string; subTitle?: string; active?: boolean }> = ({ title, icon, children, color, subTitle, active }) => (
-    <div className={`w-full p-2.5 rounded-lg bg-[#0a0a14] border transition-all duration-300 ${active ? 'ring-1 ring-inset ring-white/10 ring-opacity-50' : ''}`} 
-        style={{ 
-            borderLeftColor: color, 
-            borderLeftWidth: color ? '3px' : '1px',
-            borderColor: active ? color : '#14142a',
-            boxShadow: active ? `inset 0 0 15px ${color}10, 0 0 5px ${color}05` : undefined
-        }}>
-        <div className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string; subTitle?: string; active?: boolean }> = ({ title, icon, children, color, subTitle, active }) => {
+    return (
+        <div className={`w-full p-2.5 rounded-lg bg-gray-50 dark:bg-[#0a0a14] border-black/5 dark:border-[#14142a] border transition-all duration-300 ${active ? 'ring-1 ring-inset ring-black/5 dark:ring-white/10 ring-opacity-50' : ''}`} 
+            style={{ 
+                borderLeftColor: color, 
+                borderLeftWidth: color ? '3px' : '1px',
+                borderColor: active ? color : undefined,
+                boxShadow: active ? `inset 0 0 15px ${color}10, 0 0 5px ${color}05` : undefined
+            }}>
+            <div className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                    {color ? (
+                        <span className="text-[11px]" style={{ color: color }}>◆</span>
+                    ) : (
+                        <span className="text-[11px] font-normal opacity-70">{icon}</span>
+                    )}
+                    {title}
+                </div>
+                {subTitle && <span className="text-[7px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20">{subTitle}</span>}
+            </div>
+            <div className="space-y-1">{children}</div>
+        </div>
+    );
+};
+
+const MetricRow: React.FC<{ label: string; value: string; color?: string; status?: 'pass' | 'warn' | 'fail' }> = ({ label, value, color, status }) => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+    return (
+        <div className="flex justify-between items-center py-0.5">
+            <span className="text-[9px] font-mono text-light-400 dark:text-gray-500">{label}</span>
             <div className="flex items-center gap-1.5">
-                {color ? (
-                    <span className="text-[11px]" style={{ color: color }}>◆</span>
-                ) : (
-                    <span className="text-[11px]">{icon}</span>
-                )}
-                {title}
+                {status && <span className={`w-2 h-2 rounded-full shadow-sm ${status === 'pass' ? 'bg-emerald-400 shadow-emerald-400/20' : status === 'warn' ? 'bg-amber-400 shadow-amber-400/20' : 'bg-red-400 shadow-red-400/20'}`} />}
+                <span className="text-[10px] font-mono font-bold tracking-tight" style={{ color: color || (isDark ? '#f3f4f6' : '#1f2937') }}>{value}</span>
             </div>
-            {subTitle && <span className="text-[7px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20">{subTitle}</span>}
         </div>
-        <div className="space-y-1">{children}</div>
-    </div>
-);
-
-const MetricRow: React.FC<{ label: string; value: string; color?: string; status?: 'pass' | 'warn' | 'fail' }> = ({ label, value, color, status }) => (
-    <div className="flex justify-between items-center py-0.5">
-        <span className="text-[9px] font-mono text-gray-500">{label}</span>
-        <div className="flex items-center gap-1.5">
-            {status && <span className={`w-2 h-2 rounded-full shadow-sm ${status === 'pass' ? 'bg-emerald-400 shadow-emerald-400/20' : status === 'warn' ? 'bg-amber-400 shadow-amber-400/20' : 'bg-red-400 shadow-red-400/20'}`} />}
-            <span className="text-[10px] font-mono font-bold tracking-tight" style={{ color: color || '#f3f4f6' }}>{value}</span>
-        </div>
-    </div>
-);
+    );
+};
