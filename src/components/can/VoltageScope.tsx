@@ -37,6 +37,10 @@ const DIFF_Y = WAVE_Y + WAVE_H + GAP;
 const EYE_Y = DIFF_Y + DIFF_H + GAP;
 const DECODE_Y = EYE_Y + EYE_H + GAP;
 
+// Panel 5: Status Bar
+const STATUS_Y = DECODE_Y + DECODE_H + GAP;  // = 442 + 28 + 8 = 478
+const STATUS_H = CANVAS_H - STATUS_Y;         // = 540 - 478 = 62
+
 // ISO thresholds and types imported from waveform-generator service
 
 // ─── Types ──────────────────────────────────────────────────
@@ -596,6 +600,15 @@ export const VoltageScope: React.FC = () => {
         // ════════════════════════════════════════════
         // PANEL 4: Protocol Decode Strip
         // ════════════════════════════════════════════
+        let frameCount = 0;
+        if (samples.length >= 2) {
+            for (let i = 1; i < samples.length; i++) {
+                if (samples[i].bitIndex < samples[i - 1].bitIndex) {
+                    frameCount++;
+                }
+            }
+        }
+
         drawPanel(M.left, DECODE_Y, PLOT_W, DECODE_H, '', () => {
             if (samples.length < 2) return;
             
@@ -676,15 +689,7 @@ export const VoltageScope: React.FC = () => {
             ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.font = '7px monospace'; ctx.textAlign = 'left';
             ctx.fillText('DECODE', 4, 9);
 
-            // Count frame boundaries in the visible sample buffer
-            let frameCount = 0;
-            for (let i = 1; i < samples.length; i++) {
-                if (samples[i].bitIndex < samples[i - 1].bitIndex) {
-                    frameCount++;
-                }
-            }
-
-            // Frame count readout (right-aligned)
+            // Frame count readout (right-aligned) - Keep this for now, though redundant with status bar
             ctx.fillStyle = frameCount > 0 ? 'rgba(0,255,136,0.5)' : 'rgba(255,255,255,0.15)';
             ctx.font = '7px monospace';
             ctx.textAlign = 'right';
@@ -694,6 +699,47 @@ export const VoltageScope: React.FC = () => {
                 9
             );
         });
+
+        // ════════════════════════════════════════════
+        // STATUS BAR (Panel 5)
+        // ════════════════════════════════════════════
+        ctx.fillStyle = isDark ? '#070710' : '#f0f0f5';
+        ctx.fillRect(M.left, STATUS_Y, PLOT_W, STATUS_H);
+        ctx.strokeStyle = C.panelBdr;
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(M.left + 0.5, STATUS_Y + 0.5, PLOT_W - 1, STATUS_H - 1);
+
+        const statusMidY = STATUS_Y + STATUS_H / 2 + 3;
+        ctx.font = '600 8.5px monospace';
+
+        // Left: cursor measurement
+        if (s.cursorMode === 'time' && samples.length > 2) {
+            const idxA = Math.floor(s.cursorA * (samples.length - 1));
+            const idxB = Math.floor(s.cursorB * (samples.length - 1));
+            const sA = samples[clamp(idxA, 0, samples.length - 1)];
+            const sB = samples[clamp(idxB, 0, samples.length - 1)];
+            const dt = Math.abs(idxB - idxA) * (s.tdiv / 20);
+            const dv = Math.abs(sA.canh - sB.canh);
+            ctx.fillStyle = C.cursor;
+            ctx.textAlign = 'left';
+            ctx.fillText(`ΔT = ${dt.toFixed(1)} µs   ΔV = ${dv.toFixed(2)} V`, M.left + 12, statusMidY);
+        } else {
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.3)';
+            ctx.textAlign = 'left';
+            ctx.fillText('Enable cursors (C) to measure', M.left + 12, statusMidY);
+        }
+
+        // Center: Frame info
+        if (frameCount > 0) {
+            ctx.fillStyle = C.dominant;
+            ctx.textAlign = 'center';
+            ctx.fillText(`${frameCount} CAN FRAME${frameCount > 1 ? 'S' : ''} DETECTED`, M.left + PLOT_W / 2, statusMidY);
+        }
+
+        // Right: sample info
+        ctx.fillStyle = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.4)';
+        ctx.textAlign = 'right';
+        ctx.fillText(`${samples.length} smp  ${s.tdiv}µs/div`, PLOT_W + M.left - 12, statusMidY);
 
         // ════════════════════════════════════════════
         // Header info bar
@@ -732,17 +778,6 @@ export const VoltageScope: React.FC = () => {
             14
         );
 
-        // Cursor measurements
-        if (s.cursorMode === 'time' && samples.length > 2) {
-            const idxA = Math.floor(s.cursorA * (samples.length - 1));
-            const idxB = Math.floor(s.cursorB * (samples.length - 1));
-            const sA = samples[clamp(idxA, 0, samples.length - 1)];
-            const sB = samples[clamp(idxB, 0, samples.length - 1)];
-            const dt = Math.abs(idxB - idxA) * (s.tdiv / 20);
-            const dv = Math.abs(sA.canh - sB.canh);
-            ctx.fillStyle = C.cursor; ctx.textAlign = 'left'; ctx.font = '600 8px monospace';
-            ctx.fillText(`ΔT=${dt.toFixed(1)}µs  ΔV=${dv.toFixed(2)}V`, M.left, CANVAS_H - 4);
-        }
 
         // Ground markers
         const { vMin, vMax, avgOffset } = getActiveWaveScale();
