@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTestBench } from '../../context/TestBenchContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -624,6 +624,15 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
         ? 'Transmission ended with a bus error. Review the error detail and message log before retrying.'
         : pi.description;
 
+    // Stable bit-pattern opacities to prevent flickering during phase re-renders
+    const bitPatternOpacities = useMemo(() => {
+        const make = (len: number) => Array.from({ length: len }, () => Math.random() > 0.5 ? 0.8 : 0.2);
+        return {
+            sof: make(4), arbitration: make(11), control: make(4),
+            data: make(16), crc: make(4), ack: make(4), eof: make(4),
+        } as Record<string, number[]>;
+    }, [transmission.id]); // Re-generate only for a new transmission, stable across phases
+
     return (
         <div className="mx-4 mt-3 rounded-lg border overflow-hidden" style={{ borderColor: hasError ? '#ef444440' : pi.color + '30', backgroundColor: '#0c0c10' }}>
             {/* Phase progress bar */}
@@ -716,7 +725,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                                 {(isCompleted || isActive) && (
                                     <div className="absolute inset-0 flex items-center justify-center gap-[1px] opacity-30 overflow-hidden">
                                         {Array.from({ length: phase === 'data' ? 16 : phase === 'arbitration' ? 11 : 4 }, (_, j) => (
-                                            <div key={j} className="w-[2px] h-3 rounded-sm" style={{ backgroundColor: phaseColor, opacity: Math.random() > 0.5 ? 0.8 : 0.2 }} />
+                                            <div key={j} className="w-[2px] h-3 rounded-sm" style={{ backgroundColor: phaseColor, opacity: bitPatternOpacities[phase]?.[j] ?? 0.5 }} />
                                         ))}
                                     </div>
                                 )}
