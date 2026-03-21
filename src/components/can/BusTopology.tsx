@@ -1777,10 +1777,11 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                                 className={`px-2.5 py-1.5 rounded text-[9px] font-mono font-bold uppercase border transition-all ${toId === 'broadcast' ? 'bg-orange-500/15 text-orange-600 dark:text-[#f59e0b] border-orange-500/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                 Broadcast (All)
                             </button>
-                            {allNodes.filter(n => n.id !== fromNode.id && n.online).map(n => (
+                            {allNodes.filter(n => n.id !== fromNode.id).map(n => (
                                 <button key={n.id} onClick={() => setToId(n.id)}
-                                    className={`px-2.5 py-1.5 rounded text-[9px] font-mono font-bold uppercase border transition-all ${toId === n.id ? 'bg-cyber-blue/15 text-cyber-blue dark:text-[#00f3ff] border-cyber-blue/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
+                                    className={`px-2.5 py-1.5 rounded text-[8px] font-mono font-bold uppercase border transition-all ${toId === n.id ? 'bg-cyber-blue/15 text-cyber-blue dark:text-[#00f3ff] border-cyber-blue/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                     {n.label}
+                                    {!n.online && <span className="ml-1 text-red-500 dark:text-red-400 normal-case">(off)</span>}
                                 </button>
                             ))}
                         </div>
