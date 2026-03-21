@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from '../components/ui/Container';
 import {
@@ -68,6 +69,7 @@ function byteToBits(byte: number): number[] {
 // ─── Main Component ─────────────────────────────────────────────────────────
 
 export default function InspectorPage() {
+    const navigate = useNavigate();
     // Frame configuration state
     const [arbId, setArbId] = useState('7DF');
     const [rtr, setRtr] = useState(0);
@@ -731,14 +733,14 @@ export default function InspectorPage() {
                     {/* ── Navigation ───────────────────────────────────── */}
                     <div className="flex flex-col sm:flex-row gap-4">
                         <button
-                            onClick={() => window.location.href = '/signals'}
+                            onClick={() => navigate('/signals')}
                             className="flex-1 p-5 rounded-2xl bg-gradient-to-r from-cyber-green/15 to-cyber-blue/15 border border-cyber-green/20 text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.01] active:scale-[0.99] transition-all"
                         >
                             <span className="text-sm italic">Signals Lab</span>
                             <ArrowRight className="group-hover:translate-x-2 transition-transform" size={18} />
                         </button>
                         <button
-                            onClick={() => window.location.href = '/arbitration'}
+                            onClick={() => navigate('/arbitration')}
                             className="flex-1 p-5 rounded-2xl bg-gradient-to-r from-cyber-purple/15 to-cyber-pink/15 border border-cyber-purple/20 text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.01] active:scale-[0.99] transition-all"
                         >
                             <span className="text-sm italic">Arbitration Lab</span>
