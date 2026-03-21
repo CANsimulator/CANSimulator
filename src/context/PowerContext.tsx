@@ -5,11 +5,15 @@
  */
 
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect, useMemo, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import type { PowerContextType, PowerState, FaultState, SystemVoltage } from '../types/power';
 
 export const PowerContext = createContext<PowerContextType | undefined>(undefined);
 
 export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const { pathname } = useLocation();
+    const isSimulatorRoute = ['/simulator', '/inspector', '/physical', '/arbitration', '/errors', '/signals'].includes(pathname);
+
     // Advanced Power State
     const [systemVoltage, setSystemVoltage] = useState<SystemVoltage>(12);
     const [targetVoltage, setTargetVoltage] = useState(12.0);
@@ -35,6 +39,8 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     // physics simulation loop
     useEffect(() => {
+        if (!isSimulatorRoute) return;
+
         const interval = setInterval(() => {
             // 1. Handle Faults
             if (faultState === 'SHORT_GND') {
@@ -84,7 +90,7 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }, 100); // 100ms update for smoother responsiveness
 
         return () => clearInterval(interval);
-    }, [powerState, faultState, targetVoltage, currentLimit]);
+    }, [isSimulatorRoute, powerState, faultState, targetVoltage, currentLimit]);
 
     const toggleEcuPower = useCallback(() => {
         setPowerState(prev => prev === 'OFF' ? 'ON' : 'OFF');
