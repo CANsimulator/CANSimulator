@@ -1601,6 +1601,11 @@ function NodeDetailPanel({
                 {/* Quick send buttons */}
                 <div className="flex items-center gap-1 flex-wrap">
                     <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 uppercase mr-1 transition-colors">Send to:</span>
+                    {isBusy && (
+                        <span className="text-[8px] font-mono font-bold text-amber-500 dark:text-amber-400 border border-amber-500/30 bg-amber-500/10 rounded px-1.5 py-0.5 ml-1 animate-pulse">
+                            Bus busy
+                        </span>
+                    )}
                     {allNodes.filter(n => n.id !== node.id && n.online).map(target => (
                         <button key={target.id} onClick={() => onSendSignal(node.id, target.id)}
                             disabled={isBusy || !node.online}
@@ -1853,11 +1858,18 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                 {/* Actions */}
                 <div className="flex justify-end gap-2 mt-5">
                     <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
-                    <button onClick={() => onSend(toId, msgType, dlc, msgType === 'remote' ? [] : dataBytes.slice(0, dlc))}
-                        disabled={isBusy}
-                        className="px-5 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-green-500/10 dark:bg-[#22c55e15] border border-green-500/30 dark:border-[#22c55e40] text-green-600 dark:text-[#22c55e] hover:bg-green-500/20 dark:hover:bg-[#22c55e25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-                        Transmit Frame
-                    </button>
+                    <div className="flex items-center gap-2">
+                        {isBusy && (
+                            <span className="text-[8px] font-mono font-bold text-amber-500 dark:text-amber-400 border border-amber-500/30 bg-amber-500/10 rounded px-1.5 py-1.5 animate-pulse">
+                                Bus busy
+                            </span>
+                        )}
+                        <button onClick={() => onSend(toId, msgType, dlc, msgType === 'remote' ? [] : dataBytes.slice(0, dlc))}
+                            disabled={isBusy}
+                            className="px-5 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-green-500/10 dark:bg-[#22c55e15] border border-green-500/30 dark:border-[#22c55e40] text-green-600 dark:text-[#22c55e] hover:bg-green-500/20 dark:hover:bg-[#22c55e25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                            Transmit Frame
+                        </button>
+                    </div>
                 </div>
             </motion.div>
         </motion.div>
