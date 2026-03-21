@@ -95,8 +95,7 @@ const STORAGE_KEY = 'canscope-bus-nodes';
 type PersistedNode = Omit<ECUNode, 'txCount' | 'rxCount' | 'errorCount'>;
 const RANDOM_DATA = () => Array.from({ length: 8 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase());
 
-let _nextId = 100;
-let _txId = 0;
+
 
 /* ═══════════════════════════════════════════════════════════════
    BusTopology — Main Component
@@ -135,6 +134,8 @@ export function BusTopology() {
     const transmissionRef = useRef<TransmissionState | null>(null);
     const nodesRef = useRef(nodes);
     const completedTransmissionIdsRef = useRef<Set<number>>(new Set());
+    const nextIdRef = useRef(100);
+    const txIdRef = useRef(0);
 
     const bench = useTestBench();
     const { theme } = useTheme();
@@ -362,7 +363,7 @@ export function BusTopology() {
     const sendSignal = useCallback((fromId: string, toId: string | 'broadcast', msgType: MessageType = 'data', dlc: number = 8, data?: string[]) => {
         if (transmission && transmission.phase !== 'idle' && transmission.phase !== 'done') return; // busy
         const tx: TransmissionState = {
-            id: ++_txId,
+            id: ++txIdRef.current,
             fromId,
             toId,
             phase: 'sof',
@@ -387,7 +388,7 @@ export function BusTopology() {
         setNodes(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n));
     }, []);
     const addNode = (node: Omit<ECUNode, 'id' | 'txCount' | 'rxCount' | 'errorCount'>) => {
-        const id = `ecu_${++_nextId}`;
+        const id = `ecu_${++nextIdRef.current}`;
         setNodes(prev => [...prev, { ...node, id, txCount: 0, rxCount: 0, errorCount: 0 }].sort((a, b) => a.x - b.x));
         setShowAddDialog(false);
     };
@@ -1145,7 +1146,7 @@ function TopologyView({
 
             {/* TX/RX label overlay during transmission */}
             {txActive && (
-                <div className="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-4 pointer-events-none">
+                <div className="absolute bottom-8 left-0 right-0 flex flex-wrap items-center justify-center gap-4 pointer-events-none px-4">
                     {sourceNode && (
                         <motion.div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#22c55e15] border border-[#22c55e40]"
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
@@ -1808,7 +1809,7 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                     </div>
 
                     {/* Data Bytes */}
-                    {dlc > 0 && (
+                    {dlc > 0 && msgType !== 'remote' && (
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
                                 <label className="text-[7px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider transition-colors">Data Bytes (hex)</label>
@@ -1835,7 +1836,7 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                                 { label: 'SOF', color: '#22c55e', w: 'w-4' },
                                 { label: fromNode.canId, color: '#f59e0b', w: 'flex-[2]' },
                                 { label: `DLC:${dlc}`, color: '#3b82f6', w: 'flex-1' },
-                                { label: dlc > 0 ? dataBytes.slice(0, dlc).join(' ') : '—', color: '#a855f7', w: 'flex-[3]' },
+                                { label: msgType === 'remote' ? 'RTR' : (dlc > 0 ? dataBytes.slice(0, dlc).join(' ') : '—'), color: '#a855f7', w: 'flex-[3]' },
                                 { label: 'CRC', color: '#ec4899', w: 'flex-1' },
                                 { label: 'ACK', color: '#14b8a6', w: 'w-6' },
                                 { label: 'EOF', color: '#00f3ff', w: 'w-6' },
@@ -1852,7 +1853,7 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                 {/* Actions */}
                 <div className="flex justify-end gap-2 mt-5">
                     <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
-                    <button onClick={() => onSend(toId, msgType, dlc, dataBytes.slice(0, dlc))}
+                    <button onClick={() => onSend(toId, msgType, dlc, msgType === 'remote' ? [] : dataBytes.slice(0, dlc))}
                         disabled={isBusy}
                         className="px-5 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-green-500/10 dark:bg-[#22c55e15] border border-green-500/30 dark:border-[#22c55e40] text-green-600 dark:text-[#22c55e] hover:bg-green-500/20 dark:hover:bg-[#22c55e25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                         Transmit Frame
