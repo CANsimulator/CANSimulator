@@ -4,27 +4,47 @@ import { CANFDHandler } from '../../services/can/can-fd-handler';
 import { lengthToDlc } from '../../types/can';
 import { CyberButton } from '../ui/CyberButton';
 import { cn } from '../../utils/cn';
+import { CANValidation } from '../../services/can/validation';
 
 export const CANFrameBuilder: React.FC = () => {
     const [id, setId] = useState<string>('7DF');
     const [dataStr, setDataStr] = useState<string>('02 01 0D 00 00 00 00 00');
     const [isFD, setIsFD] = useState<boolean>(false);
     const [brs, setBrs] = useState<boolean>(true);
+    const [errors, setErrors] = useState<{ msgId?: string; payload?: string; send?: string }>({});
+    
+    // Re-validate when FD mode changes
+    React.useEffect(() => {
+        const result = CANValidation.validateMsgId(id, isFD);
+        setErrors(prev => ({ ...prev, msgId: result.error }));
+    }, [isFD, id]);
 
     const parseBytes = (): Uint8Array =>
         new Uint8Array(
             dataStr.split(' ').filter(x => x.length > 0).map(x => parseInt(x, 16))
         );
 
-    const handleSend = (): void => {
+    const handleSend = async (): Promise<void> => {
         try {
+            const idValidation = CANValidation.validateMsgId(id, isFD); // In this UI, FD implies Extended ID
+            const payloadValidation = CANValidation.validatePayload(dataStr, isFD);
+
+            if (!idValidation.isValid || !payloadValidation.isValid) {
+                setErrors({
+                    msgId: idValidation.error,
+                    payload: payloadValidation.error
+                });
+                return;
+            }
+
+            setErrors({});
             const numericId = parseInt(id, 16);
             const data = parseBytes();
 
             if (isFD) {
-                void CANFDHandler.sendFD(numericId, data, brs);
+                await CANFDHandler.sendFD(numericId, data, brs);
             } else {
-                void canSimulator.broadcast({
+                await canSimulator.broadcast({
                     id: numericId,
                     dlc: Math.min(data.length, 8),
                     data: data.slice(0, 8),
@@ -32,8 +52,9 @@ export const CANFrameBuilder: React.FC = () => {
                     timestamp: Date.now(),
                 });
             }
-        } catch {
-            console.error('Invalid frame data');
+        } catch (err) {
+            setErrors({ send: 'Failed to send frame. Check your inputs.' });
+            console.error('Invalid frame data', err);
         }
     };
 
@@ -61,14 +82,25 @@ export const CANFrameBuilder: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label htmlFor="frame-id" className="text-[10px] text-gray-500 uppercase font-mono cursor-pointer">Message ID (Hex)</label>
+                    <label htmlFor="frame-msg-id" className="text-[10px] text-gray-500 uppercase font-mono cursor-pointer">Message ID (Hex)</label>
                     <input
-                        id="frame-id"
+                        id="frame-msg-id"
                         value={id}
-                        onChange={e => setId(e.target.value.toUpperCase())}
-                        className="w-full bg-dark-950 border border-white/10 rounded px-3 py-2 text-cyber-blue font-mono focus:border-cyber-blue outline-none transition-colors"
+                        onChange={e => {
+                           const val = e.target.value.toUpperCase();
+                           if (val && !/^[0-9A-F]*$/.test(val)) return;
+                           const result = CANValidation.validateMsgId(val, isFD);
+                           setErrors(prev => ({ ...prev, msgId: result.error, send: undefined }));
+                           setId(val);
+                        }}
+                        className={cn(
+                            "w-full bg-dark-950 border rounded px-3 py-2 text-cyber-blue font-mono outline-none transition-colors",
+                            errors.msgId ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-cyber-blue"
+                        )}
                         placeholder="7DF"
+                        maxLength={isFD ? 8 : 3}
                     />
+                    {errors.msgId && <p className="text-red-400 text-[10px] font-mono leading-tight">{errors.msgId}</p>}
                 </div>
                 {isFD && (
                     <div className="flex flex-col justify-end pb-1">
@@ -85,20 +117,35 @@ export const CANFrameBuilder: React.FC = () => {
                 <textarea
                     id="frame-payload"
                     value={dataStr}
-                    onChange={e => setDataStr(e.target.value.toUpperCase())}
+                    onChange={e => {
+                        const val = e.target.value.toUpperCase();
+                        const stripped = val.replace(/\s/g, '');
+                        if (stripped && !/^[0-9A-F]*$/.test(stripped)) return;
+                        
+                        const result = CANValidation.validatePayload(val, isFD);
+                        setErrors(prev => ({ ...prev, payload: result.error, send: undefined }));
+                        setDataStr(val);
+                    }}
                     rows={2}
-                    className="w-full bg-dark-950 border border-white/10 rounded px-3 py-2 text-gray-300 font-mono focus:border-cyber-blue outline-none transition-colors resize-none"
+                    className={cn(
+                        "w-full bg-dark-950 border rounded px-3 py-2 text-gray-300 font-mono outline-none transition-colors resize-none",
+                        errors.payload ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-cyber-blue"
+                    )}
                     placeholder="01 02 03..."
                 />
+                {errors.payload && <p className="text-red-400 text-[10px] font-mono leading-tight">{errors.payload}</p>}
                 <div className="flex justify-between text-[10px] font-mono">
                     <span className="text-gray-600">LEN: {byteCount} BYTES</span>
                     <span className="text-gray-600">DLC: {lengthToDlc(byteCount)}</span>
                 </div>
             </div>
 
-            <CyberButton onClick={handleSend} variant={isFD ? 'secondary' : 'primary'} className="w-full">
-                {isFD ? 'SEND FD FRAME' : 'SEND CLASSIC FRAME'}
-            </CyberButton>
+            <div className="space-y-2">
+                <CyberButton onClick={handleSend} variant={isFD ? 'secondary' : 'primary'} className="w-full">
+                    {isFD ? 'SEND FD FRAME' : 'SEND CLASSIC FRAME'}
+                </CyberButton>
+                {errors.send && <p className="text-red-400 text-xs text-center font-mono animate-pulse">{errors.send}</p>}
+            </div>
         </div>
     );
 };
