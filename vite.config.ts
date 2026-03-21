@@ -38,6 +38,7 @@ function asyncCssPlugin(): Plugin {
 }
 
 export default defineConfig({
+  base: '/CANSimulator/',
   plugins: [
     react(),
     asyncCssPlugin(),
