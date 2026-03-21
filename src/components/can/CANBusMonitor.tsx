@@ -40,7 +40,7 @@ export const CANBusMonitor: React.FC = () => {
                 className="flex-1 overflow-y-auto p-2 font-mono text-[11px] space-y-1 scroll-smooth"
             >
                 {/* Header row */}
-                <div className="grid grid-cols-12 gap-2 text-dark-500 uppercase pb-2 border-b border-white/5 mb-2 sticky top-0 bg-dark-900/80 backdrop-blur-sm z-10">
+                <div className="grid grid-cols-12 gap-2 text-gray-400 uppercase pb-2 border-b border-white/5 mb-2 sticky top-0 bg-dark-900/80 backdrop-blur-sm z-10">
                     <div className="col-span-2">Time</div>
                     <div className="col-span-2">ID</div>
                     <div className="col-span-1">Type</div>

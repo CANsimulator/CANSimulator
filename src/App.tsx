@@ -20,6 +20,8 @@ const GenerationsPage = lazy(() => import('./pages/GenerationsPage'));
 const InspectorPage = lazy(() => import('./pages/InspectorPage'));
 const SignalsPage = lazy(() => import('./pages/SignalsPage'));
 const ArbitrationPage = lazy(() => import('./pages/ArbitrationPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m.LegalPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 function AppLayout() {
@@ -60,6 +62,9 @@ function AppLayout() {
           <Route path="/inspector" element={withLayout(InspectorPage)} />
           <Route path="/signals" element={withLayout(SignalsPage)} />
           <Route path="/arbitration" element={withLayout(ArbitrationPage)} />
+          <Route path="/about" element={withLayout(AboutPage)} />
+          <Route path="/privacy-policy" element={withLayout(() => <LegalPage title="Privacy Policy" />)} />
+          <Route path="/terms" element={withLayout(() => <LegalPage title="Terms of Use" />)} />
           <Route path="*" element={withLayout(() => <NotFoundPage />)} />
         </Routes>
       </ErrorBoundary>
@@ -69,7 +74,7 @@ function AppLayout() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/CANSimulator">
       <PowerProvider>
         <AppLayout />
       </PowerProvider>

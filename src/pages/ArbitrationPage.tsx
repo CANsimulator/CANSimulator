@@ -89,9 +89,15 @@ export default function ArbitrationPage() {
                                     <label className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase tracking-widest">Identifier (Hex)</label>
                                     <input
                                         type="text"
+                                        maxLength={3}
+                                        pattern="[0-9A-Fa-f]*"
                                         value={nodeAId.toString(16).toUpperCase()}
-                                        onChange={(e) => setNodeAId(parseInt(e.target.value.replace(/[^0-9A-Fa-f]/g, '') || '0', 16))}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/[^0-9A-Fa-f]/g, '');
+                                            setNodeAId(parseInt(val || '0', 16));
+                                        }}
                                         className="w-full bg-white/40 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-2xl p-4 font-mono text-xl text-cyber-purple font-black outline-none focus:border-cyber-purple/50 transition-all text-center"
+                                        placeholder="7FF"
                                     />
                                 </div>
 
@@ -129,9 +135,15 @@ export default function ArbitrationPage() {
                                     <label className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase tracking-widest">Identifier (Hex)</label>
                                     <input
                                         type="text"
+                                        maxLength={3}
+                                        pattern="[0-9A-Fa-f]*"
                                         value={nodeBId.toString(16).toUpperCase()}
-                                        onChange={(e) => setNodeBId(parseInt(e.target.value.replace(/[^0-9A-Fa-f]/g, '') || '0', 16))}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/[^0-9A-Fa-f]/g, '');
+                                            setNodeBId(parseInt(val || '0', 16));
+                                        }}
                                         className="w-full bg-white/40 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-2xl p-4 font-mono text-xl text-red-500 font-black outline-none focus:border-red-500/50 transition-all text-center"
+                                        placeholder="001"
                                     />
                                 </div>
 
