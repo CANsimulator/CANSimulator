@@ -104,8 +104,8 @@ export const CANFrameBuilder: React.FC = () => {
                 </div>
                 {isFD && (
                     <div className="flex flex-col justify-end pb-1">
-                        <label className="flex items-center gap-2 cursor-pointer select-none">
-                            <input type="checkbox" checked={brs} onChange={e => setBrs(e.target.checked)} className="accent-cyber-purple" />
+                        <label htmlFor="frame-brs-checkbox" className="flex items-center gap-2 cursor-pointer select-none">
+                            <input id="frame-brs-checkbox" type="checkbox" checked={brs} onChange={e => setBrs(e.target.checked)} className="accent-cyber-purple" />
                             <span className="text-[10px] text-cyber-purple uppercase font-mono">Bit Rate Switch (BRS)</span>
                         </label>
                     </div>

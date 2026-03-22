@@ -266,10 +266,11 @@ export default function InspectorPage() {
                         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
                             {/* Arb ID */}
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-cyber-blue uppercase tracking-widest">Arbitration ID</label>
+                                <label htmlFor="inspector-arb-id" className="text-[10px] font-black text-cyber-blue uppercase tracking-widest">Arbitration ID</label>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">0x</span>
                                     <input
+                                        id="inspector-arb-id"
                                         type="text"
                                         value={arbId}
                                         onChange={e => setArbId(e.target.value.replace(/[^0-9a-fA-F]/g, '').slice(0, 3))}
@@ -297,8 +298,9 @@ export default function InspectorPage() {
 
                             {/* DLC */}
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-cyber-green uppercase tracking-widest">DLC</label>
+                                <label htmlFor="inspector-dlc" className="text-[10px] font-black text-cyber-green uppercase tracking-widest">DLC</label>
                                 <select
+                                    id="inspector-dlc"
                                     value={dlc}
                                     onChange={e => setDlc(Number(e.target.value))}
                                     className="w-full py-2.5 px-3 bg-dark-800 border border-cyber-green/20 rounded-xl text-sm font-mono text-white focus:border-cyber-green/60 focus:outline-none appearance-none cursor-pointer"
@@ -312,10 +314,11 @@ export default function InspectorPage() {
                             {/* Data Bytes */}
                             {Array.from({ length: Math.min(dlc, 8) }).map((_, i) => (
                                 <div key={i} className="space-y-2">
-                                    <label className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Byte {i}</label>
+                                    <label htmlFor={`inspector-byte-${i}`} className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Byte {i}</label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">0x</span>
                                         <input
+                                            id={`inspector-byte-${i}`}
                                             type="text"
                                             value={dataBytes[i]}
                                             onChange={e => handleDataByteChange(i, e.target.value)}

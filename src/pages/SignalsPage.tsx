@@ -71,8 +71,9 @@ export default function SignalsPage() {
                                 <div className="grid grid-cols-4 sm:grid-cols-8 gap-4">
                                     {Array.from({ length: 8 }).map((_, byteIdx) => (
                                         <div key={byteIdx} className="space-y-3">
-                                            <div className="text-[10px] font-black text-gray-600 text-center uppercase">Byte {byteIdx}</div>
+                                            <label htmlFor={`signal-byte-${byteIdx}`} className="block text-[10px] font-black text-gray-600 text-center uppercase">Byte {byteIdx}</label>
                                             <input
+                                                id={`signal-byte-${byteIdx}`}
                                                 type="text"
                                                 value={payload[byteIdx].toString(16).padStart(2, '0').toUpperCase()}
                                                 onChange={(e) => updateByte(byteIdx, e.target.value)}
@@ -146,10 +147,11 @@ export default function SignalsPage() {
                                 <div className="space-y-6">
                                     <div className="space-y-3">
                                         <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase">
-                                            <span>Start Bit</span>
+                                            <label htmlFor="signal-start-bit">Start Bit</label>
                                             <span className="text-white">{startBit}</span>
                                         </div>
                                         <input
+                                            id="signal-start-bit"
                                             type="range" min="0" max="63" value={startBit}
                                             onChange={(e) => setStartBit(Number(e.target.value))}
                                             className="w-full accent-cyber-emerald"
@@ -158,10 +160,11 @@ export default function SignalsPage() {
 
                                     <div className="space-y-3">
                                         <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase">
-                                            <span>Bit Length</span>
+                                            <label htmlFor="signal-bit-length">Bit Length</label>
                                             <span className="text-white">{bitLength}</span>
                                         </div>
                                         <input
+                                            id="signal-bit-length"
                                             type="range" min="1" max="32" value={bitLength}
                                             onChange={(e) => setBitLength(Number(e.target.value))}
                                             className="w-full accent-cyber-emerald"
@@ -183,16 +186,18 @@ export default function SignalsPage() {
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-bold text-gray-600 uppercase">Scale</label>
+                                            <label htmlFor="signal-scale" className="text-[10px] font-bold text-gray-600 uppercase">Scale</label>
                                             <input
+                                                id="signal-scale"
                                                 type="number" step="0.01" value={scale}
                                                 onChange={(e) => setScale(Number(e.target.value))}
                                                 className="w-full bg-black/40 border border-white/10 rounded-lg p-2 font-mono text-xs text-white"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-bold text-gray-600 uppercase">Offset</label>
+                                            <label htmlFor="signal-offset" className="text-[10px] font-bold text-gray-600 uppercase">Offset</label>
                                             <input
+                                                id="signal-offset"
                                                 type="number" value={offset}
                                                 onChange={(e) => setOffset(Number(e.target.value))}
                                                 className="w-full bg-black/40 border border-white/10 rounded-lg p-2 font-mono text-xs text-white"

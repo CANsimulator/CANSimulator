@@ -216,10 +216,11 @@ export const PowerSupplyDashboard: React.FC = () => {
                         {/* Voltage Control */}
                         <div>
                             <div className="flex justify-between items-center mb-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase font-mono tracking-widest">Target V</label>
+                                <label htmlFor="power-target-v" className="text-[10px] font-black text-gray-400 uppercase font-mono tracking-widest">Target V</label>
                                 <span className="text-xs font-mono font-black text-cyber-blue bg-cyber-blue/10 px-2 py-0.5 rounded">{targetVoltage.toFixed(2)}V</span>
                             </div>
                             <input
+                                id="power-target-v"
                                 type="range"
                                 min="0"
                                 max="32"
@@ -244,10 +245,11 @@ export const PowerSupplyDashboard: React.FC = () => {
                         {/* Current Limit */}
                         <div>
                             <div className="flex justify-between items-center mb-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase font-mono tracking-widest">O.C.P. Limit</label>
+                                <label htmlFor="power-ocp-limit" className="text-[10px] font-black text-gray-400 uppercase font-mono tracking-widest">O.C.P. Limit</label>
                                 <span className="text-xs font-mono font-black text-cyber-purple bg-cyber-purple/10 px-2 py-0.5 rounded">{currentLimit.toFixed(2)}A</span>
                             </div>
                             <input
+                                id="power-ocp-limit"
                                 type="range"
                                 min="0.1"
                                 max="10"
