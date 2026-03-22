@@ -39,5 +39,17 @@
   <style>*,*::before,*::after{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}:root,[data-theme="dark"]{color-scheme:dark}[data-theme="light"]{color-scheme:light}.min-h-screen{min-height:100vh}.flex{display:flex}.items-center{align-items:center}.justify-center{justify-content:center}.bg-dark-950{background-color:#020617}.text-cyan-500{color:#06b6d4}.font-mono{font-family:ui-monospace,SFMono-Regular,monospace}</style></head>
   <body class="bg-dark-900 scroll-smooth">
     <div id="root"></div>
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('can_theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (theme === 'dark' || (!theme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
   </body>
 </html>
