@@ -5,6 +5,7 @@ import { useTestBench } from '../../context/TestBenchContext';
 import { findBitTimingPresetByBaudRate } from '../../types/testbench';
 import { useMomentaryAction } from '../../hooks/useMomentaryAction';
 import { useTheme } from '../../context/ThemeContext';
+import { Power, Key, Zap, Activity, Settings, Battery, RotateCcw } from 'lucide-react';
 
 type ScenarioId =
     | 'power-off'
@@ -17,7 +18,7 @@ type ScenarioId =
 interface ScenarioConfig {
     id: ScenarioId;
     label: string;
-    icon: string;
+    icon: React.ElementType;
     color: string;
     description: string;
     holdable?: boolean;
@@ -27,21 +28,21 @@ const SCENARIOS: ScenarioConfig[] = [
     {
         id: 'power-off',
         label: 'POWER OFF',
-        icon: '⏻',
+        icon: Power,
         color: '#ef4444',
         description: 'Scope flatlines, all ECUs offline, and the bench reports transceiver offline.',
     },
     {
         id: 'cranking',
         label: 'SIM CRANK',
-        icon: '🔑',
+        icon: Key,
         color: '#f59e0b',
         description: 'Voltage sags, the eye degrades, and ECUs may drop off the bus.',
     },
     {
         id: 'short-gnd',
         label: 'SHORT_GND',
-        icon: '⚡',
+        icon: Zap,
         color: '#ef4444',
         description: 'Heavy noise appears on the scope while ECU error counters spike.',
         holdable: true,
@@ -49,21 +50,21 @@ const SCENARIOS: ScenarioConfig[] = [
     {
         id: 'no-term',
         label: 'NO TERM',
-        icon: '〰',
+        icon: Activity,
         color: '#f59e0b',
         description: 'Termination is removed, reflections appear, and topology raises a warning.',
     },
     {
         id: 'baud-1m',
         label: 'BAUD 1M',
-        icon: '⚙',
+        icon: Settings,
         color: '#00f3ff',
         description: 'Controller timing switches to 1 Mbit/s and mismatch badges appear on 500k nodes.',
     },
     {
         id: 'low-voltage',
         label: 'V < 7V',
-        icon: '🔋',
+        icon: Battery,
         color: '#bf00ff',
         description: 'Supply target drops below 7 V and the transceiver falls out of regulation.',
     },
@@ -202,7 +203,7 @@ export const FaultScenarioPanel: React.FC = () => {
                         whileHover={{ backgroundColor: '#00ff9f20' }}
                         aria-label="Reset all scenarios to nominal state"
                     >
-                        ↺ RESET ALL
+                        <RotateCcw size={10} className="inline mr-1" /> RESET ALL
                     </motion.button>
                 </div>
             </div>
@@ -243,7 +244,9 @@ export const FaultScenarioPanel: React.FC = () => {
                                             animate={{ opacity: active ? 0.08 : 0 }}
                                             transition={{ duration: 0.2 }}
                                         />
-                                        <span className="z-10 text-lg leading-none">{scenario.icon}</span>
+                                        <span className="z-10 text-lg leading-none" aria-hidden="true">
+                                            <scenario.icon size={20} />
+                                        </span>
                                         <span
                                             className="z-10 text-[7px] font-mono font-black uppercase tracking-wider"
                                             style={{ color: active ? scenario.color : '#666' }}
@@ -290,7 +293,9 @@ export const FaultScenarioPanel: React.FC = () => {
                                         className="absolute left-0 right-0 top-0 h-[2px] rounded-t-lg"
                                         animate={{ backgroundColor: active ? scenario.color : 'transparent' }}
                                     />
-                                    <span className="z-10 text-lg leading-none">{scenario.icon}</span>
+                                    <span className="z-10 text-lg leading-none" aria-hidden="true">
+                                        <scenario.icon size={20} />
+                                    </span>
                                     <span
                                         className="z-10 text-[7px] font-mono font-black uppercase tracking-wider"
                                         style={{ color: active ? scenario.color : '#666' }}

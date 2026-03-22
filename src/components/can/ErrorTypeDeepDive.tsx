@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Zap } from 'lucide-react';
 import { BitStreamVisualizer } from './BitStreamVisualizer';
 import {
     ERROR_TYPE_CATALOG,
@@ -184,9 +185,9 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                     (e.target as HTMLElement).style.boxShadow = `0 0 20px ${info.colorHex}15`;
                                     (e.target as HTMLElement).style.backgroundColor = `${info.colorHex}15`;
                                 }}
-                            >
-                                ⚡ Generate {info.title} Demo
-                            </motion.button>
+                                >
+                                    <Zap size={14} className="inline mr-1.5" /> Generate {info.title} Demo
+                                </motion.button>
                         </div>
                     </div>
 

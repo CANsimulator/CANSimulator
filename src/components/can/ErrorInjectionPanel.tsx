@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CANErrorCode } from '../../types/can';
 import { canSimulator } from '../../services/can/can-simulator';
@@ -105,6 +105,14 @@ export const ErrorInjectionPanel: React.FC = () => {
     const [hoveredCode, setHoveredCode] = useState<string | null>(null);
     const [selectedCode, setSelectedCode] = useState<string | null>(null);
     const [role, setRole] = useState<ErrorRole>('transmitter');
+    const lastInjectedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Cleanup timer on unmount
+    useEffect(() => {
+        return () => {
+            if (lastInjectedTimerRef.current) clearTimeout(lastInjectedTimerRef.current);
+        };
+    }, []);
 
     const handleError = useCallback((code: CANErrorCode) => {
         canSimulator.injectError(code, role);
@@ -112,7 +120,11 @@ export const ErrorInjectionPanel: React.FC = () => {
         setClickCounts(prev => ({ ...prev, [code]: (prev[code] || 0) + 1 }));
         setSelectedCode(code); // Select on click for persistent info
 
-        setTimeout(() => setLastInjected(null), 600);
+        if (lastInjectedTimerRef.current) clearTimeout(lastInjectedTimerRef.current);
+        lastInjectedTimerRef.current = setTimeout(() => {
+            setLastInjected(null);
+            lastInjectedTimerRef.current = null;
+        }, 600);
     }, [role]);
 
     return (

@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useTestBench } from '../../context/TestBenchContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Tooltip } from '../ui';
+import { Check, ChevronUp, ChevronDown, ArrowRight, ArrowLeft } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
    Types & Constants
@@ -117,6 +119,7 @@ export function BusTopology() {
     });
     const [selectedNode, setSelectedNode] = useState<string | null>(null);
     const [showAddDialog, setShowAddDialog] = useState(false);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [busLoad, setBusLoad] = useState(0);
     const [viewMode, setViewMode] = useState<'topology' | 'list'>('topology');
     const [transmission, setTransmission] = useState<TransmissionState | null>(null);
@@ -448,7 +451,10 @@ export function BusTopology() {
                                 : 'text-gray-600 border-[#222] hover:text-gray-400'
                         }`}
                     >
-                        {showEducation ? '✓ Learn Mode' : 'Learn Mode'}
+                        <span className="flex items-center gap-1">
+                            {showEducation && <Check size={10} />}
+                            Learn Mode
+                        </span>
                     </button>
                     <button onClick={() => setShowAddDialog(true)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#00f3ff10] border border-[#00f3ff30] text-[#00f3ff] text-[8px] font-mono font-bold uppercase tracking-wider hover:bg-[#00f3ff20] active:scale-95 transition-all">
@@ -456,13 +462,7 @@ export function BusTopology() {
                         Add ECU
                     </button>
                     <button
-                        onClick={() => {
-                            if (window.confirm('Reset topology to defaults? This will clear all custom nodes.')) {
-                                localStorage.removeItem(STORAGE_KEY);
-                                setNodes(DEFAULT_NODES);
-                                setSelectedNode(null);
-                            }
-                        }}
+                        onClick={() => setShowResetConfirm(true)}
                         className="px-3 py-1.5 rounded-md bg-[#ef444410] border border-[#ef444430] text-[#ef4444] text-[8px] font-mono font-bold uppercase tracking-wider hover:bg-[#ef444420] active:scale-95 transition-all"
                     >
                         Reset
@@ -604,6 +604,47 @@ export function BusTopology() {
                     />
                 )}
             </AnimatePresence>
+
+            {/* ═══ Reset Confirmation Dialog ═══ */}
+            <AlertDialog.Root open={showResetConfirm} onOpenChange={setShowResetConfirm}>
+                <AlertDialog.Portal>
+                    <AlertDialog.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]" />
+                    <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] w-[calc(100%-2rem)] max-w-sm p-6 bg-white dark:bg-[#111114] border border-black/10 dark:border-[#1e1e24] rounded-xl shadow-2xl focus:outline-none overflow-hidden transition-colors">
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-red-500/50" />
+                        
+                        <AlertDialog.Title className="text-dark-950 dark:text-[#f1f1f1] font-mono font-black text-xs uppercase tracking-wider mb-2 flex items-center gap-2">
+                             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                             Reset Topology?
+                        </AlertDialog.Title>
+                        
+                        <AlertDialog.Description className="text-light-400 dark:text-gray-400 font-mono text-[9px] leading-relaxed uppercase tracking-tight mb-6 opacity-80">
+                            Warning: This operation will remove all custom ECU nodes and restore the bus wiring harness to its default ISO configuration. 
+                            <span className="block mt-2 text-red-500/80 font-bold">This action cannot be undone and will clear local storage data.</span>
+                        </AlertDialog.Description>
+                        
+                        <div className="flex gap-2 justify-end">
+                            <AlertDialog.Cancel asChild>
+                                <button className="px-3 py-1.5 text-[8px] font-mono font-bold uppercase tracking-wider text-light-600 dark:text-gray-400 hover:text-dark-950 dark:hover:text-white border border-black/10 dark:border-[#2a2a30] rounded-md transition-all active:scale-95">
+                                    Cancel
+                                </button>
+                            </AlertDialog.Cancel>
+                            <AlertDialog.Action asChild>
+                                <button 
+                                    onClick={() => {
+                                        localStorage.removeItem(STORAGE_KEY);
+                                        setNodes(DEFAULT_NODES);
+                                        setSelectedNode(null);
+                                        setShowResetConfirm(false);
+                                    }}
+                                    className="px-3 py-1.5 text-[8px] font-mono font-bold uppercase tracking-wider text-white bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 rounded-md transition-all active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
+                                >
+                                    Force Reset
+                                </button>
+                            </AlertDialog.Action>
+                        </div>
+                    </AlertDialog.Content>
+                </AlertDialog.Portal>
+            </AlertDialog.Root>
         </div>
     );
 };
@@ -658,7 +699,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                         <span className="text-[8px] font-mono text-gray-500 mx-2">|</span>
                         <span className="text-[8px] font-mono text-gray-300">
                             <span className="text-[#f1f1f1] font-bold">{fromNode?.label ?? '?'}</span>
-                            <span className="text-gray-400 mx-1">{'\u2192'}</span>
+                            <ArrowRight size={10} className="text-gray-400 mx-1 inline" />
                             <span className="text-[#f1f1f1] font-bold">{transmission.toId === 'broadcast' ? 'ALL NODES' : toNode?.label ?? '?'}</span>
                         </span>
                         <span className="text-[8px] font-mono px-1.5 py-0.5 rounded border ml-1"
@@ -1079,8 +1120,8 @@ function TopologyView({
                         {/* Direction arrow */}
                         <span className="text-[8px]" style={{ color: isAckPhase ? '#14b8a6' : '#00f3ff' }}>
                             {isAckPhase
-                                ? (goesRight ? '\u2190' : '\u2192')
-                                : (goesRight ? '\u2192' : '\u2190')
+                                ? (goesRight ? <ArrowLeft size={8} /> : <ArrowRight size={8} />)
+                                : (goesRight ? <ArrowRight size={8} /> : <ArrowLeft size={8} />)
                             }
                         </span>
                         <span className="text-[8px] font-mono font-bold uppercase whitespace-nowrap" style={{ color: isAckPhase ? '#14b8a6' : '#00f3ff' }}>
@@ -1104,7 +1145,7 @@ function TopologyView({
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 dark:bg-[#0a0a0f]/90 border border-black/10 dark:border-[#222] backdrop-blur-sm transition-colors">
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" style={{ boxShadow: isDark ? '0 0 4px #22c55e80' : 'none' }} />
                         <span className="text-[8px] font-mono font-bold text-green-600 dark:text-green-400">{sourceNode.label}</span>
-                        <span className="text-[8px] text-light-400 dark:text-gray-600">{isAckPhase ? '\u2190' : '\u2192'}</span>
+                        {isAckPhase ? <ArrowLeft size={8} className="text-light-400 dark:text-gray-600" /> : <ArrowRight size={8} className="text-light-400 dark:text-gray-600" />}
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500" style={{ boxShadow: isDark ? '0 0 4px #3b82f680' : 'none' }} />
                         <span className="text-[8px] font-mono font-bold text-blue-600 dark:text-blue-400">
                             {transmission.toId === 'broadcast' ? 'ALL' : (targetNode?.label ?? '?')}
@@ -1708,7 +1749,7 @@ function MessageLogPanel({ log, onClear }: { log: MessageLogEntry[]; onClear: ()
                     className="flex items-center gap-2">
                     <span className="text-[8px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-wider transition-colors">Message Log</span>
                     <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 transition-colors">({log.length})</span>
-                    <span className="text-light-400 dark:text-gray-600 text-[10px] transition-colors">{expanded ? '\u25B2' : '\u25BC'}</span>
+                    <span className="text-light-400 dark:text-gray-600 text-[10px] transition-colors">{expanded ? <ChevronUp size={10} /> : <ChevronDown size={10} />}</span>
                 </button>
                 <div className="flex items-center gap-2">
                     <button onClick={exportCSV} disabled={log.length === 0}
@@ -1735,7 +1776,7 @@ function MessageLogPanel({ log, onClear }: { log: MessageLogEntry[]; onClear: ()
                                         style={{ backgroundColor: entry.success ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${entry.success ? '#22c55e60' : '#ef444460'}` : 'none' }} />
                                     <span className="text-light-400 dark:text-gray-600 w-16 flex-shrink-0 transition-colors uppercase">{new Date(entry.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
                                     <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.fromLabel}</span>
-                                    <span className="text-light-400 dark:text-gray-600 transition-colors">{'\u2192'}</span>
+                                    <ArrowRight size={10} className="text-light-400 dark:text-gray-600 transition-colors" />
                                     <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.toLabel}</span>
                                     <span className="px-1 py-[1px] rounded border text-[8px] uppercase"
                                         style={{

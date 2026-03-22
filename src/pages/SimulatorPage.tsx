@@ -4,6 +4,7 @@ import { BorderBeam } from '../components/ui/BorderBeam';
 import { PowerSupplyDashboard } from '../components/power/PowerSupplyDashboard';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Gauge, Rocket, Zap, Swords, ChevronRight } from 'lucide-react';
 
 export default function SimulatorPage() {
     return (
@@ -11,7 +12,9 @@ export default function SimulatorPage() {
             {/* Status Bar */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="glass-panel p-4 flex items-center gap-4 group relative overflow-hidden">
-                    <div className="w-12 h-12 rounded-lg bg-cyber-blue/10 flex items-center justify-center text-cyber-blue text-2xl">📟</div>
+                    <div className="w-12 h-12 rounded-lg bg-cyber-blue/10 flex items-center justify-center text-cyber-blue text-2xl">
+                        <Gauge size={24} aria-hidden="true" />
+                    </div>
                     <div>
                         <p className="text-[10px] text-gray-500 uppercase font-mono">Baud Rate</p>
                         <p className="text-lg font-bold">500 Kbps</p>
@@ -19,7 +22,9 @@ export default function SimulatorPage() {
                     <BorderBeam duration={3} size={100} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div className="glass-panel p-4 flex items-center gap-4 group relative overflow-hidden">
-                    <div className="w-12 h-12 rounded-lg bg-cyber-purple/10 flex items-center justify-center text-cyber-purple text-2xl">🚀</div>
+                    <div className="w-12 h-12 rounded-lg bg-cyber-purple/10 flex items-center justify-center text-cyber-purple text-2xl">
+                        <Rocket size={24} aria-hidden="true" />
+                    </div>
                     <div>
                         <p className="text-[10px] text-gray-500 uppercase font-mono">CAN FD Mode</p>
                         <p className="text-lg font-bold">Enabled (2 Mbps)</p>
@@ -27,7 +32,9 @@ export default function SimulatorPage() {
                     <BorderBeam duration={4} size={100} className="opacity-0 group-hover:opacity-100 transition-opacity" colorFrom="#bd00ff" colorTo="#ff0099" />
                 </div>
                 <div className="glass-panel p-4 flex items-center gap-4 group relative overflow-hidden">
-                    <div className="w-12 h-12 rounded-lg bg-cyber-green/10 flex items-center justify-center text-cyber-green text-xl">⚡</div>
+                    <div className="w-12 h-12 rounded-lg bg-cyber-green/10 flex items-center justify-center text-cyber-green text-xl">
+                        <Zap size={24} aria-hidden="true" />
+                    </div>
                     <div>
                         <p className="text-[10px] text-gray-500 uppercase font-mono">Bus Status</p>
                         <p className="text-lg font-bold flex items-center gap-2">
@@ -72,7 +79,7 @@ export default function SimulatorPage() {
                         <Link to="/arbitration" className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-full bg-cyber-purple/20 flex items-center justify-center text-cyber-purple text-2xl animate-pulse">
-                                    ⚔️
+                                    <Swords size={24} aria-hidden="true" />
                                 </div>
                                 <div>
                                     <h4 className="text-sm font-bold text-cyber-purple uppercase tracking-tight">Arbitration Arena</h4>
@@ -80,9 +87,7 @@ export default function SimulatorPage() {
                                 </div>
                             </div>
                             <div className="text-cyber-purple group-hover:translate-x-1 transition-transform">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                </svg>
+                                <ChevronRight size={20} />
                             </div>
                         </Link>
                         <BorderBeam duration={5} size={150} colorFrom="#bf00ff" colorTo="#00f3ff" className="opacity-40" />

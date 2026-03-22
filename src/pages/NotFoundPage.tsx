@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { cn } from '../utils/cn';
 
@@ -37,9 +38,10 @@ export default function NotFoundPage() {
                     
                     <Link
                         to="/"
-                        className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-cyber-blue to-cyber-purple text-white rounded-full hover:shadow-neon/40 hover:scale-105 active:scale-95 transition-all text-sm font-black uppercase tracking-widest leading-none"
+                        className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-cyber-blue to-cyber-purple text-white rounded-full hover:shadow-neon/40 hover:scale-105 active:scale-95 transition-all text-sm font-black uppercase tracking-widest leading-none"
                     >
-                        ← Back to Terminal
+                        <ArrowLeft size={16} aria-hidden="true" />
+                        Back to Terminal
                     </Link>
                 </div>
             </motion.div>

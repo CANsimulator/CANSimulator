@@ -1,4 +1,15 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { 
+    Zap, 
+    Activity, 
+    Monitor, 
+    Ruler, 
+    PlugZap, 
+    Eye, 
+    Minus,
+    Plus,
+    Crosshair
+} from 'lucide-react';
 import { normToCanvasX, canvasXToNorm, calculateVDiff } from '../../utils/scope-math';
 import { 
     ISO, 
@@ -537,7 +548,7 @@ export const VoltageScope: React.FC = () => {
         // ════════════════════════════════════════════
         const eyeData = eyeBufferRef.current;
         const isEyeReady = eyeData.length >= EYE_MAX_OVERLAYS;
-        const eyeTitle = `Eye Diagram — ${isEyeReady ? '✓ READY' : '⟳ BUILDING'} (${eyeData.length}/${EYE_MAX_OVERLAYS}w)`;
+        const eyeTitle = `Eye Diagram — ${isEyeReady ? 'READY' : 'BUILDING'} (${eyeData.length}/${EYE_MAX_OVERLAYS}w)`;
         const eyeBdr = isEyeReady ? '#00ff8888' : '#ffd00088';
 
         drawPanel(M.left, EYE_Y, PLOT_W, EYE_H, eyeTitle, () => {
@@ -1234,12 +1245,12 @@ export const VoltageScope: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-0.5 mr-2">
-                            <SmallBtn label="−" onClick={zoomOut} title="Zoom out" />
+                            <SmallBtn icon={<Minus size={10} />} onClick={zoomOut} title="Zoom out" />
                             <button onClick={resetView} title="Reset view (R)"
                                 className="px-2 py-0.5 text-[8px] font-mono text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/5 dark:border-[#1a1a2e] transition-colors rounded">
                                 {view.zoomX !== 1 || view.zoomY !== 1 ? `${view.zoomX.toFixed(1)}×${view.zoomY.toFixed(1)}` : '1:1'}
                             </button>
-                            <SmallBtn label="+" onClick={zoomIn} title="Zoom in" />
+                            <SmallBtn icon={<Plus size={10} />} onClick={zoomIn} title="Zoom in" />
                         </div>
                         <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border"
                             style={{ borderColor: compliance.color + '40', backgroundColor: compliance.color + '08' }}>
@@ -1256,7 +1267,7 @@ export const VoltageScope: React.FC = () => {
                 <div className="flex flex-col xl:flex-row gap-0">
                     {/* Left Rail (Controls only) */}
                     <div className="xl:w-64 w-full p-2.5 xl:border-r border-black/5 dark:border-[#14142a] flex flex-col gap-3 bg-gray-100 dark:bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner transition-colors">
-                        <MetricGroup title="Acquire" icon="⚡">
+                        <MetricGroup title="Acquire" icon={<Zap size={11} />}>
                             <div className="grid grid-cols-2 gap-2 p-1">
                                 <ScopeBtn label={scope.runMode === 'run' ? 'Stop' : 'Run'} active={scope.runMode === 'run'}
                                     color={scope.runMode === 'run' ? '#00ff9f' : '#ff003c'}
@@ -1266,7 +1277,7 @@ export const VoltageScope: React.FC = () => {
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="CH1 CANH" icon="💠" color={C.ch1} active={scope.activeCh === 'ch1'}>
+                        <MetricGroup title="CH1 CANH" icon={<Activity size={11} />} color={C.ch1} active={scope.activeCh === 'ch1'}>
                             <div className="flex flex-col gap-2 p-1">
                                 <ScopeBtn label={scope.ch1.enabled ? 'Enabled' : 'Disabled'} active={scope.ch1.enabled} color={C.ch1}
                                     onClick={() => updateCh('ch1', { enabled: !scope.ch1.enabled })} />
@@ -1279,7 +1290,7 @@ export const VoltageScope: React.FC = () => {
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="CH2 CANL" icon="💠" color={C.ch2} active={scope.activeCh === 'ch2'}>
+                        <MetricGroup title="CH2 CANL" icon={<Activity size={11} />} color={C.ch2} active={scope.activeCh === 'ch2'}>
                             <div className="flex flex-col gap-2 p-1">
                                 <ScopeBtn label={scope.ch2.enabled ? 'Enabled' : 'Disabled'} active={scope.ch2.enabled} color={C.ch2}
                                     onClick={() => updateCh('ch2', { enabled: !scope.ch2.enabled })} />
@@ -1292,7 +1303,7 @@ export const VoltageScope: React.FC = () => {
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="Horizontal & Trigger" icon="🎯">
+                        <MetricGroup title="Horizontal & Trigger" icon={<Crosshair size={11} />}>
                             <div className="flex flex-col gap-3 p-1">
                                 <Stepper label="Time/div" value={`${scope.tdiv}µs`}
                                     onUp={() => { 
@@ -1327,7 +1338,7 @@ export const VoltageScope: React.FC = () => {
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="Display" icon="🖥️">
+                        <MetricGroup title="Display" icon={<Monitor size={11} />}>
                             <div className="flex flex-col gap-2 p-1">
                                 <ScopeBtn label={scope.math ? 'Differential On' : 'Differential Off'} active={scope.math} color={C.diff}
                                     onClick={() => setScope(p => ({ ...p, math: !p.math }))} />
@@ -1356,20 +1367,20 @@ export const VoltageScope: React.FC = () => {
 
                     {/* Right Rail (Metrics only) */}
                     <div className="xl:w-64 w-full p-2.5 xl:border-l border-black/5 dark:border-[#14142a] flex flex-col gap-3 bg-gray-100 dark:bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner transition-colors">
-                        <MetricGroup title="Signal Quality" icon="⚡" subTitle={metrics.isGated ? 'Gated' : undefined}>
+                        <MetricGroup title="Signal Quality" icon={<Zap size={11} />} subTitle={metrics.isGated ? 'Gated' : undefined}>
                             <MetricRow label="CANH Vpp" value={`${metrics.ch1Vpp.toFixed(2)} V`} color={C.ch1} />
                             <MetricRow label="CANH Avg" value={`${metrics.ch1Avg.toFixed(2)} V`} color={C.ch1} />
                             <MetricRow label="CANL Vpp" value={`${metrics.ch2Vpp.toFixed(2)} V`} color={C.ch2} />
                             <MetricRow label="CANL Avg" value={`${metrics.ch2Avg.toFixed(2)} V`} color={C.ch2} />
                             <MetricRow label="Vdiff" value={`${metrics.vdiff.toFixed(2)} V`} color={C.diff} />
                         </MetricGroup>
-                        <MetricGroup title="Edge Timing" icon="📐">
+                        <MetricGroup title="Edge Timing" icon={<Ruler size={11} />}>
                             <MetricRow label="Rise" value={`${metrics.riseTime} ns`} />
                             <MetricRow label="Fall" value={`${metrics.fallTime} ns`} />
                             <MetricRow label="Symmetry" value={`${metrics.symmetry}%`}
                                 status={metrics.symmetry > 80 ? 'pass' : metrics.symmetry > 60 ? 'warn' : 'fail'} />
                         </MetricGroup>
-                        <MetricGroup title="Bus Status" icon="🔌">
+                        <MetricGroup title="Bus Status" icon={<PlugZap size={11} />}>
                             <MetricRow label="Load" value={`${metrics.busLoad}%`}
                                 status={metrics.busLoad < 70 ? 'pass' : metrics.busLoad < 85 ? 'warn' : 'fail'} />
                             <MetricRow label="Bit Rate" value={`~${metrics.bitRate} kbps`} />
@@ -1384,7 +1395,7 @@ export const VoltageScope: React.FC = () => {
                                     status={metrics.isoDiff ? 'pass' : 'fail'} />
                             </div>
                         </MetricGroup>
-                        <MetricGroup title="Eye Diagram" icon="👁">
+                        <MetricGroup title="Eye Diagram" icon={<Eye size={11} />}>
                             <MetricRow label="Eye Width" value={`${metrics.eyeWidth}%`}
                                 status={metrics.eyeWidth > 70 ? 'pass' : metrics.eyeWidth > 50 ? 'warn' : 'fail'} />
                             <MetricRow label="Eye Height" value={`${metrics.eyeHeight}%`}
@@ -1407,11 +1418,11 @@ const Hint: React.FC<{ text: string }> = ({ text }) => {
     );
 };
 
-const SmallBtn: React.FC<{ label: string; onClick: () => void; title: string }> = ({ label, onClick, title }) => {
+const SmallBtn: React.FC<{ icon: React.ReactNode; onClick: () => void; title: string }> = ({ icon, onClick, title }) => {
     return (
         <button onClick={onClick} title={title}
             className="w-5 h-5 flex items-center justify-center text-[10px] font-mono text-light-400 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/5 dark:border-[#1a1a2e] rounded transition-colors hover:bg-gray-200 dark:hover:bg-[#14142a]">
-            {label}
+            {icon}
         </button>
     );
 };
@@ -1439,17 +1450,21 @@ const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown
         <div className="flex flex-col gap-1 px-1">
             <span className="text-[7px] font-mono text-light-400 dark:text-gray-500 uppercase tracking-widest">{label}</span>
             <div className="flex items-center bg-gray-100 dark:bg-[#0d0d16] border border-black/5 dark:border-[#1a1a2e] rounded-md overflow-hidden shadow-inner group-hover:border-black/10 dark:group-hover:border-[#2a2a4e] transition-colors">
-                <button onClick={onDown} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-r border-black/5 dark:border-[#1a1a2e]">˗</button>
+                <button onClick={onDown} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-r border-black/5 dark:border-[#1a1a2e]">
+                    <Minus size={10} aria-hidden="true" />
+                </button>
                 <div className="flex-1 py-1 px-1.5 flex items-center justify-center min-w-[60px]">
                     <span className="text-[10px] font-mono font-bold text-dark-950 dark:text-gray-300 tabular-nums">{value}</span>
                 </div>
-                <button onClick={onUp} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-l border-black/5 dark:border-[#1a1a2e]">+</button>
+                <button onClick={onUp} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-l border-black/5 dark:border-[#1a1a2e]">
+                    <Plus size={10} aria-hidden="true" />
+                </button>
             </div>
         </div>
     );
 };
 
-const MetricGroup: React.FC<{ title: string; icon: string; children: React.ReactNode; color?: string; subTitle?: string; active?: boolean }> = ({ title, icon, children, color, subTitle, active }) => {
+const MetricGroup: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode; color?: string; subTitle?: string; active?: boolean }> = ({ title, icon, children, color, subTitle, active }) => {
     return (
         <div className={`w-full p-2.5 rounded-lg bg-gray-50 dark:bg-[#0a0a14] border-black/5 dark:border-[#14142a] border transition-all duration-300 ${active ? 'ring-1 ring-inset ring-black/5 dark:ring-white/10 ring-opacity-50' : ''}`} 
             style={{ 
@@ -1461,13 +1476,17 @@ const MetricGroup: React.FC<{ title: string; icon: string; children: React.React
             <div className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                     {color ? (
-                        <span className="text-[11px]" style={{ color: color }}>◆</span>
+                        <span className="text-[11px]" style={{ color: color }} aria-hidden="true">◆</span>
                     ) : (
-                        <span className="text-[11px] font-normal opacity-70">{icon}</span>
+                        <span className="text-[11px] font-normal opacity-70 flex items-center" aria-hidden="true">{icon}</span>
                     )}
                     {title}
                 </div>
-                {subTitle && <span className="text-[7px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20">{subTitle}</span>}
+                {subTitle && (
+                    <span className="text-[7px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20" role="status">
+                        {subTitle}
+                    </span>
+                )}
             </div>
             <div className="space-y-1">{children}</div>
         </div>

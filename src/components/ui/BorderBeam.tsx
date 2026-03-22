@@ -22,6 +22,22 @@ export const BorderBeam = ({
     colorTo = "#bf00ff",
     delay = 0,
 }: BorderBeamProps) => {
+    const supportsOffsetPath = React.useMemo(() => {
+        if (typeof window === 'undefined') return true;
+        return window.CSS && window.CSS.supports('offset-path', 'rect(0 0 0 0)');
+    }, []);
+
+    if (!supportsOffsetPath) {
+        return (
+            <div
+                style={{
+                    border: `${borderWidth}px solid ${colorFrom}40`,
+                }}
+                className={cn("absolute inset-0 rounded-[inherit] pointer-events-none", className)}
+            />
+        );
+    }
+
     return (
         <div
             style={

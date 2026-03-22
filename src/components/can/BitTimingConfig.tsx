@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTestBench } from '../../context/TestBenchContext';
 import { useTheme } from '../../context/ThemeContext';
+import { RotateCcw, AlertTriangle } from 'lucide-react';
 import {
     BIT_TIMING_PRESETS,
     DEFAULT_BIT_TIMING_PRESET,
@@ -82,6 +83,17 @@ export function BitTimingConfig() {
     const timing = bench?.bitTiming ?? DEFAULT_BIT_TIMING_PRESET.timing;
     const activePreset = useMemo(() => findBitTimingPresetForTiming(timing)?.name ?? null, [timing]);
 
+    const constraintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Cleanup timers on unmount
+    useEffect(() => {
+        return () => {
+            if (constraintTimerRef.current) clearTimeout(constraintTimerRef.current);
+            if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+        };
+    }, []);
+
     const totalTq = timing.sync + timing.prop + timing.phase1 + timing.phase2;
     const samplePoint = bench?.samplePointPct ?? computeSamplePointPct(timing);
     const regs = useMemo(() => encodeRegisters(timing), [timing]);
@@ -103,7 +115,11 @@ export function BitTimingConfig() {
         // Trigger constraint violation feedback
         if (key === 'sjw' && value > sjwMax) {
             setConstraintViolation(true);
-            setTimeout(() => setConstraintViolation(false), 500);
+            if (constraintTimerRef.current) clearTimeout(constraintTimerRef.current);
+            constraintTimerRef.current = setTimeout(() => {
+                setConstraintViolation(false);
+                constraintTimerRef.current = null;
+            }, 500);
         }
     };
 
@@ -116,7 +132,11 @@ export function BitTimingConfig() {
         if (navigator.clipboard) {
             await navigator.clipboard.writeText(hex);
             setCopiedReg(reg);
-            setTimeout(() => setCopiedReg(null), 1400);
+            if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+            copiedTimerRef.current = setTimeout(() => {
+                setCopiedReg(null);
+                copiedTimerRef.current = null;
+            }, 1400);
         }
     };
 
@@ -132,7 +152,11 @@ export function BitTimingConfig() {
         const nextSjwMax = Math.min(nextTiming.phase1, nextTiming.phase2);
         if (nextTiming.sjw > nextSjwMax) {
             setConstraintViolation(true);
-            setTimeout(() => setConstraintViolation(false), 500);
+            if (constraintTimerRef.current) clearTimeout(constraintTimerRef.current);
+            constraintTimerRef.current = setTimeout(() => {
+                setConstraintViolation(false);
+                constraintTimerRef.current = null;
+            }, 500);
         }
     };
 
@@ -162,7 +186,7 @@ export function BitTimingConfig() {
                         whileHover={{ backgroundColor: '#ff9f4320' }}
                         title="Reset to default configuration"
                     >
-                        ↻ RESET
+                        <RotateCcw size={10} className="inline mr-1" /> RESET
                     </motion.button>
                     <div className="flex items-center gap-2">
                         <motion.div
@@ -382,8 +406,8 @@ export function BitTimingConfig() {
                                 />
                                 {!sjwValid && (
                                     <div className="mt-2 p-1.5 rounded bg-[#1c0a0a] border border-red-900/30">
-                                        <span className="text-[9px] font-mono text-red-400">
-                                            ⚠ SJW ({timing.sjw}) exceeds min(PH1,PH2) = {sjwMax}
+                                        <span className="text-[9px] font-mono text-red-400 flex items-center gap-1">
+                                            <AlertTriangle size={10} /> SJW ({timing.sjw}) exceeds min(PH1,PH2) = {sjwMax}
                                         </span>
                                     </div>
                                 )}

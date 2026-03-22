@@ -9,23 +9,24 @@ import {
 import { cn } from "../../utils/cn";
 
 const animationProps = {
-    initial: { "--x": "100%", scale: 0.8 },
-    animate: { "--x": "-100%", scale: 1 },
+    initial: { "--x": "100%", scale: 1 },
+    whileHover: { 
+        "--x": "-100%",
+        transition: {
+            repeat: Infinity,
+            repeatType: "loop",
+            repeatDelay: 1,
+            type: "spring",
+            stiffness: 20,
+            damping: 15,
+            mass: 2,
+        }
+    },
     whileTap: { scale: 0.95 },
     transition: {
-        repeat: Infinity,
-        repeatType: "loop",
-        repeatDelay: 1,
         type: "spring",
-        stiffness: 20,
-        damping: 15,
-        mass: 2,
-        scale: {
-            type: "spring",
-            stiffness: 200,
-            damping: 5,
-            mass: 0.5,
-        },
+        stiffness: 200,
+        damping: 20,
     },
 } as const;
 
@@ -47,8 +48,8 @@ const ShinyButton = React.forwardRef<HTMLButtonElement, ShinyButtonProps>(
                 {...animProps}
                 {...props}
                 className={cn(
-                    "relative rounded-lg px-6 py-2 font-medium backdrop-blur-xl transition-[shadow] duration-300 ease-in-out hover:shadow dark:bg-[linear-gradient(#000,#000),linear-gradient(#000_50%,rgba(0,243,255,0.6)_80%,rgba(0,243,255,0)),linear-gradient(90deg,rgba(0,243,255,0.1)_0%,rgba(255,255,255,0.15)_50%,rgba(0,243,255,0.1)_100%)] dark:[background-clip:padding-box,border-box,border-box] dark:[background-origin:border-box] dark:[border:1px_solid_transparent] dark:hover:shadow-[0_0_20px_rgba(0,243,255,0.2)]",
-                    "bg-[linear-gradient(rgba(255,255,255,0.7),rgba(255,255,255,0.7)),linear-gradient(rgba(255,255,255,0.7)_50%,rgba(0,243,255,0.3)_80%,rgba(0,243,255,0)),linear-gradient(90deg,rgba(0,243,255,0.05)_0%,rgba(0,0,0,0.05)_50%,rgba(0,243,255,0.05)_100%)] [background-clip:padding-box,border-box,border-box] [background-origin:border-box] [border:1px_solid_transparent] hover:shadow-[0_0_20px_rgba(0,243,255,0.1)]",
+                    "relative rounded-lg px-6 py-2 font-medium backdrop-blur-xl transition-all duration-300 ease-in-out hover:shadow dark:bg-[linear-gradient(#000,#000),linear-gradient(#000_50%,rgba(0,243,255,0.6)_80%,rgba(0,243,255,0)),linear-gradient(90deg,rgba(0,243,255,0.1)_0%,rgba(255,255,255,0.15)_50%,rgba(0,243,255,0.1)_100%)] dark:[background-clip:padding-box,border-box,border-box] dark:[background-origin:border-box] dark:[border:1px_solid_transparent] dark:hover:shadow-[0_0_20px_rgba(0,243,255,0.2)]",
+                    "bg-white/95 border border-gray-200/50 hover:border-cyber-blue/30 shadow-sm hover:shadow-[0_0_20px_rgba(0,243,255,0.1)]",
                     className,
                 )}
             >
@@ -57,6 +58,8 @@ const ShinyButton = React.forwardRef<HTMLButtonElement, ShinyButtonProps>(
                     style={{
                         maskImage:
                             "linear-gradient(-75deg,rgba(0,243,255,1) calc(var(--x) + 20%),transparent calc(var(--x) + 30%),rgba(0,243,255,1) calc(var(--x) + 100%))",
+                        WebkitMaskImage:
+                            "linear-gradient(-75deg,rgba(0,243,255,1) calc(var(--x) + 20%),transparent calc(var(--x) + 30%),rgba(0,243,255,1) calc(var(--x) + 100%))",
                     }}
                 >
                     {children}
@@ -64,7 +67,9 @@ const ShinyButton = React.forwardRef<HTMLButtonElement, ShinyButtonProps>(
                 <span
                     style={{
                         mask: "linear-gradient(rgb(0,0,0), rgb(0,0,0)) content-box,linear-gradient(rgb(0,0,0), rgb(0,0,0))",
+                        WebkitMask: "linear-gradient(rgb(0,0,0), rgb(0,0,0)) content-box,linear-gradient(rgb(0,0,0), rgb(0,0,0))",
                         maskComposite: "exclude",
+                        WebkitMaskComposite: "xor",
                     }}
                     className="absolute inset-0 z-10 block rounded-[inherit] bg-[linear-gradient(-75deg,rgba(0,243,255,0.1)_calc(var(--x)+20%),rgba(0,243,255,0.5)_calc(var(--x)+25%),rgba(0,243,255,0.1)_calc(var(--x)+100%))] p-px"
                 ></span>

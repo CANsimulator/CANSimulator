@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from '../components/ui/Container';
-import { Sword, Zap, Shield, Cpu, RefreshCw, Info } from 'lucide-react';
+import { Sword, Zap, Shield, Cpu, RefreshCw, Info, AlertTriangle } from 'lucide-react';
 import { canSimulator } from '../services/can/can-simulator';
 import { cn } from '../utils/cn';
 
@@ -10,6 +10,7 @@ export default function ArbitrationPage() {
     const [nodeBId, setNodeBId] = useState(0x110);
     const [activeBit, setActiveBit] = useState(-1);
     const [isFighting, setIsFighting] = useState(false);
+    const [showResult, setShowResult] = useState(false);
 
     const arbitration = useMemo(() =>
         canSimulator.simulateArbitration([
@@ -21,10 +22,12 @@ export default function ArbitrationPage() {
     useEffect(() => {
         let timer: ReturnType<typeof setInterval> | undefined;
         if (isFighting) {
+            setShowResult(false);
             timer = setInterval(() => {
                 setActiveBit(prev => {
                     if (prev >= 10) {
                         setIsFighting(false);
+                        setShowResult(true);
                         return prev;
                     }
                     return prev + 1;
@@ -38,8 +41,18 @@ export default function ArbitrationPage() {
 
     const startArena = () => {
         setActiveBit(-1);
+        setShowResult(false);
         setIsFighting(true);
     };
+
+    const handleIdChange = (value: string, setter: (v: number) => void) => {
+        const filtered = value.toUpperCase().replace(/[^0-9A-F]/g, '');
+        if (filtered.length <= 3) {
+            setter(parseInt(filtered || '0', 16));
+        }
+    };
+
+    const isValidId = (id: number) => id <= 0x7FF;
 
     const getBit = (id: number, pos: number) => {
         const bits = id.toString(2).padStart(11, '0').split('').map(Number);
@@ -71,8 +84,8 @@ export default function ArbitrationPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         {/* Node A */}
                         <div className={cn(
-                            "p-8 rounded-[3rem] border transition-all duration-700",
-                            arbitration.winnerIndex === 0 ? "bg-cyber-purple/10 border-cyber-purple/30 shadow-[0_0_50px_rgba(191,0,255,0.15)]" : "bg-black/[0.02] dark:bg-white/[0.02] border-black/5 dark:border-white/5 opacity-60"
+                            "p-8 rounded-[3rem] border transition-all duration-700 relative",
+                            showResult && (arbitration.isTie || arbitration.winnerIndex === 0) ? "bg-cyber-purple/10 border-cyber-purple/30 shadow-[0_0_50px_rgba(191,0,255,0.15)]" : "bg-black/[0.02] dark:bg-white/[0.02] border-black/5 dark:border-white/5 opacity-60"
                         )}>
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="w-16 h-16 rounded-2xl bg-cyber-purple/20 flex items-center justify-center text-cyber-purple border border-cyber-purple/30">
@@ -85,20 +98,28 @@ export default function ArbitrationPage() {
                             </div>
 
                             <div className="space-y-6">
-                                <div className="space-y-2">
+                                <div className="space-y-2 relative">
                                     <label className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase tracking-widest">Identifier (Hex)</label>
                                     <input
                                         type="text"
                                         maxLength={3}
-                                        pattern="[0-9A-Fa-f]*"
                                         value={nodeAId.toString(16).toUpperCase()}
-                                        onChange={(e) => {
-                                            const val = e.target.value.replace(/[^0-9A-Fa-f]/g, '');
-                                            setNodeAId(parseInt(val || '0', 16));
-                                        }}
-                                        className="w-full bg-white/40 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-2xl p-4 font-mono text-xl text-cyber-purple font-black outline-none focus:border-cyber-purple/50 transition-all text-center"
+                                        onChange={(e) => handleIdChange(e.target.value, setNodeAId)}
+                                        className={cn(
+                                            "w-full bg-white/40 dark:bg-black/40 border rounded-2xl p-4 font-mono text-xl font-black outline-none transition-all text-center",
+                                            isValidId(nodeAId) ? "text-cyber-purple border-black/10 dark:border-white/10 focus:border-cyber-purple/50" : "text-red-500 border-red-500/50"
+                                        )}
                                         placeholder="7FF"
                                     />
+                                    {!isValidId(nodeAId) && (
+                                        <motion.span 
+                                            initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                                            className="text-[9px] text-red-500 font-bold uppercase tracking-tighter absolute -bottom-5 left-0 w-full text-center flex items-center justify-center gap-1"
+                                        >
+                                            <AlertTriangle size={10} aria-hidden="true" />
+                                            Out of range (Max 0x7FF)
+                                        </motion.span>
+                                    )}
                                 </div>
 
                                 <div className="flex justify-center gap-2">
@@ -117,8 +138,8 @@ export default function ArbitrationPage() {
 
                         {/* Node B */}
                         <div className={cn(
-                            "p-8 rounded-[3rem] border transition-all duration-700",
-                            arbitration.winnerIndex === 1 ? "bg-red-500/10 border-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.15)]" : "bg-black/[0.02] dark:bg-white/[0.02] border-black/5 dark:border-white/5 opacity-60"
+                            "p-8 rounded-[3rem] border transition-all duration-700 relative",
+                            showResult && (arbitration.isTie || arbitration.winnerIndex === 1) ? "bg-red-500/10 border-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.15)]" : "bg-black/[0.02] dark:bg-white/[0.02] border-black/5 dark:border-white/5 opacity-60"
                         )}>
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="w-16 h-16 rounded-2xl bg-red-500/20 flex items-center justify-center text-red-500 border border-red-500/30 font-black italic">
@@ -131,20 +152,28 @@ export default function ArbitrationPage() {
                             </div>
 
                             <div className="space-y-6">
-                                <div className="space-y-2">
+                                <div className="space-y-2 relative">
                                     <label className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase tracking-widest">Identifier (Hex)</label>
                                     <input
                                         type="text"
                                         maxLength={3}
-                                        pattern="[0-9A-Fa-f]*"
                                         value={nodeBId.toString(16).toUpperCase()}
-                                        onChange={(e) => {
-                                            const val = e.target.value.replace(/[^0-9A-Fa-f]/g, '');
-                                            setNodeBId(parseInt(val || '0', 16));
-                                        }}
-                                        className="w-full bg-white/40 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-2xl p-4 font-mono text-xl text-red-500 font-black outline-none focus:border-red-500/50 transition-all text-center"
+                                        onChange={(e) => handleIdChange(e.target.value, setNodeBId)}
+                                        className={cn(
+                                            "w-full bg-white/40 dark:bg-black/40 border rounded-2xl p-4 font-mono text-xl font-black outline-none transition-all text-center",
+                                            isValidId(nodeBId) ? "text-red-500 border-black/10 dark:border-white/10 focus:border-red-500/50" : "text-red-500 border-red-500/50"
+                                        )}
                                         placeholder="001"
                                     />
+                                    {!isValidId(nodeBId) && (
+                                        <motion.span 
+                                            initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                                            className="text-[9px] text-red-500 font-bold uppercase tracking-tighter absolute -bottom-5 left-0 w-full text-center flex items-center justify-center gap-1"
+                                        >
+                                            <AlertTriangle size={10} aria-hidden="true" />
+                                            Out of range (Max 0x7FF)
+                                        </motion.span>
+                                    )}
                                 </div>
 
                                 <div className="flex justify-center gap-2">
@@ -203,20 +232,28 @@ export default function ArbitrationPage() {
                                             </div>
                                             <div className="p-4 rounded-2xl bg-white/40 dark:bg-black/40 border border-black/5 dark:border-white/5">
                                                 <div className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase mb-2">Winning Node</div>
-                                                <div className={cn("text-lg font-black italic", arbitration.winnerIndex === 0 ? "text-cyber-purple" : "text-red-500")}>
-                                                    {arbitration.winnerIndex === 0 ? "Alpha" : "Beta"}
+                                                <div className={cn("text-lg font-black italic", 
+                                                    showResult ? (arbitration.isTie ? "text-amber-500" : (arbitration.winnerIndex === 0 ? "text-cyber-purple" : "text-red-500")) : "text-light-400 dark:text-gray-400")}>
+                                                    {showResult ? (arbitration.isTie ? "TIE (COLLISION)" : (arbitration.winnerIndex === 0 ? "Alpha" : "Beta")) : "???"}
                                                 </div>
                                             </div>
                                             <div className="p-4 rounded-2xl bg-white/40 dark:bg-black/40 border border-black/5 dark:border-white/5">
                                                 <div className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase mb-2">Reason</div>
-                                                <div className="text-sm font-bold text-light-400 dark:text-gray-400 italic">Lower ID Dominant</div>
+                                                <div className={cn("text-sm font-bold italic", showResult && arbitration.isTie ? "text-amber-500/70" : "text-light-400 dark:text-gray-400")}>
+                                                    {showResult ? (arbitration.isTie ? "ID COLLISION" : "Lower ID Dominant") : "Awaiting Result"}
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="p-6 rounded-2xl bg-cyber-purple/10 border border-cyber-purple/20 flex items-start gap-4">
-                                            <Info size={20} className="text-cyber-purple shrink-0" />
+                                        <div className={cn("p-6 rounded-2xl border flex items-start gap-4 transition-colors", 
+                                            showResult && arbitration.isTie ? "bg-amber-500/10 border-amber-500/20" : "bg-cyber-purple/10 border-cyber-purple/20")}>
+                                            <Info size={20} className={cn("shrink-0", showResult && arbitration.isTie ? "text-amber-500" : "text-cyber-purple")} />
                                             <p className="text-xs text-light-400 dark:text-gray-400 leading-relaxed font-medium">
-                                                In CAN, a '0' is <strong>Dominant</strong>. When Node Alpha sends '0' and Node Beta sends '1', the bus wire effectively stays at '0'. Node Beta detects that what it sent ('1') is not what it sees on the bus ('0'), and immediately stops transmitting to avoid collisions.
+                                                {showResult && arbitration.isTie ? (
+                                                    "Identical identifiers! In a real CAN bus, this leads to a collision beyond the ID field unless data is also identical. If frames match bit-for-bit, both nodes assume they won, but this is a critical design error that can break ACK slots and CRC checks if data ever differs."
+                                                ) : (
+                                                    "In CAN, a '0' is Dominant. When Node Alpha sends '0' and Node Beta sends '1', the bus wire effectively stays at '0'. Node Beta detects that what it sent ('1') is not what it sees on the bus ('0'), and immediately stops transmitting to avoid collisions."
+                                                )}
                                             </p>
                                         </div>
                                     </motion.div>

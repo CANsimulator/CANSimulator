@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ArrowLeftRight, Copy, Check, GitCompareArrows, Layers } from 'lucide-react';
 import { GENERATIONS, GENERATION_ORDER } from '../data';
@@ -27,6 +27,14 @@ export function GenerationCompareDock({
   const reduceMotion = useReducedMotion();
   const [copied, setCopied] = useState(false);
   const [swapRotation, setSwapRotation] = useState(0);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   const compareOptions = useMemo(
     () => GENERATION_ORDER.filter((id) => id !== primary),
@@ -37,7 +45,12 @@ export function GenerationCompareDock({
     if (!navigator.clipboard) return;
     await navigator.clipboard.writeText(window.location.href);
     setCopied(true);
-    setTimeout(() => setCopied(false), 1400);
+    
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => {
+      setCopied(false);
+      copyTimerRef.current = null;
+    }, 1400);
   };
 
   const handleSwap = () => {

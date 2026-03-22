@@ -56,8 +56,20 @@ export const PowerSupplyDashboard: React.FC = () => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        const width = canvas.width;
-        const height = canvas.height;
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        
+        // Match the buffer size to physical pixels
+        if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+        }
+
+        // Scale context so we can continue drawing in CSS pixels
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const width = rect.width;
+        const height = rect.height;
 
         // Clear
         ctx.clearRect(0, 0, width, height);
@@ -299,7 +311,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                     {/* Viewport Monitor */}
                     <div className="flex-1 bg-white/40 dark:bg-black/40 rounded-xl border border-black/5 dark:border-white/5 p-4 relative min-h-[140px] shadow-inner transition-colors">
                         <p className="absolute top-3 left-4 text-[9px] text-gray-600 font-black uppercase tracking-widest font-mono">V-OUT Oscillo</p>
-                        <canvas ref={canvasRef} width={400} height={140} className="w-full h-full rounded-lg" />
+                        <canvas ref={canvasRef} className="w-full h-full rounded-lg block" />
                     </div>
 
                     {/* Fault Selection */}

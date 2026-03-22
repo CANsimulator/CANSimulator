@@ -43,9 +43,17 @@ export default function ShineBorder({
                         "--mask-linear-gradient": `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
                         "--background-radial-gradient": `radial-gradient(transparent,transparent, ${Array.isArray(color) ? color.join(",") : color
                             },transparent,transparent)`,
+                        WebkitMaskComposite: 'xor',
+                        maskComposite: 'exclude',
+                        WebkitMask: 'var(--mask-linear-gradient)',
+                        mask: 'var(--mask-linear-gradient)',
                     } as React.CSSProperties
                 }
-                className={`before:bg-shine-size before:absolute before:inset-0 before:aspect-square before:size-full before:rounded-[--border-radius] before:p-[--border-width] before:will-change-[background-position] before:content-[""] before:![-webkit-mask-composite:xor] before:![mask-composite:exclude] before:[background-image:--background-radial-gradient] before:[background-size:300%_300%] before:[mask:--mask-linear-gradient] motion-safe:before:animate-shine`}
+                className={cn(
+                    "bg-shine-size absolute inset-0 rounded-[--border-radius] p-[--border-width] will-change-[background-position]",
+                    "[background-image:--background-radial-gradient] [background-size:300%_300%]",
+                    "motion-safe:animate-shine"
+                )}
             ></div>
             {children}
         </div>

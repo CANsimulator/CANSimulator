@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
 import { CyberButton } from '../components/ui/CyberButton';
 import { BorderBeam } from '../components/ui/BorderBeam';
 import { PLANS, type PlanId } from '../services/razorpayService';
@@ -93,7 +94,7 @@ export const PricingPage: React.FC = () => {
                             <ul className="space-y-2 flex-1">
                                 {PLAN_FEATURES[planId].map((feat) => (
                                     <li key={feat} className="flex items-center gap-2 text-sm text-gray-300">
-                                        <span className="text-cyber-green">✓</span>
+                                        <Check size={14} className="text-cyber-green shrink-0" aria-hidden="true" />
                                         {feat}
                                     </li>
                                 ))}

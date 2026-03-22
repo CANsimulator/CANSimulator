@@ -29,7 +29,13 @@ export default function SignalsPage() {
 
     const isBitHighlighted = (byteIdx: number, bitInByte: number) => {
         const absoluteBit = byteIdx * 8 + bitInByte;
-        return absoluteBit >= startBit && absoluteBit < startBit + bitLength;
+        if (isLittleEndian) {
+            return absoluteBit >= startBit && absoluteBit < startBit + bitLength;
+        } else {
+            // Motorola (BE): startBit is MSB, bits flow towards lower indices
+            // This matches the simplified reverse logic in our current simulator
+            return absoluteBit <= startBit && absoluteBit > startBit - bitLength;
+        }
     };
 
     return (
@@ -124,7 +130,7 @@ export default function SignalsPage() {
                                     <div className="mt-8 flex gap-8">
                                         <div className="text-center">
                                             <div className="text-[10px] font-bold text-gray-600 uppercase mb-1">Raw BigInt</div>
-                                            <div className="text-xs font-mono text-gray-400">{(physicalValue / scale - offset).toFixed(0)}</div>
+                                            <div className="text-xs font-mono text-gray-400">{((physicalValue - offset) / (scale || 1)).toFixed(0)}</div>
                                         </div>
                                         <div className="w-px h-8 bg-white/5" />
                                         <div className="text-center">

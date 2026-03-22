@@ -30,7 +30,18 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [rpsEnabled] = useState(false);
     const [rpsPowerDownTime, setRpsPowerDownTime] = useState(0); // in 10ms units
     const [rpsCountdown, setRpsCountdown] = useState<number | null>(null);
-    const rpsTimerRef = useRef<number | null>(null);
+    const rpsTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const crankTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    // Global timers cleanup
+    useEffect(() => {
+        return () => {
+            if (rpsTimerRef.current) clearInterval(rpsTimerRef.current);
+            if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+            if (crankTimerRef.current) clearInterval(crankTimerRef.current);
+        };
+    }, []);
 
     // Sync legacy ecuPower with powerState
     useEffect(() => {
@@ -105,10 +116,12 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         const startTime = Date.now();
         const duration = 1500;
 
-        const crankInterval = setInterval(() => {
+        if (crankTimerRef.current) clearInterval(crankTimerRef.current);
+        crankTimerRef.current = setInterval(() => {
             const elapsed = Date.now() - startTime;
             if (elapsed >= duration) {
-                clearInterval(crankInterval);
+                if (crankTimerRef.current) clearInterval(crankTimerRef.current);
+                crankTimerRef.current = null;
                 setPowerState(originalState);
                 return;
             }
@@ -129,22 +142,26 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }, [powerState, targetVoltage]);
 
     const simulateResetVoltageProfile = useCallback((type: 'hard' | 'keyOffOn') => {
+        if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+
         if (type === 'hard') {
             setVoltage(8.0);
             setCurrent(3.0);
-            setTimeout(() => {
+            resetTimerRef.current = setTimeout(() => {
                 setVoltage(targetVoltage);
                 setCurrent(0.5);
+                resetTimerRef.current = null;
             }, 200);
         } else if (type === 'keyOffOn') {
             const previousState = powerState === 'OFF' ? 'ON' : powerState;
             setPowerState('OFF');
             setVoltage(0);
             setCurrent(0);
-            setTimeout(() => {
+            resetTimerRef.current = setTimeout(() => {
                 setPowerState(previousState);
                 setVoltage(targetVoltage);
                 setCurrent(0.5);
+                resetTimerRef.current = null;
             }, 5000);
         }
     }, [targetVoltage, powerState]);
@@ -160,12 +177,12 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         if (rpsTimerRef.current) clearInterval(rpsTimerRef.current);
 
         const startTime = Date.now();
-        rpsTimerRef.current = window.setInterval(() => {
+        rpsTimerRef.current = setInterval(() => {
             const elapsed = Date.now() - startTime;
             const remaining = Math.max(0, totalMs - elapsed);
 
             if (remaining <= 0) {
-                clearInterval(rpsTimerRef.current!);
+                if (rpsTimerRef.current) clearInterval(rpsTimerRef.current);
                 rpsTimerRef.current = null;
                 setRpsCountdown(null);
             } else {

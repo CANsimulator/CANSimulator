@@ -239,21 +239,18 @@ class CANSimulator {
         const totalBits = payload.length * 8;
 
         for (let i = 0; i < bitLength; i++) {
-            const currentBit = startBit + i;
-            if (currentBit >= totalBits) break;
+            const currentBit = isLittleEndian ? startBit + i : startBit - i;
+            if (currentBit < 0 || currentBit >= totalBits) continue;
 
             const byteIdx = Math.floor(currentBit / 8);
             const bitInByte = currentBit % 8;
 
-            // Handle bit extraction (assuming startBit 0 is LSB or MSB depending on convention)
-            // Typically in CAN DBCs, bit 0 is byte 0 bit 0.
             const bitValue = (payload[byteIdx] >> bitInByte) & 1;
 
             if (isLittleEndian) {
                 raw |= BigInt(bitValue) << BigInt(i);
             } else {
-                // Motorola (Big Endian) is more complex across byte boundaries
-                // For simplicity in the lab, we'll treat it as a reversed bitstream for now
+                // Motorola (BE): Assemble MSB-first
                 raw |= BigInt(bitValue) << BigInt(bitLength - 1 - i);
             }
         }
@@ -264,6 +261,8 @@ class CANSimulator {
     /** Simulate bit-by-bit arbitration between multiple nodes */
     simulateArbitration(nodes: { id: number; name: string }[]): {
         winnerIndex: number;
+        activeNodes: number[];
+        isTie: boolean;
         bitHistory: { [nodeIndex: number]: number[] };
         collisionBit: number;
     } {
@@ -305,6 +304,8 @@ class CANSimulator {
 
         return {
             winnerIndex: activeNodes[0],
+            activeNodes,
+            isTie: activeNodes.length > 1,
             bitHistory,
             collisionBit
         };
