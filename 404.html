@@ -3,25 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <title>CAN Simulator</title>
+    <!--
+      Single-Page App GitHub Pages 404 redirect.
+      Based on: https://github.com/rafgraph/spa-github-pages
+
+      When GitHub Pages 404s on a deep route (e.g. /CANSimulator/physical),
+      it serves this file. We encode the route as a query string and redirect
+      to the repo root so the React app can boot and handle the route itself.
+
+      pathSegmentsToKeep = 1  →  keeps /CANSimulator as the basename.
+    -->
     <script>
-      // GitHub Pages SPA redirect trick.
-      // When GH Pages 404s on a deep route (e.g. /CANSimulator/physical),
-      // it serves this file. We encode the full path+query+hash as a query
-      // param and redirect to the repo root so the SPA can boot normally.
-      //
-      // The `l` param carries: path segments after the basename, delimited
-      // by '&' (encoded). The leading '?' is replaced with '~' so the whole
-      // thing travels as a single query param value.
-      var l = window.location;
-      // pathSegmentsToKeep = 1 — keep the first path segment (/CANSimulator)
-      // as the basename so that the redirect lands at the correct root.
       var pathSegmentsToKeep = 1;
+      var l = window.location;
       l.replace(
         l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?p=/' +
-        l.pathname.split('/').slice(1 + pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        (l.hash ? '&h=' + l.hash.slice(1) : '')
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
       );
     </script>
   </head>
