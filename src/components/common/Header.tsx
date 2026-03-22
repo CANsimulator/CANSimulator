@@ -25,7 +25,7 @@ const NAV_LINKS = [
 export function Header() {
     const { theme, toggleTheme } = useTheme();
     const isDark = theme === 'dark';
-    const { isAuthenticated, user, logout } = useAuth();
+    const { isAuthenticated, user, logout, isLoading } = useAuth();
     const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
@@ -131,7 +131,7 @@ export function Header() {
                         </button>
 
                         {/* User Profile */}
-                        {isAuthenticated && user ? (
+                        {isLoading ? null : isAuthenticated && user ? (
                             <div className="relative" ref={userMenuRef}>
                                 <button
                                     onClick={() => setShowUserMenu(!showUserMenu)}
@@ -219,7 +219,7 @@ export function Header() {
                                 {link.label}
                             </Link>
                         ))}
-                        {!isAuthenticated && (
+                        {!isLoading && !isAuthenticated && (
                             <Link
                                 to="/auth"
                                 onClick={() => setMobileMenuOpen(false)}

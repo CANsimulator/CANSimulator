@@ -13,7 +13,7 @@ interface AuthContextType extends AuthState {
 const defaultAuthState: AuthState = {
     user: null,
     isAuthenticated: false,
-    isLoading: false, // ← start false; we set true only while fetching
+    isLoading: true, // ← start true until auth is resolved
     error: null,
     rateLimitInfo: { attemptsRemaining: 5, isLocked: false, lockoutEndTime: null, lastAttemptTime: null },
     sessionExpiry: null,
@@ -82,14 +82,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             return true;
         } catch (error: unknown) {
             const msg = error instanceof Error ? error.message : 'Login failed';
-            setState(prev => ({ ...prev, isLoading: false, error: { code: 'INVALID_CREDENTIALS', message: msg } }));
+            setState(prev => ({ 
+                ...prev, 
+                isLoading: false, 
+                error: { code: 'INVALID_CREDENTIALS', message: msg },
+                rateLimitInfo: {
+                    ...prev.rateLimitInfo,
+                    attemptsRemaining: Math.max(0, (prev.rateLimitInfo?.attemptsRemaining || 5) - 1),
+                }
+            }));
             return false;
         }
     }, [fetchProfile]);
 
     const logout = useCallback(async () => {
         await authService.signOut();
-        setState({ ...defaultAuthState });
+        setState({ ...defaultAuthState, isLoading: false }); // ensure loading is false after explicit logout
     }, []);
 
     return (
