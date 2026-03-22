@@ -1,1 +1,0 @@
-import{j as o}from"./vendor-react-Cf9IQFwj.js";import{a as r}from"./index-DhCLkv5s.js";const l=({children:a,className:x,variant:t="default"})=>{const m={default:"max-w-7xl",narrow:"max-w-5xl",wide:"max-w-[1440px]"}[t];return o.jsx("div",{className:r("mx-auto px-4 sm:px-6 lg:px-8 w-full",m,x),children:a})};export{l as C};
