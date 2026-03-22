@@ -23,6 +23,7 @@ const ArbitrationPage = lazy(() => import('./pages/ArbitrationPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
 const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m.LegalPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const AuthPage = lazy(() => import('./pages/AuthPage').then(m => ({ default: m.AuthPage })));
 
 function AppLayout() {
   const { theme } = useTheme();
@@ -62,6 +63,7 @@ function AppLayout() {
           <Route path="/inspector" element={withLayout(InspectorPage)} />
           <Route path="/signals" element={withLayout(SignalsPage)} />
           <Route path="/arbitration" element={withLayout(ArbitrationPage)} />
+          <Route path="/auth" element={withLayout(AuthPage)} />
           <Route path="/about" element={withLayout(AboutPage)} />
           <Route path="/privacy-policy" element={withLayout(() => <LegalPage title="Privacy Policy" />)} />
           <Route path="/terms" element={withLayout(() => <LegalPage title="Terms of Use" />)} />
