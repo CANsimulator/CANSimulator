@@ -10,6 +10,24 @@
     <title>CAN Simulator - Master the ISO 11898 Protocol</title>
     <meta name="description" content="Advanced Interactive CAN Protocol Simulator. Master automotive diagnostics (CAN/FD) instantly—right in your browser. Cyber-ready and WCAG AAA compliant." />
     <meta name="theme-color" content="#00f3ff" />
+    <!-- GitHub Pages SPA: decode the redirect produced by 404.html -->
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var p = params.get('p');
+        if (p) {
+          // Reconstruct the original path, query string, and hash.
+          var q = params.get('q');
+          var h = params.get('h');
+          var url =
+            window.location.pathname.split('?')[0] +
+            p.replace(/~and~/g, '&') +
+            (q ? '?' + q.replace(/~and~/g, '&') : '') +
+            (h ? '#' + h : '');
+          window.history.replaceState(null, null, url);
+        }
+      })();
+    </script>
   </head>
   <body class="bg-dark-900 scroll-smooth">
     <div id="root"></div>

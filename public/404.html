@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CAN Simulator</title>
+    <script>
+      // GitHub Pages SPA redirect trick.
+      // When GH Pages 404s on a deep route (e.g. /CANSimulator/physical),
+      // it serves this file. We encode the full path+query+hash as a query
+      // param and redirect to the repo root so the SPA can boot normally.
+      //
+      // The `l` param carries: path segments after the basename, delimited
+      // by '&' (encoded). The leading '?' is replaced with '~' so the whole
+      // thing travels as a single query param value.
+      var l = window.location;
+      // pathSegmentsToKeep = 1 — keep the first path segment (/CANSimulator)
+      // as the basename so that the redirect lands at the correct root.
+      var pathSegmentsToKeep = 1;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?p=/' +
+        l.pathname.split('/').slice(1 + pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        (l.hash ? '&h=' + l.hash.slice(1) : '')
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
