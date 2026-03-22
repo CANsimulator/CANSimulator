@@ -11,22 +11,26 @@
     <meta name="description" content="Advanced Interactive CAN Protocol Simulator. Master automotive diagnostics (CAN/FD) instantly—right in your browser. Cyber-ready and WCAG AAA compliant." />
     <meta name="theme-color" content="#00f3ff" />
     <!-- GitHub Pages SPA: decode the redirect produced by 404.html -->
+    <!-- Based on https://github.com/rafgraph/spa-github-pages -->
     <script>
-      (function () {
-        var params = new URLSearchParams(window.location.search);
-        var p = params.get('p');
-        if (p) {
-          // Reconstruct the original path, query string, and hash.
-          var q = params.get('q');
-          var h = params.get('h');
-          var url =
-            window.location.pathname.split('?')[0].replace(/\/$/, '') +
-            p.replace(/~and~/g, '&') +
-            (q ? '?' + q.replace(/~and~/g, '&') : '') +
-            (h ? '#' + h : '');
-          window.history.replaceState(null, null, url);
+      (function (l) {
+        // 404.html redirects deep routes as: /CANSimulator/?/physical
+        // l.search[1] === '/' detects that sentinel.
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function (s) {
+            return s.replace(/~and~/g, '&');
+          });
+          window.history.replaceState(
+            null,
+            null,
+            // l.pathname is '/CANSimulator/' — slice off the trailing slash,
+            // then append decoded[0] which is e.g. '/physical'.
+            l.pathname.slice(0, -1) + decoded[0] +
+            (decoded[1] ? '?' + decoded[1] : '') +
+            l.hash
+          );
         }
-      })();
+      }(window.location));
     </script>
   </head>
   <body class="bg-dark-900 scroll-smooth">
