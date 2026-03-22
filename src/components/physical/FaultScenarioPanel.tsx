@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { usePower } from '../../context/PowerContext';
 import { useTestBench } from '../../context/TestBenchContext';
 import { findBitTimingPresetByBaudRate } from '../../types/testbench';
@@ -74,6 +74,7 @@ export const FaultScenarioPanel: React.FC = () => {
     const isDark = theme === 'dark';
     const bench = useTestBench();
     const power = usePower();
+    const shouldReduceMotion = useReducedMotion();
 
     const shortGndAction = useMomentaryAction({
         isActive: power.faultState === 'SHORT_GND',
@@ -188,8 +189,8 @@ export const FaultScenarioPanel: React.FC = () => {
                         <motion.span
                             className="rounded px-1.5 py-0.5 text-[7px] font-mono font-bold"
                             style={{ backgroundColor: '#f59e0b20', color: '#f59e0b', border: '1px solid #f59e0b40' }}
-                            animate={{ opacity: [1, 0.5, 1] }}
-                            transition={{ duration: 1.2, repeat: Infinity }}
+                            animate={{ opacity: shouldReduceMotion ? 0.8 : [1, 0.5, 1] }}
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity }}
                         >
                             RINGING
                         </motion.span>

@@ -7,12 +7,13 @@ import { ErrorInjectionPanel } from '../components/can/ErrorInjectionPanel';
 import { ErrorLogPanel } from '../components/can/ErrorLogPanel';
 import { TroubleshootingHints } from '../components/can/TroubleshootingHints';
 import { ErrorTypeDeepDive } from '../components/can/ErrorTypeDeepDive';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 const ErrorPage: React.FC = () => {
     const [errorState, setErrorState] = useState<CANErrorState>(canSimulator.getErrorState());
     const [activeTab, setActiveTab] = useState<'log' | 'hints'>('log');
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const shouldReduceMotion = useReducedMotion();
 
     useEffect(() => {
         const unsubscribe = canSimulator.subscribe({
@@ -57,8 +58,8 @@ const ErrorPage: React.FC = () => {
                             <motion.div
                                 className="w-1.5 h-1.5 rounded-full"
                                 style={{ backgroundColor: stateColor }}
-                                animate={{ opacity: [1, 0.3, 1] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
+                                animate={{ opacity: shouldReduceMotion ? 0.7 : [1, 0.3, 1] }}
+                                transition={{ duration: 1.5, repeat: shouldReduceMotion ? 0 : Infinity }}
                             />
                             {stateLabel}
                         </motion.div>
@@ -147,14 +148,14 @@ const ErrorPage: React.FC = () => {
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <motion.div
                                     className="w-2 h-2 rounded-full bg-red-500"
-                                    animate={{ opacity: [1, 0.2, 1] }}
-                                    transition={{ duration: 0.8, repeat: Infinity }}
+                                    animate={{ opacity: shouldReduceMotion ? 0.6 : [1, 0.2, 1] }}
+                                    transition={{ duration: 0.8, repeat: shouldReduceMotion ? 0 : Infinity }}
                                 />
                                 <span className="text-[10px] font-black uppercase tracking-widest text-red-400">Bus-Off Detected</span>
                                 <motion.div
                                     className="w-2 h-2 rounded-full bg-red-500"
-                                    animate={{ opacity: [1, 0.2, 1] }}
-                                    transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }}
+                                    animate={{ opacity: shouldReduceMotion ? 0.6 : [1, 0.2, 1] }}
+                                    transition={{ duration: 0.8, repeat: shouldReduceMotion ? 0 : Infinity, delay: 0.4 }}
                                 />
                             </div>
                             <p className="text-[10px] text-red-400/70 font-medium leading-relaxed max-w-lg mx-auto">

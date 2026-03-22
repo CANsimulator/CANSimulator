@@ -1,5 +1,4 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface LoadingSpinnerProps {
     size?: 'sm' | 'md' | 'lg';
@@ -24,12 +23,13 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     color = 'primary',
     className = '',
 }) => {
+    const shouldReduceMotion = useReducedMotion();
     return (
         <motion.div
             className={`${sizeMap[size]} ${className}`}
-            animate={{ rotate: 360 }}
+            animate={shouldReduceMotion ? { opacity: [0.5, 1, 0.5] } : { rotate: 360 }}
             transition={{
-                duration: 1,
+                duration: shouldReduceMotion ? 2 : 1,
                 repeat: Infinity,
                 ease: 'linear',
             }}

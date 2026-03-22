@@ -147,4 +147,14 @@
   line-height: 1.4;
   letter-spacing: 0.04em;
 }
-
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

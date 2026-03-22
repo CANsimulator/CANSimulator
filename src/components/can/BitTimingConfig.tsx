@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTestBench } from '../../context/TestBenchContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
@@ -76,6 +76,7 @@ export function BitTimingConfig() {
 
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    const shouldReduceMotion = useReducedMotion();
 
     const bench = useTestBench();
     const timing = bench?.bitTiming ?? DEFAULT_BIT_TIMING_PRESET.timing;
@@ -167,8 +168,8 @@ export function BitTimingConfig() {
                         <motion.div
                             className="w-1.5 h-1.5 rounded-full"
                             style={{ backgroundColor: analysis.color, boxShadow: `0 0 4px ${analysis.color}` }}
-                            animate={{ opacity: [1, 0.5, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
+                            animate={{ opacity: shouldReduceMotion ? 0.8 : [1, 0.5, 1] }}
+                            transition={{ duration: 2, repeat: shouldReduceMotion ? 0 : Infinity }}
                         />
                         <span className="text-[8px] font-mono" style={{ color: analysis.color }}>{analysis.quality}</span>
                     </div>

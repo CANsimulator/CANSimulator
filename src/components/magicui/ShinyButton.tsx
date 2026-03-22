@@ -3,6 +3,7 @@
 import React from "react";
 import {
     motion,
+    useReducedMotion,
     type HTMLMotionProps,
 } from "framer-motion";
 import { cn } from "../../utils/cn";
@@ -35,10 +36,15 @@ interface ShinyButtonProps extends HTMLMotionProps<"button"> {
 
 const ShinyButton = React.forwardRef<HTMLButtonElement, ShinyButtonProps>(
     ({ children, className, ...props }, ref) => {
+        const shouldReduceMotion = useReducedMotion();
+        const animProps = shouldReduceMotion 
+            ? { initial: { "--x": "0%", scale: 1 }, whileTap: { scale: 0.95 } } 
+            : animationProps;
+
         return (
             <motion.button
                 ref={ref}
-                {...animationProps}
+                {...animProps}
                 {...props}
                 className={cn(
                     "relative rounded-lg px-6 py-2 font-medium backdrop-blur-xl transition-[shadow] duration-300 ease-in-out hover:shadow dark:bg-[linear-gradient(#000,#000),linear-gradient(#000_50%,rgba(0,243,255,0.6)_80%,rgba(0,243,255,0)),linear-gradient(90deg,rgba(0,243,255,0.1)_0%,rgba(255,255,255,0.15)_50%,rgba(0,243,255,0.1)_100%)] dark:[background-clip:padding-box,border-box,border-box] dark:[background-origin:border-box] dark:[border:1px_solid_transparent] dark:hover:shadow-[0_0_20px_rgba(0,243,255,0.2)]",

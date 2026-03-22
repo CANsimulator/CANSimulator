@@ -126,8 +126,14 @@ export const LandingPage: React.FC = () => {
         <div className="min-h-screen bg-light-50 dark:bg-dark-900 selection:bg-cyber-blue/30 relative">
             {/* Ambient Background Elements */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyber-blue/5 dark:bg-cyber-blue/10 blur-[120px] rounded-full animate-float-slow" />
-                <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-cyber-purple/5 dark:bg-cyber-purple/10 blur-[150px] rounded-full animate-float" />
+                <div className={cn(
+                    "absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyber-blue/5 dark:bg-cyber-blue/10 blur-[120px] rounded-full",
+                    !prefersReducedMotion && "animate-float-slow"
+                )} />
+                <div className={cn(
+                    "absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-cyber-purple/5 dark:bg-cyber-purple/10 blur-[150px] rounded-full",
+                    !prefersReducedMotion && "animate-float"
+                )} />
             </div>
 
             <div className="cyber-grid opacity-20 dark:opacity-40" />
@@ -161,7 +167,7 @@ export const LandingPage: React.FC = () => {
                                     Next-Gen Bus Simulation
                                 </span>
                             </motion.div>
-
+                            
                             {!isMobile && !prefersReducedMotion && (
                                 <Suspense fallback={null}>
                                     <Meteors number={15} className="opacity-35 dark:opacity-90 bg-slate-100 dark:bg-slate-500/30" />
@@ -169,7 +175,7 @@ export const LandingPage: React.FC = () => {
                             )}
 
                             <h1 className="text-6xl sm:text-7xl lg:text-9xl font-black mb-10 leading-[0.85] tracking-tighter uppercase italic">
-                                <span className="gradient-text animate-gradient-shift">
+                                <span className={cn("gradient-text", !prefersReducedMotion && "animate-gradient-shift")}>
                                     MASTER THE
                                 </span>
                                 <br />

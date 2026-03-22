@@ -1,4 +1,5 @@
 import { cn } from "../../utils/cn";
+import { useReducedMotion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 
 interface MeteorsProps {
@@ -7,9 +8,11 @@ interface MeteorsProps {
 }
 
 export const Meteors = ({ number = 20, className }: MeteorsProps) => {
+    const shouldReduceMotion = useReducedMotion();
     const [meteorStyles, setMeteorStyles] = useState<React.CSSProperties[]>([]);
 
     useEffect(() => {
+        if (shouldReduceMotion) return;
         const styles = [...new Array(number)].map(() => ({
             top: -5,
             left: Math.floor(Math.random() * window.innerWidth) + "px",
@@ -17,7 +20,9 @@ export const Meteors = ({ number = 20, className }: MeteorsProps) => {
             animationDuration: Math.floor(Math.random() * 8 + 2) + "s",
         }));
         setMeteorStyles(styles);
-    }, [number]);
+    }, [number, shouldReduceMotion]);
+
+    if (shouldReduceMotion) return null;
 
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

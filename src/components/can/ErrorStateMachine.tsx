@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface ErrorStateMachineProps {
     state: 'ERROR_ACTIVE' | 'ERROR_PASSIVE' | 'BUS_OFF';
@@ -48,6 +48,7 @@ const StateCard: React.FC<{
     isActive: boolean;
 }> = ({ stateKey, isActive }) => {
     const config = STATE_CONFIG[stateKey];
+    const shouldReduceMotion = useReducedMotion();
 
     return (
         <motion.div
@@ -63,7 +64,7 @@ const StateCard: React.FC<{
             transition={{ type: 'spring', stiffness: 200 }}
         >
             {/* Active glow pulse */}
-            {isActive && (
+            {isActive && !shouldReduceMotion && (
                 <motion.div
                     className="absolute -inset-px rounded-2xl pointer-events-none"
                     style={{ boxShadow: `0 0 30px ${config.color}30, inset 0 0 30px ${config.color}08` }}

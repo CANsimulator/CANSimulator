@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { cn } from '../../utils/cn';
 import type { FrameField } from '../../services/can/can-error-catalog';
 
 interface BitStreamVisualizerProps {
@@ -29,7 +30,9 @@ export const BitStreamVisualizer: React.FC<BitStreamVisualizerProps> = ({
     label,
     variant,
 }) => {
+    const shouldReduceMotion = useReducedMotion();
     const errorSet = useMemo(() => new Set(errorBitIndices), [errorBitIndices]);
+    const finalAnimate = animate && !shouldReduceMotion;
 
     /** Find which field a bit belongs to */
     const getField = (bitIndex: number): FrameField | undefined => {
@@ -50,7 +53,10 @@ export const BitStreamVisualizer: React.FC<BitStreamVisualizerProps> = ({
             {/* Label */}
             <div className="flex items-center gap-2">
                 <div
-                    className="w-1.5 h-1.5 rounded-full"
+                    className={cn(
+                        "w-1.5 h-1.5 rounded-full",
+                        !shouldReduceMotion && "animate-pulse"
+                    )}
                     style={{
                         backgroundColor: variant === 'correct' ? '#00ff9f' : '#ff006e',
                     }}
@@ -78,10 +84,10 @@ export const BitStreamVisualizer: React.FC<BitStreamVisualizerProps> = ({
                             return (
                                 <motion.div
                                     key={i}
-                                    initial={animate ? { opacity: 0, scale: 0.5 } : false}
+                                    initial={finalAnimate ? { opacity: 0, scale: 0.5 } : { opacity: 1, scale: 1 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={
-                                        animate
+                                        finalAnimate
                                             ? { delay: i * 0.015, duration: 0.15 }
                                             : undefined
                                     }
@@ -101,7 +107,7 @@ export const BitStreamVisualizer: React.FC<BitStreamVisualizerProps> = ({
                                     title={`Bit ${i}: ${bit} (${field?.name ?? 'Unknown'})`}
                                 >
                                     {bit}
-                                    {isError && (
+                                    {isError && !shouldReduceMotion && (
                                         <motion.div
                                             className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#ff006e]"
                                             animate={{ opacity: [1, 0.3, 1] }}

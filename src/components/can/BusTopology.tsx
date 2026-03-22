@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useTestBench } from '../../context/TestBenchContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Tooltip } from '../ui';
@@ -823,6 +823,7 @@ function TopologyView({
 }) {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    const shouldReduceMotion = useReducedMotion();
 
     const nodeCount = nodes.length;
     const boxScale = nodeCount > 9 ? Math.max(0.65, 9 / nodeCount) : 1;
@@ -899,23 +900,23 @@ function TopologyView({
                         <motion.line
                             x1={`${segLeft}%`} y1={`${BUS_Y_H}%`} x2={`${segRight}%`} y2={`${BUS_Y_H}%`}
                             stroke="#00f3ff" strokeWidth="4" strokeLinecap="round"
-                            initial={{ opacity: 0 }} animate={{ opacity: [0.15, 0.35, 0.15] }}
-                            transition={{ duration: 1.2, repeat: Infinity }} />
+                            initial={{ opacity: 0 }} animate={{ opacity: shouldReduceMotion ? 0.25 : [0.15, 0.35, 0.15] }}
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity }} />
                         <motion.line
                             x1={`${segLeft}%`} y1={`${BUS_Y_H}%`} x2={`${segRight}%`} y2={`${BUS_Y_H}%`}
                             stroke="#00f3ff" strokeWidth="10" strokeLinecap="round" filter="url(#glow-signal)"
-                            initial={{ opacity: 0 }} animate={{ opacity: [0.05, 0.12, 0.05] }}
-                            transition={{ duration: 1.2, repeat: Infinity }} />
+                            initial={{ opacity: 0 }} animate={{ opacity: shouldReduceMotion ? 0.08 : [0.05, 0.12, 0.05] }}
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity }} />
                         <motion.line
                             x1={`${segLeft}%`} y1={`${BUS_Y_L}%`} x2={`${segRight}%`} y2={`${BUS_Y_L}%`}
                             stroke="#bf00ff" strokeWidth="4" strokeLinecap="round"
-                            initial={{ opacity: 0 }} animate={{ opacity: [0.15, 0.35, 0.15] }}
-                            transition={{ duration: 1.2, repeat: Infinity, delay: 0.1 }} />
+                            initial={{ opacity: 0 }} animate={{ opacity: shouldReduceMotion ? 0.25 : [0.15, 0.35, 0.15] }}
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity, delay: 0.1 }} />
                         <motion.line
                             x1={`${segLeft}%`} y1={`${BUS_Y_L}%`} x2={`${segRight}%`} y2={`${BUS_Y_L}%`}
                             stroke="#bf00ff" strokeWidth="10" strokeLinecap="round" filter="url(#glow-signal)"
-                            initial={{ opacity: 0 }} animate={{ opacity: [0.05, 0.12, 0.05] }}
-                            transition={{ duration: 1.2, repeat: Infinity, delay: 0.1 }} />
+                            initial={{ opacity: 0 }} animate={{ opacity: shouldReduceMotion ? 0.08 : [0.05, 0.12, 0.05] }}
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity, delay: 0.1 }} />
                     </>
                 )}
 
@@ -960,11 +961,11 @@ function TopologyView({
                                 </text>
                             )}
                             {/* TX glow ring */}
-                            {isTx && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="8" fill="none" stroke="#22c55e" strokeWidth="1" opacity="0.4"><animate attributeName="r" values="8;16;8" dur="1s" repeatCount="indefinite" /><animate attributeName="opacity" values="0.4;0.1;0.4" dur="1s" repeatCount="indefinite" /></circle>}
+                            {isTx && !shouldReduceMotion && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="8" fill="none" stroke="#22c55e" strokeWidth="1" opacity="0.4"><animate attributeName="r" values="8;16;8" dur="1s" repeatCount="indefinite" /><animate attributeName="opacity" values="0.4;0.1;0.4" dur="1s" repeatCount="indefinite" /></circle>}
                             {/* RX pulse ring */}
-                            {isRx && isDataPhase && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="6" fill="none" stroke="#3b82f6" strokeWidth="1" opacity="0.3"><animate attributeName="r" values="6;12;6" dur="0.8s" repeatCount="indefinite" /></circle>}
+                            {isRx && isDataPhase && !shouldReduceMotion && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="6" fill="none" stroke="#3b82f6" strokeWidth="1" opacity="0.3"><animate attributeName="r" values="6;12;6" dur="0.8s" repeatCount="indefinite" /></circle>}
                             {/* ACK pulse */}
-                            {isRx && isAckPhase && transmission?.ackReceived && (
+                            {isRx && isAckPhase && transmission?.ackReceived && !shouldReduceMotion && (
                                 <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="6" fill="#14b8a640" stroke="#14b8a6" strokeWidth="1.5">
                                     <animate attributeName="r" values="6;14;6" dur="0.6s" repeatCount="indefinite" />
                                     <animate attributeName="opacity" values="0.6;0.2;0.6" dur="0.6s" repeatCount="indefinite" />
@@ -983,33 +984,33 @@ function TopologyView({
                             key={`canh-fwd-${transmission?.id}`}
                             animate={{
                                 x: goesRight ? [`${srcX}%`, `${segRight}%`] : [`${srcX}%`, `${segLeft}%`],
-                                opacity: [0.7, 0.5, 0.7],
+                                opacity: shouldReduceMotion ? 0.7 : [0.7, 0.5, 0.7],
                             }}
                             style={{ width: '3%' }}
-                            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }} />
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut' }} />
                         {/* CANL packet (complementary) */}
                         <motion.rect y={`${BUS_Y_L - 1.5}%`} height="3%" rx="2"
                             fill="#bf00ff" filter="url(#glow-signal)"
                             key={`canl-fwd-${transmission?.id}`}
                             animate={{
                                 x: goesRight ? [`${srcX}%`, `${segRight}%`] : [`${srcX}%`, `${segLeft}%`],
-                                opacity: [0.5, 0.4, 0.5],
+                                opacity: shouldReduceMotion ? 0.5 : [0.5, 0.4, 0.5],
                             }}
                             style={{ width: '3%' }}
-                            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut', delay: 0.08 }} />
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.08 }} />
                         {/* For broadcast: second packet going the other direction */}
                         {tgtX === null && (
                             <>
                                 <motion.rect y={`${BUS_Y_H - 1.5}%`} height="3%" rx="2"
                                     fill="#00f3ff" filter="url(#glow-signal)"
-                                    animate={{ x: [`${srcX}%`, '4%'], opacity: [0.5, 0.3, 0.5] }}
+                                    animate={{ x: [`${srcX}%`, '4%'], opacity: shouldReduceMotion ? 0.5 : [0.5, 0.3, 0.5] }}
                                     style={{ width: '3%' }}
-                                    transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut', delay: 0.15 }} />
+                                    transition={{ duration: 1.4, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.15 }} />
                                 <motion.rect y={`${BUS_Y_L - 1.5}%`} height="3%" rx="2"
                                     fill="#bf00ff" filter="url(#glow-signal)"
-                                    animate={{ x: [`${srcX}%`, '4%'], opacity: [0.4, 0.25, 0.4] }}
+                                    animate={{ x: [`${srcX}%`, '4%'], opacity: shouldReduceMotion ? 0.4 : [0.4, 0.25, 0.4] }}
                                     style={{ width: '3%' }}
-                                    transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }} />
+                                    transition={{ duration: 1.4, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.2 }} />
                             </>
                         )}
                     </>
@@ -1023,19 +1024,19 @@ function TopologyView({
                             key={`ack-h-${transmission?.id}`}
                             animate={{
                                 x: goesRight ? [`${segRight}%`, `${srcX}%`] : [`${segLeft}%`, `${srcX}%`],
-                                opacity: [0.7, 0.5, 0.7],
+                                opacity: shouldReduceMotion ? 0.7 : [0.7, 0.5, 0.7],
                             }}
                             style={{ width: '2.5%' }}
-                            transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }} />
+                            transition={{ duration: 0.8, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut' }} />
                         <motion.rect y={`${BUS_Y_L - 1.5}%`} height="3%" rx="2"
                             fill="#14b8a6" filter="url(#glow-signal)"
                             key={`ack-l-${transmission?.id}`}
                             animate={{
                                 x: goesRight ? [`${segRight}%`, `${srcX}%`] : [`${segLeft}%`, `${srcX}%`],
-                                opacity: [0.5, 0.4, 0.5],
+                                opacity: shouldReduceMotion ? 0.5 : [0.5, 0.4, 0.5],
                             }}
                             style={{ width: '2.5%' }}
-                            transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut', delay: 0.06 }} />
+                            transition={{ duration: 0.8, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.06 }} />
                     </>
                 )}
 
@@ -1044,10 +1045,10 @@ function TopologyView({
                     <>
                         <motion.line x1={`${segLeft}%`} y1={`${BUS_Y_H}%`} x2={`${segRight}%`} y2={`${BUS_Y_H}%`}
                             stroke="#00f3ff" strokeWidth="3" strokeLinecap="round"
-                            animate={{ opacity: [0.4, 0.1, 0.4] }} transition={{ duration: 0.3, repeat: Infinity }} />
+                            animate={{ opacity: shouldReduceMotion ? 0.4 : [0.4, 0.1, 0.4] }} transition={{ duration: 0.3, repeat: shouldReduceMotion ? 0 : Infinity }} />
                         <motion.line x1={`${segLeft}%`} y1={`${BUS_Y_L}%`} x2={`${segRight}%`} y2={`${BUS_Y_L}%`}
                             stroke="#bf00ff" strokeWidth="3" strokeLinecap="round"
-                            animate={{ opacity: [0.4, 0.1, 0.4] }} transition={{ duration: 0.3, repeat: Infinity, delay: 0.05 }} />
+                            animate={{ opacity: shouldReduceMotion ? 0.4 : [0.4, 0.1, 0.4] }} transition={{ duration: 0.3, repeat: shouldReduceMotion ? 0 : Infinity, delay: 0.05 }} />
                     </>
                 )}
             </svg>
@@ -1117,10 +1118,10 @@ function TopologyView({
                 <>
                     <motion.div className="absolute pointer-events-none rounded-full"
                         style={{ top: `${BUS_Y_H - 0.5}%`, height: '4px', width: '60px', background: 'linear-gradient(90deg, transparent, #00f3ff50, transparent)', filter: 'blur(1px)' }}
-                        animate={{ left: ['4%', '92%'] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'linear', repeatDelay: 0.8 }} />
+                        animate={{ left: shouldReduceMotion ? '50%' : ['4%', '92%'] }} transition={{ duration: 2.2, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'linear', repeatDelay: 0.8 }} />
                     <motion.div className="absolute pointer-events-none rounded-full"
                         style={{ top: `${BUS_Y_L - 0.5}%`, height: '4px', width: '60px', background: 'linear-gradient(90deg, transparent, #bf00ff40, transparent)', filter: 'blur(1px)' }}
-                        animate={{ left: ['92%', '4%'] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1.0 }} />
+                        animate={{ left: shouldReduceMotion ? '50%' : ['92%', '4%'] }} transition={{ duration: 2.5, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'linear', repeatDelay: 1.0 }} />
                 </>
             )}
 
@@ -1128,8 +1129,8 @@ function TopologyView({
             {hasTermIssue && !txActive && (
                 <motion.div className="absolute pointer-events-none rounded-full"
                     style={{ top: `${BUS_MID - 1}%`, height: '10px', width: '24px', background: 'linear-gradient(90deg, transparent, #ef4444, transparent)', filter: 'blur(3px)' }}
-                    animate={{ left: !termRight ? ['90%', '80%', '90%'] : ['4%', '14%', '4%'], opacity: [0.8, 0.2, 0.8] }}
-                    transition={{ duration: 0.5, repeat: Infinity }} />
+                    animate={{ left: shouldReduceMotion ? ( !termRight ? '85%' : '9%' ) : (!termRight ? ['90%', '80%', '90%'] : ['4%', '14%', '4%']), opacity: shouldReduceMotion ? 0.8 : [0.8, 0.2, 0.8] }}
+                    transition={{ duration: 0.5, repeat: shouldReduceMotion ? 0 : Infinity }} />
             )}
 
             {/* Termination Resistors */}
@@ -1161,7 +1162,7 @@ function TopologyView({
                     {sourceNode && (
                         <motion.div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#22c55e15] border border-[#22c55e40]"
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                            <div className={`w-2 h-2 rounded-full bg-green-500 ${!shouldReduceMotion ? 'animate-pulse' : ''}`} />
                             <span className="text-[8px] font-mono font-bold text-green-400 uppercase">{sourceNode.label} TX</span>
                         </motion.div>
                     )}
@@ -1171,7 +1172,7 @@ function TopologyView({
                         return (
                             <motion.div key={id} className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3b82f615] border border-[#3b82f640]"
                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                <div className={`w-2 h-2 rounded-full bg-blue-500 ${!shouldReduceMotion ? 'animate-pulse' : ''}`} />
                                 <span className="text-[8px] font-mono font-bold text-blue-400 uppercase">{n.label} RX</span>
                             </motion.div>
                         );
@@ -1214,6 +1215,7 @@ function ECUBox({
 }) {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    const shouldReduceMotion = useReducedMotion();
     const dm = DOMAIN_META[node.domain];
     const borderGlow = isTx ? '#22c55e' : isRx ? '#3b82f6' : isSelected ? dm.color : undefined;
     const hasBaudMismatch = node.online && node.baudRate !== controllerBaudStr;
@@ -1234,7 +1236,7 @@ function ECUBox({
                 opacity: isDimmed ? 0.25 : 1 
             }}>
             <motion.button onClick={onSelect}
-                whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
+                whileHover={shouldReduceMotion ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
                 className={`w-full rounded-lg border text-center transition-all duration-200 cursor-pointer relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0a0a0d] ${isSelected ? 'ring-1 ring-offset-1 ring-offset-white dark:ring-offset-[#0a0a0d]' : ''}`}
                 animate={{
                     borderColor: borderGlow ? borderGlow + '80' : (node.online ? (isDark ? '#222230' : '#e5e7eb') : (isDark ? '#1a0a0a' : '#fee2e2')),
