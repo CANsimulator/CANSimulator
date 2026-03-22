@@ -75,6 +75,11 @@ export default {
                 'meteor': "meteor 5s linear infinite",
                 'shine': "shine var(--duration) infinite linear",
                 'grid': "grid 15s linear infinite",
+                'float': 'float 3s ease-in-out infinite',
+                'float-slow': 'float-slow 4s ease-in-out infinite',
+                'marquee': 'marquee 30s linear infinite',
+                'marquee-vertical': 'marquee-vertical 30s linear infinite',
+                'slide-in-down': 'slide-in-down 0.2s ease-out',
             },
             keyframes: {
                 shine: {
@@ -128,12 +133,34 @@ export default {
                     '0%, 100%': { backgroundSize: '200% 200%', backgroundPosition: 'left center' },
                     '50%': { backgroundSize: '200% 200%', backgroundPosition: 'right center' }
                 },
+                float: {
+                    '0%, 100%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-12px)' },
+                },
+                'float-slow': {
+                    '0%, 100%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-8px)' },
+                },
+                marquee: {
+                    '0%': { transform: 'translateX(0%)' },
+                    '100%': { transform: 'translateX(-50%)' },
+                },
+                'marquee-vertical': {
+                    '0%': { transform: 'translateY(0%)' },
+                    '100%': { transform: 'translateY(-50%)' },
+                },
+                'slide-in-down': {
+                    '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
             },
             boxShadow: {
                 'neon': '0 0 5px theme("colors.cyber.blue"), 0 0 20px theme("colors.cyber.blue")',
                 'neon-pink': '0 0 5px theme("colors.cyber.pink"), 0 0 20px theme("colors.cyber.pink")',
                 'neon-purple': '0 0 5px theme("colors.cyber.purple"), 0 0 20px theme("colors.cyber.purple")',
                 'neon-green': '0 0 5px theme("colors.cyber.green"), 0 0 20px theme("colors.cyber.green")',
+                'neon-cyan': '0 0 5px #00f3ff, 0 0 20px #00f3ff40',
+                '3xl': '0 35px 60px -15px rgba(0, 0, 0, 0.5)',
             }
         },
     },
