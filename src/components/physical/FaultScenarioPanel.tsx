@@ -92,7 +92,7 @@ export const FaultScenarioPanel: React.FC = () => {
             case 'short-gnd':
                 return power.faultState === 'SHORT_GND';
             case 'no-term':
-                return !bench?.terminationLeft && !bench?.terminationRight;
+                return bench?.terminationLeft === false && bench?.terminationRight === false;
             case 'baud-1m':
                 return findBitTimingPresetByBaudRate(bench?.baudRate ?? 0)?.id === '1m';
             case 'low-voltage':
@@ -121,9 +121,12 @@ export const FaultScenarioPanel: React.FC = () => {
                 break;
 
             case 'no-term': {
-                const willActivate = !isScenarioActive('no-term');
-                bench.setTerminationLeft(!willActivate);
-                bench.setTerminationRight(!willActivate);
+                const isCurrentlyActive = isScenarioActive('no-term');
+                // If scenario is active (both OFF), toggle to normal (both ON). 
+                // If not active (normal or partial), toggle to fault (both OFF).
+                const targetState = isCurrentlyActive; 
+                bench.setTerminationLeft(targetState);
+                bench.setTerminationRight(targetState);
                 bench.resetEyeBuffer();
                 break;
             }
@@ -249,7 +252,7 @@ export const FaultScenarioPanel: React.FC = () => {
                                         </span>
                                         <span
                                             className="z-10 text-[7px] font-mono font-black uppercase tracking-wider"
-                                            style={{ color: active ? scenario.color : '#666' }}
+                                            style={{ color: active ? scenario.color : (isDark ? '#888' : '#666') }}
                                         >
                                             {scenario.label}
                                         </span>

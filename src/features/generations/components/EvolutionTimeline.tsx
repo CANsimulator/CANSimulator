@@ -25,19 +25,19 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
   };
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+     <section className="rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 md:p-8 transition-all duration-300 shadow-sm">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-black uppercase tracking-widest text-white">
+        <h2 className="text-lg font-black uppercase tracking-widest text-dark-950 dark:text-white">
           Evolution Timeline
         </h2>
-        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gray-500">
+        <p className="text-xs font-black uppercase tracking-[0.15em] text-gray-600 dark:text-gray-500 transition-colors">
           Click a generation to focus
         </p>
       </div>
 
-      {/* Horizontal connecting line (desktop only) */}
+       {/* Horizontal connecting line (desktop only) */}
       <div className="relative">
-        <div className="absolute left-0 right-0 top-[42px] hidden h-px bg-gradient-to-r from-cyan-500/30 via-violet-500/30 to-emerald-500/30 md:block" />
+        <div className="absolute left-0 right-0 top-[42px] hidden h-[2px] bg-gradient-to-r from-cyan-500/40 via-violet-500/40 to-emerald-500/40 dark:from-cyan-500/30 dark:via-violet-500/30 dark:to-emerald-500/30 md:block transition-all" />
 
         <ol className="relative grid grid-cols-1 gap-4 md:grid-cols-3">
           {GENERATION_ORDER.map((id, idx) => {
@@ -56,11 +56,20 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
                 whileHover={reduceMotion ? undefined : { scale: 1.03 }}
                 whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                 onClick={() => onPrimaryChange?.(id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onPrimaryChange?.(id);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-pressed={active}
                 className={cn(
-                  'group relative cursor-pointer rounded-2xl border p-5 transition-all duration-300',
+                  'group relative cursor-pointer rounded-2xl border p-5 transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-cyber-blue shadow-sm hover:shadow-md',
                   active
                     ? `${spec.accentBorderClass} ${spec.accentSurfaceClass}`
-                    : 'border-white/10 bg-dark-900/40 hover:border-white/20 hover:bg-dark-900/60'
+                    : 'border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-dark-900/40 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-100 dark:hover:bg-dark-900/60'
                 )}
                 style={
                   active
@@ -77,7 +86,7 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
                       'h-3 w-3 rounded-full border-2 transition-all duration-300',
                       active
                         ? `${spec.accentSurfaceClass} border-current ${spec.accentTextClass}`
-                        : 'border-gray-700 bg-dark-950'
+                        : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-950'
                     )}
                   />
                   {active && !reduceMotion && (
@@ -94,7 +103,7 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
                   <span
                     className={cn(
                       'text-xs font-black uppercase tracking-[0.2em] transition-colors duration-200',
-                      active ? spec.accentTextClass : 'text-gray-500 group-hover:text-gray-400'
+                      active ? spec.accentTextClass : 'text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-400'
                     )}
                   >
                     {spec.yearLabel}
@@ -105,15 +114,15 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
                       'transition-all duration-300',
                       active
                         ? spec.accentTextClass
-                        : 'text-gray-600 group-hover:text-gray-400'
+                        : 'text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-400'
                     )}
                   />
                 </div>
 
-                <h3 className="mb-2 text-xl font-black tracking-tight text-white">
+                 <h3 className="mb-2 text-xl font-black tracking-tight text-dark-950 dark:text-white transition-colors">
                   {spec.title}
                 </h3>
-                <p className="text-sm text-gray-400">{milestoneCopy[id]}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-400 font-medium transition-colors">{milestoneCopy[id]}</p>
 
                 {/* Active indicator bar */}
                 <div
@@ -121,7 +130,7 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
                     'mt-4 h-0.5 rounded-full transition-all duration-300',
                     active
                       ? `${spec.accentSurfaceClass} opacity-100`
-                      : 'bg-white/5 opacity-0 group-hover:opacity-100'
+                      : 'bg-gray-200 dark:bg-white/5 opacity-0 group-hover:opacity-100'
                   )}
                 />
               </motion.li>

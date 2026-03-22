@@ -39,7 +39,7 @@ export default function SignalsPage() {
     };
 
     return (
-        <div className="min-h-screen py-20 bg-dark-950 font-sans">
+        <div className="min-h-screen py-20 bg-white dark:bg-dark-950 font-sans transition-colors duration-300">
             <Container>
                 <div className="relative z-10 space-y-12">
                     {/* Header */}
@@ -55,7 +55,7 @@ export default function SignalsPage() {
                         <h1 className="text-5xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-cyber-emerald italic uppercase tracking-tighter">
                             Signal Lab
                         </h1>
-                        <p className="text-gray-400 max-w-2xl font-medium italic">
+                        <p className="text-gray-600 dark:text-gray-400 max-w-2xl font-medium italic">
                             Map hexadecimal noise to real engineering values. Experiment with DBC-style signal extraction.
                         </p>
                     </div>
@@ -63,9 +63,9 @@ export default function SignalsPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Hex Grid Mapper */}
                         <div className="lg:col-span-2 space-y-8">
-                            <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 space-y-8">
+                             <div className="p-8 rounded-[2.5rem] bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 space-y-8">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-xl font-black text-white uppercase italic tracking-widest flex items-center gap-2">
+                                    <h3 className="text-xl font-black text-dark-950 dark:text-white uppercase italic tracking-widest flex items-center gap-2">
                                         <Layers size={20} className="text-cyber-emerald" />
                                         Payload Mapper
                                     </h3>
@@ -83,7 +83,7 @@ export default function SignalsPage() {
                                                 type="text"
                                                 value={payload[byteIdx].toString(16).padStart(2, '0').toUpperCase()}
                                                 onChange={(e) => updateByte(byteIdx, e.target.value)}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-center font-mono font-bold text-cyber-emerald focus:border-cyber-emerald/50 focus:ring-1 focus:ring-cyber-emerald/30 outline-none transition-all"
+                                                className="w-full bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-center font-mono font-bold text-cyber-emerald focus:border-cyber-emerald/50 focus:ring-1 focus:ring-cyber-emerald/30 outline-none transition-all"
                                             />
                                             <div className="grid grid-cols-4 gap-1">
                                                 {Array.from({ length: 8 }).map((_, b) => {
@@ -94,7 +94,7 @@ export default function SignalsPage() {
                                                             key={bitIdx}
                                                             className={cn(
                                                                 "h-1 rounded-[2px] transition-all",
-                                                                highlighted ? "bg-cyber-emerald shadow-[0_0_5px_rgba(0,255,159,0.5)]" : "bg-white/5"
+                                                                highlighted ? "bg-cyber-emerald shadow-[0_0_5px_rgba(0,255,159,0.5)]" : "bg-gray-200 dark:bg-white/5"
                                                             )}
                                                         />
                                                     );
@@ -106,16 +106,16 @@ export default function SignalsPage() {
 
                                 <div className="p-4 rounded-xl bg-cyber-emerald/5 border border-cyber-emerald/20 flex items-start gap-3">
                                     <Info size={16} className="text-cyber-emerald mt-1 shrink-0" />
-                                    <p className="text-[10px] text-gray-400 italic">
+                                    <p className="text-[10px] text-gray-600 dark:text-gray-400 italic">
                                         Highlighting shows the selected bit range defined in the Config Sidebar. Bit 0 is the Least Significant Bit (LSB) of Byte 0.
                                     </p>
                                 </div>
                             </div>
 
                             {/* Engineering Result Card */}
-                            <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-yellow-400/10 to-transparent border border-yellow-400/20 space-y-6 shadow-2xl">
+                            <div className="p-8 rounded-[2.5rem] bg-white dark:bg-gradient-to-br dark:from-yellow-400/10 dark:to-transparent border border-gray-200 dark:border-yellow-400/20 space-y-6 shadow-2xl transition-colors duration-300">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-xl font-black text-white uppercase italic tracking-widest flex items-center gap-2">
+                                    <h3 className="text-xl font-black text-dark-950 dark:text-white uppercase italic tracking-widest flex items-center gap-2">
                                         <Gauge size={20} className="text-yellow-400" />
                                         Interpreted Value
                                     </h3>
@@ -123,16 +123,16 @@ export default function SignalsPage() {
 
                                 <div className="flex flex-col items-center justify-center py-10 relative">
                                     <div className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.3em] mb-4">Signal Output</div>
-                                    <div className="text-7xl font-mono text-white font-black tracking-tighter flex items-end gap-3">
+                                    <div className="text-7xl font-mono text-dark-950 dark:text-white font-black tracking-tighter flex items-end gap-3">
                                         {physicalValue.toFixed(2)}
                                         <span className="text-xl text-gray-500 font-sans tracking-widest mb-2 uppercase italic">Units</span>
                                     </div>
                                     <div className="mt-8 flex gap-8">
                                         <div className="text-center">
                                             <div className="text-[10px] font-bold text-gray-600 uppercase mb-1">Raw BigInt</div>
-                                            <div className="text-xs font-mono text-gray-400">{((physicalValue - offset) / (scale || 1)).toFixed(0)}</div>
-                                        </div>
-                                        <div className="w-px h-8 bg-white/5" />
+                                             <div className="text-xs font-mono text-gray-400">{((physicalValue - offset) / (scale || 1)).toFixed(0)}</div>
+                                         </div>
+                                         <div className="w-px h-8 bg-gray-200 dark:bg-white/5" />
                                         <div className="text-center">
                                             <div className="text-[10px] font-bold text-gray-600 uppercase mb-1">Resolution</div>
                                             <div className="text-xs font-mono text-gray-400">{scale} unit/bit</div>
@@ -144,8 +144,8 @@ export default function SignalsPage() {
 
                         {/* Config Sidebar */}
                         <div className="space-y-8">
-                            <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 space-y-8">
-                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                            <div className="p-8 rounded-[2.5rem] bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 space-y-8">
+                                <h3 className="text-sm font-black text-dark-950 dark:text-white uppercase tracking-widest flex items-center gap-2">
                                     <Settings size={16} className="text-gray-400" />
                                     DBC Config
                                 </h3>
@@ -177,7 +177,7 @@ export default function SignalsPage() {
                                         />
                                     </div>
 
-                                    <div className="flex items-center justify-between p-4 rounded-xl bg-black/40 border border-white/5">
+                                     <div className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/5">
                                         <div className="text-[10px] font-bold text-gray-500 uppercase">Endianness</div>
                                         <button
                                             onClick={() => setIsLittleEndian(!isLittleEndian)}
@@ -197,7 +197,7 @@ export default function SignalsPage() {
                                                 id="signal-scale"
                                                 type="number" step="0.01" value={scale}
                                                 onChange={(e) => setScale(Number(e.target.value))}
-                                                className="w-full bg-black/40 border border-white/10 rounded-lg p-2 font-mono text-xs text-white"
+                                                className="w-full bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-lg p-2 font-mono text-xs text-dark-950 dark:text-white"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -206,17 +206,17 @@ export default function SignalsPage() {
                                                 id="signal-offset"
                                                 type="number" value={offset}
                                                 onChange={(e) => setOffset(Number(e.target.value))}
-                                                className="w-full bg-black/40 border border-white/10 rounded-lg p-2 font-mono text-xs text-white"
+                                                className="w-full bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-lg p-2 font-mono text-xs text-dark-950 dark:text-white"
                                             />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => navigate('/arbitration')}
-                                className="w-full p-6 rounded-3xl bg-gradient-to-r from-cyber-purple/20 to-red-500/20 border border-cyber-purple/30 text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(191,0,255,0.1)]"
-                            >
+                             <button
+                                 onClick={() => navigate('/arbitration')}
+                                 className="w-full p-6 rounded-3xl bg-gradient-to-r from-cyber-purple/20 to-red-500/20 border border-cyber-purple/30 text-dark-950 dark:text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(191,0,255,0.1)]"
+                             >
                                 <span className="italic">To Arbitration Arena</span>
                                 <ArrowRight className="group-hover:translate-x-2 transition-transform" />
                             </button>

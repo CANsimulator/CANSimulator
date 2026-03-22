@@ -50,7 +50,7 @@ export default function GenerationsPage() {
   }, [scenarioDefaults.id, scenarioDefaults.payloadBytes, scenarioDefaults.updateHz]);
 
   return (
-    <div className="relative min-h-screen bg-dark-950 py-14 font-sans">
+    <div className="relative min-h-screen bg-white dark:bg-dark-950 py-14 font-sans transition-colors duration-300">
       {/* Subtle ambient grid pattern */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.03]"
@@ -67,13 +67,13 @@ export default function GenerationsPage() {
           initial={reduceMotion ? undefined : { opacity: 0, y: 20 }}
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           transition={reduceMotion ? undefined : { duration: 0.5 }}
-          className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8"
+          className="rounded-3xl border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02] p-6 md:p-8"
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-3xl space-y-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                <Cpu size={14} className="text-cyan-300" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 dark:border-white/10 bg-cyan-500/5 dark:bg-white/5 px-3 py-1">
+                <Cpu size={14} className="text-cyan-600 dark:text-cyan-300" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
                   Protocol evolution
                 </span>
               </div>
@@ -85,7 +85,7 @@ export default function GenerationsPage() {
                 </span>
               </h1>
 
-              <p className="max-w-2xl text-sm text-gray-400 md:text-base">
+              <p className="max-w-2xl text-sm text-gray-600 dark:text-gray-400 md:text-base">
                 Compare CAN Classic, CAN FD, and CAN XL with an interactive decision lab.
                 Follow one path to understand protocol differences and another to choose the
                 best fit for your workload.
@@ -100,15 +100,15 @@ export default function GenerationsPage() {
               href="#compare-matrix"
               whileHover={reduceMotion ? undefined : { scale: 1.01 }}
               whileTap={reduceMotion ? undefined : { scale: 0.99 }}
-              className="group rounded-2xl border border-cyan-400/20 bg-cyan-500/10 p-4 transition-all duration-200 hover:bg-cyan-500/15 hover:shadow-[0_0_20px_rgba(0,243,255,0.1)]"
+              className="group rounded-2xl border border-cyan-400/30 dark:border-cyan-400/20 bg-cyan-500/5 dark:bg-cyan-500/10 p-5 transition-all duration-200 hover:bg-cyan-500/10 dark:hover:bg-cyan-500/15 hover:shadow-[0_4px_20px_rgba(0,243,255,0.1)] dark:hover:shadow-[0_0_20px_rgba(0,243,255,0.1)]"
             >
-              <p className="mb-1 text-xs font-black uppercase tracking-widest text-cyan-200">
+              <p className="mb-1 text-xs font-black uppercase tracking-widest text-cyan-700 dark:text-cyan-200">
                 Path A
               </p>
-              <p className="text-sm font-semibold text-gray-100 group-hover:text-white">
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-cyan-800 dark:group-hover:text-white">
                 Understand Differences
               </p>
-              <p className="mt-1 text-xs text-gray-300">
+              <p className="mt-1 text-xs text-gray-700 dark:text-gray-300 font-medium">
                 Scan timeline, metric matrix, and generation deltas.
               </p>
             </motion.a>
@@ -117,15 +117,15 @@ export default function GenerationsPage() {
               href="#choose-fit"
               whileHover={reduceMotion ? undefined : { scale: 1.01 }}
               whileTap={reduceMotion ? undefined : { scale: 0.99 }}
-              className="group rounded-2xl border border-violet-400/20 bg-violet-500/10 p-4 transition-all duration-200 hover:bg-violet-500/15 hover:shadow-[0_0_20px_rgba(139,92,246,0.1)]"
+              className="group rounded-2xl border border-violet-400/30 dark:border-violet-400/20 bg-violet-500/5 dark:bg-violet-500/10 p-5 transition-all duration-200 hover:bg-violet-500/10 dark:hover:bg-violet-500/15 hover:shadow-[0_4px_20px_rgba(139,92,246,0.1)] dark:hover:shadow-[0_0_20px_rgba(139,92,246,0.1)]"
             >
-              <p className="mb-1 text-xs font-black uppercase tracking-widest text-violet-200">
+              <p className="mb-1 text-xs font-black uppercase tracking-widest text-violet-700 dark:text-violet-200">
                 Path B
               </p>
-              <p className="text-sm font-semibold text-gray-100 group-hover:text-white">
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-violet-800 dark:group-hover:text-white">
                 Choose Best Fit
               </p>
-              <p className="mt-1 text-xs text-gray-300">
+              <p className="mt-1 text-xs text-gray-700 dark:text-gray-300 font-medium">
                 Model bus-load and use-case recommendations for your scenario.
               </p>
             </motion.a>
@@ -175,11 +175,11 @@ export default function GenerationsPage() {
               >
                 Primary Focus
               </p>
-              <h2 className="mb-2 text-2xl font-black text-white">{primarySpec.title}</h2>
-              <p className="mb-4 text-sm text-gray-300">{primarySpec.summary}</p>
+              <h2 className="mb-2 text-2xl font-black text-dark-950 dark:text-white">{primarySpec.title}</h2>
+              <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">{primarySpec.summary}</p>
               <ul className="space-y-2">
                 {primarySpec.keyCapabilities.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-gray-200">
+                  <li key={item} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
                     <span className={cn('mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full', primarySpec.accentSurfaceClass)} />
                     {item}
                   </li>
@@ -206,11 +206,11 @@ export default function GenerationsPage() {
               >
                 Compare Target
               </p>
-              <h2 className="mb-2 text-2xl font-black text-white">{compareSpec.title}</h2>
-              <p className="mb-4 text-sm text-gray-300">{compareSpec.summary}</p>
+              <h2 className="mb-2 text-2xl font-black text-dark-950 dark:text-white">{compareSpec.title}</h2>
+              <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">{compareSpec.summary}</p>
               <ul className="space-y-2">
                 {compareSpec.keyCapabilities.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-gray-200">
+                  <li key={item} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
                     <span className={cn('mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full', compareSpec.accentSurfaceClass)} />
                     {item}
                   </li>
@@ -222,16 +222,16 @@ export default function GenerationsPage() {
 
         {/* ──────────── Changes from Previous ──────────── */}
         <SectionReveal delay={0.05}>
-          <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+          <div className="rounded-3xl border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02] p-6 md:p-8">
             <div className="mb-4 flex items-center gap-2">
               <Sparkles size={14} className={primarySpec.accentTextClass} />
-              <h2 className="text-base font-black uppercase tracking-widest text-white">
+              <h2 className="text-base font-black uppercase tracking-widest text-dark-950 dark:text-white">
                 What changes from previous generation
               </h2>
             </div>
             <ul className="space-y-2">
               {primarySpec.changesFromPrevious.map((item, idx) => (
-                <motion.li
+                 <motion.li
                   key={item}
                   initial={reduceMotion ? undefined : { opacity: 0, x: -8 }}
                   whileInView={reduceMotion ? undefined : { opacity: 1, x: 0 }}
@@ -239,7 +239,7 @@ export default function GenerationsPage() {
                   transition={
                     reduceMotion ? undefined : { delay: idx * 0.08, duration: 0.25 }
                   }
-                  className="flex items-start gap-2 text-sm text-gray-300"
+                  className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium"
                 >
                   <span className={cn('mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full', primarySpec.accentSurfaceClass)} />
                   {item}
@@ -281,12 +281,12 @@ export default function GenerationsPage() {
         </SectionReveal>
 
         {/* ──────────── Reality Check ──────────── */}
-        <SectionReveal delay={0.05}>
-          <div className="rounded-3xl border border-amber-300/20 bg-amber-500/5 p-6">
-            <h2 className="mb-2 text-base font-black uppercase tracking-widest text-amber-200">
+         <SectionReveal delay={0.05}>
+          <div className="rounded-3xl border border-amber-500/30 dark:border-amber-300/20 bg-amber-500/5 dark:bg-amber-500/10 p-6 shadow-sm">
+            <h2 className="mb-2 text-base font-black uppercase tracking-widest text-amber-800 dark:text-amber-200">
               Reality check
             </h2>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-gray-800 dark:text-gray-300 font-medium leading-relaxed">
               Deployment choices are not purely technical: tooling maturity, ECU fleet age,
               validation capacity, and supplier readiness often dominate generation decisions.
               Treat recommendations as guidance, then validate on your target network.
@@ -301,7 +301,7 @@ export default function GenerationsPage() {
             onClick={() => navigate('/inspector')}
             whileHover={reduceMotion ? undefined : { scale: 1.04 }}
             whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-            className="group inline-flex items-center gap-3 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-7 py-4 text-sm font-black uppercase tracking-[0.15em] text-cyan-100 transition-all duration-200 hover:bg-cyan-500/20 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)]"
+            className="group inline-flex items-center gap-3 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-7 py-4 text-sm font-black uppercase tracking-[0.15em] text-cyan-700 dark:text-cyan-100 transition-all duration-200 hover:bg-cyan-500/20 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)]"
           >
             Next Lab: Bit-Level Inspector
             <ArrowRight

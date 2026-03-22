@@ -5,12 +5,12 @@ import type { ErrorLogEntry } from '../../services/can/can-simulator';
 import type { CANErrorCode } from '../../types/can';
 
 const ERROR_COLORS: Record<CANErrorCode, { bg: string; text: string; border: string }> = {
-    BIT1: { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/30' },
-    BIT0: { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/30' },
-    STUFF: { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/30' },
-    CRC: { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/30' },
-    FORM: { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/30' },
-    ACK: { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/30' },
+    BIT1: { bg: 'bg-red-500/10', text: 'text-red-600 dark:text-red-400', border: 'border-red-500/30' },
+    BIT0: { bg: 'bg-orange-500/10', text: 'text-orange-600 dark:text-orange-400', border: 'border-orange-500/30' },
+    STUFF: { bg: 'bg-yellow-500/10', text: 'text-yellow-600 dark:text-yellow-400', border: 'border-yellow-500/30' },
+    CRC: { bg: 'bg-purple-500/10', text: 'text-purple-600 dark:text-purple-400', border: 'border-purple-500/30' },
+    FORM: { bg: 'bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400', border: 'border-blue-500/30' },
+    ACK: { bg: 'bg-cyan-500/10', text: 'text-cyan-600 dark:text-cyan-400', border: 'border-cyan-500/30' },
 };
 
 const ERROR_LABELS: Record<CANErrorCode, string> = {
@@ -61,7 +61,7 @@ export const ErrorLogPanel: React.FC = () => {
                         onClick={() => setFilter(f)}
                         className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${filter === f
                                 ? 'bg-cyber-blue/20 text-cyber-blue border border-cyber-blue/40'
-                                : 'bg-dark-800 text-gray-500 border border-dark-700 hover:text-gray-300 hover:border-dark-600'
+                                : 'bg-gray-100 dark:bg-dark-800 text-gray-500 border border-gray-200 dark:border-dark-700 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-dark-600'
                             }`}
                     >
                         {f}
@@ -72,7 +72,7 @@ export const ErrorLogPanel: React.FC = () => {
                     onClick={() => setAutoScroll(!autoScroll)}
                     className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${autoScroll
                             ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/30'
-                            : 'bg-dark-800 text-gray-500 border border-dark-700'
+                            : 'bg-gray-100 dark:bg-dark-800 text-gray-500 border border-gray-200 dark:border-dark-700'
                         }`}
                 >
                     {autoScroll ? 'Auto-scroll ON' : 'Auto-scroll OFF'}
@@ -82,10 +82,10 @@ export const ErrorLogPanel: React.FC = () => {
                 </span>
             </div>
 
-            {/* Log Table */}
+             {/* Log Table */}
             <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto min-h-0 rounded-xl bg-dark-950/50 border border-dark-700/50"
+                className="flex-1 overflow-y-auto min-h-0 rounded-xl bg-gray-50 dark:bg-dark-950/50 border border-gray-200 dark:border-dark-700/50 shadow-inner"
                 style={{ maxHeight: '320px' }}
             >
                 {filteredLog.length === 0 ? (
@@ -101,9 +101,9 @@ export const ErrorLogPanel: React.FC = () => {
                         </div>
                     </div>
                 ) : (
-                    <table className="w-full text-[10px]">
-                        <thead className="sticky top-0 bg-dark-900/95 backdrop-blur-sm z-10">
-                            <tr className="text-gray-500 uppercase tracking-widest font-black border-b border-dark-700/50">
+                     <table className="w-full text-[10px]">
+                        <thead className="sticky top-0 bg-white/95 dark:bg-dark-900/95 backdrop-blur-sm z-10">
+                            <tr className="text-gray-500 uppercase tracking-widest font-black border-b border-gray-200 dark:border-dark-700/50">
                                 <th className="text-left py-2 px-3">#</th>
                                 <th className="text-left py-2 px-3">Time</th>
                                 <th className="text-left py-2 px-3">Type</th>
@@ -117,35 +117,35 @@ export const ErrorLogPanel: React.FC = () => {
                             <AnimatePresence initial={false}>
                                 {filteredLog.map((entry) => {
                                     const colors = ERROR_COLORS[entry.errorCode];
-                                    const stateColor = entry.newState === 'ERROR_ACTIVE' ? 'text-cyber-blue'
-                                        : entry.newState === 'ERROR_PASSIVE' ? 'text-purple-400'
-                                            : 'text-red-400';
+                                     const stateColor = entry.newState === 'ERROR_ACTIVE' ? 'text-cyan-700 dark:text-cyber-blue'
+                                        : entry.newState === 'ERROR_PASSIVE' ? 'text-purple-600 dark:text-purple-400'
+                                            : 'text-red-600 dark:text-red-400';
 
                                     return (
-                                        <motion.tr
+                                         <motion.tr
                                             key={entry.id}
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ duration: 0.2 }}
-                                            className={`border-b border-dark-800/50 hover:bg-dark-800/30 transition-colors ${entry.stateChanged ? 'bg-yellow-500/5' : ''
+                                            className={`border-b border-gray-100 dark:border-dark-800/50 hover:bg-gray-100/50 dark:hover:bg-dark-800/30 transition-colors ${entry.stateChanged ? 'bg-yellow-500/10 dark:bg-yellow-500/5' : ''
                                                 }`}
                                         >
-                                            <td className="py-1.5 px-3 font-mono text-gray-400">{entry.id}</td>
-                                            <td className="py-1.5 px-3 font-mono text-gray-400">{formatTime(entry.timestamp)}</td>
+                                             <td className="py-1.5 px-3 font-mono text-gray-500 dark:text-gray-400">{entry.id}</td>
+                                            <td className="py-1.5 px-3 font-mono text-gray-500 dark:text-gray-400">{formatTime(entry.timestamp)}</td>
                                             <td className="py-1.5 px-3">
                                                 <span className={`inline-flex px-2 py-0.5 rounded ${colors.bg} ${colors.text} ${colors.border} border font-black tracking-wider`}>
                                                     {ERROR_LABELS[entry.errorCode]}
                                                 </span>
                                             </td>
-                                            <td className="py-1.5 px-3">
-                                                <span className={`font-bold tracking-wider ${entry.role === 'transmitter' ? 'text-red-400' : 'text-blue-400'}`}>
+                                             <td className="py-1.5 px-3">
+                                                <span className={`font-bold tracking-wider ${entry.role === 'transmitter' ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'}`}>
                                                     {entry.role === 'transmitter' ? 'TX' : 'RX'}
                                                 </span>
                                             </td>
-                                            <td className={`py-1.5 px-3 text-right font-mono font-bold ${entry.tec >= 128 ? 'text-red-400' : 'text-cyber-blue'}`}>
+                                            <td className={`py-1.5 px-3 text-right font-mono font-bold ${entry.tec >= 128 ? 'text-red-600 dark:text-red-400' : 'text-cyan-700 dark:text-cyber-blue'}`}>
                                                 {entry.tec}
                                             </td>
-                                            <td className={`py-1.5 px-3 text-right font-mono font-bold ${entry.rec >= 128 ? 'text-red-400' : 'text-purple-400'}`}>
+                                            <td className={`py-1.5 px-3 text-right font-mono font-bold ${entry.rec >= 128 ? 'text-red-600 dark:text-red-400' : 'text-purple-600 dark:text-purple-400'}`}>
                                                 {entry.rec}
                                             </td>
                                             <td className="py-1.5 px-3">

@@ -34,7 +34,7 @@ function ConfidenceGauge({
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percent / 100) * circumference;
 
-  return (
+   return (
     <div className="relative flex items-center justify-center">
       <svg
         width={size}
@@ -47,7 +47,8 @@ function ConfidenceGauge({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="rgba(255,255,255,0.06)"
+          stroke="currentColor"
+          className="text-gray-200 dark:text-white/5"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -67,7 +68,7 @@ function ConfidenceGauge({
           }}
         />
       </svg>
-      <span className="absolute text-[9px] font-black uppercase tracking-widest text-gray-400">
+      <span className="absolute text-[9px] font-black uppercase tracking-widest text-gray-600 dark:text-gray-500">
         {confidence === 'high' ? 'HI' : 'MD'}
       </span>
     </div>
@@ -89,30 +90,30 @@ export function UseCaseRecommender({
   const primarySpec = GENERATIONS[recommendation.recommended];
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <section className="rounded-3xl border border-gray-200 dark:border-white/10 bg-gray-50/30 dark:bg-white/[0.02] p-6 md:p-8">
+       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-black uppercase tracking-widest text-white">
+          <h2 className="text-lg font-black uppercase tracking-widest text-dark-950 dark:text-white">
             Use-Case Recommender
           </h2>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 font-bold">
             Actionable recommendation based on profile and workload.
           </p>
         </div>
       </div>
 
       {/* Profile tabs */}
-      <div className="mb-5 flex flex-wrap gap-2">
+       <div className="mb-5 flex flex-wrap gap-2">
         {PROFILES.map((item) => (
           <button
             key={item}
             type="button"
             onClick={() => setProfile(item)}
             className={cn(
-              'relative rounded-lg border px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-all duration-200',
-              profile === item
-                ? 'border-cyan-400/40 bg-cyan-500/10 text-cyan-200 shadow-[0_0_8px_rgba(0,243,255,0.1)]'
-                : 'border-white/10 text-gray-400 hover:text-white hover:border-white/20'
+              'relative rounded-lg border px-3 py-2 text-[11px] font-black uppercase tracking-wider transition-all duration-200 shadow-sm',
+               profile === item
+                ? 'border-cyber-blue/50 dark:border-cyan-400/40 bg-cyber-blue/10 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-200 shadow-[0_2px_8px_rgba(0,243,255,0.15)] dark:shadow-[0_0_8px_rgba(0,243,255,0.1)]'
+                : 'border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-transparent hover:text-dark-950 dark:hover:text-white hover:border-gray-300 dark:hover:border-white/20'
             )}
           >
             {item}
@@ -128,7 +129,7 @@ export function UseCaseRecommender({
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
           transition={{ duration: 0.25 }}
-          className="rounded-2xl border border-white/10 bg-black/30 p-5"
+           className="rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-black/30 p-5 transition-colors duration-300 shadow-sm"
         >
           <div className="mb-3 flex items-center justify-between">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-500">
@@ -160,16 +161,16 @@ export function UseCaseRecommender({
             {primarySpec.id} — {primarySpec.title}
           </h3>
 
-          <p className="mb-4 text-sm text-gray-300">{recommendation.reason}</p>
-
-          <p className="mb-4 flex items-start gap-2 rounded-lg border border-white/5 bg-black/20 p-3 text-sm text-gray-400">
-            <Lightbulb size={16} className="mt-0.5 shrink-0 text-cyan-300" />
+           <p className="mb-4 text-sm text-gray-800 dark:text-gray-300 font-medium leading-relaxed">{recommendation.reason}</p>
+ 
+          <p className="mb-4 flex items-start gap-2 rounded-lg border border-gray-200 dark:border-white/5 bg-white/50 dark:bg-black/20 p-3 text-sm text-gray-600 dark:text-gray-400 shadow-inner italic">
+            <Lightbulb size={16} className="mt-0.5 shrink-0 text-amber-600 dark:text-cyan-300" />
             {PROFILE_HINTS[profile]}
           </p>
 
           {/* Alternatives with animated list */}
-          <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+           <div className="space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 dark:text-gray-500">
               Alternatives
             </p>
             {recommendation.alternatives.map((alt, idx) => (
@@ -182,11 +183,11 @@ export function UseCaseRecommender({
                     ? undefined
                     : { delay: 0.1 + idx * 0.08, duration: 0.2 }
                 }
-                className="flex items-start gap-2 text-sm text-gray-300"
+                 className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium"
               >
-                <CheckCircle2
+                 <CheckCircle2
                   size={14}
-                  className="mt-1 shrink-0 text-emerald-300"
+                  className="mt-1 shrink-0 text-emerald-700 dark:text-emerald-300"
                 />
                 <span>
                   <strong className={GENERATIONS[alt.id].accentTextClass}>

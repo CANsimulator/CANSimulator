@@ -25,7 +25,13 @@ export default function Particles({
     const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
     const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
 
+    const rafId = useRef<number | null>(null);
+
     useEffect(() => {
+        if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            return;
+        }
+
         if (canvasRef.current) {
             context.current = canvasRef.current.getContext("2d");
         }
@@ -34,6 +40,7 @@ export default function Particles({
         window.addEventListener("resize", initCanvas);
 
         return () => {
+            if (rafId.current) cancelAnimationFrame(rafId.current);
             window.removeEventListener("resize", initCanvas);
         };
     }, []);
@@ -135,7 +142,6 @@ export default function Particles({
     const animate = () => {
         clearContext();
         circles.current.forEach((circle: any, i: number) => {
-            // Handle the alpha
             const edge = [
                 circle.x + circle.translateX - circle.size, // left
                 canvasSize.current.w - circle.x - circle.translateX - circle.size, // right
@@ -162,8 +168,6 @@ export default function Particles({
             circle.translateY +=
                 (mouse.current.y / (staticity / circle.magnetism) - circle.translateY) /
                 ease;
-            // circle.translateX += ((mouse.current.x - (canvasSize.current.w / 2)) / (staticity / circle.magnetism) - circle.translateX) / ease;
-            // circle.translateY += ((mouse.current.y - (canvasSize.current.h / 2)) / (staticity / circle.magnetism) - circle.translateY) / ease;
 
             if (
                 circle.x < -circle.size ||
@@ -177,7 +181,7 @@ export default function Particles({
                 drawCircle(circle, true);
             }
         });
-        window.requestAnimationFrame(animate);
+        rafId.current = window.requestAnimationFrame(animate);
     };
 
     return (

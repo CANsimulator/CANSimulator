@@ -85,10 +85,10 @@ export default function ArbitrationPage() {
                         {/* Node A */}
                         <div className={cn(
                             "p-8 rounded-[3rem] border transition-all duration-700 relative",
-                            showResult && (arbitration.isTie || arbitration.winnerIndex === 0) ? "bg-cyber-purple/10 border-cyber-purple/30 shadow-[0_0_50px_rgba(191,0,255,0.15)]" : "bg-black/[0.02] dark:bg-white/[0.02] border-black/5 dark:border-white/5 opacity-60"
+                            showResult && (arbitration.isTie || arbitration.winnerIndex === 0) ? "bg-cyber-purple/10 border-cyber-purple/30 shadow-[0_0_50px_rgba(191,0,255,0.15)]" : "bg-gray-50 dark:bg-white/[0.02] border-gray-200 dark:border-white/5 opacity-60"
                         )}>
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="w-16 h-16 rounded-2xl bg-cyber-purple/20 flex items-center justify-center text-cyber-purple border border-cyber-purple/30">
+                                <div className="w-16 h-16 rounded-2xl bg-cyber-purple/10 dark:bg-cyber-purple/20 flex items-center justify-center text-cyber-purple border border-cyber-purple/20 dark:border-cyber-purple/30">
                                     <Cpu size={32} />
                                 </div>
                                 <div>
@@ -106,8 +106,8 @@ export default function ArbitrationPage() {
                                         value={nodeAId.toString(16).toUpperCase()}
                                         onChange={(e) => handleIdChange(e.target.value, setNodeAId)}
                                         className={cn(
-                                            "w-full bg-white/40 dark:bg-black/40 border rounded-2xl p-4 font-mono text-xl font-black outline-none transition-all text-center",
-                                            isValidId(nodeAId) ? "text-cyber-purple border-black/10 dark:border-white/10 focus:border-cyber-purple/50" : "text-red-500 border-red-500/50"
+                                            "w-full bg-white dark:bg-black/40 border rounded-2xl p-4 font-mono text-xl font-black outline-none transition-all text-center",
+                                            isValidId(nodeAId) ? "text-cyber-purple border-gray-200 dark:border-white/10 focus:border-cyber-purple/50" : "text-red-500 border-red-500/50"
                                         )}
                                         placeholder="7FF"
                                     />
@@ -139,10 +139,10 @@ export default function ArbitrationPage() {
                         {/* Node B */}
                         <div className={cn(
                             "p-8 rounded-[3rem] border transition-all duration-700 relative",
-                            showResult && (arbitration.isTie || arbitration.winnerIndex === 1) ? "bg-red-500/10 border-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.15)]" : "bg-black/[0.02] dark:bg-white/[0.02] border-black/5 dark:border-white/5 opacity-60"
+                            showResult && (arbitration.isTie || arbitration.winnerIndex === 1) ? "bg-red-500/10 border-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.15)]" : "bg-gray-50 dark:bg-white/[0.02] border-gray-200 dark:border-white/5 opacity-60"
                         )}>
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="w-16 h-16 rounded-2xl bg-red-500/20 flex items-center justify-center text-red-500 border border-red-500/30 font-black italic">
+                                <div className="w-16 h-16 rounded-2xl bg-red-500/10 dark:bg-red-500/20 flex items-center justify-center text-red-500 border border-red-500/20 dark:border-red-500/30 font-black italic">
                                     B
                                 </div>
                                 <div>
@@ -160,8 +160,8 @@ export default function ArbitrationPage() {
                                         value={nodeBId.toString(16).toUpperCase()}
                                         onChange={(e) => handleIdChange(e.target.value, setNodeBId)}
                                         className={cn(
-                                            "w-full bg-white/40 dark:bg-black/40 border rounded-2xl p-4 font-mono text-xl font-black outline-none transition-all text-center",
-                                            isValidId(nodeBId) ? "text-red-500 border-black/10 dark:border-white/10 focus:border-red-500/50" : "text-red-500 border-red-500/50"
+                                            "w-full bg-white dark:bg-black/40 border rounded-2xl p-4 font-mono text-xl font-black outline-none transition-all text-center",
+                                            isValidId(nodeBId) ? "text-red-500 border-gray-200 dark:border-white/10 focus:border-red-500/50" : "text-red-500 border-red-500/50"
                                         )}
                                         placeholder="001"
                                     />
@@ -202,8 +202,8 @@ export default function ArbitrationPage() {
                         </button>
 
                         {/* Battle Log */}
-                        <div className="w-full max-w-4xl p-10 rounded-[3rem] bg-black/[0.01] dark:bg-white/[0.01] border border-black/5 dark:border-white/5 space-y-8 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-8 text-black/5 dark:text-white/5"><Sword size={120} /></div>
+                        <div className="w-full max-w-4xl p-10 rounded-[3rem] bg-gray-50 dark:bg-white/[0.01] border border-gray-200 dark:border-white/5 space-y-8 relative overflow-hidden transition-colors duration-300">
+                            <div className="absolute top-0 right-0 p-8 text-black/5 dark:text-white/5 transition-opacity duration-300"><Sword size={120} /></div>
 
                             <h3 className="text-xl font-black text-dark-950 dark:text-white uppercase italic tracking-widest flex items-center gap-2 relative z-10">
                                 <Shield size={20} className="text-cyber-purple" />
@@ -224,22 +224,22 @@ export default function ArbitrationPage() {
                                         className="space-y-6 relative z-10"
                                     >
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center uppercase">
-                                            <div className="p-4 rounded-2xl bg-white/40 dark:bg-black/40 border border-black/5 dark:border-white/5">
-                                                <div className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase mb-2">Current State</div>
-                                                <div className={cn("text-lg font-black italic", activeBit >= 10 ? "text-cyber-emerald" : "text-light-400 dark:text-gray-400")}>
+                                            <div className="p-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/5">
+                                                <div className="text-[10px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Current State</div>
+                                                <div className={cn("text-lg font-black italic", activeBit >= 10 ? "text-cyber-emerald" : "text-gray-400 dark:text-gray-400")}>
                                                     {activeBit >= 10 ? "COMPLETED" : activeBit === -1 ? "-" : `BIT ${activeBit}`}
                                                 </div>
                                             </div>
-                                            <div className="p-4 rounded-2xl bg-white/40 dark:bg-black/40 border border-black/5 dark:border-white/5">
-                                                <div className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase mb-2">Winning Node</div>
+                                            <div className="p-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/5">
+                                                <div className="text-[10px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Winning Node</div>
                                                 <div className={cn("text-lg font-black italic", 
-                                                    showResult ? (arbitration.isTie ? "text-amber-500" : (arbitration.winnerIndex === 0 ? "text-cyber-purple" : "text-red-500")) : "text-light-400 dark:text-gray-400")}>
+                                                    showResult ? (arbitration.isTie ? "text-amber-500" : (arbitration.winnerIndex === 0 ? "text-cyber-purple" : "text-red-500")) : "text-gray-400 dark:text-gray-400")}>
                                                     {showResult ? (arbitration.isTie ? "TIE (COLLISION)" : (arbitration.winnerIndex === 0 ? "Alpha" : "Beta")) : "???"}
                                                 </div>
                                             </div>
-                                            <div className="p-4 rounded-2xl bg-white/40 dark:bg-black/40 border border-black/5 dark:border-white/5">
-                                                <div className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase mb-2">Reason</div>
-                                                <div className={cn("text-sm font-bold italic", showResult && arbitration.isTie ? "text-amber-500/70" : "text-light-400 dark:text-gray-400")}>
+                                            <div className="p-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/5">
+                                                <div className="text-[10px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Reason</div>
+                                                <div className={cn("text-sm font-bold italic", showResult && arbitration.isTie ? "text-amber-500/70" : "text-gray-400 dark:text-gray-400")}>
                                                     {showResult ? (arbitration.isTie ? "ID COLLISION" : "Lower ID Dominant") : "Awaiting Result"}
                                                 </div>
                                             </div>

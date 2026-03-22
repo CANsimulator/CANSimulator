@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTheme } from '../../context/ThemeContext';
 
 interface GaugeProps {
     value: number;
@@ -10,11 +11,19 @@ interface GaugeProps {
 }
 
 const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+    
     const percentage = Math.min((value / max) * 100, 100);
     const rotation = (percentage / 100) * 180 - 90;
 
-    // Determine danger level color
-    const dangerColor = value > 255 ? '#ef4444' : value >= 128 ? '#f59e0b' : value >= 96 ? '#fb923c' : color;
+    // Determine danger level color - use more readable versions in light mode
+    const getThemeColor = (dark: string, light: string) => isDark ? dark : light;
+    
+    const dangerColor = value > 255 ? '#ef4444' 
+        : value >= 128 ? getThemeColor('#f59e0b', '#d97706') 
+        : value >= 96 ? getThemeColor('#fb923c', '#ea580c') 
+        : getThemeColor(color, color === '#00f3ff' ? '#0891b2' : '#9333ea');
 
     return (
         <div
@@ -34,7 +43,7 @@ const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) =
                     <path
                         d="M 10 60 A 50 50 0 0 1 110 60"
                         fill="none"
-                        stroke="#1a1a24"
+                        className="stroke-gray-200 dark:stroke-[#1a1a24]"
                         strokeWidth="8"
                         strokeLinecap="round"
                     />
@@ -133,8 +142,8 @@ const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) =
                     />
                 </motion.div>
 
-                {/* Center hub */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-dark-800 border-2 z-20" style={{ borderColor: dangerColor }}>
+                 {/* Center hub */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-white dark:bg-dark-800 border-2 z-20" style={{ borderColor: dangerColor }}>
                     <div className="absolute inset-1 rounded-full" style={{ backgroundColor: dangerColor, opacity: 0.3 }} />
                 </div>
             </div>
@@ -152,8 +161,8 @@ const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) =
                 </motion.span>
                 <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.25em]">{label}</span>
 
-                {/* Threshold bar */}
-                <div className="w-40 h-1.5 mt-2 rounded-full bg-dark-700 overflow-hidden relative">
+                 {/* Threshold bar */}
+                <div className="w-40 h-1.5 mt-2 rounded-full bg-gray-200 dark:bg-dark-700 overflow-hidden relative">
                     <motion.div
                         className="h-full rounded-full"
                         style={{ backgroundColor: dangerColor }}
@@ -196,8 +205,8 @@ export const ErrorGauges: React.FC<ErrorGaugesProps> = ({ tec, rec }) => {
 
     return (
         <div className="flex flex-col sm:flex-row justify-around items-center gap-6 py-4">
-            <Gauge value={tec} max={255} label="Transmit Error Counter" color="#00f3ff" thresholds={thresholds} />
-            <div className="hidden sm:block w-px h-32 bg-dark-700" />
+             <Gauge value={tec} max={255} label="Transmit Error Counter" color="#00f3ff" thresholds={thresholds} />
+            <div className="hidden sm:block w-px h-32 bg-gray-200 dark:bg-dark-700" />
             <Gauge value={rec} max={255} label="Receive Error Counter" color="#bf00ff" thresholds={thresholds} />
         </div>
     );

@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { BookOpenText, Search, X } from 'lucide-react';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { cn } from '../../../utils/cn';
+import { useFocusTrap } from '../../../hooks/useFocusTrap';
 
 interface GlossaryTerm {
   term: string;
@@ -72,7 +73,7 @@ function TermList({
     <div className="space-y-4">
       {grouped.map(([letter, items]) => (
         <div key={letter}>
-          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">
+          <p className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
             {letter}
           </p>
           <div className="space-y-2">
@@ -86,12 +87,12 @@ function TermList({
                     ? undefined
                     : { duration: 0.2, delay: idx * 0.04 }
                 }
-                className="rounded-xl border border-white/10 bg-black/30 p-4 transition-colors duration-150 hover:bg-black/40"
+                className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 p-4 transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-black/40 shadow-sm dark:shadow-none"
               >
-                <h4 className="mb-2 text-xs font-black uppercase tracking-wider text-cyan-200">
+                <h4 className="mb-2 text-xs font-black uppercase tracking-wider text-cyan-600 dark:text-cyan-300">
                   {item.term}
                 </h4>
-                <p className="text-sm text-gray-300">{item.meaning}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{item.meaning}</p>
               </motion.article>
             ))}
           </div>
@@ -106,6 +107,13 @@ export function GlossaryDrawer() {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const handleClose = () => setOpen(false);
+  useFocusTrap(drawerRef, open, handleClose);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
   const filteredTerms = useMemo(() => {
     if (!search.trim()) return TERMS;
@@ -120,13 +128,13 @@ export function GlossaryDrawer() {
   const drawerContent = (
     <>
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-black uppercase tracking-widest text-white">
+        <h3 className="text-sm font-black uppercase tracking-widest text-dark-950 dark:text-white">
           Glossary
         </h3>
-        <button
+         <button
           type="button"
-          onClick={() => setOpen(false)}
-          className="rounded-lg border border-white/10 p-2 text-gray-300 transition-colors hover:text-white"
+          onClick={handleClose}
+          className="rounded-lg border border-gray-200 dark:border-white/10 p-2 text-gray-500 dark:text-gray-300 transition-colors hover:text-dark-950 dark:hover:text-white"
           aria-label="Close glossary"
         >
           <X size={16} />
@@ -144,7 +152,7 @@ export function GlossaryDrawer() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search terms..."
-          className="w-full rounded-lg border border-white/10 bg-black/30 py-2.5 pl-9 pr-3 text-sm text-gray-200 placeholder:text-gray-600 outline-none transition-colors focus:border-cyan-400/40 focus:shadow-[0_0_8px_rgba(0,243,255,0.1)]"
+          className="w-full rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 py-2.5 pl-9 pr-3 text-sm text-dark-950 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-600 outline-none transition-colors focus:border-cyber-blue/40 dark:focus:border-cyan-400/40 focus:shadow-[0_0_8px_rgba(0,243,255,0.1)]"
         />
       </div>
 
@@ -154,10 +162,10 @@ export function GlossaryDrawer() {
 
   return (
     <>
-      <button
+       <button
         type="button"
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-gray-300 transition-all duration-200 hover:text-white hover:border-white/20 hover:shadow-[0_0_8px_rgba(0,243,255,0.1)]"
+        onClick={handleOpen}
+        className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-white/10 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300 transition-all duration-200 hover:text-dark-950 dark:hover:text-white hover:border-gray-300 dark:hover:border-white/20 hover:shadow-[0_0_8px_rgba(0,243,255,0.1)]"
       >
         <BookOpenText size={14} />
         Glossary
@@ -174,12 +182,16 @@ export function GlossaryDrawer() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
             />
 
             {/* Drawer panel */}
             <motion.div
               key="drawer"
+              ref={drawerRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="CAN Protocol Glossary"
               initial={
                 reduceMotion
                   ? undefined
@@ -203,7 +215,7 @@ export function GlossaryDrawer() {
               }
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               className={cn(
-                'fixed z-50 overflow-y-auto border-white/10 bg-dark-950 p-5',
+                'fixed z-50 overflow-y-auto border-gray-200 dark:border-white/10 bg-white dark:bg-dark-950 p-5 transition-colors duration-300',
                 isMobile
                   ? 'bottom-0 left-0 right-0 max-h-[85vh] rounded-t-3xl border-t'
                   : 'right-0 top-0 h-full w-full max-w-md border-l'

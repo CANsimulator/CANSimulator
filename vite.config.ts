@@ -70,15 +70,25 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return undefined;
-          if (id.includes('/react-dom/') || id.includes('/react/') || id.includes('/react-router'))
-            return 'vendor-react';
-          if (id.includes('/framer-motion/'))
-            return 'vendor-motion';
-          if (id.includes('/@supabase/'))
-            return 'vendor-supabase';
-          if (id.includes('/@radix-ui/'))
-            return 'vendor-radix';
-          return undefined;
+          
+          // Combine core React/Router dependencies
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/react-router')) {
+            return 'vendor-core';
+          }
+          
+          // Heavy libraries into separate chunks for async loading
+          if (id.includes('/framer-motion/')) return 'vendor-motion';
+          if (id.includes('/mermaid/')) return 'vendor-mermaid';
+          if (id.includes('/jspdf/')) return 'vendor-pdf';
+          if (id.includes('/recharts/')) return 'vendor-charts';
+          if (id.includes('/@tsparticles/')) return 'vendor-particles';
+          if (id.includes('/@supabase/')) return 'vendor-backend';
+          if (id.includes('/@radix-ui/')) return 'vendor-ui';
+          
+          // Standard libraries
+          if (id.includes('/lucide-react/') || id.includes('/date-fns/')) return 'vendor-utils';
+          
+          return 'vendor-misc';
         },
       },
     },

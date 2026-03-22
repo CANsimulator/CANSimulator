@@ -111,12 +111,12 @@ export const VoltageScope: React.FC = () => {
         gridFine:  isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
         gridMajor: isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.09)',
         axisText:  isDark ? 'rgba(255,255,255,0.50)' : 'rgba(0,0,0,0.50)',
-        ch1:       '#00d4ff',  
-        ch1Dim:    'rgba(0,212,255,0.12)',
-        ch2:       '#c850ff',  
-        ch2Dim:    'rgba(200,80,255,0.12)',
-        diff:      '#00ff88',  
-        diffDim:   'rgba(0,255,136,0.10)',
+        ch1:       isDark ? '#00d4ff' : '#0077aa',  
+        ch1Dim:    isDark ? 'rgba(0,212,255,0.12)' : 'rgba(0,119,170,0.12)',
+        ch2:       isDark ? '#c850ff' : '#8822cc',  
+        ch2Dim:    isDark ? 'rgba(200,80,255,0.12)' : 'rgba(136,34,204,0.12)',
+        diff:      isDark ? '#00ff88' : '#00aa55',  
+        diffDim:   isDark ? 'rgba(0,255,136,0.10)' : 'rgba(0,170,85,0.10)',
         trigger:   '#ffd000',
         cursor:    '#ff6b35',
         cursorB:   '#35b0ff',
@@ -268,7 +268,7 @@ export const VoltageScope: React.FC = () => {
 
         // Background persistence
         if (s.persistence && !requestClearRef.current) {
-            ctx.fillStyle = 'rgba(6,6,12,0.18)';
+            ctx.fillStyle = isDark ? 'rgba(6,6,12,0.18)' : 'rgba(255,255,255,0.82)';
         } else {
             ctx.fillStyle = C.bg;
             requestClearRef.current = false;
@@ -304,7 +304,7 @@ export const VoltageScope: React.FC = () => {
                 const y = vToPanel(val, vMin, vMax, h, v);
                 if (y < -5 || y > h + 5) continue;
                 ctx.fillText(`${val.toFixed(1)}${unit}`, -6, y + 3);
-                ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)';
                 ctx.lineWidth = 0.5;
                 ctx.beginPath(); ctx.moveTo(-3, y); ctx.lineTo(0, y); ctx.stroke();
             }
@@ -343,7 +343,7 @@ export const VoltageScope: React.FC = () => {
             ctx.lineWidth = 1;
             ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
             if (title) {
-                ctx.fillStyle = 'rgba(255,255,255,0.22)';
+                ctx.fillStyle = isDark ? 'rgba(255,255,255,0.22)' : 'rgba(0,0,0,0.25)';
                 ctx.font = '600 8px sans-serif';
                 ctx.textAlign = 'left';
                 ctx.fillText(title, x + 6, y + 11);
@@ -552,7 +552,7 @@ export const VoltageScope: React.FC = () => {
         const eyeBdr = isEyeReady ? '#00ff8888' : '#ffd00088';
 
         drawPanel(M.left, EYE_Y, PLOT_W, EYE_H, eyeTitle, () => {
-            ctx.fillStyle = 'rgba(0,10,20,0.5)';
+            ctx.fillStyle = isDark ? 'rgba(0,10,20,0.5)' : '#ffffff';
             ctx.fillRect(0, 0, PLOT_W, EYE_H);
             drawGrid(PLOT_W, EYE_H, 8, 4, { zoomX: 1, zoomY: 1, panX: 0, panY: 0 });
 
@@ -565,7 +565,7 @@ export const VoltageScope: React.FC = () => {
             }
 
             if (eyeData.length < 20) {
-                ctx.fillStyle = 'rgba(255,255,255,0.25)';
+                ctx.fillStyle = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.35)';
                 ctx.font = '600 10px sans-serif'; ctx.textAlign = 'center';
                 ctx.fillText('COLLECTING TRANSITIONS...', PLOT_W / 2, EYE_H / 2 + 5);
                 return;
@@ -574,7 +574,8 @@ export const VoltageScope: React.FC = () => {
             const noZoom: ViewState = { zoomX: 1, zoomY: 1, panX: 0, panY: 0 };
             
             // Brightness boost: higher alpha when ready to clearly show eye opening
-            ctx.globalAlpha = isEyeReady ? 0.25 : 0.06;
+            // In light mode, we need much higher alpha for visibility on white background
+            ctx.globalAlpha = isEyeReady ? (isDark ? 0.28 : 0.45) : (isDark ? 0.08 : 0.22);
             
             for (const bitSamples of eyeData) {
                 if (bitSamples.length < 2) continue;
@@ -632,7 +633,7 @@ export const VoltageScope: React.FC = () => {
                 ctx.strokeRect(PLOT_W / 2 - tw / 2, 4, tw, DECODE_H - 8);
 
                 ctx.fillStyle = '#00f3ff';
-                ctx.font = 'bold 7px monospace'; ctx.textAlign = 'center';
+                ctx.font = 'bold 9px monospace'; ctx.textAlign = 'center';
                 ctx.fillText('WAITING FOR PROBE CONNECTION...', PLOT_W / 2, DECODE_H / 2 + 3);
                 return;
             }
@@ -697,12 +698,12 @@ export const VoltageScope: React.FC = () => {
                 ctx.globalAlpha = 1;
             });
 
-            ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.font = '7px monospace'; ctx.textAlign = 'left';
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; ctx.font = '9px monospace'; ctx.textAlign = 'left';
             ctx.fillText('DECODE', 4, 9);
 
             // Frame count readout (right-aligned) - Keep this for now, though redundant with status bar
-            ctx.fillStyle = frameCount > 0 ? 'rgba(0,255,136,0.5)' : 'rgba(255,255,255,0.15)';
-            ctx.font = '7px monospace';
+            ctx.fillStyle = frameCount > 0 ? (isDark ? 'rgba(0,255,136,0.5)' : 'rgba(0,180,100,0.6)') : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)');
+            ctx.font = '9px monospace';
             ctx.textAlign = 'right';
             ctx.fillText(
                 frameCount === 1 ? '1 frame' : `${frameCount} frames`,
@@ -1240,14 +1241,14 @@ export const VoltageScope: React.FC = () => {
                 <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-[#0c0c16] border-b border-black/5 dark:border-[#14142a] transition-colors">
                     <div className="flex items-center gap-3">
                         <span className="text-xs font-bold text-light-600 dark:text-gray-300 tracking-wide">CAN-SCOPE</span>
-                        <span className="text-[8px] text-light-400 dark:text-gray-600 font-mono">CSO-2000 SERIES</span>
-                        <span className="text-[8px] text-light-500 dark:text-gray-700 font-mono border border-black/10 dark:border-[#1a1a2e] px-1.5 py-0.5 rounded">ISO 11898</span>
+                        <span className="text-[9px] text-light-400 dark:text-gray-600 font-mono transition-colors">CSO-2000 SERIES</span>
+                        <span className="text-[9px] text-light-500 dark:text-gray-700 font-mono border border-black/10 dark:border-[#1a1a2e] px-1.5 py-0.5 rounded transition-colors">ISO 11898</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-0.5 mr-2">
                             <SmallBtn icon={<Minus size={10} />} onClick={zoomOut} title="Zoom out" />
                             <button onClick={resetView} title="Reset view (R)"
-                                className="px-2 py-0.5 text-[8px] font-mono text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/5 dark:border-[#1a1a2e] transition-colors rounded">
+                                className="px-2 py-0.5 text-[10px] font-mono text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/5 dark:border-[#1a1a2e] transition-colors rounded">
                                 {view.zoomX !== 1 || view.zoomY !== 1 ? `${view.zoomX.toFixed(1)}×${view.zoomY.toFixed(1)}` : '1:1'}
                             </button>
                             <SmallBtn icon={<Plus size={10} />} onClick={zoomIn} title="Zoom in" />
@@ -1255,11 +1256,11 @@ export const VoltageScope: React.FC = () => {
                         <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border"
                             style={{ borderColor: compliance.color + '40', backgroundColor: compliance.color + '08' }}>
                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: compliance.color, boxShadow: `0 0 4px ${compliance.color}` }} />
-                            <span className="text-[8px] font-mono font-bold" style={{ color: compliance.color }}>ISO {compliance.label}</span>
+                            <span className="text-[10px] font-mono font-bold" style={{ color: compliance.color }}>ISO {compliance.label}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <div className={`w-2 h-2 rounded-full ${scope.runMode === 'run' ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : scope.runMode === 'single' ? 'bg-amber-400' : 'bg-red-400'}`} />
-                            <span className="text-[8px] font-mono text-gray-500 uppercase">{scope.runMode === 'run' ? 'Acquiring' : scope.runMode === 'single' ? 'Armed' : 'Stopped'}</span>
+                            <span className="text-[10px] font-mono text-gray-500 uppercase tracking-tight">{scope.runMode === 'run' ? 'Acquiring' : scope.runMode === 'single' ? 'Armed' : 'Stopped'}</span>
                         </div>
                     </div>
                 </div>
@@ -1316,7 +1317,7 @@ export const VoltageScope: React.FC = () => {
                                     }} />
                                 
                                 <div className="space-y-1">
-                                    <div className="text-[7px] font-mono text-light-400 dark:text-gray-500 uppercase px-0.5">Trigger Mode</div>
+                                 <div className="text-[10px] font-mono text-light-400 dark:text-gray-500 uppercase px-0.5 mb-1">Trigger Mode</div>
                                     {(() => {
                                         const trigColors: Record<'auto' | 'SOF' | 'error' | 'ID', string> = {
                                             auto:  '#ffd000',   // yellow
@@ -1386,7 +1387,7 @@ export const VoltageScope: React.FC = () => {
                             <MetricRow label="Bit Rate" value={`~${metrics.bitRate} kbps`} />
                             
                             <div className="pt-2 mt-2 border-t border-black/5 dark:border-white/5 space-y-1">
-                                <div className="text-[7px] font-mono text-light-400 dark:text-gray-500 uppercase px-0.5 mb-1.5">Compliance (ISO 11898)</div>
+                                <div className="text-[10px] font-mono text-light-400 dark:text-gray-500 uppercase px-0.5 mb-1.5">Compliance (ISO 11898)</div>
                                 <MetricRow label="CANH Level" value={metrics.isoCANH ? 'VALID' : 'OUT-OF-SPEC'} 
                                     status={metrics.isoCANH ? 'pass' : 'fail'} />
                                 <MetricRow label="CANL Level" value={metrics.isoCANL ? 'VALID' : 'OUT-OF-SPEC'} 
@@ -1414,7 +1415,7 @@ export const VoltageScope: React.FC = () => {
 
 const Hint: React.FC<{ text: string }> = ({ text }) => {
     return (
-        <span className="text-[7px] font-mono text-light-500 dark:text-gray-700 bg-black/5 dark:bg-black/50 px-1 py-0.5 rounded whitespace-nowrap transition-colors">{text}</span>
+        <span className="text-[9px] font-mono text-light-500 dark:text-gray-700 bg-black/5 dark:bg-black/50 px-1 py-0.5 rounded whitespace-nowrap transition-colors shadow-sm">{text}</span>
     );
 };
 
@@ -1448,7 +1449,7 @@ const ScopeBtn: React.FC<{ label: string; active?: boolean; color?: string; onCl
 const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown: () => void }> = ({ label, value, onUp, onDown }) => {
     return (
         <div className="flex flex-col gap-1 px-1">
-            <span className="text-[7px] font-mono text-light-400 dark:text-gray-500 uppercase tracking-widest">{label}</span>
+            <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 uppercase tracking-widest">{label}</span>
             <div className="flex items-center bg-gray-100 dark:bg-[#0d0d16] border border-black/5 dark:border-[#1a1a2e] rounded-md overflow-hidden shadow-inner group-hover:border-black/10 dark:group-hover:border-[#2a2a4e] transition-colors">
                 <button onClick={onDown} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-r border-black/5 dark:border-[#1a1a2e]">
                     <Minus size={10} aria-hidden="true" />
@@ -1483,7 +1484,7 @@ const MetricGroup: React.FC<{ title: string; icon: React.ReactNode; children: Re
                     {title}
                 </div>
                 {subTitle && (
-                    <span className="text-[7px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20" role="status">
+                    <span className="text-[9px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20" role="status">
                         {subTitle}
                     </span>
                 )}
@@ -1498,7 +1499,7 @@ const MetricRow: React.FC<{ label: string; value: string; color?: string; status
     const isDark = theme === 'dark';
     return (
         <div className="flex justify-between items-center py-0.5">
-            <span className="text-[9px] font-mono text-light-400 dark:text-gray-500">{label}</span>
+            <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 transition-colors">{label}</span>
             <div className="flex items-center gap-1.5">
                 {status && <span className={`w-2 h-2 rounded-full shadow-sm ${status === 'pass' ? 'bg-emerald-400 shadow-emerald-400/20' : status === 'warn' ? 'bg-amber-400 shadow-amber-400/20' : 'bg-red-400 shadow-red-400/20'}`} />}
                 <span className="text-[10px] font-mono font-bold tracking-tight" style={{ color: color || (isDark ? '#f3f4f6' : '#1f2937') }}>{value}</span>

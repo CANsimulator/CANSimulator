@@ -27,19 +27,21 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [ecuPower, setEcuPower] = useState(true);
 
     // Rapid Power Shutdown (RPS) State
-    const [rpsEnabled] = useState(false);
+    const [rpsEnabled, setRpsEnabled] = useState(false);
     const [rpsPowerDownTime, setRpsPowerDownTime] = useState(0); // in 10ms units
     const [rpsCountdown, setRpsCountdown] = useState<number | null>(null);
     const rpsTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-    const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const activeTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
     const crankTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     // Global timers cleanup
     useEffect(() => {
+        const currentTimers = activeTimers.current;
         return () => {
             if (rpsTimerRef.current) clearInterval(rpsTimerRef.current);
-            if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
             if (crankTimerRef.current) clearInterval(crankTimerRef.current);
+            currentTimers.forEach(clearTimeout);
+            activeTimers.current = [];
         };
     }, []);
 
@@ -120,9 +122,11 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         crankTimerRef.current = setInterval(() => {
             const elapsed = Date.now() - startTime;
             if (elapsed >= duration) {
-                if (crankTimerRef.current) clearInterval(crankTimerRef.current);
-                crankTimerRef.current = null;
-                setPowerState(originalState);
+                if (crankTimerRef.current) {
+                    clearInterval(crankTimerRef.current);
+                    crankTimerRef.current = null;
+                }
+                setPowerState(prev => prev === 'CRANKING' ? originalState : prev);
                 return;
             }
 
@@ -142,27 +146,28 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }, [powerState, targetVoltage]);
 
     const simulateResetVoltageProfile = useCallback((type: 'hard' | 'keyOffOn') => {
-        if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+        activeTimers.current.forEach(clearTimeout);
+        activeTimers.current = [];
 
         if (type === 'hard') {
             setVoltage(8.0);
             setCurrent(3.0);
-            resetTimerRef.current = setTimeout(() => {
+            const timer = setTimeout(() => {
                 setVoltage(targetVoltage);
                 setCurrent(0.5);
-                resetTimerRef.current = null;
             }, 200);
+            activeTimers.current.push(timer);
         } else if (type === 'keyOffOn') {
             const previousState = powerState === 'OFF' ? 'ON' : powerState;
             setPowerState('OFF');
             setVoltage(0);
             setCurrent(0);
-            resetTimerRef.current = setTimeout(() => {
+            const timer = setTimeout(() => {
                 setPowerState(previousState);
                 setVoltage(targetVoltage);
                 setCurrent(0.5);
-                resetTimerRef.current = null;
             }, 5000);
+            activeTimers.current.push(timer);
         }
     }, [targetVoltage, powerState]);
 
@@ -205,6 +210,7 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         rpsCountdown,
         toggleEcuPower,
         setPowerState,
+        setRpsEnabled,
         setSystemVoltage,
         setTargetVoltage,
         setCurrentLimit,
@@ -231,6 +237,7 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         simulateCranking,
         triggerRpsPowerDown,
         simulateResetVoltageProfile,
+        setRpsEnabled,
     ]);
 
     return <PowerContext.Provider value={value}>{children}</PowerContext.Provider>;

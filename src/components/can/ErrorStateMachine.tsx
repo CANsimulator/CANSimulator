@@ -54,11 +54,11 @@ const StateCard: React.FC<{
         <motion.div
             layout
             className={`relative rounded-2xl border-2 transition-all duration-500 overflow-hidden ${
-                isActive ? '' : 'opacity-30 grayscale border-dark-700 bg-dark-900/30'
+                isActive ? '' : 'opacity-30 grayscale border-gray-200 dark:border-dark-700 bg-gray-50 dark:bg-dark-900/30'
             }`}
             style={{
                 borderColor: isActive ? config.color : undefined,
-                backgroundColor: isActive ? `${config.color}08` : undefined,
+                backgroundColor: isActive ? `${config.color}${document.documentElement.classList.contains('dark') ? '08' : '10'}` : undefined,
             }}
             animate={isActive ? { scale: 1.02 } : { scale: 1 }}
             transition={{ type: 'spring', stiffness: 200 }}
@@ -76,25 +76,25 @@ const StateCard: React.FC<{
             {/* Top accent strip */}
             <div
                 className="h-1 w-full"
-                style={{ backgroundColor: isActive ? config.color : '#1a1a24' }}
+                style={{ backgroundColor: isActive ? config.color : (document.documentElement.classList.contains('dark') ? '#1a1a24' : '#e2e8f0') }}
             />
 
             <div className="p-4 sm:p-5">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-3">
-                    <div
+                     <div
                         className="p-2 rounded-lg"
                         style={{
-                            backgroundColor: isActive ? `${config.color}15` : '#131318',
-                            color: isActive ? config.color : '#4b5563',
+                            backgroundColor: isActive ? `${config.color}15` : (document.documentElement.classList.contains('dark') ? '#131318' : '#f1f5f9'),
+                            color: isActive ? config.color : (document.documentElement.classList.contains('dark') ? '#4b5563' : '#64748b'),
                         }}
                     >
                         {config.icon}
                     </div>
                     <div>
-                        <h3
+                         <h3
                             className="text-xs font-black uppercase tracking-widest"
-                            style={{ color: isActive ? config.color : '#6b7280' }}
+                            style={{ color: isActive ? config.color : (document.documentElement.classList.contains('dark') ? '#6b7280' : '#475569') }}
                         >
                             {config.label}
                         </h3>
@@ -102,7 +102,7 @@ const StateCard: React.FC<{
                             <motion.span
                                 initial={{ opacity: 0, width: 0 }}
                                 animate={{ opacity: 1, width: 'auto' }}
-                                className="inline-block text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full mt-1"
+                                 className="inline-block text-[10px] sm:text-[11px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full mt-1"
                                 style={{
                                     backgroundColor: `${config.color}20`,
                                     color: config.color,
@@ -116,7 +116,7 @@ const StateCard: React.FC<{
                 </div>
 
                 {/* Description */}
-                <p className="text-[10px] leading-relaxed text-gray-500 font-medium mb-3">
+                <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium mb-3">
                     {config.description}
                 </p>
 
@@ -133,7 +133,7 @@ const StateCard: React.FC<{
                                     className="w-1 h-1 rounded-full"
                                     style={{ backgroundColor: config.color }}
                                 />
-                                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">
+                                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     {cap}
                                 </span>
                             </div>
@@ -157,21 +157,21 @@ const TransitionArrow: React.FC<{
         <div className={`flex ${isVertical ? 'flex-col' : 'flex-row'} items-center gap-1 ${isVertical ? 'py-1' : 'px-1'}`}>
             <div
                 className={`${isVertical ? 'h-6 w-0.5' : 'w-8 h-0.5'} rounded-full transition-all duration-500`}
-                style={{
-                    backgroundColor: isActive ? color : '#1a1a24',
+                 style={{
+                    backgroundColor: isActive ? color : (document.documentElement.classList.contains('dark') ? '#1a1a24' : '#e2e8f0'),
                     boxShadow: isActive ? `0 0 8px ${color}` : 'none',
                 }}
             />
             <span
-                className="text-[7px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-500"
-                style={{ color: isActive ? color : '#374151' }}
+                className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-500"
+                style={{ color: isActive ? color : (document.documentElement.classList.contains('dark') ? '#4b5563' : '#94a3b8') }}
             >
                 {label}
             </span>
             <div className={`flex items-center ${isVertical ? 'rotate-90' : ''}`}>
-                <svg
+                 <svg
                     className="w-3 h-3 transition-colors duration-500"
-                    style={{ color: isActive ? color : '#1a1a24' }}
+                    style={{ color: isActive ? color : (document.documentElement.classList.contains('dark') ? '#1a1a24' : '#e2e8f0') }}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                 >

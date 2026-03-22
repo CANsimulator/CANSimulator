@@ -1824,10 +1824,50 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
         setDataBytes(prev => { const n = [...prev]; n[idx] = clamped; return n; });
     };
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const lastActiveElement = useRef<HTMLElement | null>(null);
+
+    useEffect(() => {
+        lastActiveElement.current = document.activeElement as HTMLElement;
+        return () => {
+            setTimeout(() => {
+                lastActiveElement.current?.focus();
+            }, 50);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        const initialFocus = containerRef.current.querySelector('button, input');
+        (initialFocus as HTMLElement)?.focus();
+
+        const handleTab = (e: KeyboardEvent) => {
+            if (e.key !== 'Tab') return;
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        };
+
+        window.addEventListener('keydown', handleTab);
+        return () => window.removeEventListener('keydown', handleTab);
+    }, []);
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-colors" onClick={onClose}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+                ref={containerRef}
                 onClick={e => e.stopPropagation()}
                 className="bg-white dark:bg-[#111116] border border-black/10 dark:border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-lg transition-colors">
 
@@ -1978,10 +2018,50 @@ function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
         onAdd({ label: label.trim(), description: description.trim() || undefined, canId, x: findFreePosition(), online: true, domain, stubLength: parseFloat(stubLength) || 0.20, baudRate });
     };
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const lastActiveElement = useRef<HTMLElement | null>(null);
+
+    useEffect(() => {
+        lastActiveElement.current = document.activeElement as HTMLElement;
+        return () => {
+            setTimeout(() => {
+                lastActiveElement.current?.focus();
+            }, 50);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        const initialFocus = containerRef.current.querySelector('input');
+        initialFocus?.focus();
+
+        const handleTab = (e: KeyboardEvent) => {
+            if (e.key !== 'Tab') return;
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        };
+
+        window.addEventListener('keydown', handleTab);
+        return () => window.removeEventListener('keydown', handleTab);
+    }, []);
+
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+                ref={containerRef}
                 onClick={e => e.stopPropagation()}
                 className="bg-white dark:bg-[#111116] border border-black/10 dark:border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-md transition-colors">
                 <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider mb-4 transition-colors">Add ECU Node</h3>

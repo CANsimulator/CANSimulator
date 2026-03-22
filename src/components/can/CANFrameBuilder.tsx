@@ -64,10 +64,10 @@ export const CANFrameBuilder: React.FC = () => {
         <div className="glass-panel p-6 space-y-4 border-cyber-blue/30 relative overflow-hidden">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-cyber-blue uppercase tracking-tighter">Frame Builder</h3>
-                <div className="flex bg-dark-950 p-1 rounded-md border border-white/5">
+                <div className="flex bg-white dark:bg-dark-950 p-1 rounded-md border border-gray-200 dark:border-white/5">
                     <button
                         onClick={() => setIsFD(false)}
-                        className={cn('px-3 py-1 text-xs rounded transition-all', !isFD ? 'bg-cyber-blue text-dark-950 font-bold' : 'text-gray-500')}
+                        className={cn('px-3 py-1 text-xs rounded transition-all', !isFD ? 'bg-cyber-blue text-dark-950 font-bold' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300')}
                     >
                         CLASSIC
                     </button>
@@ -94,8 +94,8 @@ export const CANFrameBuilder: React.FC = () => {
                            setId(val);
                         }}
                         className={cn(
-                            "w-full bg-dark-950 border rounded px-3 py-2 text-cyber-blue font-mono outline-none transition-colors",
-                            errors.msgId ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-cyber-blue"
+                            "w-full bg-white dark:bg-dark-950 border rounded px-3 py-2 text-cyber-blue font-mono outline-none transition-colors",
+                            errors.msgId ? "border-red-500/50 focus:border-red-500" : "border-gray-200 dark:border-white/10 focus:border-cyber-blue"
                         )}
                         placeholder="7DF"
                         maxLength={isFD ? 8 : 3}
@@ -128,8 +128,8 @@ export const CANFrameBuilder: React.FC = () => {
                     }}
                     rows={2}
                     className={cn(
-                        "w-full bg-dark-950 border rounded px-3 py-2 text-gray-300 font-mono outline-none transition-colors resize-none",
-                        errors.payload ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-cyber-blue"
+                        "w-full bg-white dark:bg-dark-950 border rounded px-3 py-2 text-gray-700 dark:text-gray-300 font-mono outline-none transition-colors resize-none",
+                        errors.payload ? "border-red-500/50 focus:border-red-500" : "border-gray-200 dark:border-white/10 focus:border-cyber-blue"
                     )}
                     placeholder="01 02 03..."
                 />

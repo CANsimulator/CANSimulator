@@ -69,7 +69,7 @@ export const ErrorTypeDeepDive: React.FC = () => {
 
     return (
         <section
-            className="p-5 sm:p-6 rounded-2xl bg-dark-900/80 border border-dark-700 backdrop-blur-sm"
+            className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-dark-900/80 border border-gray-200 dark:border-dark-700 backdrop-blur-sm shadow-sm"
             aria-label="Error Type Deep-Dive"
         >
             {/* Section header */}
@@ -77,34 +77,51 @@ export const ErrorTypeDeepDive: React.FC = () => {
                 <h2 className="text-[10px] font-black text-cyber-green uppercase tracking-widest px-2 border-l-2 border-cyber-green">
                     Error Type Deep-Dive
                 </h2>
-                <span className="text-[9px] font-bold text-gray-600 uppercase tracking-wider">
+                 <span className="text-[9px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-wider">
                     ISO 11898-1 · 5 Error Types · Interactive
                 </span>
             </div>
 
             {/* Tab bar */}
-            <div className="flex flex-wrap gap-2 mb-5">
+            <div 
+                role="tablist" 
+                aria-label="CAN Error Types"
+                className="flex flex-wrap gap-2 mb-5"
+                onKeyDown={(e) => {
+                    const currentIndex = ERROR_TYPE_CATALOG.findIndex(err => err.type === selectedType);
+                    if (e.key === 'ArrowRight') {
+                        const nextIndex = (currentIndex + 1) % ERROR_TYPE_CATALOG.length;
+                        handleTabChange(ERROR_TYPE_CATALOG[nextIndex].type);
+                    } else if (e.key === 'ArrowLeft') {
+                        const prevIndex = (currentIndex - 1 + ERROR_TYPE_CATALOG.length) % ERROR_TYPE_CATALOG.length;
+                        handleTabChange(ERROR_TYPE_CATALOG[prevIndex].type);
+                    }
+                }}
+            >
                 {ERROR_TYPE_CATALOG.map((err) => {
                     const isActive = selectedType === err.type;
                     return (
                         <button
                             key={err.type}
+                            id={`tab-${err.type}`}
+                            role="tab"
+                            aria-selected={isActive}
+                            aria-controls={`tabpanel-${err.type}`}
+                            tabIndex={isActive ? 0 : -1}
                             onClick={() => handleTabChange(err.type)}
-                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-200 border"
+                             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all duration-200 border"
                             style={{
                                 backgroundColor: isActive ? `${err.colorHex}15` : 'transparent',
-                                borderColor: isActive ? `${err.colorHex}40` : '#1a1a24',
-                                color: isActive ? err.colorHex : '#6b7280',
+                                borderColor: isActive ? `${err.colorHex}40` : (document.documentElement.classList.contains('dark') ? '#1a1a24' : '#e2e8f0'),
+                                color: isActive ? err.colorHex : (document.documentElement.classList.contains('dark') ? '#6b7280' : '#475569'),
                                 boxShadow: isActive
                                     ? `0 0 12px ${err.colorHex}15`
                                     : 'none',
                             }}
-                            aria-selected={isActive}
-                            role="tab"
                         >
-                            <span style={{ color: isActive ? err.colorHex : '#4b5563' }}>
+                             <span style={{ color: isActive ? err.colorHex : (document.documentElement.classList.contains('dark') ? '#4b5563' : '#94a3b8') }}>
                                 {ERROR_ICONS[err.type]}
-                            </span>
+                             </span>
                             {err.title}
                         </button>
                     );
@@ -115,6 +132,9 @@ export const ErrorTypeDeepDive: React.FC = () => {
             <AnimatePresence mode="wait">
                 <motion.div
                     key={selectedType}
+                    role="tabpanel"
+                    id={`tabpanel-${selectedType}`}
+                    aria-labelledby={`tab-${selectedType}`}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
@@ -122,9 +142,9 @@ export const ErrorTypeDeepDive: React.FC = () => {
                     className="space-y-5"
                 >
                     {/* Info cards row */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                         {/* Description */}
-                        <div className="lg:col-span-2 p-4 rounded-xl bg-dark-800/50 border border-dark-700">
+                        <div className="lg:col-span-2 p-4 rounded-xl bg-gray-50 dark:bg-dark-800/50 border border-gray-200 dark:border-dark-700">
                             <div className="flex items-center gap-2 mb-2">
                                 <span
                                     className="text-[10px] font-black uppercase tracking-widest"
@@ -132,45 +152,45 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                 >
                                     {info.title}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider border"
-                                    style={{
-                                        borderColor: `${info.colorHex}30`,
-                                        color: `${info.colorHex}cc`,
-                                        backgroundColor: `${info.colorHex}08`,
-                                    }}
-                                >
-                                    {info.detectedBy}
-                                </span>
-                                <span className="text-[10px] font-mono text-gray-400">{info.isoReference}</span>
+                                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border"
+                                     style={{
+                                         borderColor: `${info.colorHex}30`,
+                                         color: `${info.colorHex}cc`,
+                                         backgroundColor: `${info.colorHex}08`,
+                                     }}
+                                 >
+                                      {info.detectedBy}
+                                 </span>
+                                 <span className="text-[12px] font-mono text-gray-500 dark:text-gray-400">{info.isoReference}</span>
                             </div>
-                            <p className="text-[11px] leading-relaxed text-gray-400 font-medium mb-3">
+                            <p className="text-[12px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium mb-3">
                                 {info.description}
                             </p>
-                            <div className="p-3 rounded-lg bg-dark-900/60 border border-dark-700">
-                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1">
-                                    Mechanism
-                                </span>
-                                <p className="text-[10px] text-gray-300 font-mono leading-relaxed">
-                                    {info.mechanism}
-                                </p>
-                            </div>
+                              <div className="p-3 rounded-lg bg-gray-100 dark:bg-dark-900/60 border border-gray-200 dark:border-dark-700">
+                                 <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest block mb-1">
+                                     Mechanism
+                                 </span>
+                                 <p className="text-[11px] text-gray-700 dark:text-gray-300 font-mono leading-relaxed">
+                                     {info.mechanism}
+                                 </p>
+                             </div>
                         </div>
 
                         {/* Real-world cause + Generate button */}
-                        <div className="flex flex-col gap-3">
-                            <div className="p-4 rounded-xl bg-dark-800/50 border border-dark-700 flex-1">
-                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">
-                                    Real-World Causes
-                                </span>
-                                <p className="text-[10px] leading-relaxed text-gray-400 font-medium">
-                                    {info.realWorldCause}
-                                </p>
+                         <div className="flex flex-col gap-3">
+                            <div className="p-4 rounded-xl bg-gray-50 dark:bg-dark-800/50 border border-gray-200 dark:border-dark-700 flex-1">
+                                 <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">
+                                     Real-World Causes
+                                 </span>
+                                 <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
+                                     {info.realWorldCause}
+                                 </p>
                             </div>
 
                             <motion.button
                                 onClick={handleGenerate}
                                 whileTap={{ scale: 0.97 }}
-                                className="w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2"
+                                 className="w-full py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 border-2"
                                 style={{
                                     backgroundColor: `${info.colorHex}15`,
                                     borderColor: `${info.colorHex}50`,
@@ -203,12 +223,12 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                 className="space-y-4 overflow-hidden"
                             >
                                 {/* Bit stream comparison */}
-                                <div className="p-4 rounded-xl bg-dark-800/30 border border-dark-700 space-y-4">
+                                 <div className="p-4 rounded-xl bg-gray-50 dark:bg-dark-800/30 border border-gray-200 dark:border-dark-700 space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">
-                                            CAN Frame Bit-Level View
-                                        </span>
-                                        <span className="text-[10px] font-mono text-gray-400">
+                                         <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                             CAN Frame Bit-Level View
+                                         </span>
+                                        <span className="text-[11px] font-mono text-gray-500 dark:text-gray-400">
                                             ID=0x123 · DLC=2 · Data=[0xAB, 0xCD] · 60 bits
                                         </span>
                                     </div>
@@ -247,28 +267,28 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                         }}
                                     >
                                         <span
-                                            className="text-[9px] font-black uppercase tracking-widest block mb-1.5"
-                                            style={{ color: info.colorHex }}
-                                        >
-                                            What Went Wrong
-                                        </span>
-                                        <p className="text-[10px] leading-relaxed text-gray-400 font-medium">
-                                            {demo.explanation}
-                                        </p>
+                                             className="text-[10px] font-black uppercase tracking-widest block mb-1.5"
+                                             style={{ color: info.colorHex }}
+                                         >
+                                             What Went Wrong
+                                         </span>
+                                          <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
+                                             {demo.explanation}
+                                         </p>
                                     </motion.div>
-
+ 
                                     <motion.div
                                         initial={{ opacity: 0, x: 10 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: 0.4 }}
-                                        className="p-4 rounded-xl bg-red-500/5 border border-red-500/15"
+                                        className="p-4 rounded-xl bg-red-500/10 dark:bg-red-500/5 border border-red-500/20 dark:border-red-500/15 shadow-sm"
                                     >
-                                        <span className="text-[9px] font-black text-red-400 uppercase tracking-widest block mb-1.5">
-                                            Bus Consequence
-                                        </span>
-                                        <p className="text-[10px] leading-relaxed text-gray-400 font-medium">
-                                            {demo.whatHappens}
-                                        </p>
+                                         <span className="text-[10px] font-black text-red-600 dark:text-red-400 uppercase tracking-widest block mb-1.5">
+                                             Bus Consequence
+                                         </span>
+                                         <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
+                                             {demo.whatHappens}
+                                         </p>
                                     </motion.div>
                                 </div>
                             </motion.div>

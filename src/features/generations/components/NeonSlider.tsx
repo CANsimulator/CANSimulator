@@ -68,26 +68,26 @@ export function NeonSlider({
     };
 
     return (
-        <div className={cn('rounded-xl border border-white/10 bg-black/30 p-4', className)}>
+        <div className={cn('rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 p-4 transition-colors duration-300', className)}>
             <div className="mb-3 flex items-center justify-between">
                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
                     {label}
                 </label>
                 <span
                     className={cn(
-                        'rounded-md border border-white/10 bg-white/5 px-2 py-0.5 font-mono text-sm font-bold text-white transition-all duration-150',
-                        isDragging && 'border-cyan-400/40 text-cyan-200 shadow-[0_0_8px_rgba(0,243,255,0.2)]'
+                        'rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-0.5 font-mono text-sm font-bold text-dark-950 dark:text-white transition-all duration-150',
+                        isDragging && 'border-cyber-blue/40 dark:border-cyan-400/40 text-cyber-blue dark:text-cyan-200 shadow-[0_0_8px_rgba(0,243,255,0.2)]'
                     )}
                 >
                     {value}
-                    {valueSuffix && <span className="ml-1 text-xs text-gray-400">{valueSuffix}</span>}
+                    {valueSuffix && <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">{valueSuffix}</span>}
                 </span>
             </div>
 
             {/* Custom track */}
             <div
                 ref={trackRef}
-                className="group relative h-3 cursor-pointer rounded-full bg-white/[0.06]"
+                className="group relative h-3 cursor-pointer rounded-full bg-gray-100 dark:bg-white/[0.06] outline-none"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
@@ -99,12 +99,38 @@ export function NeonSlider({
                 aria-valuenow={value}
                 tabIndex={0}
                 onKeyDown={(e) => {
-                    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        onChange(Math.min(max, value + 1));
-                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        onChange(Math.max(min, value - 1));
+                    const range = max - min;
+                    const largeStep = Math.max(Math.round(range * 0.1), 1);
+                    
+                    switch (e.key) {
+                        case 'ArrowRight':
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            onChange(Math.min(max, value + 1));
+                            break;
+                        case 'ArrowLeft':
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            onChange(Math.max(min, value - 1));
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            onChange(min);
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            onChange(max);
+                            break;
+                        case 'PageUp':
+                            e.preventDefault();
+                            onChange(Math.min(max, value + largeStep));
+                            break;
+                        case 'PageDown':
+                            e.preventDefault();
+                            onChange(Math.max(min, value - largeStep));
+                            break;
+                        default:
+                            break;
                     }
                 }}
             >
@@ -130,10 +156,10 @@ export function NeonSlider({
                 {/* Thumb */}
                 <div
                     className={cn(
-                        'absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full border-2 border-white/80 bg-dark-950 transition-all duration-100',
+                        'absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full border-2 border-white/80 bg-white dark:bg-dark-950 transition-all duration-100',
                         isDragging
                             ? 'scale-125 shadow-[0_0_12px_rgba(0,243,255,0.5)]'
-                            : 'shadow-[0_0_6px_rgba(0,243,255,0.3)] group-hover:scale-110'
+                            : 'shadow-[0_0_6px_rgba(0,243,255,0.3)] group-hover:scale-110 group-focus-visible:ring-2 group-focus-visible:ring-cyber-blue group-focus-visible:ring-offset-2 dark:group-focus-visible:ring-offset-black'
                     )}
                     style={{ left: `calc(${percent}% - 10px)` }}
                 />

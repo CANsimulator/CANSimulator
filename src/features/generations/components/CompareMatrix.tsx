@@ -100,7 +100,7 @@ function BarChart({
   accentSoftClass: string;
 }) {
   return (
-    <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-white/5">
+    <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/5">
       <div
         className={cn('h-full rounded-full transition-all duration-500', accentSoftClass)}
         style={{ width: `${Math.max(percent, 2)}%` }}
@@ -119,41 +119,41 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
   };
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <section className="rounded-3xl border border-gray-200 dark:border-white/10 bg-gray-50/30 dark:bg-white/[0.02] p-6 md:p-8">
+       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-black uppercase tracking-widest text-white">
+          <h2 className="text-lg font-black uppercase tracking-widest text-dark-950 dark:text-white">
             Interactive Compare Matrix
           </h2>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 font-bold">
             Click any row to expand details. Bars show relative scale.
           </p>
         </div>
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300">
+         <span className="rounded-full border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 dark:text-gray-300 transition-colors">
           {sideBySide ? 'Side-by-side active' : 'Single-focus view'}
         </span>
       </div>
 
       {/* Desktop table */}
       <div className="hidden md:block">
-        <div className="overflow-hidden rounded-2xl border border-white/10">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10">
           <table className="w-full table-fixed border-collapse">
-            <thead>
-              <tr className="bg-dark-900/70">
-                <th className="w-[28%] border-b border-white/10 px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+             <thead>
+              <tr className="bg-gray-100/80 dark:bg-dark-900/70 transition-colors">
+                 <th className="w-[28%] border-b border-gray-200 dark:border-white/10 px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 dark:text-gray-400">
                   Metric
                 </th>
-                <th
+                 <th
                   className={cn(
-                    'border-b border-white/10 px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em]',
+                    'border-b border-gray-200 dark:border-white/10 px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em]',
                     primary.accentTextClass
                   )}
                 >
                   {primary.id}
                 </th>
-                <th
+                 <th
                   className={cn(
-                    'border-b border-white/10 px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em]',
+                    'border-b border-gray-200 dark:border-white/10 px-4 py-3 text-left text-[10px] font-black uppercase tracking-[0.2em]',
                     compare.accentTextClass
                   )}
                 >
@@ -165,22 +165,21 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
               {rows.map((row, idx) => {
                 const isExpanded = expandedRow === row.label;
                 return (
-                  <motion.tr
+                  <tr
                     key={row.label}
-                    initial={reduceMotion ? undefined : { opacity: 0 }}
-                    animate={reduceMotion ? undefined : { opacity: 1 }}
-                    transition={
-                      reduceMotion ? undefined : { delay: idx * 0.04 }
-                    }
                     onClick={() => toggleRow(row.label)}
+                    style={{
+                      animationDelay: `${idx * 40}ms`,
+                    }}
                     className={cn(
                       'cursor-pointer transition-colors duration-150',
-                      'odd:bg-black/20 even:bg-black/10',
-                      'hover:bg-white/[0.04]',
-                      isExpanded && 'bg-white/[0.06]'
+                      !reduceMotion && 'animate-fade-in opacity-0 [animation-fill-mode:forwards]',
+                      'odd:bg-gray-100/30 dark:odd:bg-black/20 even:bg-transparent dark:even:bg-black/10',
+                      'hover:bg-gray-100 dark:hover:bg-white/[0.04]',
+                      isExpanded && 'bg-gray-200/50 dark:bg-white/[0.06]'
                     )}
                   >
-                    <td className="border-b border-white/5 px-4 py-3 text-sm font-semibold text-gray-300">
+                     <td className="border-b border-gray-100 dark:border-white/5 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
                       <div className="flex items-center gap-2">
                         {row.label}
                         <ChevronDown
@@ -198,14 +197,14 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="mt-2 overflow-hidden text-xs font-normal text-gray-500"
+                              className="mt-2 overflow-hidden text-xs font-semibold text-gray-600 dark:text-gray-500 leading-relaxed"
                           >
                             {row.detail}
                           </motion.p>
                         )}
                       </AnimatePresence>
                     </td>
-                    <td className="border-b border-white/5 px-4 py-3 text-sm text-gray-200">
+                      <td className="border-b border-gray-100 dark:border-white/5 px-4 py-3 text-sm text-dark-950 dark:text-gray-200 font-medium">
                       <div className="flex items-center gap-2">
                         <IndicatorIcon
                           isBetter={row.primaryBetter}
@@ -221,7 +220,7 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
                         />
                       )}
                     </td>
-                    <td className="border-b border-white/5 px-4 py-3 text-sm text-gray-200">
+                     <td className="border-b border-gray-100 dark:border-white/5 px-4 py-3 text-sm text-dark-950 dark:text-gray-200 font-medium">
                       <div className="flex items-center gap-2">
                         <IndicatorIcon
                           isBetter={row.compareBetter}
@@ -237,7 +236,7 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
                         />
                       )}
                     </td>
-                  </motion.tr>
+                  </tr>
                 );
               })}
             </tbody>
@@ -252,11 +251,23 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
           return (
             <article
               key={row.label}
-              className="rounded-xl border border-white/10 bg-black/20"
+              className={cn(
+                "rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 p-5 transition-colors duration-300",
+                "cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-cyber-blue/40"
+              )}
               onClick={() => toggleRow(row.label)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  toggleRow(row.label);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-expanded={isExpanded}
             >
-              <header className="flex items-center justify-between rounded-t-xl border-b border-white/10 bg-dark-950/95 px-4 py-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+             <header className="flex items-center justify-between rounded-t-xl border-b border-gray-100 dark:border-white/10 bg-gray-100 dark:bg-dark-950/95 px-4 py-2 transition-colors duration-300">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 dark:text-gray-400">
                   {row.label}
                 </p>
                 <ChevronDown
@@ -277,7 +288,7 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
                   >
                     {primary.id}
                   </span>
-                  <span className="text-sm text-gray-200">{row.primary}</span>
+                   <span className="text-sm text-dark-950 dark:text-gray-200">{row.primary}</span>
                 </div>
                 {row.primaryBar !== undefined && (
                   <BarChart
@@ -294,7 +305,7 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
                   >
                     {compare.id}
                   </span>
-                  <span className="text-sm text-gray-200">{row.compare}</span>
+                   <span className="text-sm text-dark-950 dark:text-gray-200">{row.compare}</span>
                 </div>
                 {row.compareBar !== undefined && (
                   <BarChart
@@ -302,13 +313,13 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
                     accentSoftClass={compare.accentSoftClass}
                   />
                 )}
-                <AnimatePresence>
+                 <AnimatePresence>
                   {isExpanded && row.detail && (
                     <motion.p
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden pt-2 text-xs text-gray-500"
+                      className="overflow-hidden pt-2 text-xs text-gray-700 dark:text-gray-500 font-medium leading-relaxed"
                     >
                       {row.detail}
                     </motion.p>

@@ -83,6 +83,13 @@ export function BitTimingConfig() {
     const timing = bench?.bitTiming ?? DEFAULT_BIT_TIMING_PRESET.timing;
     const activePreset = useMemo(() => findBitTimingPresetForTiming(timing)?.name ?? null, [timing]);
 
+    const [brpInput, setBrpInput] = useState(String(timing.brp));
+
+    // Update local input when global timing changes
+    useEffect(() => {
+        setBrpInput(String(timing.brp));
+    }, [timing.brp]);
+
     const constraintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -113,13 +120,40 @@ export function BitTimingConfig() {
         bench.setBitTiming({ ...timing, [key]: value });
 
         // Trigger constraint violation feedback
-        if (key === 'sjw' && value > sjwMax) {
+        if ((key === 'sjw' && value > sjwMax) || 
+            ((key === 'phase1' || key === 'phase2') && timing.sjw > Math.min(key === 'phase1' ? value : timing.phase1, key === 'phase2' ? value : timing.phase2))) {
+            
             setConstraintViolation(true);
             if (constraintTimerRef.current) clearTimeout(constraintTimerRef.current);
             constraintTimerRef.current = setTimeout(() => {
                 setConstraintViolation(false);
                 constraintTimerRef.current = null;
             }, 500);
+        }
+    };
+
+    const handleBrpBlur = () => {
+        const val = parseInt(brpInput, 10);
+        if (!isNaN(val) && val >= 1 && val <= 64) {
+            handleChange('brp', val);
+        } else {
+            setBrpInput(String(timing.brp));
+        }
+    };
+
+    const handleBrpKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleBrpBlur();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const next = Math.min(64, timing.brp + 1);
+            handleChange('brp', next);
+            setBrpInput(String(next));
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = Math.max(1, timing.brp - 1);
+            handleChange('brp', next);
+            setBrpInput(String(next));
         }
     };
 
@@ -130,13 +164,17 @@ export function BitTimingConfig() {
     const handleCopyRegister = async (reg: string, value: number) => {
         const hex = '0x' + value.toString(16).toUpperCase().padStart(2, '0');
         if (navigator.clipboard) {
-            await navigator.clipboard.writeText(hex);
-            setCopiedReg(reg);
-            if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
-            copiedTimerRef.current = setTimeout(() => {
-                setCopiedReg(null);
-                copiedTimerRef.current = null;
-            }, 1400);
+            try {
+                await navigator.clipboard.writeText(hex);
+                setCopiedReg(reg);
+                if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+                copiedTimerRef.current = setTimeout(() => {
+                    setCopiedReg(null);
+                    copiedTimerRef.current = null;
+                }, 2000); // Changed timeout to 2000ms
+            } catch (err) {
+                console.error('Failed to copy register:', err);
+            }
         }
     };
 
@@ -171,8 +209,8 @@ export function BitTimingConfig() {
             {/* Equipment label */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-mono font-black text-dark-950 dark:text-[#f1f1f1] tracking-widest uppercase transition-colors">CAN-CTRL</span>
-                    <span className="text-[8px] font-mono text-light-500 dark:text-gray-500 tracking-wider transition-colors">BIT TIMING REGISTER CONFIG</span>
+                    <span className="text-[11px] font-mono font-black text-dark-950 dark:text-[#f1f1f1] tracking-widest uppercase transition-colors">CAN-CTRL</span>
+                    <span className="text-[9px] font-mono text-light-500 dark:text-gray-500 tracking-wider transition-colors">BIT TIMING REGISTER CONFIG</span>
                 </div>
                 <div className="flex items-center gap-3">
                     <motion.button
@@ -195,7 +233,7 @@ export function BitTimingConfig() {
                             animate={{ opacity: shouldReduceMotion ? 0.8 : [1, 0.5, 1] }}
                             transition={{ duration: 2, repeat: shouldReduceMotion ? 0 : Infinity }}
                         />
-                        <span className="text-[8px] font-mono" style={{ color: analysis.color }}>{analysis.quality}</span>
+                        <span className="text-[9px] font-mono font-bold" style={{ color: analysis.color }}>{analysis.quality}</span>
                     </div>
                 </div>
             </div>
@@ -214,7 +252,7 @@ export function BitTimingConfig() {
 
                     {/* Register Display */}
                     <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
-                        <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">REGISTER VALUES (MCP2515)</span>
+                        <span className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">REGISTER VALUES (MCP2515)</span>
 
                         <RegisterRow
                             name="BTR0"
@@ -245,7 +283,7 @@ export function BitTimingConfig() {
 
                     {/* Timing Summary */}
                     <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
-                        <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">COMPUTED PARAMETERS</span>
+                        <span className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">COMPUTED PARAMETERS</span>
                         {[
                             { k: 'Baud Rate', v: ((bench?.baudRate ?? 0) / 1000).toFixed(0), u: 'kbit/s' },
                             { k: 'Total TQ/bit', v: `${totalTq}`, u: 'TQ' },
@@ -297,8 +335,8 @@ export function BitTimingConfig() {
                                         animate={{ width: `${(seg.tq / totalTq) * 100}%` }}
                                         transition={{ type: 'spring', stiffness: 100, damping: 15 }}
                                     >
-                                        <span className="text-[8px] font-mono font-bold whitespace-nowrap transition-colors" style={{ color: seg.color }}>{seg.label}</span>
-                                        <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 transition-colors">{seg.tq}TQ</span>
+                                        <span className="text-[9px] font-mono font-bold whitespace-nowrap transition-colors" style={{ color: seg.color }}>{seg.label}</span>
+                                        <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 transition-colors">{seg.tq}TQ</span>
                                     </motion.div>
                                 ))}
 
@@ -334,7 +372,7 @@ export function BitTimingConfig() {
                                 {Array.from({ length: totalTq }, (_, i) => (
                                     <div key={i} className="flex-1 text-center">
                                         <div className="w-px h-1 bg-gray-200 dark:bg-gray-800 mx-auto transition-colors" />
-                                        <span className="text-[8px] font-mono text-light-400 dark:text-gray-600 transition-colors">{i + 1}</span>
+                                        <span className="text-[9px] font-mono text-light-400 dark:text-gray-600 transition-colors">{i + 1}</span>
                                     </div>
                                 ))}
                             </div>
@@ -427,15 +465,12 @@ export function BitTimingConfig() {
                                         aria-label="Decrease BRP"
                                     >−</button>
                                     <input
-                                        type="number"
-                                        min={1}
-                                        max={64}
-                                        value={timing.brp}
-                                        onChange={(e) => {
-                                            const v = parseInt(e.target.value, 10);
-                                            if (!isNaN(v)) handleChange('brp', Math.max(1, Math.min(64, v)));
-                                        }}
-                                        className="flex-1 h-8 text-center bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[11px] font-bold outline-none focus:border-light-600 dark:focus:border-[#6b7280] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-colors"
+                                        type="text"
+                                        value={brpInput}
+                                        onChange={(e) => setBrpInput(e.target.value)}
+                                        onBlur={handleBrpBlur}
+                                        onKeyDown={handleBrpKeyDown}
+                                        className="flex-1 h-8 text-center bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[11px] font-bold outline-none focus:border-light-600 dark:focus:border-[#6b7280] transition-colors"
                                         aria-label="BRP value"
                                     />
                                     <button
@@ -500,22 +535,22 @@ function PresetTabStrip({ presets, activePreset, onApply }: {
 
     return (
         <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] mb-4 transition-colors">
-            <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">BAUD RATE PRESETS</span>
-            <div className="relative flex gap-1">
-                <div className="flex gap-1 w-full">
+            <span className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">BAUD RATE PRESETS</span>
+            <div className="relative">
+                <div className="flex gap-1 w-full overflow-x-auto no-scrollbar pb-1">
                     {presets.map(preset => (
                         <button
                             key={preset.name}
                             onClick={() => onApply(preset)}
-                            className="relative flex-1 px-2 py-2 rounded text-[8px] font-mono font-bold transition-all active:scale-95 transition-colors"
+                            className="relative flex-none min-w-[70px] px-2 py-2 rounded text-[8px] font-mono font-bold transition-all active:scale-95 transition-colors"
                             style={{
                                 color: activePreset === preset.name ? (isDark ? '#00f3ff' : '#0891b2') : (isDark ? '#888' : '#666'),
                                 zIndex: activePreset === preset.name ? 1 : 0,
                             }}
                         >
                             <div className="leading-none">
-                                <div className="text-[9px] font-bold">{preset.name.split(' ')[0]}</div>
-                                <div className="text-[9px] opacity-60">{preset.clock}</div>
+                                <div className="text-[10px] font-bold">{preset.name.split(' ')[0]}</div>
+                                <div className="text-[10px] opacity-60">{preset.clock}</div>
                             </div>
                             {activePreset === preset.name && (
                                 <motion.div
@@ -528,6 +563,8 @@ function PresetTabStrip({ presets, activePreset, onApply }: {
                         </button>
                     ))}
                 </div>
+                {/* Fade indicator */}
+                <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-gray-50 dark:from-[#0c0c0e] to-transparent pointer-events-none" />
             </div>
         </div>
     );
@@ -575,10 +612,32 @@ function SegmentSlider({ label, color, value, max, onChange, description }: Segm
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         let newValue = value;
-        if (e.key === 'ArrowLeft') newValue = Math.max(1, value - 1);
-        if (e.key === 'ArrowRight') newValue = Math.min(max, value + 1);
-        if (e.key === 'ArrowDown') newValue = Math.max(1, value - (e.ctrlKey ? 5 : 1));
-        if (e.key === 'ArrowUp') newValue = Math.min(max, value + (e.ctrlKey ? 5 : 1));
+        const range = max - 1;
+        const largeStep = Math.round(range * 0.1) || 1;
+
+        switch (e.key) {
+            case 'ArrowLeft':
+            case 'ArrowDown':
+                newValue = Math.max(1, value - 1);
+                break;
+            case 'ArrowRight':
+            case 'ArrowUp':
+                newValue = Math.min(max, value + 1);
+                break;
+            case 'Home':
+                newValue = 1;
+                break;
+            case 'End':
+                newValue = max;
+                break;
+            case 'PageDown':
+                newValue = Math.max(1, value - largeStep);
+                break;
+            case 'PageUp':
+                newValue = Math.min(max, value + largeStep);
+                break;
+        }
+
         if (newValue !== value) {
             e.preventDefault();
             onChange(newValue);
@@ -590,10 +649,10 @@ function SegmentSlider({ label, color, value, max, onChange, description }: Segm
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono font-bold uppercase tracking-wider transition-colors" style={{ color }}>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider transition-colors" style={{ color }}>
                     {label}
                 </span>
-                <span className="text-[8px] font-mono text-light-400 dark:text-gray-500 transition-colors">1 – {max}</span>
+                <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 transition-colors">1 – {max}</span>
             </div>
 
             <div
@@ -651,7 +710,7 @@ function SegmentSlider({ label, color, value, max, onChange, description }: Segm
 
                 {/* Value badge */}
                 <motion.div
-                    className="absolute -top-7 px-2 py-0.5 rounded text-[8px] font-mono font-bold whitespace-nowrap pointer-events-none transition-colors"
+                    className="absolute -top-7 px-2 py-0.5 rounded text-[9px] font-mono font-bold whitespace-nowrap pointer-events-none transition-colors"
                     style={{
                         backgroundColor: color,
                         color: isDark ? '#000' : '#fff',
@@ -665,7 +724,7 @@ function SegmentSlider({ label, color, value, max, onChange, description }: Segm
                 </motion.div>
             </div>
 
-            <span className="text-[9px] font-mono text-light-400 dark:text-gray-500 block transition-colors leading-tight">{description}</span>
+            <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 block transition-colors leading-tight">{description}</span>
         </div>
     );
 }
@@ -751,8 +810,11 @@ function RegisterRow({ name, hex, binary, fields, onCopy, onEdit, isCopied }: {
                     return (
                         <div
                             key={i}
-                            className={`flex-1 flex flex-col items-center justify-center border-r border-black/5 dark:border-white/5 last:border-0 relative group transition-colors ${bit === '1' ? 'bg-black/[0.02] dark:bg-white/[0.02]' : ''
+                            className={`flex-1 flex flex-col items-center justify-center border-r border-black/5 dark:border-white/5 last:border-0 relative group outline-none focus:bg-cyan-500/10 dark:focus:bg-[#00f3ff08] transition-colors ${bit === '1' ? 'bg-black/[0.02] dark:bg-white/[0.02]' : ''
                                 }`}
+                            tabIndex={0}
+                            role="img"
+                            aria-label={`Bit ${7 - i}: ${bit}${field ? ` (${field.name})` : ''}`}
                         >
                             <span className={`text-[11px] font-mono font-bold transition-colors ${bit === '1'
                                     ? (isDark ? 'text-[#f1f1f1]' : 'text-dark-900')
@@ -766,7 +828,7 @@ function RegisterRow({ name, hex, binary, fields, onCopy, onEdit, isCopied }: {
                                     style={{ backgroundColor: field.color }}
                                 />
                             )}
-                            <span className="absolute -top-4 text-[7px] font-mono text-light-400 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity transition-colors">
+                            <span className="absolute -top-4 text-[9px] font-mono text-light-400 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity transition-colors">
                                 {7 - i}
                             </span>
                         </div>

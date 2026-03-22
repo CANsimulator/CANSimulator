@@ -20,6 +20,7 @@ export interface PowerContextType {
     rpsPowerDownTime: number;
     rpsCountdown: number | null;
 
+    setRpsEnabled: (enabled: boolean) => void;
     toggleEcuPower: () => void;
     setPowerState: (state: PowerState) => void;
     setSystemVoltage: (volts: SystemVoltage) => void;

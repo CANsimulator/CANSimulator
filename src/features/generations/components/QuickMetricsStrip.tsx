@@ -45,7 +45,8 @@ function ProgressRing({
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke="rgba(255,255,255,0.06)"
+        stroke="currentColor"
+        className="text-gray-100 dark:text-white/10 transition-colors duration-300"
         strokeWidth={strokeWidth}
       />
       {/* Progress ring */}
@@ -87,7 +88,7 @@ function MetricCard({
       initial={reduceMotion ? undefined : { opacity: 0, y: 10 }}
       animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       transition={reduceMotion ? undefined : { duration: 0.25, delay: idx * 0.06 }}
-      className="group relative rounded-xl border border-white/10 bg-black/30 p-3 transition-all duration-200 hover:border-white/20 hover:bg-black/40"
+      className="group relative rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 p-3 transition-all duration-200 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-50 dark:hover:bg-black/40"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -100,7 +101,7 @@ function MetricCard({
           <AnimatedCounter
             value={item.value}
             suffix={` ${item.suffix}`}
-            className="font-mono text-sm font-semibold text-gray-100"
+            className="font-mono text-sm font-semibold text-dark-900 dark:text-gray-100"
           />
         </div>
       </div>
@@ -111,9 +112,9 @@ function MetricCard({
           initial={reduceMotion ? undefined : { opacity: 0, y: 4 }}
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           className={cn(
-            'absolute left-0 right-0 top-full z-20 mt-2 rounded-lg border border-white/10 p-2.5 text-xs text-gray-300',
+            'absolute left-0 right-0 top-full z-20 mt-2 rounded-lg border border-gray-200 dark:border-white/10 p-2.5 text-xs text-gray-600 dark:text-gray-300',
             accentSoftClass,
-            'bg-dark-950/95 backdrop-blur-sm'
+            'bg-white dark:bg-dark-950/95 backdrop-blur-sm shadow-lg dark:shadow-none'
           )}
         >
           {item.tooltip}
@@ -158,9 +159,9 @@ export function QuickMetricsStrip({ spec }: QuickMetricsStripProps) {
   ];
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-dark-900/50 p-4 md:p-5">
+    <section className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-dark-900/50 p-4 md:p-5 transition-colors duration-300">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-black uppercase tracking-widest text-white">
+        <h2 className="text-base font-black uppercase tracking-widest text-dark-950 dark:text-white">
           Quick Metrics
         </h2>
         <span
@@ -187,14 +188,14 @@ export function QuickMetricsStrip({ spec }: QuickMetricsStripProps) {
           />
         ))}
 
-        <article className="col-span-2 rounded-xl border border-white/10 bg-black/30 p-3 md:col-span-1">
+        <article className="col-span-2 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-black/30 p-3 md:col-span-1">
           <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-500">
             Compatibility
           </p>
           <p className={cn('text-sm font-semibold', spec.accentTextClass)}>
             {spec.compatibility}
           </p>
-          <p className="mt-1 text-xs text-gray-400">
+          <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
             {COMPATIBILITY_DESCRIPTIONS[spec.compatibility]}
           </p>
         </article>

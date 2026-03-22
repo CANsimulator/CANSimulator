@@ -9,6 +9,12 @@ import { CookieProvider } from './context/CookieContext'
 import { ToastProvider } from './context/ToastContext'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('[Unhandled Promise Rejection]', event.reason);
+  // TODO: reportError(event.reason) — integrate Sentry or similar here
+  event.preventDefault(); // prevents default browser console warning format
+});
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>

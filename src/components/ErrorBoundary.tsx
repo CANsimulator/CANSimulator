@@ -23,8 +23,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
     }
 
     componentDidCatch(error: Error, info: React.ErrorInfo) {
-        // In a real production app, we would send this to Sentry/LogRocket
-        console.error('[ErrorBoundary] Caught exception:', error, info.componentStack);
+        console.error('[ErrorBoundary caught]', error, info);
+        // TODO: reportError(error, { componentStack: info.componentStack });
     }
 
     handleRetry = () => {

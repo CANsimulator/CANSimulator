@@ -21,11 +21,11 @@ export const CyberButton: React.FC<CyberButtonProps> = ({
     const baseStyles = "relative px-6 py-3 rounded-lg font-bold transition-all duration-300 overflow-hidden flex items-center justify-center gap-2";
 
     const variants = {
-        primary: "bg-dark-900 border border-cyber-blue/50 text-cyber-blue hover:text-white hover:bg-cyber-blue/20 shadow-neon/20 hover:shadow-neon",
-        secondary: "bg-dark-900 border border-cyber-purple/50 text-cyber-purple hover:text-white hover:bg-cyber-purple/20 shadow-neon-purple/20 hover:shadow-neon-purple",
-        success: "bg-dark-900 border border-cyber-green/50 text-cyber-green hover:text-dark-950 hover:bg-cyber-green shadow-neon-green/20 hover:shadow-neon-green",
-        outline: "bg-transparent border border-white/20 text-white hover:border-white/40 hover:bg-white/5",
-        ghost: "bg-transparent text-gray-400 hover:text-white hover:bg-white/5 border-transparent",
+        primary: "bg-white dark:bg-dark-900 border border-cyber-blue/50 text-blue-600 dark:text-cyber-blue hover:text-white hover:bg-cyber-blue/20 shadow-neon/20 hover:shadow-neon",
+        secondary: "bg-white dark:bg-dark-900 border border-cyber-purple/50 text-purple-600 dark:text-cyber-purple hover:text-white hover:bg-cyber-purple/20 shadow-neon-purple/20 hover:shadow-neon-purple",
+        success: "bg-white dark:bg-dark-900 border border-cyber-green/50 text-green-600 dark:text-cyber-green hover:text-dark-950 hover:bg-cyber-green shadow-neon-green/20 hover:shadow-neon-green",
+        outline: "bg-transparent border border-slate-300 dark:border-white/20 text-slate-700 dark:text-white hover:border-slate-400 dark:hover:border-white/40 hover:bg-slate-50 dark:hover:bg-white/5",
+        ghost: "bg-transparent text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border-transparent",
         active: "bg-gradient-to-r from-cyber-blue to-cyber-purple text-white shadow-neon border-none"
     };
 
@@ -33,7 +33,7 @@ export const CyberButton: React.FC<CyberButtonProps> = ({
 
     return (
         <motion.button
-            whileHover={!isDisabled ? { scale: 1.02, y: -2 } : {}}
+            whileHover={!isDisabled ? { scale: 1.02 } : {}}
             whileTap={!isDisabled ? { scale: 0.98 } : {}}
             className={cn(baseStyles, variants[variant], isDisabled && "opacity-50 cursor-not-allowed", className)}
             disabled={isDisabled}

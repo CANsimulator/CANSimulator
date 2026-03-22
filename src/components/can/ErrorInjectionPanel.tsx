@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CANErrorCode } from '../../types/can';
 import { canSimulator } from '../../services/can/can-simulator';
+import { useTheme } from '../../context/ThemeContext';
 import type { ErrorRole } from '../../services/can/can-simulator';
 
 interface ErrorDef {
@@ -100,6 +101,8 @@ const errors: ErrorDef[] = [
 ];
 
 export const ErrorInjectionPanel: React.FC = () => {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const [lastInjected, setLastInjected] = useState<string | null>(null);
     const [clickCounts, setClickCounts] = useState<Record<string, number>>({});
     const [hoveredCode, setHoveredCode] = useState<string | null>(null);
@@ -132,16 +135,15 @@ export const ErrorInjectionPanel: React.FC = () => {
             {/* Role toggle — Transmitter vs Receiver */}
             <div className="flex items-center gap-2">
                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Error Source</span>
-                <div className="flex rounded-lg overflow-hidden border border-dark-700">
+                <div className="flex rounded-lg overflow-hidden border border-gray-200 dark:border-dark-700 transition-colors shadow-sm">
                     {(['transmitter', 'receiver'] as ErrorRole[]).map((r) => (
                         <button
                             key={r}
                             onClick={() => setRole(r)}
-                            className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider transition-all duration-200"
-                            style={{
+                            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all duration-200 border-r last:border-r-0 border-gray-200 dark:border-dark-700"
+                             style={{
                                 backgroundColor: role === r ? (r === 'transmitter' ? '#ef444420' : '#3b82f620') : 'transparent',
-                                color: role === r ? (r === 'transmitter' ? '#ef4444' : '#3b82f6') : '#6b7280',
-                                borderRight: r === 'transmitter' ? '1px solid #1a1a24' : 'none',
+                                color: role === r ? (r === 'transmitter' ? (isDark ? '#ef4444' : '#dc2626') : (isDark ? '#3b82f6' : '#2563eb')) : (isDark ? '#6b7280' : '#475569'),
                             }}
                         >
                             {r === 'transmitter' ? 'TX (TEC +8)' : 'RX (REC +1/+8)'}
@@ -165,9 +167,9 @@ export const ErrorInjectionPanel: React.FC = () => {
                             onFocus={() => setHoveredCode(err.code)}
                             onBlur={() => setHoveredCode(null)}
                             whileTap={{ scale: 0.95 }}
-                            className="group relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 bg-dark-900/50 transition-all duration-300 overflow-hidden"
+                             className="group relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 bg-white dark:bg-dark-900/50 transition-all duration-300 overflow-hidden"
                             style={{
-                                borderColor: isActive ? err.colorHex : isSelected ? `${err.colorHex}A0` : isHovered ? `${err.colorHex}60` : '#1a1a24',
+                                borderColor: isActive ? err.colorHex : isSelected ? `${err.colorHex}A0` : isHovered ? `${err.colorHex}60` : (isDark ? '#1a1a24' : '#e2e8f0'),
                                 boxShadow: isActive ? `0 0 25px ${err.colorHex}40` : (isSelected ? `0 0 10px ${err.colorHex}20` : 'none'),
                             }}
                         >
@@ -196,17 +198,17 @@ export const ErrorInjectionPanel: React.FC = () => {
                             />
 
                             {/* Icon */}
-                            <div
+                             <div
                                 className="mb-2 transition-colors duration-300"
-                                style={{ color: isHovered ? err.colorHex : '#6b7280' }}
+                                style={{ color: isHovered || isSelected ? err.colorHex : (isDark ? '#6b7280' : '#94a3b8') }}
                             >
                                 {err.icon}
                             </div>
 
                             {/* Label */}
-                            <span
+                             <span
                                 className="text-xs font-black tracking-widest uppercase mb-0.5 transition-colors duration-300"
-                                style={{ color: isHovered ? err.colorHex : '#ffffff' }}
+                                style={{ color: isHovered || isSelected ? err.colorHex : (isDark ? '#ffffff' : '#0f172a') }}
                             >
                                 {err.label}
                             </span>
@@ -239,16 +241,16 @@ export const ErrorInjectionPanel: React.FC = () => {
             {/* Detail tooltip for hovered or selected error */}
             <AnimatePresence mode="wait">
                 {(hoveredCode || selectedCode) && (
-                    <motion.div
+                         <motion.div
                         key={hoveredCode || selectedCode}
                         initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -4 }}
                         transition={{ duration: 0.15 }}
-                        className="px-4 py-3 rounded-xl bg-dark-800/80 border border-dark-700 backdrop-blur-sm"
+                        className="px-4 py-3 rounded-xl bg-white/80 dark:bg-dark-800/80 border border-gray-200 dark:border-dark-700 backdrop-blur-sm shadow-sm"
                     >
-                        <p className="text-[11px] leading-relaxed text-gray-400 font-medium">
-                            <span className="font-black text-white uppercase tracking-wider">
+                         <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
+                            <span className="font-black text-dark-950 dark:text-white uppercase tracking-wider">
                                 {errors.find(e => e.code === (hoveredCode || selectedCode))?.label}:
                             </span>{' '}
                             {errors.find(e => e.code === (hoveredCode || selectedCode))?.detail}

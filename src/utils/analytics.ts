@@ -54,7 +54,17 @@ class Analytics {
     }
 
     private generateSessionId(): string {
-        return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+    }
+
+    private hasConsent(): boolean {
+        try {
+            const consent = localStorage.getItem('can_cookie_consent');
+            if (!consent) return false;
+            return JSON.parse(consent).analytics === true;
+        } catch {
+            return false;
+        }
     }
 
     /**
@@ -62,6 +72,7 @@ class Analytics {
      * Uses requestIdleCallback (or setTimeout fallback) to defer serialization + write.
      */
     private scheduleFlush(): void {
+        if (!this.hasConsent()) return;
         if (this.flushScheduled) return;
         this.flushScheduled = true;
         const cb = () => {
@@ -102,6 +113,8 @@ class Analytics {
      * Track a custom event — non-blocking (defers localStorage write)
      */
     trackEvent(type: string, properties?: Record<string, any>): void {
+        if (!this.hasConsent() && type !== 'page_view') return;
+
         const event: AnalyticsEvent = {
             type,
             properties: {
@@ -114,6 +127,10 @@ class Analytics {
 
         if (this.session) {
             this.session.events.push(event);
+            // Cap session events to avoid bloat
+            if (this.session.events.length > 100) {
+                this.session.events = this.session.events.slice(-100);
+            }
         }
         this.pendingEvents.push(event);
         this.scheduleFlush();

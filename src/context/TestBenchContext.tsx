@@ -151,6 +151,10 @@ export const TestBenchProvider: React.FC<{ children: ReactNode }> = ({ children 
     return <TestBenchContext.Provider value={value}>{children}</TestBenchContext.Provider>;
 };
 
-export function useTestBench(): TestBenchState | undefined {
-    return useContext(TestBenchContext);
+export function useTestBench(): TestBenchState {
+    const context = useContext(TestBenchContext);
+    if (!context) {
+        throw new Error('useTestBench must be used within a TestBenchProvider');
+    }
+    return context;
 }

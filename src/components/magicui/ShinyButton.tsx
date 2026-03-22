@@ -10,7 +10,7 @@ import { cn } from "../../utils/cn";
 
 const animationProps = {
     initial: { "--x": "100%", scale: 1 },
-    whileHover: { 
+    animate: { 
         "--x": "-100%",
         transition: {
             repeat: Infinity,
@@ -22,12 +22,8 @@ const animationProps = {
             mass: 2,
         }
     },
-    whileTap: { scale: 0.95 },
-    transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 20,
-    },
+    whileHover: { scale: 1.02 },
+    whileTap: { scale: 0.98 },
 } as const;
 
 interface ShinyButtonProps extends HTMLMotionProps<"button"> {
@@ -39,7 +35,7 @@ const ShinyButton = React.forwardRef<HTMLButtonElement, ShinyButtonProps>(
     ({ children, className, ...props }, ref) => {
         const shouldReduceMotion = useReducedMotion();
         const animProps = shouldReduceMotion 
-            ? { initial: { "--x": "0%", scale: 1 }, whileTap: { scale: 0.95 } } 
+            ? { initial: { "--x": "0%", scale: 1 }, animate: { "--x": "0%" }, whileTap: { scale: 1 } } 
             : animationProps;
 
         return (

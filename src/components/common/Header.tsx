@@ -142,10 +142,13 @@ export function Header() {
                                             : "bg-white hover:bg-light-100 border-light-200 shadow-sm",
                                     )}
                                 >
-                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyber-blue to-cyber-purple flex items-center justify-center text-white text-xs font-bold ring-2 ring-dark-900">
+                                    <div className={cn(
+                                        "w-7 h-7 rounded-full bg-gradient-to-br from-cyber-blue to-cyber-purple flex items-center justify-center text-white text-xs font-bold ring-2",
+                                        isDark ? "ring-dark-900" : "ring-white"
+                                    )}>
                                         {user.name?.[0]?.toUpperCase()}
                                     </div>
-                                    <svg className="w-3 h-3 text-gray-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className={cn("w-3 h-3 mr-1 transition-colors", isDark ? "text-gray-400" : "text-gray-500")} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
@@ -160,7 +163,7 @@ export function Header() {
                                             isDark ? "border-white/5" : "border-black/5"
                                         )}>
                                             <p className={cn("text-sm font-bold", isDark ? "text-white" : "text-slate-900")}>{user.name}</p>
-                                            <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                                            <p className={cn("text-xs truncate", isDark ? "text-gray-400" : "text-gray-500")}>{user.email}</p>
                                         </div>
                                         <div className="p-1">
                                             <button
@@ -213,7 +216,9 @@ export function Header() {
                                 onClick={() => setMobileMenuOpen(false)}
                                 className={cn(
                                     "block px-4 py-3 text-sm rounded-lg border border-transparent transition-colors",
-                                    isDark ? "text-gray-300 hover:bg-white/5 hover:border-white/5" : "text-slate-600 hover:bg-black/5 hover:border-black/5"
+                                    isDark 
+                                        ? "text-gray-300 hover:bg-white/5 hover:border-white/5" 
+                                        : "text-gray-700 hover:bg-gray-100 hover:border-gray-200"
                                 )}
                             >
                                 {link.label}

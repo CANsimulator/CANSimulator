@@ -24,19 +24,19 @@ interface FrameField {
 }
 
 const STANDARD_FRAME_FIELDS: FrameField[] = [
-    { name: 'Start of Frame', shortName: 'SOF', bits: 1, color: 'text-amber-400', bgColor: 'bg-amber-500/15', borderColor: 'border-amber-500/30', glowColor: 'shadow-[0_0_12px_rgba(245,158,11,0.2)]', description: 'Always dominant (0). Marks the beginning of a frame.', editable: false },
-    { name: 'Arbitration ID', shortName: 'ID', bits: 11, color: 'text-cyber-blue', bgColor: 'bg-cyber-blue/15', borderColor: 'border-cyber-blue/30', glowColor: 'shadow-[0_0_12px_rgba(0,243,255,0.2)]', description: 'Message priority identifier (11-bit). Lower ID = Higher priority.', editable: true },
-    { name: 'Remote Request', shortName: 'RTR', bits: 1, color: 'text-cyber-purple', bgColor: 'bg-cyber-purple/15', borderColor: 'border-cyber-purple/30', glowColor: 'shadow-[0_0_12px_rgba(189,0,255,0.2)]', description: 'Remote Transmission Request. Dominant (0) for data frame.', editable: true },
-    { name: 'Identifier Extension', shortName: 'IDE', bits: 1, color: 'text-cyber-pink', bgColor: 'bg-cyber-pink/15', borderColor: 'border-cyber-pink/30', glowColor: 'shadow-[0_0_12px_rgba(255,0,153,0.2)]', description: 'Dominant (0) for standard frame, recessive (1) for extended.', editable: false },
-    { name: 'Reserved', shortName: 'r0', bits: 1, color: 'text-gray-400', bgColor: 'bg-gray-500/15', borderColor: 'border-gray-500/30', glowColor: '', description: 'Reserved bit. Must be dominant (0).', editable: false },
-    { name: 'Data Length Code', shortName: 'DLC', bits: 4, color: 'text-cyber-green', bgColor: 'bg-cyber-green/15', borderColor: 'border-cyber-green/30', glowColor: 'shadow-[0_0_12px_rgba(0,255,159,0.2)]', description: 'Number of data bytes (0-8 for Classic CAN).', editable: true },
-    { name: 'Data Field', shortName: 'DATA', bits: 64, color: 'text-cyan-300', bgColor: 'bg-cyan-500/10', borderColor: 'border-cyan-500/20', glowColor: 'shadow-[0_0_12px_rgba(6,182,212,0.15)]', description: 'Payload data (0-8 bytes based on DLC).', editable: true },
-    { name: 'CRC Sequence', shortName: 'CRC', bits: 15, color: 'text-orange-400', bgColor: 'bg-orange-500/15', borderColor: 'border-orange-500/30', glowColor: 'shadow-[0_0_12px_rgba(249,115,22,0.2)]', description: 'Cyclic Redundancy Check for error detection.', editable: false },
-    { name: 'CRC Delimiter', shortName: 'DEL', bits: 1, color: 'text-orange-300', bgColor: 'bg-orange-400/10', borderColor: 'border-orange-400/20', glowColor: '', description: 'Always recessive (1). Separates CRC from ACK.', editable: false },
-    { name: 'ACK Slot', shortName: 'ACK', bits: 1, color: 'text-emerald-400', bgColor: 'bg-emerald-500/15', borderColor: 'border-emerald-500/30', glowColor: 'shadow-[0_0_12px_rgba(16,185,129,0.2)]', description: 'Transmitter sends recessive; receivers overwrite with dominant.', editable: false },
-    { name: 'ACK Delimiter', shortName: 'DEL', bits: 1, color: 'text-emerald-300', bgColor: 'bg-emerald-400/10', borderColor: 'border-emerald-400/20', glowColor: '', description: 'Always recessive (1).', editable: false },
-    { name: 'End of Frame', shortName: 'EOF', bits: 7, color: 'text-red-400', bgColor: 'bg-red-500/10', borderColor: 'border-red-500/20', glowColor: '', description: '7 recessive bits marking end of frame.', editable: false },
-    { name: 'Inter-Frame Space', shortName: 'IFS', bits: 3, color: 'text-gray-500', bgColor: 'bg-gray-600/10', borderColor: 'border-gray-600/20', glowColor: '', description: '3 recessive bits minimum gap between frames.', editable: false },
+    { name: 'Start of Frame', shortName: 'SOF', bits: 1, color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10 dark:bg-amber-500/15', borderColor: 'border-amber-400/30 dark:border-amber-500/30', glowColor: 'shadow-[0_0_12px_rgba(245,158,11,0.15)] dark:shadow-[0_0_12px_rgba(245,158,11,0.2)]', description: 'Always dominant (0). Marks the beginning of a frame.', editable: false },
+    { name: 'Arbitration ID', shortName: 'ID', bits: 11, color: 'text-cyan-600 dark:text-cyber-blue', bgColor: 'bg-cyber-blue/10 dark:bg-cyber-blue/15', borderColor: 'border-cyber-blue/20 dark:border-cyber-blue/30', glowColor: 'shadow-[0_0_12px_rgba(0,243,255,0.15)] dark:shadow-[0_0_12px_rgba(0,243,255,0.2)]', description: 'Message priority identifier (11-bit). Lower ID = Higher priority.', editable: true },
+    { name: 'Remote Request', shortName: 'RTR', bits: 1, color: 'text-purple-600 dark:text-cyber-purple', bgColor: 'bg-cyber-purple/10 dark:bg-cyber-purple/15', borderColor: 'border-cyber-purple/20 dark:border-cyber-purple/30', glowColor: 'shadow-[0_0_12px_rgba(189,0,255,0.15)] dark:shadow-[0_0_12px_rgba(189,0,255,0.2)]', description: 'Remote Transmission Request. Dominant (0) for data frame.', editable: true },
+    { name: 'Identifier Extension', shortName: 'IDE', bits: 1, color: 'text-pink-600 dark:text-cyber-pink', bgColor: 'bg-cyber-pink/10 dark:bg-cyber-pink/15', borderColor: 'border-cyber-pink/20 dark:border-cyber-pink/30', glowColor: 'shadow-[0_0_12px_rgba(255,0,153,0.15)] dark:shadow-[0_0_12px_rgba(255,0,153,0.2)]', description: 'Dominant (0) for standard frame, recessive (1) for extended.', editable: false },
+    { name: 'Reserved', shortName: 'r0', bits: 1, color: 'text-gray-500 dark:text-gray-400', bgColor: 'bg-gray-500/10 dark:bg-gray-500/15', borderColor: 'border-gray-500/20 dark:border-gray-500/30', glowColor: '', description: 'Reserved bit. Must be dominant (0).', editable: false },
+    { name: 'Data Length Code', shortName: 'DLC', bits: 4, color: 'text-emerald-600 dark:text-cyber-green', bgColor: 'bg-cyber-green/10 dark:bg-cyber-green/15', borderColor: 'border-cyber-green/20 dark:border-cyber-green/30', glowColor: 'shadow-[0_0_12px_rgba(0,255,159,0.15)] dark:shadow-[0_0_12px_rgba(0,255,159,0.2)]', description: 'Number of data bytes (0-8 for Classic CAN).', editable: true },
+    { name: 'Data Field', shortName: 'DATA', bits: 64, color: 'text-cyan-700 dark:text-cyan-300', bgColor: 'bg-cyan-500/10 dark:bg-cyan-500/15', borderColor: 'border-cyan-500/20 dark:border-cyan-500/30', glowColor: 'shadow-[0_0_12px_rgba(6,182,212,0.1)] dark:shadow-[0_0_12px_rgba(6,182,212,0.15)]', description: 'Payload data (0-8 bytes based on DLC).', editable: true },
+    { name: 'CRC Sequence', shortName: 'CRC', bits: 15, color: 'text-orange-600 dark:text-orange-400', bgColor: 'bg-orange-500/10 dark:bg-orange-500/15', borderColor: 'border-orange-500/20 dark:border-orange-500/30', glowColor: 'shadow-[0_0_12px_rgba(249,115,22,0.15)] dark:shadow-[0_0_12px_rgba(249,115,22,0.2)]', description: 'Cyclic Redundancy Check for error detection.', editable: false },
+    { name: 'CRC Delimiter', shortName: 'DEL', bits: 1, color: 'text-orange-500 dark:text-orange-300', bgColor: 'bg-orange-400/10', borderColor: 'border-orange-400/20', glowColor: '', description: 'Always recessive (1). Separates CRC from ACK.', editable: false },
+    { name: 'ACK Slot', shortName: 'ACK', bits: 1, color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10 dark:bg-emerald-500/15', borderColor: 'border-emerald-500/20 dark:border-emerald-500/30', glowColor: 'shadow-[0_0_12px_rgba(16,185,129,0.15)] dark:shadow-[0_0_12px_rgba(16,185,129,0.2)]', description: 'Transmitter sends recessive; receivers overwrite with dominant.', editable: false },
+    { name: 'ACK Delimiter', shortName: 'DEL', bits: 1, color: 'text-emerald-500 dark:text-emerald-300', bgColor: 'bg-emerald-400/10', borderColor: 'border-emerald-400/20', glowColor: '', description: 'Always recessive (1).', editable: false },
+    { name: 'End of Frame', shortName: 'EOF', bits: 7, color: 'text-red-600 dark:text-red-400', bgColor: 'bg-red-500/10 dark:bg-red-500/15', borderColor: 'border-red-500/20 dark:border-red-500/30', glowColor: '', description: '7 recessive bits marking end of frame.', editable: false },
+    { name: 'Inter-Frame Space', shortName: 'IFS', bits: 3, color: 'text-gray-500', bgColor: 'bg-gray-600/10', borderColor: 'border-gray-500/20 dark:border-gray-600/20', glowColor: '', description: '3 recessive bits minimum gap between frames.', editable: false },
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -201,7 +201,7 @@ export default function InspectorPage() {
     }, [frameBits]);
 
     return (
-        <div className="min-h-screen py-20 bg-dark-950 font-sans">
+        <div className="min-h-screen py-20 bg-white dark:bg-dark-950 font-sans transition-colors duration-300">
             <Container variant="wide">
                 <div className="relative z-10 space-y-10">
 
@@ -227,7 +227,7 @@ export default function InspectorPage() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="text-gray-400 max-w-3xl font-medium"
+                            className="text-gray-600 dark:text-gray-400 max-w-3xl font-medium"
                         >
                             Build a CAN frame from scratch. See every field, every bit, and understand exactly how data travels on the bus.
                         </motion.p>
@@ -238,23 +238,23 @@ export default function InspectorPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-6"
+                        className="p-6 sm:p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 space-y-6 transition-colors duration-300"
                     >
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                            <h2 className="text-lg font-black text-white uppercase tracking-widest flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-cyber-blue/20 border border-cyber-blue/30 flex items-center justify-center">
+                            <h2 className="text-lg font-black text-dark-950 dark:text-white uppercase tracking-widest flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-cyber-blue/10 dark:bg-cyber-blue/20 border border-cyber-blue/20 dark:border-cyber-blue/30 flex items-center justify-center">
                                     <Layers size={16} className="text-cyber-blue" />
                                 </div>
                                 Frame Builder
                             </h2>
                             <div className="flex items-center gap-3">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                                     {totalBits} bits
                                     {showBitStuffing && ` / ${totalStuffedBits} stuffed`}
                                 </span>
                                 <button
                                     onClick={copyFrameHex}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-bold text-gray-300 border border-white/5 transition-all"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg text-[10px] font-bold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/5 transition-all shadow-sm"
                                 >
                                     {copied ? <Check size={10} className="text-cyber-green" /> : <Copy size={10} />}
                                     {copied ? 'Copied' : 'Copy Hex'}
@@ -266,22 +266,22 @@ export default function InspectorPage() {
                         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
                             {/* Arb ID */}
                             <div className="space-y-2">
-                                <label htmlFor="inspector-arb-id" className="text-[10px] font-black text-cyber-blue uppercase tracking-widest">Arbitration ID</label>
+                                <label htmlFor="inspector-arb-id" className="text-[10px] font-black text-cyan-600 dark:text-cyber-blue uppercase tracking-widest">Arbitration ID</label>
                                 <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">0x</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 dark:text-gray-500 font-mono">0x</span>
                                     <input
                                         id="inspector-arb-id"
                                         type="text"
                                         value={arbId}
                                         onChange={e => setArbId(e.target.value.replace(/[^0-9a-fA-F]/g, '').slice(0, 3))}
                                         maxLength={3}
-                                        className="w-full pl-8 pr-3 py-2.5 bg-dark-800 border border-cyber-blue/20 rounded-xl text-sm font-mono text-white focus:border-cyber-blue/60 focus:outline-none focus:ring-1 focus:ring-cyber-blue/30 transition-all"
+                                        className="w-full pl-8 pr-3 py-2.5 bg-white dark:bg-dark-800 border border-gray-200 dark:border-cyber-blue/20 rounded-xl text-sm font-mono text-dark-950 dark:text-white focus:border-cyan-500/60 dark:focus:border-cyber-blue/60 focus:outline-none focus:ring-1 focus:ring-cyber-blue/30 transition-all font-bold"
                                     />
                                 </div>
                             </div>
 
                             {/* RTR */}
-                            <div className="space-y-2">
+                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-cyber-purple uppercase tracking-widest">RTR</label>
                                 <button
                                     onClick={() => setRtr(r => r === 0 ? 1 : 0)}
@@ -289,7 +289,7 @@ export default function InspectorPage() {
                                         "w-full py-2.5 rounded-xl text-sm font-bold border transition-all",
                                         rtr === 0
                                             ? "bg-cyber-purple/10 border-cyber-purple/30 text-cyber-purple"
-                                            : "bg-cyber-purple/25 border-cyber-purple/50 text-white shadow-[0_0_15px_rgba(189,0,255,0.15)]"
+                                            : "bg-cyber-purple/90 dark:bg-cyber-purple/25 border-cyber-purple/50 text-white shadow-[0_4px_12px_rgba(189,0,255,0.2)] dark:shadow-[0_0_15px_rgba(189,0,255,0.15)]"
                                     )}
                                 >
                                     {rtr === 0 ? 'Data Frame' : 'Remote Frame'}
@@ -303,7 +303,7 @@ export default function InspectorPage() {
                                     id="inspector-dlc"
                                     value={dlc}
                                     onChange={e => setDlc(Number(e.target.value))}
-                                    className="w-full py-2.5 px-3 bg-dark-800 border border-cyber-green/20 rounded-xl text-sm font-mono text-white focus:border-cyber-green/60 focus:outline-none appearance-none cursor-pointer"
+                                    className="w-full py-2.5 px-3 bg-white dark:bg-dark-800 border border-gray-200 dark:border-cyber-green/20 rounded-xl text-sm font-mono text-dark-950 dark:text-white focus:border-cyber-green/60 focus:outline-none appearance-none cursor-pointer font-bold"
                                 >
                                     {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(n => (
                                         <option key={n} value={n}>{n} byte{n !== 1 ? 's' : ''}</option>
@@ -314,16 +314,16 @@ export default function InspectorPage() {
                             {/* Data Bytes */}
                             {Array.from({ length: Math.min(dlc, 8) }).map((_, i) => (
                                 <div key={i} className="space-y-2">
-                                    <label htmlFor={`inspector-byte-${i}`} className="text-[10px] font-black text-cyan-400 uppercase tracking-widest">Byte {i}</label>
+                                    <label htmlFor={`inspector-byte-${i}`} className="text-[10px] font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-widest">Byte {i}</label>
                                     <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">0x</span>
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 dark:text-gray-500 font-mono">0x</span>
                                         <input
                                             id={`inspector-byte-${i}`}
                                             type="text"
                                             value={dataBytes[i]}
                                             onChange={e => handleDataByteChange(i, e.target.value)}
                                             maxLength={2}
-                                            className="w-full pl-8 pr-3 py-2.5 bg-dark-800 border border-cyan-500/15 rounded-xl text-sm font-mono text-white focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-all"
+                                            className="w-full pl-8 pr-3 py-2.5 bg-white dark:bg-dark-800 border border-gray-200 dark:border-cyan-500/15 rounded-xl text-sm font-mono text-dark-950 dark:text-white focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-all font-bold"
                                         />
                                     </div>
                                 </div>
@@ -336,18 +336,18 @@ export default function InspectorPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-6"
+                        className="p-6 sm:p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 space-y-6"
                     >
                         <div className="flex items-center justify-between">
-                            <h2 className="text-lg font-black text-white uppercase tracking-widest flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-cyber-green/20 border border-cyber-green/30 flex items-center justify-center">
+                            <h2 className="text-lg font-black text-dark-950 dark:text-white uppercase tracking-widest flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-cyber-green/10 dark:bg-cyber-green/20 border border-cyber-green/20 dark:border-cyber-green/30 flex items-center justify-center">
                                     <Binary size={16} className="text-cyber-green" />
                                 </div>
                                 Frame Structure
                             </h2>
-                            <button
+                             <button
                                 onClick={() => setShowFrameDetails(!showFrameDetails)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-bold text-gray-400 border border-white/5 transition-all"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg text-[10px] font-bold text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-white/5 transition-all shadow-sm"
                             >
                                 {showFrameDetails ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                                 Details
@@ -356,7 +356,7 @@ export default function InspectorPage() {
 
                         {/* Color-coded frame bar */}
                         <div className="space-y-3">
-                            <div className="flex rounded-2xl overflow-hidden border border-white/5 h-14 sm:h-16">
+                            <div className="flex rounded-2xl overflow-hidden border border-gray-200 dark:border-white/5 h-14 sm:h-16">
                                 {fieldSegments.map((seg, i) => {
                                     const widthPercent = (seg.bitValues.length / totalBits) * 100;
                                     const isHovered = hoveredField === i;
@@ -381,8 +381,8 @@ export default function InspectorPage() {
                                                     <div className={cn("text-[9px] sm:text-[10px] font-black uppercase tracking-wider", seg.field.color)}>
                                                         {seg.field.shortName}
                                                     </div>
-                                                    {widthPercent > 6 && (
-                                                        <div className="text-[8px] text-gray-500 font-mono">
+                                                     {widthPercent > 6 && (
+                                                        <div className="text-[8px] text-gray-600 dark:text-gray-500 font-mono">
                                                             {seg.bitValues.length}b
                                                         </div>
                                                     )}
@@ -396,13 +396,13 @@ export default function InspectorPage() {
                             {/* Field legend */}
                             <div className="flex flex-wrap gap-2">
                                 {fieldSegments.map((seg, i) => (
-                                    <button
+                                         <button
                                         key={i}
                                         className={cn(
-                                            "flex items-center gap-1.5 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border transition-all",
+                                            "flex items-center gap-1.5 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border transition-all shadow-sm",
                                             hoveredField === i || selectedField === i
                                                 ? cn(seg.field.bgColor, seg.field.borderColor, seg.field.color)
-                                                : "bg-white/[0.02] border-white/5 text-gray-500 hover:text-gray-300"
+                                                : "bg-white dark:bg-white/[0.02] border-gray-200 dark:border-white/5 text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300"
                                         )}
                                         onMouseEnter={() => setHoveredField(i)}
                                         onMouseLeave={() => setHoveredField(null)}
@@ -410,7 +410,7 @@ export default function InspectorPage() {
                                     >
                                         <div className={cn("w-2 h-2 rounded-full", seg.field.bgColor, seg.field.borderColor, "border")} />
                                         {seg.field.shortName}
-                                        <span className="text-gray-600 font-mono">{seg.bitValues.length}</span>
+                                        <span className="text-gray-600 dark:text-gray-400 font-mono">{seg.bitValues.length}</span>
                                     </button>
                                 ))}
                             </div>
@@ -436,22 +436,22 @@ export default function InspectorPage() {
                                                 <h4 className={cn("text-sm font-black uppercase tracking-widest", fieldSegments[selectedField].field.color)}>
                                                     {fieldSegments[selectedField].field.name}
                                                 </h4>
-                                                <p className="text-xs text-gray-400 mt-1">
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                                                     {fieldSegments[selectedField].field.description}
                                                 </p>
                                             </div>
-                                            <div className="flex gap-3">
-                                                <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/5 text-center">
-                                                    <div className="text-[9px] text-gray-500 font-bold uppercase">Bits</div>
-                                                    <div className="text-lg font-mono font-black text-white">{fieldSegments[selectedField].bitValues.length}</div>
+                                             <div className="flex gap-3">
+                                                <div className="px-3 py-2 rounded-xl bg-white/60 dark:bg-black/30 border border-gray-200 dark:border-white/5 text-center shadow-sm">
+                                                    <div className="text-[9px] text-gray-600 dark:text-gray-500 font-bold uppercase">Bits</div>
+                                                    <div className="text-lg font-mono font-black text-dark-950 dark:text-white">{fieldSegments[selectedField].bitValues.length}</div>
                                                 </div>
-                                                <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/5 text-center">
-                                                    <div className="text-[9px] text-gray-500 font-bold uppercase">Hex</div>
-                                                    <div className="text-lg font-mono font-black text-white">0x{bitsToHex(fieldSegments[selectedField].bitValues)}</div>
+                                                <div className="px-3 py-2 rounded-xl bg-white/60 dark:bg-black/30 border border-gray-200 dark:border-white/5 text-center shadow-sm">
+                                                    <div className="text-[9px] text-gray-600 dark:text-gray-500 font-bold uppercase">Hex</div>
+                                                    <div className="text-lg font-mono font-black text-dark-950 dark:text-white">0x{bitsToHex(fieldSegments[selectedField].bitValues)}</div>
                                                 </div>
-                                                <div className="px-3 py-2 rounded-xl bg-black/30 border border-white/5 text-center">
-                                                    <div className="text-[9px] text-gray-500 font-bold uppercase">Dec</div>
-                                                    <div className="text-lg font-mono font-black text-white">{parseInt(bitsToHex(fieldSegments[selectedField].bitValues), 16)}</div>
+                                                <div className="px-3 py-2 rounded-xl bg-white/60 dark:bg-black/30 border border-gray-200 dark:border-white/5 text-center shadow-sm">
+                                                    <div className="text-[9px] text-gray-600 dark:text-gray-500 font-bold uppercase">Dec</div>
+                                                    <div className="text-lg font-mono font-black text-dark-950 dark:text-white">{parseInt(bitsToHex(fieldSegments[selectedField].bitValues), 16)}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -462,10 +462,10 @@ export default function InspectorPage() {
 
                         {/* Bit Grid */}
                         <div className="space-y-3">
-                            <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                            <div className="text-[10px] font-black text-gray-500 dark:text-gray-500 uppercase tracking-widest">
                                 Bit-Level View ({totalBits} bits)
                             </div>
-                            <div className="p-4 sm:p-6 bg-black/40 rounded-2xl border border-white/5 overflow-x-auto">
+                            <div className="p-4 sm:p-6 bg-gray-100 dark:bg-black/40 rounded-2xl border border-gray-200 dark:border-white/5 overflow-x-auto shadow-inner transition-colors">
                                 <div className="flex flex-wrap gap-[3px] min-w-0">
                                     {frameBits.map((bit, i) => {
                                         const field = STANDARD_FRAME_FIELDS[bit.fieldIndex];
@@ -474,13 +474,13 @@ export default function InspectorPage() {
                                         return (
                                             <div
                                                 key={i}
-                                                className={cn(
+                                                 className={cn(
                                                     "w-6 h-8 sm:w-7 sm:h-9 rounded flex flex-col items-center justify-center font-mono text-[10px] sm:text-xs font-bold transition-all duration-150 border cursor-default",
                                                     isFieldHovered || isFieldSelected
-                                                        ? cn(field.bgColor, field.borderColor, field.color, "brightness-125")
+                                                        ? cn(field.bgColor, field.borderColor, field.color, "brightness-125 saturate-150")
                                                         : bit.value === 1
-                                                            ? cn("bg-white/[0.06] border-white/[0.08] text-white/70")
-                                                            : cn("bg-dark-900 border-white/[0.03] text-gray-600"),
+                                                            ? cn("bg-gray-100/80 dark:bg-white/[0.06] border-gray-200 dark:border-white/[0.08] text-dark-950/80 dark:text-white/70 shadow-sm")
+                                                            : cn("bg-white dark:bg-dark-900 border-gray-200 dark:border-white/[0.03] text-gray-400 dark:text-gray-600 shadow-sm"),
                                                 )}
                                                 onMouseEnter={() => {
                                                     const idx = fieldSegments.findIndex(s => s.field === field);
@@ -506,10 +506,10 @@ export default function InspectorPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5 }}
-                            className="p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-6"
+                            className="p-6 sm:p-8 rounded-3xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 space-y-6 transition-colors duration-300"
                         >
                             <div className="flex items-center justify-between">
-                                <h3 className="text-base font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                <h3 className="text-base font-black text-dark-950 dark:text-white uppercase tracking-widest flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-cyber-purple/20 border border-cyber-purple/30 flex items-center justify-center">
                                         <Zap size={16} className="text-cyber-purple" />
                                     </div>
@@ -520,8 +520,8 @@ export default function InspectorPage() {
                                     className={cn(
                                         "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all",
                                         showBitStuffing
-                                            ? "bg-cyber-purple/15 border-cyber-purple/30 text-cyber-purple"
-                                            : "bg-white/5 border-white/5 text-gray-500"
+                                            ? "bg-cyber-purple/15 border-cyber-purple/30 text-purple-700 dark:text-cyber-purple"
+                                            : "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/5 text-gray-500"
                                     )}
                                 >
                                     {showBitStuffing ? 'Active' : 'Inactive'}
@@ -531,26 +531,26 @@ export default function InspectorPage() {
                             {showBitStuffing && (
                                 <>
                                     {/* Rule callout */}
-                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-cyber-purple/5 border border-cyber-purple/15">
+                                     <div className="flex items-start gap-3 p-4 rounded-xl bg-cyber-purple/5 border border-cyber-purple/15 shadow-sm">
                                         <AlertCircle size={14} className="text-cyber-purple shrink-0 mt-0.5" />
-                                        <div className="text-[11px] text-gray-400">
+                                        <div className="text-[11px] text-gray-600 dark:text-gray-400">
                                             <span className="font-bold text-cyber-purple">Rule:</span> After 5 consecutive identical bits, a complementary bit is inserted to maintain synchronization.
                                         </div>
                                     </div>
 
                                     {/* Stats */}
-                                    <div className="grid grid-cols-3 gap-3">
-                                        <div className="p-3 rounded-xl bg-black/30 border border-white/5 text-center">
-                                            <div className="text-[9px] text-gray-500 font-bold uppercase">Original</div>
-                                            <div className="text-xl font-mono font-black text-white">{stuffingResult.stuffed.length - stuffingResult.stuffIndices.length}</div>
+                                     <div className="grid grid-cols-3 gap-3">
+                                        <div className="p-3 rounded-xl bg-white dark:bg-black/30 border border-gray-200 dark:border-white/5 text-center shadow-sm">
+                                            <div className="text-[9px] text-gray-600 dark:text-gray-500 font-bold uppercase">Original</div>
+                                            <div className="text-xl font-mono font-black text-dark-950 dark:text-white">{stuffingResult.stuffed.length - stuffingResult.stuffIndices.length}</div>
                                         </div>
-                                        <div className="p-3 rounded-xl bg-cyber-purple/10 border border-cyber-purple/20 text-center">
+                                        <div className="p-3 rounded-xl bg-cyber-purple/10 border border-cyber-purple/20 text-center shadow-sm">
                                             <div className="text-[9px] text-cyber-purple font-bold uppercase">Stuffed</div>
-                                            <div className="text-xl font-mono font-black text-cyber-purple">{stuffingResult.stuffIndices.length}</div>
+                                            <div className="text-xl font-mono font-black text-cyber-purple font-black">{stuffingResult.stuffIndices.length}</div>
                                         </div>
-                                        <div className="p-3 rounded-xl bg-black/30 border border-white/5 text-center">
-                                            <div className="text-[9px] text-gray-500 font-bold uppercase">Total</div>
-                                            <div className="text-xl font-mono font-black text-white">{stuffingResult.stuffed.length}</div>
+                                        <div className="p-3 rounded-xl bg-white dark:bg-black/30 border border-gray-200 dark:border-white/5 text-center shadow-sm">
+                                            <div className="text-[9px] text-gray-600 dark:text-gray-500 font-bold uppercase">Total</div>
+                                            <div className="text-xl font-mono font-black text-dark-950 dark:text-white">{stuffingResult.stuffed.length}</div>
                                         </div>
                                     </div>
 
@@ -559,20 +559,20 @@ export default function InspectorPage() {
                                         <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                             Stuffed Bitstream
                                         </div>
-                                        <div className="p-4 bg-black/40 rounded-2xl border border-white/5 max-h-48 overflow-y-auto">
+                                        <div className="p-4 bg-gray-100 dark:bg-black/40 rounded-2xl border border-gray-200 dark:border-white/5 max-h-48 overflow-y-auto shadow-inner transition-colors">
                                             <div className="flex flex-wrap gap-[3px]">
                                                 {stuffingResult.stuffed.map((bit, i) => {
                                                     const isStuffBit = stuffingResult.stuffIndices.includes(i);
                                                     return (
-                                                        <div
+                                                         <div
                                                             key={i}
                                                             className={cn(
-                                                                "w-6 h-7 rounded flex items-center justify-center font-mono text-[10px] font-bold transition-all border",
+                                                                "w-6 h-7 rounded flex items-center justify-center font-mono text-[10px] font-bold transition-all border shadow-sm",
                                                                 isStuffBit
-                                                                    ? "bg-cyber-purple/25 border-cyber-purple/40 text-cyber-purple shadow-[0_0_10px_rgba(189,0,255,0.25)] ring-1 ring-cyber-purple/30"
+                                                                    ? "bg-cyber-purple/90 dark:bg-cyber-purple/25 border-cyber-purple/40 text-white dark:text-cyber-purple shadow-[0_2px_8px_rgba(189,0,255,0.3)] dark:shadow-[0_0_10px_rgba(189,0,255,0.25)] ring-1 ring-cyber-purple/30"
                                                                     : bit === 1
-                                                                        ? "bg-white/[0.06] border-white/[0.08] text-white/60"
-                                                                        : "bg-dark-900 border-white/[0.03] text-gray-600"
+                                                                        ? "bg-gray-200/50 dark:bg-white/[0.06] border-gray-200 dark:border-white/[0.08] text-dark-950/80 dark:text-white/60"
+                                                                        : "bg-white dark:bg-dark-900 border-gray-100 dark:border-white/[0.03] text-gray-400 dark:text-gray-600"
                                                             )}
                                                         >
                                                             {bit}
@@ -591,16 +591,16 @@ export default function InspectorPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6 }}
-                            className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-cyber-blue/[0.03] to-transparent border border-cyber-blue/10 space-y-6"
+                            className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-cyber-blue/[0.03] to-transparent border border-gray-200 dark:border-cyber-blue/10 space-y-6 transition-colors duration-300"
                         >
                             <div className="flex items-center justify-between">
-                                <h3 className="text-base font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                <h3 className="text-base font-black text-dark-950 dark:text-white uppercase tracking-widest flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-cyber-blue/20 border border-cyber-blue/30 flex items-center justify-center">
                                         <Hexagon size={16} className="text-cyber-blue" />
                                     </div>
                                     CRC Engine
                                 </h3>
-                                <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
+                                 <div className="flex bg-gray-100 dark:bg-black/40 p-1 rounded-xl border border-gray-200 dark:border-white/5 shadow-inner">
                                     {(['CRC15', 'CRC17', 'CRC21'] as const).map(type => (
                                         <button
                                             key={type}
@@ -608,8 +608,8 @@ export default function InspectorPage() {
                                             className={cn(
                                                 "px-3 py-1.5 rounded-lg text-[10px] font-black transition-all uppercase",
                                                 crcType === type
-                                                    ? "bg-cyber-blue text-black shadow-[0_0_10px_rgba(0,243,255,0.3)]"
-                                                    : "text-gray-500 hover:text-white"
+                                                    ? "bg-cyber-blue text-dark-950 shadow-[0_2px_8px_rgba(0,243,255,0.3)] dark:shadow-[0_0_10px_rgba(0,243,255,0.3)]"
+                                                    : "text-gray-500 hover:text-dark-950 dark:hover:text-white"
                                             )}
                                         >
                                             {type}
@@ -618,8 +618,8 @@ export default function InspectorPage() {
                                 </div>
                             </div>
 
-                            {/* Polynomial info */}
-                            <div className="p-4 rounded-xl bg-black/20 border border-white/5 space-y-3">
+                             {/* Polynomial info */}
+                            <div className="p-4 rounded-xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/5 space-y-3 shadow-sm transition-colors">
                                 <div className="flex justify-between items-center text-xs">
                                     <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Polynomial</span>
                                     <span className="text-cyber-blue font-mono font-bold text-sm">
@@ -628,23 +628,23 @@ export default function InspectorPage() {
                                 </div>
                                 <div className="flex justify-between items-center text-xs">
                                     <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Standard</span>
-                                    <span className="text-gray-300 font-medium">
+                                    <span className="text-gray-700 dark:text-gray-300 font-medium font-sans">
                                         {crcType === 'CRC15' ? 'Classic CAN (ISO 11898)' : crcType === 'CRC17' ? 'CAN FD (\u226416B payload)' : 'CAN FD (>16B payload)'}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center text-xs">
                                     <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Bit Width</span>
-                                    <span className="text-gray-300 font-mono font-medium">
+                                    <span className="text-gray-700 dark:text-gray-300 font-mono font-medium">
                                         {crcType === 'CRC15' ? '15' : crcType === 'CRC17' ? '17' : '21'} bits
                                     </span>
                                 </div>
                             </div>
 
                             {/* CRC Result */}
-                            <div className="flex flex-col items-center justify-center p-8 bg-cyber-blue/[0.06] rounded-2xl border border-cyber-blue/20 relative overflow-hidden group">
-                                <RefreshCw className="absolute top-3 right-3 text-cyber-blue/10 group-hover:rotate-180 transition-transform duration-700" size={32} />
-                                <div className="text-[10px] font-black text-cyber-blue uppercase tracking-[0.3em] mb-3">Calculated CRC</div>
-                                <div className="text-4xl sm:text-5xl font-mono text-white font-black tracking-tight">
+                             <div className="flex flex-col items-center justify-center p-8 bg-cyan-500/5 dark:bg-cyber-blue/[0.06] rounded-2xl border border-cyan-500/20 dark:border-cyber-blue/20 relative overflow-hidden group shadow-inner transition-colors">
+                                <RefreshCw className="absolute top-3 right-3 text-cyan-500/10 dark:text-cyber-blue/5 group-hover:rotate-180 transition-transform duration-700" size={32} />
+                                <div className="text-[10px] font-black text-cyan-600 dark:text-cyber-blue uppercase tracking-[0.3em] mb-3">Calculated CRC</div>
+                                <div className="text-4xl sm:text-5xl font-mono text-dark-950 dark:text-white font-black tracking-tight">
                                     0x{crcValue.toString(16).toUpperCase().padStart(crcType === 'CRC15' ? 4 : crcType === 'CRC17' ? 5 : 6, '0')}
                                 </div>
                                 <div className="text-[10px] text-gray-500 font-mono mt-2">
@@ -653,19 +653,19 @@ export default function InspectorPage() {
                             </div>
 
                             {/* CRC bits visualized */}
-                            <div className="space-y-2">
+                             <div className="space-y-2">
                                 <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest">CRC Bit Sequence</div>
-                                <div className="flex flex-wrap gap-[3px] p-4 bg-black/30 rounded-xl border border-white/5">
+                                <div className="flex flex-wrap gap-[3px] p-4 bg-gray-100/50 dark:bg-black/30 rounded-xl border border-gray-200 dark:border-white/5 shadow-inner">
                                     {crcValue.toString(2).padStart(
                                         crcType === 'CRC15' ? 15 : crcType === 'CRC17' ? 17 : 21, '0'
                                     ).split('').map((bit, i) => (
                                         <div
                                             key={i}
                                             className={cn(
-                                                "w-6 h-7 rounded flex items-center justify-center font-mono text-[10px] font-bold border",
+                                                "w-6 h-7 rounded flex items-center justify-center font-mono text-[10px] font-bold border shadow-sm transition-colors",
                                                 bit === '1'
-                                                    ? "bg-orange-500/15 border-orange-500/25 text-orange-400"
-                                                    : "bg-dark-900 border-white/[0.03] text-gray-600"
+                                                    ? "bg-orange-500/10 dark:bg-orange-500/15 border-orange-500/20 dark:border-orange-500/25 text-orange-600 dark:text-orange-400"
+                                                    : "bg-white dark:bg-dark-900 border-gray-200 dark:border-white/[0.03] text-gray-400 dark:text-gray-600"
                                             )}
                                         >
                                             {bit}
@@ -717,34 +717,34 @@ export default function InspectorPage() {
                                 desc: 'Nodes track TEC/REC counters. Error Active → Error Passive → Bus Off state machine.'
                             },
                         ].map((card, i) => (
-                            <div
+                             <div
                                 key={i}
                                 className={cn(
-                                    "p-5 rounded-2xl border space-y-3 transition-all hover:scale-[1.02]",
+                                    "p-5 rounded-2xl border space-y-3 transition-all hover:scale-[1.02] shadow-sm",
                                     card.bgColor, card.borderColor
                                 )}
                             >
                                 <div className={cn("flex items-center gap-2", card.iconColor)}>
                                     {card.icon}
-                                    <span className="text-xs font-black uppercase tracking-widest text-white">{card.title}</span>
+                                    <span className="text-xs font-black uppercase tracking-widest text-dark-950 dark:text-white">{card.title}</span>
                                 </div>
-                                <p className="text-[11px] text-gray-400 leading-relaxed">{card.desc}</p>
+                                <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed font-medium">{card.desc}</p>
                             </div>
                         ))}
                     </motion.div>
 
                     {/* ── Navigation ───────────────────────────────────── */}
-                    <div className="flex flex-col sm:flex-row gap-4">
+                     <div className="flex flex-col sm:flex-row gap-4">
                         <button
                             onClick={() => navigate('/signals')}
-                            className="flex-1 p-5 rounded-2xl bg-gradient-to-r from-cyber-green/15 to-cyber-blue/15 border border-cyber-green/20 text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.01] active:scale-[0.99] transition-all"
+                            className="flex-1 p-5 rounded-2xl bg-gradient-to-r from-cyber-green/90 to-cyber-blue/90 dark:from-cyber-green/15 dark:to-cyber-blue/15 border border-cyber-green/20 text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg"
                         >
                             <span className="text-sm italic">Signals Lab</span>
                             <ArrowRight className="group-hover:translate-x-2 transition-transform" size={18} />
                         </button>
                         <button
                             onClick={() => navigate('/arbitration')}
-                            className="flex-1 p-5 rounded-2xl bg-gradient-to-r from-cyber-purple/15 to-cyber-pink/15 border border-cyber-purple/20 text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.01] active:scale-[0.99] transition-all"
+                            className="flex-1 p-5 rounded-2xl bg-gradient-to-r from-cyber-purple/90 to-cyber-pink/90 dark:from-cyber-purple/15 dark:to-cyber-pink/15 border border-cyber-purple/20 text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg"
                         >
                             <span className="text-sm italic">Arbitration Lab</span>
                             <ArrowRight className="group-hover:translate-x-2 transition-transform" size={18} />

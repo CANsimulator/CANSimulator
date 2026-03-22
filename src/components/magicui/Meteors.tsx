@@ -13,13 +13,20 @@ export const Meteors = ({ number = 20, className }: MeteorsProps) => {
 
     useEffect(() => {
         if (shouldReduceMotion) return;
-        const styles = [...new Array(number)].map(() => ({
-            top: -5,
-            left: Math.floor(Math.random() * window.innerWidth) + "px",
-            animationDelay: Math.random() * 1 + 0.2 + "s",
-            animationDuration: Math.floor(Math.random() * 8 + 2) + "s",
-        }));
-        setMeteorStyles(styles);
+        
+        const generateStyles = () => {
+            const styles = [...new Array(number)].map(() => ({
+                top: -5,
+                left: Math.floor(Math.random() * window.innerWidth) + "px",
+                animationDelay: Math.random() * 1 + 0.2 + "s",
+                animationDuration: Math.floor(Math.random() * 8 + 2) + "s",
+            }));
+            setMeteorStyles(styles);
+        };
+
+        generateStyles();
+        window.addEventListener('resize', generateStyles);
+        return () => window.removeEventListener('resize', generateStyles);
     }, [number, shouldReduceMotion]);
 
     if (shouldReduceMotion) return null;

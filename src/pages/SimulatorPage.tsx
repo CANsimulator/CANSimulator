@@ -4,47 +4,11 @@ import { BorderBeam } from '../components/ui/BorderBeam';
 import { PowerSupplyDashboard } from '../components/power/PowerSupplyDashboard';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Gauge, Rocket, Zap, Swords, ChevronRight } from 'lucide-react';
+import { Swords, ChevronRight } from 'lucide-react';
 
 export default function SimulatorPage() {
     return (
         <div className="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-8">
-            {/* Status Bar */}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="glass-panel p-4 flex items-center gap-4 group relative overflow-hidden">
-                    <div className="w-12 h-12 rounded-lg bg-cyber-blue/10 flex items-center justify-center text-cyber-blue text-2xl">
-                        <Gauge size={24} aria-hidden="true" />
-                    </div>
-                    <div>
-                        <p className="text-[10px] text-gray-500 uppercase font-mono">Baud Rate</p>
-                        <p className="text-lg font-bold">500 Kbps</p>
-                    </div>
-                    <BorderBeam duration={3} size={100} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="glass-panel p-4 flex items-center gap-4 group relative overflow-hidden">
-                    <div className="w-12 h-12 rounded-lg bg-cyber-purple/10 flex items-center justify-center text-cyber-purple text-2xl">
-                        <Rocket size={24} aria-hidden="true" />
-                    </div>
-                    <div>
-                        <p className="text-[10px] text-gray-500 uppercase font-mono">CAN FD Mode</p>
-                        <p className="text-lg font-bold">Enabled (2 Mbps)</p>
-                    </div>
-                    <BorderBeam duration={4} size={100} className="opacity-0 group-hover:opacity-100 transition-opacity" colorFrom="#bd00ff" colorTo="#ff0099" />
-                </div>
-                <div className="glass-panel p-4 flex items-center gap-4 group relative overflow-hidden">
-                    <div className="w-12 h-12 rounded-lg bg-cyber-green/10 flex items-center justify-center text-cyber-green text-xl">
-                        <Zap size={24} aria-hidden="true" />
-                    </div>
-                    <div>
-                        <p className="text-[10px] text-gray-500 uppercase font-mono">Bus Status</p>
-                        <p className="text-lg font-bold flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-cyber-green shadow-glow animate-pulse inline-block" />
-                            Online
-                        </p>
-                    </div>
-                </div>
-            </section>
-
             {/* Main Grid */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Left: controls */}
@@ -59,8 +23,8 @@ export default function SimulatorPage() {
                                 { label: 'Diag Gateway', id: '0x7DF' },
                             ].map(n => (
                                 <div key={n.id} className="flex items-center justify-between text-xs">
-                                    <span className="text-gray-400">{n.label}</span>
-                                    <span className="text-cyber-green font-mono">{n.id}</span>
+                                    <span className="text-gray-600 dark:text-gray-400 font-bold">{n.label}</span>
+                                    <span className="text-cyber-green font-mono font-black">{n.id}</span>
                                 </div>
                             ))}
                         </div>
@@ -82,8 +46,8 @@ export default function SimulatorPage() {
                                     <Swords size={24} aria-hidden="true" />
                                 </div>
                                 <div>
-                                    <h4 className="text-sm font-bold text-cyber-purple uppercase tracking-tight">Arbitration Arena</h4>
-                                    <p className="text-xs text-gray-400">See CAN bus arbitration in action bit-by-bit</p>
+                                    <h4 className="text-sm font-black text-cyber-purple uppercase tracking-tight">Arbitration Arena</h4>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 font-bold">See CAN bus arbitration in action bit-by-bit</p>
                                 </div>
                             </div>
                             <div className="text-cyber-purple group-hover:translate-x-1 transition-transform">

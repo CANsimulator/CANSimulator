@@ -91,23 +91,23 @@ function getHints(state: CANControllerState, tec: number, rec: number): Hint[] {
 const SEVERITY_STYLES = {
     info: {
         border: 'border-cyber-blue/30',
-        bg: 'bg-cyber-blue/5',
-        icon: 'text-cyber-blue',
-        title: 'text-cyber-blue',
+        bg: 'bg-cyber-blue/5 dark:bg-cyber-blue/5',
+        icon: 'text-cyan-600 dark:text-cyber-blue',
+        title: 'text-cyan-700 dark:text-cyber-blue',
         accentBar: 'bg-cyber-blue',
     },
     warning: {
         border: 'border-yellow-500/30',
-        bg: 'bg-yellow-500/5',
-        icon: 'text-yellow-400',
-        title: 'text-yellow-400',
+        bg: 'bg-yellow-500/5 dark:bg-yellow-500/5',
+        icon: 'text-yellow-600 dark:text-yellow-400',
+        title: 'text-yellow-700 dark:text-yellow-400',
         accentBar: 'bg-yellow-500',
     },
     critical: {
         border: 'border-red-500/30',
-        bg: 'bg-red-500/5',
-        icon: 'text-red-400',
-        title: 'text-red-400',
+        bg: 'bg-red-500/5 dark:bg-red-500/5',
+        icon: 'text-red-600 dark:text-red-400',
+        title: 'text-red-700 dark:text-red-400',
         accentBar: 'bg-red-500',
     },
 };
@@ -166,15 +166,15 @@ export const TroubleshootingHints: React.FC<TroubleshootingHintsProps> = ({ stat
                                         {hint.severity}
                                     </span>
                                 </div>
-                                <p className="text-[10px] leading-relaxed text-gray-400 font-medium">
+                                 <p className="text-[10px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
                                     {hint.message}
                                 </p>
                                 {hint.action && (
                                     <div className="mt-2 flex items-start gap-1.5">
-                                        <svg className="w-3 h-3 text-cyber-green mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                         <svg className="w-3 h-3 text-green-600 dark:text-cyber-green mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                         </svg>
-                                        <p className="text-[10px] leading-relaxed text-cyber-green/80 font-medium">
+                                        <p className="text-[10px] leading-relaxed text-green-700 dark:text-cyber-green/80 font-medium">
                                             {hint.action}
                                         </p>
                                     </div>

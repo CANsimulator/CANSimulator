@@ -25,17 +25,36 @@ const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage').then(m => ({ default: m.AuthPage })));
 
+import { useLocation } from 'react-router-dom';
+import { SimulatorStatusBar } from './components/common/SimulatorStatusBar';
+
 function AppLayout() {
   const { theme } = useTheme();
+  const location = useLocation();
   useScrollToTop();
 
   useEffect(() => {
     initVirtualNetwork();
   }, []);
 
+  const showStatusBar = [
+    '/simulator', 
+    '/arbitration', 
+    '/physical', 
+    '/errors', 
+    '/generations', 
+    '/inspector', 
+    '/signals'
+  ].includes(location.pathname);
+
   const withLayout = (Component: React.ElementType) => (
     <div className="flex flex-col min-h-screen">
       <Header />
+      {showStatusBar && (
+        <div className="max-w-7xl mx-auto w-full px-4 md:px-8 pt-4">
+          <SimulatorStatusBar />
+        </div>
+      )}
       <main id="main-content" className="flex-1">
         <Suspense fallback={
           <div className="flex-1 flex items-center justify-center bg-dark-950/50">
