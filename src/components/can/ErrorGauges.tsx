@@ -17,10 +17,19 @@ const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) =
     const dangerColor = value > 255 ? '#ef4444' : value >= 128 ? '#f59e0b' : value >= 96 ? '#fb923c' : color;
 
     return (
-        <div className="flex flex-col items-center">
+        <div
+            className="flex flex-col items-center"
+            role="meter"
+            aria-label={label}
+            aria-valuenow={value}
+            aria-valuemin={0}
+            aria-valuemax={max}
+            aria-valuetext={`${value} of ${max} — ${value >= 255 ? 'Bus Off' : value >= 128 ? 'Error Passive' : 'Error Active'}`}
+        >
             <div className="relative w-52 h-28 overflow-hidden">
                 {/* Background arc track */}
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 120 65">
+                    <title>{label}: {value} of {max}</title>
                     {/* Background track */}
                     <path
                         d="M 10 60 A 50 50 0 0 1 110 60"
@@ -96,7 +105,7 @@ const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) =
                                     x={60 + 36 * Math.cos(angle)}
                                     y={60 + 36 * Math.sin(angle)}
                                     fill={t.color}
-                                    fontSize="5"
+                                    fontSize="8"
                                     fontWeight="bold"
                                     textAnchor="middle"
                                     dominantBaseline="middle"
