@@ -67,8 +67,9 @@ export const ContactPage: React.FC = () => {
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <label className="text-[10px] text-gray-500 uppercase font-mono">Name</label>
+                                <label htmlFor="contact-name" className="text-[10px] text-gray-500 uppercase font-mono">Name</label>
                                 <input
+                                    id="contact-name"
                                     required
                                     value={form.name}
                                     onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))}
@@ -77,8 +78,9 @@ export const ContactPage: React.FC = () => {
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[10px] text-gray-500 uppercase font-mono">Email</label>
+                                <label htmlFor="contact-email" className="text-[10px] text-gray-500 uppercase font-mono">Email</label>
                                 <input
+                                    id="contact-email"
                                     type="email"
                                     required
                                     value={form.email}
@@ -90,8 +92,9 @@ export const ContactPage: React.FC = () => {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-[10px] text-gray-500 uppercase font-mono">Subject</label>
+                            <label htmlFor="contact-subject" className="text-[10px] text-gray-500 uppercase font-mono">Subject</label>
                             <input
+                                id="contact-subject"
                                 value={form.subject}
                                 onChange={(e) => setForm(p => ({ ...p, subject: e.target.value }))}
                                 className="w-full bg-dark-950 border border-white/10 rounded px-3 py-2 text-white focus:border-cyber-blue outline-none transition-colors"
@@ -100,8 +103,9 @@ export const ContactPage: React.FC = () => {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-[10px] text-gray-500 uppercase font-mono">Message</label>
+                            <label htmlFor="contact-message" className="text-[10px] text-gray-500 uppercase font-mono">Message</label>
                             <textarea
+                                id="contact-message"
                                 required
                                 rows={5}
                                 value={form.message}
