@@ -7,6 +7,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { CookieProvider } from './context/CookieContext'
 import { ToastProvider } from './context/ToastContext'
+import { ToastContainer } from './components/ToastContainer'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 window.addEventListener('unhandledrejection', (event) => {
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
         <AuthProvider>
           <ThemeProvider>
             <ToastProvider>
+              <ToastContainer />
               <App />
             </ToastProvider>
           </ThemeProvider>
