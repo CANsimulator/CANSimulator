@@ -4,7 +4,7 @@ import { BusTopology } from '../components/can/BusTopology';
 import { VoltageScope } from '../components/can/VoltageScope';
 import { FaultScenarioPanel } from '../components/physical/FaultScenarioPanel';
 import { PowerSupplyDashboard } from '../components/power/PowerSupplyDashboard';
-import { TestBenchProvider, useTestBench } from '../context/TestBenchContext';
+import { useTestBench } from '../context/TestBenchContext';
 
 const PhysicalPageInner: React.FC = () => {
     const bench = useTestBench();
@@ -75,9 +75,7 @@ const PhysicalPageInner: React.FC = () => {
 };
 
 const PhysicalPage: React.FC = () => (
-    <TestBenchProvider>
-        <PhysicalPageInner />
-    </TestBenchProvider>
+    <PhysicalPageInner />
 );
 
 const RackLabel: React.FC<{ number: number; name: string; badge?: string }> = ({ number, name, badge }) => (

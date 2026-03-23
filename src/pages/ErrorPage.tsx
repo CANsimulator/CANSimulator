@@ -140,6 +140,7 @@ const ErrorPage: React.FC = () => {
                 <AnimatePresence mode="wait">
                     {errorState.state === 'BUS_OFF' && (
                         <motion.div
+                            key="bus-off-message"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
@@ -234,14 +235,12 @@ const ErrorPage: React.FC = () => {
                     </div>
 
                     <AnimatePresence mode="wait">
-                        <div 
-                            role="tabpanel" 
-                            id="tabpanel-error-log" 
-                            aria-labelledby="tab-error-log" 
-                            hidden={activeTab !== 'log'}
-                        >
+                        {activeTab === 'log' && (
                             <motion.div
                                 key="log"
+                                role="tabpanel"
+                                id="tabpanel-error-log"
+                                aria-labelledby="tab-error-log"
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: 10 }}
@@ -249,15 +248,13 @@ const ErrorPage: React.FC = () => {
                             >
                                 <ErrorLogPanel />
                             </motion.div>
-                        </div>
-                        <div 
-                            role="tabpanel" 
-                            id="tabpanel-troubleshooting" 
-                            aria-labelledby="tab-troubleshooting" 
-                            hidden={activeTab !== 'hints'}
-                        >
+                        )}
+                        {activeTab === 'hints' && (
                             <motion.div
                                 key="hints"
+                                role="tabpanel"
+                                id="tabpanel-troubleshooting"
+                                aria-labelledby="tab-troubleshooting"
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: 10 }}
@@ -269,7 +266,7 @@ const ErrorPage: React.FC = () => {
                                     rec={errorState.rec}
                                 />
                             </motion.div>
-                        </div>
+                        )}
                     </AnimatePresence>
                 </div>
 

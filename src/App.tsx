@@ -5,6 +5,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { initVirtualNetwork } from './services/can/mockNodes';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import { PowerProvider } from './context/PowerContext';
+import { TestBenchProvider } from './context/TestBenchContext';
 import { useScrollToTop } from './hooks/useScrollToTop';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
@@ -97,7 +98,9 @@ function App() {
   return (
     <BrowserRouter basename="/CANSimulator">
       <PowerProvider>
-        <AppLayout />
+        <TestBenchProvider>
+          <AppLayout />
+        </TestBenchProvider>
       </PowerProvider>
     </BrowserRouter>
   );
