@@ -58,38 +58,10 @@ export default defineConfig({
     ]
   },
   build: {
-    modulePreload: {
-      polyfill: false,
-      resolveDependencies: (_filename, deps) => {
-        return deps.filter(
-          (dep) => !dep.includes('vendor-radix') && !dep.includes('jspdf') && !dep.includes('recharts') && !dep.includes('mermaid')
-        );
-      },
-    },
+    cssMinify: 'lightningcss',
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return undefined;
-          
-          // Combine core React/Router dependencies
-          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/react-router')) {
-            return 'vendor-core';
-          }
-          
-          // Heavy libraries into separate chunks for async loading
-          if (id.includes('/framer-motion/')) return 'vendor-motion';
-          if (id.includes('/mermaid/')) return 'vendor-mermaid';
-          if (id.includes('/jspdf/')) return 'vendor-pdf';
-          if (id.includes('/recharts/')) return 'vendor-charts';
-          if (id.includes('/@tsparticles/')) return 'vendor-particles';
-          if (id.includes('/@supabase/')) return 'vendor-backend';
-          if (id.includes('/@radix-ui/')) return 'vendor-ui';
-          
-          // Standard libraries
-          if (id.includes('/lucide-react/') || id.includes('/date-fns/')) return 'vendor-utils';
-          
-          return 'vendor-misc';
-        },
+        // Default Vite chunking is safer for preventing React duplication/missing issues
       },
     },
   },
