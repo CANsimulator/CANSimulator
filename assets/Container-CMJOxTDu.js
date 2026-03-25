@@ -1,0 +1,1 @@
+import{j as m,d as o}from"./index-BlBZEUiX.js";const e=({children:x,className:a,variant:t="default"})=>{const s={default:"max-w-7xl",narrow:"max-w-5xl",wide:"max-w-[1440px]"}[t];return m.jsx("div",{className:o("mx-auto px-4 sm:px-6 lg:px-8 w-full",s,a),children:x})};export{e as C};
