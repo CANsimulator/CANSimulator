@@ -58,7 +58,6 @@ export default defineConfig({
     ]
   },
   build: {
-    cssMinify: 'lightningcss',
     rollupOptions: {
       output: {
         // Default Vite chunking is safer for preventing React duplication/missing issues
