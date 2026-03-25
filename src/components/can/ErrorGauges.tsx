@@ -114,7 +114,7 @@ const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) =
                                     x={60 + 36 * Math.cos(angle)}
                                     y={60 + 36 * Math.sin(angle)}
                                     fill={t.color}
-                                    fontSize="8"
+                                     fontSize="11"
                                     fontWeight="bold"
                                     textAnchor="middle"
                                     dominantBaseline="middle"
@@ -154,12 +154,17 @@ const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) =
                     key={value}
                     initial={{ scale: 1.2, opacity: 0.7 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="text-3xl font-black tracking-widest leading-none mb-1 tabular-nums"
+                     className="text-4xl font-black tracking-widest leading-none mb-1 tabular-nums"
                     style={{ color: dangerColor }}
                 >
                     {value}
                 </motion.span>
-                <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.25em]">{label}</span>
+                <div className="flex flex-col items-center gap-0.5">
+                     <span className="text-xs font-black uppercase tracking-widest leading-none" style={{ color: dangerColor }}>
+                        {value >= 255 ? 'Bus Off' : value >= 128 ? 'Error Passive' : 'Error Active'}
+                    </span>
+                     <span className="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em]">{label}</span>
+                </div>
 
                  {/* Threshold bar */}
                 <div className="w-40 h-1.5 mt-2 rounded-full bg-gray-200 dark:bg-dark-700 overflow-hidden relative">
@@ -182,9 +187,9 @@ const Gauge: React.FC<GaugeProps> = ({ value, max, label, color, thresholds }) =
                     />
                 </div>
                 <div className="flex justify-between w-40 mt-1">
-                    <span className="text-[8px] text-gray-600 font-mono">0</span>
-                    <span className="text-[8px] text-yellow-500/60 font-mono">128</span>
-                    <span className="text-[8px] text-red-500/60 font-mono">255</span>
+                     <span className="text-[11px] text-gray-600 font-mono">0</span>
+                    <span className="text-[11px] text-yellow-500/60 font-mono">128</span>
+                    <span className="text-[11px] text-red-500/60 font-mono">255</span>
                 </div>
             </div>
         </div>

@@ -8,7 +8,7 @@ import { PowerProvider } from './context/PowerContext';
 import { TestBenchProvider } from './context/TestBenchContext';
 import { useScrollToTop } from './hooks/useScrollToTop';
 import Header from './components/common/Header';
-import Footer from './components/common/Footer';
+import Footer, { MinimalFooter } from './components/common/Footer';
 
 // Lazy load pages for better performance
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -26,8 +26,9 @@ const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage').then(m => ({ default: m.AuthPage })));
 
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 import { SimulatorStatusBar } from './components/common/SimulatorStatusBar';
+import { MotionConfig } from 'framer-motion';
 
 function AppLayout() {
   const { theme } = useTheme();
@@ -48,47 +49,27 @@ function AppLayout() {
     '/signals'
   ].includes(location.pathname);
 
-  const withLayout = (Component: React.ElementType) => (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      {showStatusBar && (
-        <div className="max-w-7xl mx-auto w-full px-4 md:px-8 pt-4">
-          <SimulatorStatusBar />
-        </div>
-      )}
-      <main id="main-content" className="flex-1">
-        <Suspense fallback={
-          <div className="flex-1 flex items-center justify-center bg-dark-950/50">
-            <LoadingSpinner />
-          </div>
-        }>
-          <Component />
-        </Suspense>
-      </main>
-      <Footer />
-    </div>
-  );
-
   return (
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'dark bg-dark-950' : 'bg-light-50'} text-gray-900 dark:text-gray-100 selection:bg-cyber-blue/30 font-sans transition-colors duration-300`}>
       <ErrorBoundary>
-        <Routes>
-          <Route path="/" element={withLayout(LandingPage)} />
-          <Route path="/simulator" element={withLayout(SimulatorPage)} />
-          <Route path="/pricing" element={withLayout(PricingPage)} />
-          <Route path="/contact" element={withLayout(ContactPage)} />
-          <Route path="/errors" element={withLayout(ErrorPage)} />
-          <Route path="/physical" element={withLayout(PhysicalPage)} />
-          <Route path="/generations" element={withLayout(GenerationsPage)} />
-          <Route path="/inspector" element={withLayout(InspectorPage)} />
-          <Route path="/signals" element={withLayout(SignalsPage)} />
-          <Route path="/arbitration" element={withLayout(ArbitrationPage)} />
-          <Route path="/auth" element={withLayout(AuthPage)} />
-          <Route path="/about" element={withLayout(AboutPage)} />
-          <Route path="/privacy-policy" element={withLayout(() => <LegalPage title="Privacy Policy" />)} />
-          <Route path="/terms" element={withLayout(() => <LegalPage title="Terms of Use" />)} />
-          <Route path="*" element={withLayout(() => <NotFoundPage />)} />
-        </Routes>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          {showStatusBar && (
+            <div className="max-w-7xl mx-auto w-full px-4 md:px-8 pt-4">
+              <SimulatorStatusBar />
+            </div>
+          )}
+          <main id="main-content" className="flex-1 flex flex-col">
+            <Suspense fallback={
+              <div className="flex-1 flex items-center justify-center bg-dark-950/50">
+                <LoadingSpinner />
+              </div>
+            }>
+              <Outlet />
+            </Suspense>
+          </main>
+          {showStatusBar ? <MinimalFooter /> : <Footer />}
+        </div>
       </ErrorBoundary>
     </div>
   );
@@ -96,13 +77,33 @@ function AppLayout() {
 
 function App() {
   return (
-    <BrowserRouter basename="/CANSimulator">
-      <PowerProvider>
-        <TestBenchProvider>
-          <AppLayout />
-        </TestBenchProvider>
-      </PowerProvider>
-    </BrowserRouter>
+    <MotionConfig reducedMotion="user">
+      <BrowserRouter basename="/CANSimulator">
+        <PowerProvider>
+          <TestBenchProvider>
+            <Routes>
+              <Route element={<AppLayout />}>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/simulator" element={<SimulatorPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/errors" element={<ErrorPage />} />
+                <Route path="/physical" element={<PhysicalPage />} />
+                <Route path="/generations" element={<GenerationsPage />} />
+                <Route path="/inspector" element={<InspectorPage />} />
+                <Route path="/signals" element={<SignalsPage />} />
+                <Route path="/arbitration" element={<ArbitrationPage />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/privacy-policy" element={<LegalPage title="Privacy Policy" />} />
+                <Route path="/terms" element={<LegalPage title="Terms of Use" />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
+            </Routes>
+          </TestBenchProvider>
+        </PowerProvider>
+      </BrowserRouter>
+    </MotionConfig>
   );
 }
 

@@ -62,7 +62,7 @@ export const BitStreamVisualizer: React.FC<BitStreamVisualizerProps> = ({
                     }}
                 />
                 <span
-                    className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest"
+                    className="text-[11px] font-black uppercase tracking-widest"
                     style={{
                         color: variant === 'correct' ? '#00ff9f' : '#ff006e',
                     }}
@@ -124,7 +124,7 @@ export const BitStreamVisualizer: React.FC<BitStreamVisualizerProps> = ({
                             {fieldLabels.map((f) => (
                                 <div
                                     key={f.abbrev}
-                                    className="absolute text-[9px] font-black uppercase tracking-wider text-center whitespace-nowrap cursor-help hover:opacity-100 transition-opacity"
+                                    className="absolute text-[11px] font-black uppercase tracking-wider text-center whitespace-nowrap cursor-help hover:opacity-100 transition-opacity"
                                     style={{
                                         left: `${f.startBit * 23}px`,
                                         width: `${f.width * 23}px`,

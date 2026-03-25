@@ -113,7 +113,7 @@ class Analytics {
      * Track a custom event — non-blocking (defers localStorage write)
      */
     trackEvent(type: string, properties?: Record<string, any>): void {
-        if (!this.hasConsent() && type !== 'page_view') return;
+        if (!this.hasConsent()) return;
 
         const event: AnalyticsEvent = {
             type,

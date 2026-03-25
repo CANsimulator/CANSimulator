@@ -23,9 +23,7 @@
           window.history.replaceState(
             null,
             null,
-            // l.pathname is '/CANSimulator/' — slice off the trailing slash,
-            // then append decoded[0] which is e.g. '/physical'.
-            l.pathname.slice(0, -1) + decoded[0] +
+            l.pathname.slice(0, -1) + (decoded[0][0] === '/' ? decoded[0] : '/' + decoded[0]) +
             (decoded[1] ? '?' + decoded[1] : '') +
             l.hash
           );

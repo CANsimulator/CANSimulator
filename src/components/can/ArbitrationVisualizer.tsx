@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CyberButton } from '../ui/CyberButton';
 import { cn } from '../../utils/cn';
@@ -9,10 +9,15 @@ export const ArbitrationVisualizer: React.FC = () => {
     const [step, setStep] = useState<number>(-1);
     const [winner, setWinner] = useState<number | null>(null);
 
-    const bits1 = parseInt(id1, 16).toString(2).padStart(11, '0').split('').map(Number);
-    const bits2 = parseInt(id2, 16).toString(2).padStart(11, '0').split('').map(Number);
+    const parseIdToBits = (idStr: string) => {
+        const val = parseInt(idStr || '0', 16) & 0x7FF;
+        return val.toString(2).padStart(11, '0').split('').map(Number);
+    };
 
-    const handleRun = () => { setStep(0); setWinner(null); };
+    const bits1 = useMemo(() => parseIdToBits(id1), [id1]);
+    const bits2 = useMemo(() => parseIdToBits(id2), [id2]);
+
+    const handleRun = () => { if (!id1 || !id2) return; setStep(0); setWinner(null); };
 
     useEffect(() => {
         if (step < 0 || step >= 11) return;
@@ -24,8 +29,7 @@ export const ArbitrationVisualizer: React.FC = () => {
             else setStep(s => s + 1);
         }, 600);
         return () => clearTimeout(timer);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [step]);
+    }, [step, bits1, bits2]);
 
     useEffect(() => {
         if (step === 11 && winner === null) setWinner(0);
@@ -34,6 +38,11 @@ export const ArbitrationVisualizer: React.FC = () => {
     const busState = step >= 0 && step < 11
         ? (((bits1[step] ?? 1) === 0 || (bits2[step] ?? 1) === 0) ? { label: 'DOMINANT', bit: '0', color: 'text-cyber-blue' } : { label: 'RECESSIVE', bit: '1', color: 'text-gray-700' })
         : null;
+
+    const handleIdChange = (val: string, setter: (v: string) => void) => {
+        const hex = val.replace(/[^0-9A-Fa-f]/g, '').slice(0, 3).toUpperCase();
+        setter(hex);
+    };
 
     return (
         <div className="glass-panel p-6 border-cyber-purple/30 space-y-6">
@@ -46,8 +55,10 @@ export const ArbitrationVisualizer: React.FC = () => {
                             winner === eIdx + 1 ? 'border-cyber-green bg-cyber-green/5' :
                                 winner !== null && winner !== eIdx + 1 ? 'border-red-900/50 opacity-40' : 'border-white/10'
                         )}>
-                            <label className="text-[10px] text-gray-500 uppercase font-mono mb-2 block">ECU {eIdx === 0 ? 'A' : 'B'} | 0x{eIdx === 0 ? id1 : id2}</label>
-                            <div className="flex gap-1">
+                            <label className="text-[10px] text-gray-500 uppercase font-mono mb-2 block">
+                                ECU {eIdx === 0 ? 'A' : 'B'} | 0x{eIdx === 0 ? id1 : id2}
+                            </label>
+                            <div className="flex gap-1" aria-hidden="true">
                                 {bits.map((b, i) => (
                                     <div key={i} className={cn('w-4 h-6 flex items-center justify-center font-mono text-xs rounded transition-all',
                                         step === i ? 'bg-white text-dark-950 scale-125' :
@@ -61,13 +72,14 @@ export const ArbitrationVisualizer: React.FC = () => {
 
                 <div className="flex flex-col justify-center items-center text-center space-y-4">
                     <div className="bg-dark-950 p-6 rounded-full border-2 border-dashed border-white/5 w-40 h-40 flex flex-col items-center justify-center">
-                        <span className="text-[8px] text-gray-600 uppercase mb-1">Bus State</span>
+                        <span className="text-[8px] text-gray-600 uppercase mb-1" id="bus-state-label">Bus State</span>
                         <AnimatePresence mode="wait">
                             <motion.span
                                 key={step}
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 className={cn('text-4xl font-black', busState?.color ?? 'text-gray-900')}
+                                aria-labelledby="bus-state-label"
                             >
                                 {busState?.bit ?? '--'}
                             </motion.span>
@@ -78,7 +90,7 @@ export const ArbitrationVisualizer: React.FC = () => {
                     </div>
 
                     {winner !== null && (
-                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-cyber-green font-bold text-sm uppercase tracking-widest">
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-cyber-green font-bold text-sm uppercase tracking-widest" aria-live="polite">
                             {winner === 1 ? 'ECU A WON BUS' : winner === 2 ? 'ECU B WON BUS' : 'TIE — Same ID'}
                         </motion.div>
                     )}
@@ -86,9 +98,21 @@ export const ArbitrationVisualizer: React.FC = () => {
             </div>
 
             <div className="flex gap-4">
-                <input value={id1} onChange={e => setId1(e.target.value.toUpperCase())} className="flex-1 bg-dark-950 border border-white/10 rounded px-3 py-2 text-cyber-blue font-mono" />
-                <input value={id2} onChange={e => setId2(e.target.value.toUpperCase())} className="flex-1 bg-dark-950 border border-white/10 rounded px-3 py-2 text-cyber-blue font-mono" />
-                <CyberButton onClick={handleRun} variant="secondary">SIMULATE</CyberButton>
+                <input 
+                    placeholder="ID A (Hex)"
+                    value={id1} 
+                    onChange={e => handleIdChange(e.target.value, setId1)} 
+                    className="flex-1 bg-dark-950 border border-white/10 rounded px-3 py-2 text-cyber-blue font-mono placeholder:text-gray-700 focus:outline-none focus:border-cyber-blue/50" 
+                    aria-label="Hex ID for ECU A"
+                />
+                <input 
+                    placeholder="ID B (Hex)"
+                    value={id2} 
+                    onChange={e => handleIdChange(e.target.value, setId2)} 
+                    className="flex-1 bg-dark-950 border border-white/10 rounded px-3 py-2 text-cyber-blue font-mono placeholder:text-gray-700 focus:outline-none focus:border-cyber-blue/50" 
+                    aria-label="Hex ID for ECU B"
+                />
+                <CyberButton onClick={handleRun} variant="secondary" disabled={step >= 0 && step < 11}>SIMULATE</CyberButton>
             </div>
         </div>
     );

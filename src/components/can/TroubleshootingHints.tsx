@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import type { CANControllerState } from '../../types/can';
 
 interface TroubleshootingHintsProps {
@@ -136,6 +136,7 @@ const SeverityIcon: React.FC<{ severity: 'info' | 'warning' | 'critical' }> = ({
 
 export const TroubleshootingHints: React.FC<TroubleshootingHintsProps> = ({ state, tec, rec }) => {
     const hints = getHints(state, tec, rec);
+    const shouldReduceMotion = useReducedMotion();
 
     return (
         <div className="space-y-3">
@@ -145,36 +146,37 @@ export const TroubleshootingHints: React.FC<TroubleshootingHintsProps> = ({ stat
                     return (
                         <motion.div
                             key={`${hint.title}-${state}`}
-                            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 8, scale: shouldReduceMotion ? 1 : 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                            transition={{ duration: 0.3, delay: i * 0.05 }}
-                            className={`relative rounded-xl border ${styles.border} ${styles.bg} overflow-hidden`}
+                            exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -8, scale: shouldReduceMotion ? 1 : 0.98 }}
+                            transition={{ duration: shouldReduceMotion ? 0.1 : 0.3, delay: i * 0.05 }}
+                            className={`relative rounded-xl border ${styles.border} ${styles.bg} overflow-hidden transition-colors`}
                         >
                             {/* Left accent bar */}
                             <div className={`absolute left-0 top-0 bottom-0 w-1 ${styles.accentBar}`} />
 
-                            <div className="pl-5 pr-4 py-3">
-                                <div className="flex items-center gap-2 mb-1.5">
+                            <div className="px-4 py-3 sm:pl-5 sm:pr-4">
+                                <div className="flex flex-wrap items-center gap-1.5 xs:gap-2 mb-1.5">
                                     <span className={styles.icon}>
                                         <SeverityIcon severity={hint.severity} />
                                     </span>
-                                    <span className={`text-[10px] font-black uppercase tracking-widest ${styles.title}`}>
+                                     <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-widest ${styles.title}`}>
                                         {hint.title}
                                     </span>
-                                    <span className={`text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded ${styles.bg} ${styles.title} border ${styles.border}`}>
-                                        {hint.severity}
-                                    </span>
+                                      <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-widest px-1.5 sm:px-2 py-0.5 rounded ${styles.bg} ${styles.title} border ${styles.border} ml-auto sm:ml-0`}>
+                                         {hint.severity}
+                                     </span>
                                 </div>
-                                 <p className="text-[10px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
+                                  <p className="text-xs leading-relaxed text-gray-700 dark:text-gray-400 font-bold">
                                     {hint.message}
                                 </p>
                                 {hint.action && (
-                                    <div className="mt-2 flex items-start gap-1.5">
-                                         <svg className="w-3 h-3 text-green-600 dark:text-cyber-green mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div className="mt-2.5 flex items-start gap-1.5 bg-black/5 dark:bg-black/20 p-2 rounded-lg border border-black/5 dark:border-white/5">
+                                         <svg className="w-3 H-3 text-green-600 dark:text-cyber-green mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                         </svg>
-                                        <p className="text-[10px] leading-relaxed text-green-700 dark:text-cyber-green/80 font-medium">
+                                         <p className="text-[11px] sm:text-xs leading-relaxed text-green-700 dark:text-cyber-green font-bold">
+                                            <span className="uppercase text-[10px] tracking-wider opacity-60 mr-1.5">Action:</span>
                                             {hint.action}
                                         </p>
                                     </div>

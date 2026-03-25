@@ -59,7 +59,7 @@ export const ErrorLogPanel: React.FC = () => {
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
-                        className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all ${filter === f
+                         className={`px-3 py-1.5 rounded-md text-[11px] font-black uppercase tracking-widest transition-all min-h-[44px] flex items-center justify-center ${filter === f
                                 ? 'bg-cyber-blue/20 text-cyber-blue border border-cyber-blue/40'
                                 : 'bg-gray-100 dark:bg-dark-800 text-gray-500 border border-gray-200 dark:border-dark-700 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-dark-600'
                             }`}
@@ -68,16 +68,16 @@ export const ErrorLogPanel: React.FC = () => {
                     </button>
                 ))}
                 <div className="flex-1" />
-                <button
+                 <button
                     onClick={() => setAutoScroll(!autoScroll)}
-                    className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${autoScroll
+                    className={`px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all min-h-[44px] flex items-center justify-center ${autoScroll
                             ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/30'
                             : 'bg-gray-100 dark:bg-dark-800 text-gray-500 border border-gray-200 dark:border-dark-700'
                         }`}
                 >
                     {autoScroll ? 'Auto-scroll ON' : 'Auto-scroll OFF'}
                 </button>
-                <span className="text-[9px] font-bold text-gray-600 uppercase tracking-wider">
+                 <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider">
                     {filteredLog.length} entries
                 </span>
             </div>
@@ -96,21 +96,21 @@ export const ErrorLogPanel: React.FC = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                             </div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest">No errors logged</p>
-                            <p className="text-[9px] text-gray-700 mt-1">Inject an error to see activity here</p>
+                             <p className="text-[11px] font-bold uppercase tracking-widest">No errors logged</p>
+                            <p className="text-[11px] text-gray-700 mt-1">Inject an error to see activity here</p>
                         </div>
                     </div>
                 ) : (
-                     <table className="w-full text-[10px]">
-                        <thead className="sticky top-0 bg-white/95 dark:bg-dark-900/95 backdrop-blur-sm z-10">
+                      <table className="w-full text-[11px]">
+                         <thead className="sticky top-0 bg-white/95 dark:bg-dark-900/95 backdrop-blur-sm z-10">
                             <tr className="text-gray-500 uppercase tracking-widest font-black border-b border-gray-200 dark:border-dark-700/50">
-                                <th className="text-left py-2 px-3">#</th>
-                                <th className="text-left py-2 px-3">Time</th>
-                                <th className="text-left py-2 px-3">Type</th>
-                                <th className="text-left py-2 px-3">Role</th>
-                                <th className="text-right py-2 px-3">TEC</th>
-                                <th className="text-right py-2 px-3">REC</th>
-                                <th className="text-left py-2 px-3">State</th>
+                                <th className="text-left py-2.5 px-3">#</th>
+                                <th className="text-left py-2.5 px-3">Time</th>
+                                <th className="text-left py-2.5 px-3">Type</th>
+                                <th className="text-left py-2.5 px-3">Role</th>
+                                <th className="text-right py-2.5 px-3">TEC</th>
+                                <th className="text-right py-2.5 px-3">REC</th>
+                                <th className="text-left py-2.5 px-3">State</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -130,27 +130,27 @@ export const ErrorLogPanel: React.FC = () => {
                                             className={`border-b border-gray-100 dark:border-dark-800/50 hover:bg-gray-100/50 dark:hover:bg-dark-800/30 transition-colors ${entry.stateChanged ? 'bg-yellow-500/10 dark:bg-yellow-500/5' : ''
                                                 }`}
                                         >
-                                             <td className="py-1.5 px-3 font-mono text-gray-500 dark:text-gray-400">{entry.id}</td>
-                                            <td className="py-1.5 px-3 font-mono text-gray-500 dark:text-gray-400">{formatTime(entry.timestamp)}</td>
-                                            <td className="py-1.5 px-3">
+                                              <td className="py-2.5 px-3 font-mono text-gray-500 dark:text-gray-400">{entry.id}</td>
+                                             <td className="py-2.5 px-3 font-mono text-gray-500 dark:text-gray-400">{formatTime(entry.timestamp)}</td>
+                                             <td className="py-2.5 px-3">
                                                 <span className={`inline-flex px-2 py-0.5 rounded ${colors.bg} ${colors.text} ${colors.border} border font-black tracking-wider`}>
                                                     {ERROR_LABELS[entry.errorCode]}
                                                 </span>
                                             </td>
-                                             <td className="py-1.5 px-3">
+                                              <td className="py-2.5 px-3">
                                                 <span className={`font-bold tracking-wider ${entry.role === 'transmitter' ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'}`}>
                                                     {entry.role === 'transmitter' ? 'TX' : 'RX'}
                                                 </span>
                                             </td>
-                                            <td className={`py-1.5 px-3 text-right font-mono font-bold ${entry.tec >= 128 ? 'text-red-600 dark:text-red-400' : 'text-cyan-700 dark:text-cyber-blue'}`}>
+                                             <td className={`py-2.5 px-3 text-right font-mono font-bold ${entry.tec >= 128 ? 'text-red-600 dark:text-red-400' : 'text-cyan-700 dark:text-cyber-blue'}`}>
                                                 {entry.tec}
                                             </td>
-                                            <td className={`py-1.5 px-3 text-right font-mono font-bold ${entry.rec >= 128 ? 'text-red-600 dark:text-red-400' : 'text-purple-600 dark:text-purple-400'}`}>
+                                             <td className="py-2.5 px-3 uppercase text-right font-mono font-bold ${entry.rec >= 128 ? 'text-red-600 dark:text-red-400' : 'text-purple-600 dark:text-purple-400'}">
                                                 {entry.rec}
                                             </td>
-                                            <td className="py-1.5 px-3">
+                                             <td className="py-2.5 px-3">
                                                 <span className={`font-black tracking-wider ${stateColor}`}>
-                                                    {entry.newState.replace(/_/g, ' ')}
+                                                     {entry.newState.replaceAll('_', ' ')}
                                                     {entry.stateChanged && (
                                                         <span className="ml-1 text-yellow-400 animate-pulse">*</span>
                                                     )}

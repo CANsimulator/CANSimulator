@@ -31,7 +31,7 @@ function StatusItem({ label, value, icon: Icon, colorClass, animate, beamColor, 
                 <Icon size={20} aria-hidden="true" />
             </div>
             <div>
-                <p className="text-[9px] text-gray-500 dark:text-gray-400 uppercase font-mono tracking-wider">{label}</p>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 uppercase font-mono tracking-wider">{label}</p>
                 <p className="text-sm font-black flex items-center gap-2">
                     {indicatorColor && (
                         <span className={cn(
@@ -87,7 +87,7 @@ export function SimulatorStatusBar({ className }: { className?: string }) {
             />
             <StatusItem 
                 label="Bus Status" 
-                value={isError ? `Error: ${power.faultState.replace('_', ' ')}` : (isOnline ? 'Online' : 'Standby')}
+                value={isError ? `Error: ${power.faultState.replace(/_/g, ' ')}` : (isOnline ? 'Online' : 'Standby')}
                 icon={isError ? AlertCircle : Zap}
                 colorClass={isError ? "bg-red-500/10 text-red-500" : (isOnline ? "bg-cyber-green/10 text-cyber-green" : "bg-gray-500/10 text-gray-500")}
                 animate={isOnline}

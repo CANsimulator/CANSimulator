@@ -49,16 +49,25 @@ const StateCard: React.FC<{
 }> = ({ stateKey, isActive }) => {
     const config = STATE_CONFIG[stateKey];
     const shouldReduceMotion = useReducedMotion();
+    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+
+    // WCAG AAA compliant colors for light mode
+    const contrastColor = isActive 
+        ? (isDark ? config.color : (stateKey === 'ERROR_ACTIVE' ? '#0891b2' : stateKey === 'ERROR_PASSIVE' ? '#9333ea' : '#dc2626'))
+        : (isDark ? '#6b7280' : '#475569');
 
     return (
         <motion.div
             layout
+            role="article"
+            aria-current={isActive ? 'step' : undefined}
+            aria-label={`Controller state: ${config.label}`}
             className={`relative rounded-2xl border-2 transition-all duration-500 overflow-hidden ${
                 isActive ? '' : 'opacity-30 grayscale border-gray-200 dark:border-dark-700 bg-gray-50 dark:bg-dark-900/30'
             }`}
             style={{
-                borderColor: isActive ? config.color : undefined,
-                backgroundColor: isActive ? `${config.color}${document.documentElement.classList.contains('dark') ? '08' : '10'}` : undefined,
+                borderColor: isActive ? contrastColor : undefined,
+                backgroundColor: isActive ? `${contrastColor}${isDark ? '08' : '05'}` : undefined,
             }}
             animate={isActive ? { scale: 1.02 } : { scale: 1 }}
             transition={{ type: 'spring', stiffness: 200 }}
@@ -67,7 +76,7 @@ const StateCard: React.FC<{
             {isActive && !shouldReduceMotion && (
                 <motion.div
                     className="absolute -inset-px rounded-2xl pointer-events-none"
-                    style={{ boxShadow: `0 0 30px ${config.color}30, inset 0 0 30px ${config.color}08` }}
+                    style={{ boxShadow: `0 0 30px ${contrastColor}30, inset 0 0 30px ${contrastColor}08` }}
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
                 />
@@ -76,7 +85,7 @@ const StateCard: React.FC<{
             {/* Top accent strip */}
             <div
                 className="h-1 w-full"
-                style={{ backgroundColor: isActive ? config.color : (document.documentElement.classList.contains('dark') ? '#1a1a24' : '#e2e8f0') }}
+                style={{ backgroundColor: isActive ? contrastColor : (isDark ? '#1a1a24' : '#e2e8f0') }}
             />
 
             <div className="p-4 sm:p-5">
@@ -85,16 +94,17 @@ const StateCard: React.FC<{
                      <div
                         className="p-2 rounded-lg"
                         style={{
-                            backgroundColor: isActive ? `${config.color}15` : (document.documentElement.classList.contains('dark') ? '#131318' : '#f1f5f9'),
-                            color: isActive ? config.color : (document.documentElement.classList.contains('dark') ? '#4b5563' : '#64748b'),
+                            backgroundColor: isActive ? `${contrastColor}15` : (isDark ? '#131318' : '#f1f5f9'),
+                            color: isActive ? contrastColor : (isDark ? '#4b5563' : '#64748b'),
                         }}
+                        aria-hidden="true"
                     >
                         {config.icon}
                     </div>
                     <div>
                          <h3
                             className="text-xs font-black uppercase tracking-widest"
-                            style={{ color: isActive ? config.color : (document.documentElement.classList.contains('dark') ? '#6b7280' : '#475569') }}
+                            style={{ color: contrastColor }}
                         >
                             {config.label}
                         </h3>
@@ -102,11 +112,11 @@ const StateCard: React.FC<{
                             <motion.span
                                 initial={{ opacity: 0, width: 0 }}
                                 animate={{ opacity: 1, width: 'auto' }}
-                                 className="inline-block text-[10px] sm:text-[11px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full mt-1"
+                                className="inline-block text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full mt-1.5"
                                 style={{
-                                    backgroundColor: `${config.color}20`,
-                                    color: config.color,
-                                    border: `1px solid ${config.color}40`,
+                                    backgroundColor: `${contrastColor}20`,
+                                    color: contrastColor,
+                                    border: `1px solid ${contrastColor}40`,
                                 }}
                             >
                                 Current State
@@ -116,7 +126,7 @@ const StateCard: React.FC<{
                 </div>
 
                 {/* Description */}
-                <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium mb-3">
+                 <p className="text-xs leading-relaxed text-gray-700 dark:text-gray-400 font-bold mb-3">
                     {config.description}
                 </p>
 
@@ -131,9 +141,9 @@ const StateCard: React.FC<{
                             <div key={cap} className="flex items-center gap-2">
                                 <div
                                     className="w-1 h-1 rounded-full"
-                                    style={{ backgroundColor: config.color }}
+                                    style={{ backgroundColor: contrastColor }}
                                 />
-                                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                 <span className="text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                                     {cap}
                                 </span>
                             </div>
@@ -152,26 +162,34 @@ const TransitionArrow: React.FC<{
     direction?: 'right' | 'down';
 }> = ({ label, isActive, color, direction = 'right' }) => {
     const isVertical = direction === 'down';
+    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+    
+    // Adjust color for light mode contrast
+    const displayColor = isActive && !isDark ? (color === '#bf00ff' ? '#9333ea' : color === '#ef4444' ? '#dc2626' : color) : color;
 
     return (
-        <div className={`flex ${isVertical ? 'flex-col' : 'flex-row'} items-center gap-1 ${isVertical ? 'py-1' : 'px-1'}`}>
+        <div 
+            className={`flex ${isVertical ? 'flex-col' : 'flex-row'} items-center gap-1 ${isVertical ? 'py-1' : 'px-1'}`}
+            role="separator"
+            aria-label={`State transition: ${label}`}
+        >
             <div
                 className={`${isVertical ? 'h-6 w-0.5' : 'w-8 h-0.5'} rounded-full transition-all duration-500`}
                  style={{
-                    backgroundColor: isActive ? color : (document.documentElement.classList.contains('dark') ? '#1a1a24' : '#e2e8f0'),
-                    boxShadow: isActive ? `0 0 8px ${color}` : 'none',
+                    backgroundColor: isActive ? displayColor : (isDark ? '#1a1a24' : '#e2e8f0'),
+                    boxShadow: isActive ? `0 0 8px ${displayColor}` : 'none',
                 }}
             />
-            <span
-                className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-500"
-                style={{ color: isActive ? color : (document.documentElement.classList.contains('dark') ? '#4b5563' : '#94a3b8') }}
+             <span
+                className="text-[11px] font-black uppercase tracking-widest whitespace-nowrap transition-colors duration-500"
+                style={{ color: isActive ? displayColor : (isDark ? '#4b5563' : '#94a3b8') }}
             >
                 {label}
             </span>
-            <div className={`flex items-center ${isVertical ? 'rotate-90' : ''}`}>
+            <div className={`flex items-center ${isVertical ? 'rotate-90' : ''}`} aria-hidden="true">
                  <svg
                     className="w-3 h-3 transition-colors duration-500"
-                    style={{ color: isActive ? color : (document.documentElement.classList.contains('dark') ? '#1a1a24' : '#e2e8f0') }}
+                    style={{ color: isActive ? displayColor : (isDark ? '#1a1a24' : '#e2e8f0') }}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                 >
@@ -215,29 +233,11 @@ export const ErrorStateMachine: React.FC<ErrorStateMachineProps> = ({ state }) =
                 </div>
             </div>
 
-            {/* Mobile/Tablet: vertical layout */}
-            <div className="lg:hidden flex flex-col items-center gap-1">
-                <div className="w-full max-w-sm">
-                    <StateCard stateKey="ERROR_ACTIVE" isActive={state === 'ERROR_ACTIVE'} />
-                </div>
-                <TransitionArrow
-                    label={`TEC/REC ${'\u2265'} 128`}
-                    isActive={passiveReached}
-                    color="#bf00ff"
-                    direction="down"
-                />
-                <div className="w-full max-w-sm">
-                    <StateCard stateKey="ERROR_PASSIVE" isActive={state === 'ERROR_PASSIVE'} />
-                </div>
-                <TransitionArrow
-                    label="TEC > 255"
-                    isActive={busOffReached}
-                    color="#ef4444"
-                    direction="down"
-                />
-                <div className="w-full max-w-sm">
-                    <StateCard stateKey="BUS_OFF" isActive={state === 'BUS_OFF'} />
-                </div>
+            {/* Mobile/Tablet: vertical layout on smallest screens, grid on tablets */}
+            <div className="lg:hidden grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <StateCard stateKey="ERROR_ACTIVE" isActive={state === 'ERROR_ACTIVE'} />
+                <StateCard stateKey="ERROR_PASSIVE" isActive={state === 'ERROR_PASSIVE'} />
+                <StateCard stateKey="BUS_OFF" isActive={state === 'BUS_OFF'} />
             </div>
         </div>
     );

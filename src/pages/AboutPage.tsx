@@ -9,7 +9,7 @@ export const AboutPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center space-y-4"
             >
-                <h1 className="text-6xl font-black gradient-text tracking-tighter uppercase italic">Engineering the Future of CAN</h1>
+                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black gradient-text tracking-tighter uppercase italic">Engineering the Future of CAN</h1>
                 <p className="text-xl text-gray-400 font-medium">High-fidelity Simulation for the Automotive Industry</p>
             </motion.div>
 

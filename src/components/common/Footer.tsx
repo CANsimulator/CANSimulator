@@ -6,6 +6,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Github, Linkedin, FileText, ArrowRight, Shield, Eye, Users } from 'lucide-react';
 import { useCookieConsent } from '../../context/CookieContext';
+import { useTheme } from '../../context/ThemeContext';
+import { cn } from '../../utils/cn';
 import { supabase } from '../../config/supabase';
 
 // Optional: Import modal if needed later
@@ -198,7 +200,7 @@ const Footer: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-900/60 dark:text-white/50">
+                        <div className="flex items-center gap-8 text-[11px] font-black uppercase tracking-[0.2em] text-cyan-900/60 dark:text-white/50">
                             <span>React 19</span>
                             <span>TypeScript 5.9</span>
                             <span>Tailwind CSS</span>
@@ -210,6 +212,28 @@ const Footer: React.FC = () => {
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-cyan-500/5 blur-[120px] rounded-full -mr-32 -mb-32" />
             </footer>
         </>
+    );
+};
+
+export const MinimalFooter: React.FC = () => {
+    const { theme } = useTheme(); // Note: must import useTheme or pass as prop
+    const isDark = theme === 'dark';
+    const currentYear = new Date().getFullYear();
+
+    return (
+        <footer className={cn(
+            "py-6 px-8 border-t transition-colors",
+            isDark ? "bg-dark-950/20 border-white/5" : "bg-white border-gray-100"
+        )}>
+            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold tracking-tight text-gray-500 uppercase">
+                <p>© {currentYear} SUDULI RESEARCH.</p>
+                <div className="flex items-center gap-6">
+                    <Link to="/privacy-policy" className="hover:text-cyan-600 transition-colors">Privacy Policy</Link>
+                    <Link to="/terms" className="hover:text-cyan-600 transition-colors">Terms of Use</Link>
+                    <Link to="/contact" className="hover:text-cyan-600 transition-colors">Contact</Link>
+                </div>
+            </div>
+        </footer>
     );
 };
 

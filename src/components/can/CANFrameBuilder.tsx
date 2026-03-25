@@ -5,6 +5,7 @@ import { lengthToDlc } from '../../types/can';
 import { CyberButton } from '../ui/CyberButton';
 import { cn } from '../../utils/cn';
 import { CANValidation } from '../../services/can/validation';
+import { AlertCircle } from 'lucide-react';
 
 export const CANFrameBuilder: React.FC = () => {
     const [id, setId] = useState<string>('7DF');
@@ -82,7 +83,7 @@ export const CANFrameBuilder: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label htmlFor="frame-msg-id" className="text-[10px] text-gray-500 uppercase font-mono cursor-pointer">Message ID (Hex)</label>
+                    <label htmlFor="frame-msg-id" className="text-[11px] text-gray-500 uppercase font-mono cursor-pointer">Message ID (Hex)</label>
                     <input
                         id="frame-msg-id"
                         value={id}
@@ -100,20 +101,25 @@ export const CANFrameBuilder: React.FC = () => {
                         placeholder="7DF"
                         maxLength={isFD ? 8 : 3}
                     />
-                    {errors.msgId && <p className="text-red-400 text-[10px] font-mono leading-tight">{errors.msgId}</p>}
+                    {errors.msgId && (
+                        <p className="text-red-400 text-[11px] font-mono leading-tight flex items-center gap-1.5">
+                            <AlertCircle size={10} aria-hidden="true" />
+                            {errors.msgId}
+                        </p>
+                    )}
                 </div>
                 {isFD && (
                     <div className="flex flex-col justify-end pb-1">
                         <label htmlFor="frame-brs-checkbox" className="flex items-center gap-2 cursor-pointer select-none">
                             <input id="frame-brs-checkbox" type="checkbox" checked={brs} onChange={e => setBrs(e.target.checked)} className="accent-cyber-purple" />
-                            <span className="text-[10px] text-cyber-purple uppercase font-mono">Bit Rate Switch (BRS)</span>
+                            <span className="text-[11px] text-cyber-purple uppercase font-mono">Bit Rate Switch (BRS)</span>
                         </label>
                     </div>
                 )}
             </div>
 
             <div className="space-y-1">
-                <label htmlFor="frame-payload" className="text-[10px] text-gray-500 uppercase font-mono cursor-pointer">Payload (Hex Bytes)</label>
+                <label htmlFor="frame-payload" className="text-[11px] text-gray-500 uppercase font-mono cursor-pointer">Payload (Hex Bytes)</label>
                 <textarea
                     id="frame-payload"
                     value={dataStr}
@@ -133,8 +139,13 @@ export const CANFrameBuilder: React.FC = () => {
                     )}
                     placeholder="01 02 03..."
                 />
-                {errors.payload && <p className="text-red-400 text-[10px] font-mono leading-tight">{errors.payload}</p>}
-                <div className="flex justify-between text-[10px] font-mono">
+                {errors.payload && (
+                    <p className="text-red-400 text-[11px] font-mono leading-tight flex items-center gap-1.5">
+                        <AlertCircle size={10} aria-hidden="true" />
+                        {errors.payload}
+                    </p>
+                )}
+                <div className="flex justify-between text-[11px] font-mono">
                     <span className="text-gray-600">LEN: {byteCount} BYTES</span>
                     <span className="text-gray-600">DLC: {lengthToDlc(byteCount)}</span>
                 </div>
@@ -144,7 +155,12 @@ export const CANFrameBuilder: React.FC = () => {
                 <CyberButton onClick={handleSend} variant={isFD ? 'secondary' : 'primary'} className="w-full">
                     {isFD ? 'SEND FD FRAME' : 'SEND CLASSIC FRAME'}
                 </CyberButton>
-                {errors.send && <p className="text-red-400 text-xs text-center font-mono animate-pulse">{errors.send}</p>}
+                {errors.send && (
+                    <p className="text-red-400 text-xs text-center font-mono animate-pulse flex items-center justify-center gap-1.5">
+                        <AlertCircle size={12} aria-hidden="true" />
+                        {errors.send}
+                    </p>
+                )}
             </div>
         </div>
     );

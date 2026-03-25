@@ -6,6 +6,9 @@ import type { GenerationId } from '../types';
 import { cn } from '../../../utils/cn';
 import { useRef } from 'react';
 import { useFocusTrap } from '../../../hooks/useFocusTrap';
+import { useCookieConsent } from '../../../context/CookieContext';
+
+const STORAGE_KEY = 'can_migration_checklist';
 
 interface MigrationChecklistProps {
   primary: GenerationId;
@@ -48,9 +51,30 @@ export function MigrationChecklist({ primary }: MigrationChecklistProps) {
 
   useFocusTrap(mobileSheetRef, openMobileSheet, () => setOpenMobileSheet(false));
 
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+  const { consent } = useCookieConsent();
+
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
   const [showIncompleteOnly, setShowIncompleteOnly] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+
+  // Persist to localStorage
+  useEffect(() => {
+    if (!consent.functional) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...checkedItems]));
+    } catch (e) {
+      console.warn('Failed to persist checklist:', e);
+    }
+  }, [checkedItems, consent.functional]);
 
   useEffect(() => {
     if (!confirmReset) return;
@@ -60,6 +84,7 @@ export function MigrationChecklist({ primary }: MigrationChecklistProps) {
 
   const handleReset = () => {
     setCheckedItems(new Set());
+    localStorage.removeItem(STORAGE_KEY);
     setConfirmReset(false);
   };
 

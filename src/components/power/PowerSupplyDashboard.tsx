@@ -152,7 +152,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                             key={v}
                             onClick={() => setSystemVoltage(v as any)}
                             className={cn(
-                                "px-4 py-1 rounded text-[10px] font-bold transition-all uppercase tracking-widest font-mono",
+                                "px-4 py-1 min-h-[44px] rounded text-[10px] font-bold transition-all uppercase tracking-widest font-mono",
                                 systemVoltage === v
                                     ? "bg-cyber-blue text-dark-950 shadow-neon/20"
                                     : "text-gray-400 hover:text-gray-200"
@@ -246,7 +246,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                                     <button
                                         key={v}
                                         onClick={() => setTargetVoltage(v)}
-                                        className="flex-shrink-0 px-3 py-1.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 rounded text-[9px] font-mono font-bold text-light-400 dark:text-gray-400 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all shadow-sm"
+                                            className="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center px-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 rounded text-[10px] font-mono font-bold text-light-400 dark:text-gray-400 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all shadow-sm"
                                     >
                                         {v}V
                                     </button>
@@ -292,13 +292,13 @@ export const PowerSupplyDashboard: React.FC = () => {
                                     aria-pressed={powerState !== 'OFF'}
                                     aria-label={powerState !== 'OFF' ? 'Turn ignition off' : 'Turn ignition on'}
                                     className={cn(
-                                        "w-12 h-6 rounded-full relative transition-all duration-300",
+                                        "w-12 h-7 rounded-full relative transition-all duration-300 flex items-center min-h-[44px]",
                                         powerState !== 'OFF' ? "bg-cyber-blue" : (isDark ? "bg-gray-800" : "bg-gray-300")
                                     )}
                                 >
                                     <motion.div
                                         animate={{ x: powerState !== 'OFF' ? 24 : 4 }}
-                                        className="w-4 h-4 bg-white rounded-full absolute top-1"
+                                        className="w-5 h-5 bg-white rounded-full absolute"
                                     />
                                 </button>
                             </div>
@@ -365,7 +365,7 @@ export const PowerSupplyDashboard: React.FC = () => {
                         <button
                             onClick={simulateCranking}
                             disabled={powerState === 'OFF' || powerState === 'CRANKING'}
-                            className="w-full py-4 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-[10px] font-black uppercase tracking-widest font-mono hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+                            className="w-full py-4 min-h-[44px] rounded-lg border border-white/10 bg-white/5 text-gray-300 text-[10px] font-black uppercase tracking-widest font-mono hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                         >
                             {powerState === 'CRANKING' ? 'Cranking...' : 'Simulate Engine Crank'}
                         </button>

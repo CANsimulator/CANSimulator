@@ -73,13 +73,13 @@ export default function GenerationsPage() {
             <div className="max-w-3xl space-y-4">
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 dark:border-white/10 bg-cyan-500/5 dark:bg-white/5 px-3 py-1">
                 <Cpu size={14} className="text-cyan-600 dark:text-cyan-300" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
                   Protocol evolution
                 </span>
               </div>
 
               {/* Gradient headline */}
-              <h1 className="text-4xl font-black uppercase tracking-tight md:text-6xl">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight">
                 <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent">
                   Generations Hub
                 </span>

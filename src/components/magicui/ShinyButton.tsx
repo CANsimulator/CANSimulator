@@ -10,19 +10,21 @@ import { cn } from "../../utils/cn";
 
 const animationProps = {
     initial: { "--x": "100%", scale: 1 },
-    animate: { 
+    whileHover: { 
         "--x": "-100%",
+        scale: 1.02,
         transition: {
-            repeat: Infinity,
-            repeatType: "loop",
-            repeatDelay: 1,
-            type: "spring",
-            stiffness: 20,
-            damping: 15,
-            mass: 2,
+            "--x": {
+                repeat: Infinity,
+                repeatType: "loop",
+                repeatDelay: 1,
+                type: "spring",
+                stiffness: 20,
+                damping: 15,
+                mass: 2,
+            }
         }
     },
-    whileHover: { scale: 1.02 },
     whileTap: { scale: 0.98 },
 } as const;
 

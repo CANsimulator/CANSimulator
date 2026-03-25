@@ -68,14 +68,19 @@ export default function ArbitrationPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyber-purple/10 border border-cyber-purple/30 text-[10px] font-black text-cyber-purple uppercase tracking-[0.3em]"
+                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyber-purple/10 border border-cyber-purple/30 text-[11px] font-black text-cyber-purple uppercase tracking-[0.3em]"
                         >
                             <Sword size={12} />
                             Priority Arena
                         </motion.div>
-                        <h1 className="text-6xl md:text-7xl font-black bg-clip-text text-transparent bg-gradient-to-b from-dark-950 dark:from-white via-cyber-purple to-red-500 italic uppercase tracking-tighter">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black bg-clip-text text-transparent bg-gradient-to-b from-dark-950 dark:from-white via-cyber-purple to-red-500 italic uppercase tracking-tighter"
+                        >
                             Arbitration Battle
-                        </h1>
+                        </motion.h1>
                         <p className="text-light-500 dark:text-gray-500 max-w-xl mx-auto font-medium italic">
                             The Bus-Master Battle. Lower IDs are dominant "0"s, winning the right to speak while others go silent.
                         </p>
@@ -93,13 +98,13 @@ export default function ArbitrationPage() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black text-dark-950 dark:text-white uppercase italic tracking-widest text-cyber-purple">Node Alpha</h3>
-                                    <div className="text-[10px] font-bold text-light-500 dark:text-gray-500 uppercase italic">Priority Contender</div>
+                                    <div className="text-[11px] font-bold text-light-500 dark:text-gray-500 uppercase italic">Priority Contender</div>
                                 </div>
                             </div>
 
                             <div className="space-y-6">
                                 <div className="space-y-2 relative">
-                                    <label className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase tracking-widest">Identifier (Hex)</label>
+                                    <label className="text-[11px] font-black text-light-600 dark:text-gray-600 uppercase tracking-widest">Identifier (Hex)</label>
                                     <input
                                         type="text"
                                         maxLength={3}
@@ -114,7 +119,7 @@ export default function ArbitrationPage() {
                                     {!isValidId(nodeAId) && (
                                         <motion.span 
                                             initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-                                            className="text-[9px] text-red-500 font-bold uppercase tracking-tighter absolute -bottom-5 left-0 w-full text-center flex items-center justify-center gap-1"
+                                            className="text-[11px] text-red-500 font-bold uppercase tracking-tighter absolute -bottom-5 left-0 w-full text-center flex items-center justify-center gap-1"
                                         >
                                             <AlertTriangle size={10} aria-hidden="true" />
                                             Out of range (Max 0x7FF)
@@ -147,13 +152,13 @@ export default function ArbitrationPage() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black text-dark-950 dark:text-white uppercase italic tracking-widest text-red-500">Node Beta</h3>
-                                    <div className="text-[10px] font-bold text-light-500 dark:text-gray-500 uppercase italic">Priority Contender</div>
+                                    <div className="text-[11px] font-bold text-light-500 dark:text-gray-500 uppercase italic">Priority Contender</div>
                                 </div>
                             </div>
 
                             <div className="space-y-6">
                                 <div className="space-y-2 relative">
-                                    <label className="text-[10px] font-black text-light-600 dark:text-gray-600 uppercase tracking-widest">Identifier (Hex)</label>
+                                    <label className="text-[11px] font-black text-light-600 dark:text-gray-600 uppercase tracking-widest">Identifier (Hex)</label>
                                     <input
                                         type="text"
                                         maxLength={3}
@@ -168,7 +173,7 @@ export default function ArbitrationPage() {
                                     {!isValidId(nodeBId) && (
                                         <motion.span 
                                             initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-                                            className="text-[9px] text-red-500 font-bold uppercase tracking-tighter absolute -bottom-5 left-0 w-full text-center flex items-center justify-center gap-1"
+                                            className="text-[11px] text-red-500 font-bold uppercase tracking-tighter absolute -bottom-5 left-0 w-full text-center flex items-center justify-center gap-1"
                                         >
                                             <AlertTriangle size={10} aria-hidden="true" />
                                             Out of range (Max 0x7FF)
@@ -225,36 +230,49 @@ export default function ArbitrationPage() {
                                     >
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center uppercase">
                                             <div className="p-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/5">
-                                                <div className="text-[10px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Current State</div>
+                                                <div className="text-[11px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Current State</div>
                                                 <div className={cn("text-lg font-black italic", activeBit >= 10 ? "text-cyber-emerald" : "text-gray-400 dark:text-gray-400")}>
                                                     {activeBit >= 10 ? "COMPLETED" : activeBit === -1 ? "-" : `BIT ${activeBit}`}
                                                 </div>
                                             </div>
                                             <div className="p-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/5">
-                                                <div className="text-[10px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Winning Node</div>
+                                                <div className="text-[11px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Winning Node</div>
                                                 <div className={cn("text-lg font-black italic", 
                                                     showResult ? (arbitration.isTie ? "text-amber-500" : (arbitration.winnerIndex === 0 ? "text-cyber-purple" : "text-red-500")) : "text-gray-400 dark:text-gray-400")}>
                                                     {showResult ? (arbitration.isTie ? "TIE (COLLISION)" : (arbitration.winnerIndex === 0 ? "Alpha" : "Beta")) : "???"}
                                                 </div>
                                             </div>
                                             <div className="p-4 rounded-2xl bg-white dark:bg-black/40 border border-gray-200 dark:border-white/5">
-                                                <div className="text-[10px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Reason</div>
+                                                <div className="text-[11px] font-black text-gray-500 dark:text-gray-600 uppercase mb-2">Reason</div>
                                                 <div className={cn("text-sm font-bold italic", showResult && arbitration.isTie ? "text-amber-500/70" : "text-gray-400 dark:text-gray-400")}>
                                                     {showResult ? (arbitration.isTie ? "ID COLLISION" : "Lower ID Dominant") : "Awaiting Result"}
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className={cn("p-6 rounded-2xl border flex items-start gap-4 transition-colors", 
-                                            showResult && arbitration.isTie ? "bg-amber-500/10 border-amber-500/20" : "bg-cyber-purple/10 border-cyber-purple/20")}>
-                                            <Info size={20} className={cn("shrink-0", showResult && arbitration.isTie ? "text-amber-500" : "text-cyber-purple")} />
-                                            <p className="text-xs text-light-400 dark:text-gray-400 leading-relaxed font-medium">
+                                        <div className={cn("p-6 rounded-2xl border flex items-start gap-4 transition-all duration-500", 
+                                            showResult && arbitration.isTie ? "bg-red-500/20 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.2)] animate-pulse" : "bg-cyber-purple/10 border-cyber-purple/20")}>
+                                            <div className="shrink-0 pt-1">
                                                 {showResult && arbitration.isTie ? (
-                                                    "Identical identifiers! In a real CAN bus, this leads to a collision beyond the ID field unless data is also identical. If frames match bit-for-bit, both nodes assume they won, but this is a critical design error that can break ACK slots and CRC checks if data ever differs."
+                                                    <AlertTriangle size={20} className="text-red-500" />
                                                 ) : (
-                                                    "In CAN, a '0' is Dominant. When Node Alpha sends '0' and Node Beta sends '1', the bus wire effectively stays at '0'. Node Beta detects that what it sent ('1') is not what it sees on the bus ('0'), and immediately stops transmitting to avoid collisions."
+                                                    <Info size={20} className="text-cyber-purple" />
                                                 )}
-                                            </p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <div className={cn("text-[11px] font-black uppercase tracking-widest", 
+                                                    showResult && arbitration.isTie ? "text-red-500" : "text-cyber-purple")}>
+                                                    {showResult && arbitration.isTie ? "Critical Protocol Violation" : "Protocol Insight"}
+                                                </div>
+                                                <p className={cn("text-xs leading-relaxed font-medium transition-colors",
+                                                    showResult && arbitration.isTie ? "text-red-200" : "text-light-400 dark:text-gray-400")}>
+                                                    {showResult && arbitration.isTie ? (
+                                                        "CRITICAL: Identical identifiers detected! On a real CAN bus, this causes a catastrophic collision. Since both nodes drive the bus identically during the ID phase, neither 'loses' arbitration. If their data then differs, both will detect an 'Error Frame' simultaneously, potentially leading to a bus-off condition if not resolved by hardware."
+                                                     ) : (
+                                                        "In CAN, a '0' is Dominant. When Node Alpha sends '0' and Node Beta sends '1', the bus wire effectively stays at '0'. Node Beta detects that what it sent ('1') is not what it sees on the bus ('0'), and immediately stops transmitting to avoid collisions."
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
                                     </motion.div>
                                 )}

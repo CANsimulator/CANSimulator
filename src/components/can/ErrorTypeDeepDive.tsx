@@ -14,29 +14,29 @@ import {
 // ----------------------------------------------------------------
 const ERROR_ICONS: Record<CANErrorType, React.ReactNode> = {
     BIT: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M4 4l16 16M4 20L20 4" strokeLinecap="round" />
         </svg>
     ),
     STUFF: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M4 12h4l2-8 4 16 2-8h4" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     ),
     FORM: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <rect x="4" y="4" width="16" height="16" rx="2" />
             <path d="M4 10h16M10 4v16" />
         </svg>
     ),
     ACK: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M8 12h8M12 16V8" strokeLinecap="round" />
             <circle cx="12" cy="12" r="9" />
         </svg>
     ),
     CRC: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
             <rect x="3" y="3" width="18" height="18" rx="3" />
         </svg>
@@ -73,31 +73,31 @@ export const ErrorTypeDeepDive: React.FC = () => {
             aria-label="Error Type Deep-Dive"
         >
             {/* Section header */}
-            <div className="flex items-center justify-between mb-5">
-                <h2 className="text-[10px] font-black text-cyber-green uppercase tracking-widest px-2 border-l-2 border-cyber-green">
+            <div className="flex flex-col sm:flex-row items-baseline sm:items-center justify-between gap-4 mb-5">
+                <h2 className="text-[12px] font-black text-cyber-green uppercase tracking-widest px-2 border-l-2 border-cyber-green">
                     Error Type Deep-Dive
                 </h2>
-                 <span className="text-[9px] font-bold text-gray-500 dark:text-gray-600 uppercase tracking-wider">
+                 <span className="text-xs font-bold text-gray-500 dark:text-gray-600 uppercase tracking-wider">
                     ISO 11898-1 · 5 Error Types · Interactive
                 </span>
             </div>
 
-            {/* Tab bar */}
-            <div 
-                role="tablist" 
-                aria-label="CAN Error Types"
-                className="flex flex-wrap gap-2 mb-5"
-                onKeyDown={(e) => {
-                    const currentIndex = ERROR_TYPE_CATALOG.findIndex(err => err.type === selectedType);
-                    if (e.key === 'ArrowRight') {
-                        const nextIndex = (currentIndex + 1) % ERROR_TYPE_CATALOG.length;
-                        handleTabChange(ERROR_TYPE_CATALOG[nextIndex].type);
-                    } else if (e.key === 'ArrowLeft') {
-                        const prevIndex = (currentIndex - 1 + ERROR_TYPE_CATALOG.length) % ERROR_TYPE_CATALOG.length;
-                        handleTabChange(ERROR_TYPE_CATALOG[prevIndex].type);
-                    }
-                }}
-            >
+            <div className="relative -mx-5 sm:mx-0 overflow-hidden">
+                <div 
+                    role="tablist" 
+                    aria-label="CAN Error Types"
+                    className="flex flex-wrap gap-2 mb-5 px-5 sm:px-0 pb-2"
+                    onKeyDown={(e) => {
+                        const currentIndex = ERROR_TYPE_CATALOG.findIndex(err => err.type === selectedType);
+                        if (e.key === 'ArrowRight') {
+                            const nextIndex = (currentIndex + 1) % ERROR_TYPE_CATALOG.length;
+                            handleTabChange(ERROR_TYPE_CATALOG[nextIndex].type);
+                        } else if (e.key === 'ArrowLeft') {
+                            const prevIndex = (currentIndex - 1 + ERROR_TYPE_CATALOG.length) % ERROR_TYPE_CATALOG.length;
+                            handleTabChange(ERROR_TYPE_CATALOG[prevIndex].type);
+                        }
+                    }}
+                >
                 {ERROR_TYPE_CATALOG.map((err) => {
                     const isActive = selectedType === err.type;
                     return (
@@ -109,7 +109,7 @@ export const ErrorTypeDeepDive: React.FC = () => {
                             aria-controls={`tabpanel-${err.type}`}
                             tabIndex={isActive ? 0 : -1}
                             onClick={() => handleTabChange(err.type)}
-                             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all duration-200 border"
+                             className="flex-1 min-w-[120px] flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-[11px] sm:text-xs font-black uppercase tracking-widest transition-all duration-200 border whitespace-nowrap min-h-[44px]"
                             style={{
                                 backgroundColor: isActive ? `${err.colorHex}15` : 'transparent',
                                 borderColor: isActive ? `${err.colorHex}40` : (document.documentElement.classList.contains('dark') ? '#1a1a24' : '#e2e8f0'),
@@ -126,6 +126,7 @@ export const ErrorTypeDeepDive: React.FC = () => {
                         </button>
                     );
                 })}
+                </div>
             </div>
 
             {/* Active error type content */}
@@ -142,17 +143,16 @@ export const ErrorTypeDeepDive: React.FC = () => {
                     className="space-y-5"
                 >
                     {/* Info cards row */}
-                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         {/* Description */}
                         <div className="lg:col-span-2 p-4 rounded-xl bg-gray-50 dark:bg-dark-800/50 border border-gray-200 dark:border-dark-700">
                             <div className="flex items-center gap-2 mb-2">
                                 <span
-                                    className="text-[10px] font-black uppercase tracking-widest"
+                                    className="text-[12px] font-black uppercase tracking-widest"
                                     style={{ color: info.colorHex }}
                                 >
                                     {info.title}
-                                </span>
-                                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border"
+                                </span>                                  <span className="px-2 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border"
                                      style={{
                                          borderColor: `${info.colorHex}30`,
                                          color: `${info.colorHex}cc`,
@@ -163,14 +163,14 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                  </span>
                                  <span className="text-[12px] font-mono text-gray-500 dark:text-gray-400">{info.isoReference}</span>
                             </div>
-                            <p className="text-[12px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium mb-3">
+                            <p className="text-[12px] sm:text-sm leading-relaxed text-gray-700 dark:text-gray-400 font-medium mb-3">
                                 {info.description}
                             </p>
                               <div className="p-3 rounded-lg bg-gray-100 dark:bg-dark-900/60 border border-gray-200 dark:border-dark-700">
                                  <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest block mb-1">
                                      Mechanism
                                  </span>
-                                 <p className="text-[11px] text-gray-700 dark:text-gray-300 font-mono leading-relaxed">
+                                 <p className="text-[11px] sm:text-xs text-gray-700 dark:text-gray-300 font-mono leading-relaxed">
                                      {info.mechanism}
                                  </p>
                              </div>
@@ -182,7 +182,7 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                  <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">
                                      Real-World Causes
                                  </span>
-                                 <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
+                                 <p className="text-[11px] sm:text-xs leading-relaxed text-gray-700 dark:text-gray-400 font-medium">
                                      {info.realWorldCause}
                                  </p>
                             </div>
@@ -206,7 +206,7 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                     (e.target as HTMLElement).style.backgroundColor = `${info.colorHex}15`;
                                 }}
                                 >
-                                    <Zap size={14} className="inline mr-1.5" /> Generate {info.title} Demo
+                                <Zap size={16} className="inline mr-2" /> Generate {info.title} Demo
                                 </motion.button>
                         </div>
                     </div>
@@ -224,11 +224,11 @@ export const ErrorTypeDeepDive: React.FC = () => {
                             >
                                 {/* Bit stream comparison */}
                                  <div className="p-4 rounded-xl bg-gray-50 dark:bg-dark-800/30 border border-gray-200 dark:border-dark-700 space-y-4">
-                                    <div className="flex items-center justify-between">
-                                         <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                         <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">
                                              CAN Frame Bit-Level View
                                          </span>
-                                        <span className="text-[11px] font-mono text-gray-500 dark:text-gray-400">
+                                        <span className="text-xs font-mono text-gray-500 dark:text-gray-400">
                                             ID=0x123 · DLC=2 · Data=[0xAB, 0xCD] · 60 bits
                                         </span>
                                     </div>
@@ -267,12 +267,12 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                         }}
                                     >
                                         <span
-                                             className="text-[10px] font-black uppercase tracking-widest block mb-1.5"
+                                             className="text-[11px] font-black uppercase tracking-widest block mb-1.5"
                                              style={{ color: info.colorHex }}
                                          >
                                              What Went Wrong
                                          </span>
-                                          <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
+                                          <p className="text-xs leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
                                              {demo.explanation}
                                          </p>
                                     </motion.div>
@@ -283,10 +283,10 @@ export const ErrorTypeDeepDive: React.FC = () => {
                                         transition={{ delay: 0.4 }}
                                         className="p-4 rounded-xl bg-red-500/10 dark:bg-red-500/5 border border-red-500/20 dark:border-red-500/15 shadow-sm"
                                     >
-                                         <span className="text-[10px] font-black text-red-600 dark:text-red-400 uppercase tracking-widest block mb-1.5">
+                                         <span className="text-[11px] font-black text-red-600 dark:text-red-400 uppercase tracking-widest block mb-1.5">
                                              Bus Consequence
                                          </span>
-                                         <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-400 font-medium">
+                                         <p className="text-xs leading-relaxed text-gray-700 dark:text-gray-400 font-medium">
                                              {demo.whatHappens}
                                          </p>
                                     </motion.div>

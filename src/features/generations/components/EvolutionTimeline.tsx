@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Gauge, Route, ShieldCheck } from 'lucide-react';
 import { GENERATION_ORDER, GENERATIONS } from '../data';
@@ -11,6 +12,7 @@ interface EvolutionTimelineProps {
 
 export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelineProps) {
   const reduceMotion = useReducedMotion();
+  const listRef = useRef<HTMLOListElement>(null);
 
   const milestoneCopy: Record<GenerationId, string> = {
     Classic: 'Deterministic control foundation',
@@ -24,6 +26,48 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
     XL: Route,
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent, id: GenerationId, idx: number) => {
+    const list = listRef.current;
+    if (!list) return;
+
+    const items = Array.from(list.querySelectorAll<HTMLElement>('[role="tab"]'));
+    let nextIdx = -1;
+
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        e.preventDefault();
+        nextIdx = (idx + 1) % items.length;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        e.preventDefault();
+        nextIdx = (idx - 1 + items.length) % items.length;
+        break;
+      case 'Home':
+        e.preventDefault();
+        nextIdx = 0;
+        break;
+      case 'End':
+        e.preventDefault();
+        nextIdx = items.length - 1;
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        onPrimaryChange?.(id);
+        return;
+      default:
+        return;
+    }
+
+    if (nextIdx !== -1) {
+      const nextId = GENERATION_ORDER[nextIdx];
+      onPrimaryChange?.(nextId);
+      items[nextIdx].focus();
+    }
+  };
+
   return (
      <section className="rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] p-6 md:p-8 transition-all duration-300 shadow-sm">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -31,7 +75,7 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
           Evolution Timeline
         </h2>
         <p className="text-xs font-black uppercase tracking-[0.15em] text-gray-600 dark:text-gray-500 transition-colors">
-          Click a generation to focus
+          Use arrow keys to navigate
         </p>
       </div>
 
@@ -39,7 +83,12 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
       <div className="relative">
         <div className="absolute left-0 right-0 top-[42px] hidden h-[2px] bg-gradient-to-r from-cyan-500/40 via-violet-500/40 to-emerald-500/40 dark:from-cyan-500/30 dark:via-violet-500/30 dark:to-emerald-500/30 md:block transition-all" />
 
-        <ol className="relative grid grid-cols-1 gap-4 md:grid-cols-3">
+        <ol 
+          ref={listRef}
+          role="tablist"
+          aria-label="CAN Generations Timeline"
+          className="relative grid grid-cols-1 gap-4 md:grid-cols-3"
+        >
           {GENERATION_ORDER.map((id, idx) => {
             const spec = GENERATIONS[id];
             const active = primary === id;
@@ -56,15 +105,12 @@ export function EvolutionTimeline({ primary, onPrimaryChange }: EvolutionTimelin
                 whileHover={reduceMotion ? undefined : { scale: 1.03 }}
                 whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                 onClick={() => onPrimaryChange?.(id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onPrimaryChange?.(id);
-                  }
-                }}
-                tabIndex={0}
-                role="button"
-                aria-pressed={active}
+                onKeyDown={(e) => handleKeyDown(e, id, idx)}
+                tabIndex={active ? 0 : -1}
+                role="tab"
+                aria-selected={active}
+                aria-controls={`generation-panel-${id}`}
+                id={`generation-tab-${id}`}
                 className={cn(
                   'group relative cursor-pointer rounded-2xl border p-5 transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-cyber-blue shadow-sm hover:shadow-md',
                   active

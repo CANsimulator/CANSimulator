@@ -1,10 +1,17 @@
-import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import React, { useState, useCallback, useRef, useEffect, useMemo, memo } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import {
+    ArrowRight,
+    ArrowLeft,
+    ChevronDown,
+    ChevronUp,
+    Check
+} from 'lucide-react';
+import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import { cn } from '../../utils/cn';
 import { useTestBench } from '../../context/TestBenchContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Tooltip } from '../ui';
-import { Check, ChevronUp, ChevronDown, ArrowRight, ArrowLeft } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
    Types & Constants
@@ -100,11 +107,79 @@ type PersistedNode = Omit<ECUNode, 'txCount' | 'rxCount' | 'errorCount'>;
 const RANDOM_DATA = () => Array.from({ length: 8 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase());
 
 
+/* ═══════════════════════════════════════════════════════════════
+   Optimized Bus Stubs Component
+   ═══════════════════════════════════════════════════════════════ */
+const BusStubs = memo(({ nodes, selectedNode, txActive, transmission, receivingIds, isAckPhase, BUS_Y_H, BUS_Y_L, STUB_OFFSET }: {
+    nodes: ECUNode[];
+    selectedNode: string | null;
+    txActive: boolean;
+    transmission: TransmissionState | null;
+    receivingIds: Set<string>;
+    isAckPhase: boolean;
+    BUS_Y_H: number;
+    BUS_Y_L: number;
+    STUB_OFFSET: number;
+}) => {
+    const shouldReduceMotion = useReducedMotion();
+    return (
+        <>
+            {nodes.map((node: ECUNode, i: number) => {
+                const dm = DOMAIN_META[node.domain];
+                const isSelected = selectedNode === node.id;
+                const isTx = txActive && transmission?.fromId === node.id;
+                const isRx = receivingIds.has(node.id) && txActive;
+                const stubColor = isTx ? '#22c55eaa' : isRx ? (isAckPhase ? '#14b8a6aa' : '#3b82f6aa') : node.online ? (isSelected ? dm.color + 'aa' : dm.color + '30') : '#ef444420';
+                const isTop = (i % 2 === 0);
+                const y1 = isTop ? (BUS_Y_H - STUB_OFFSET) : (BUS_Y_L + STUB_OFFSET);
+                const connectY = isTop ? BUS_Y_H : BUS_Y_L;
+                const BUS_MID = (BUS_Y_H + BUS_Y_L) / 2;
+                const isDataPhase = transmission?.phase === 'data' || transmission?.phase === 'control';
+
+                return (
+                    <g key={`stub-${node.id}`}>
+                        <line x1={`${node.x}%`} y1={`${y1}%`} x2={`${node.x}%`} y2={`${connectY}%`}
+                            stroke={stubColor} strokeWidth={isTx || isRx ? 2.5 : isSelected ? 2 : 1.5} strokeDasharray={node.online ? 'none' : '4 3'} />
+                        <circle cx={`${node.x}%`} cy={`${BUS_Y_H}%`} r={isTx || isRx ? 5 : isSelected ? 4 : 3}
+                            fill={isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#333'} opacity={node.online ? 1 : 0.3} />
+                        <circle cx={`${node.x}%`} cy={`${BUS_Y_L}%`} r={isTx || isRx ? 5 : isSelected ? 4 : 3}
+                            fill={isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#333'} opacity={node.online ? (node.isLocal ? 0.9 : 0.6) : 0.3} />
+                        {isSelected && (
+                            <text
+                                x={`${node.x}%`}
+                                y={isTop ? `${BUS_Y_H - STUB_OFFSET - 24}%` : `${BUS_Y_L + STUB_OFFSET + 30}%`}
+                                fill={dm.color}
+                                fontSize="11"
+                                fontFamily="monospace"
+                                fontWeight="bold"
+                                opacity="1"
+                                textAnchor="middle">
+                                {node.label}
+                            </text>
+                        )}
+                        {/* TX glow ring */}
+                        {isTx && !shouldReduceMotion && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="8" fill="none" stroke="#22c55e" strokeWidth="1" opacity="0.4"><animate attributeName="r" values="8;16;8" dur="1s" repeatCount="indefinite" /><animate attributeName="opacity" values="0.4;0.1;0.4" dur="1s" repeatCount="indefinite" /></circle>}
+                        {/* RX pulse ring */}
+                        {isRx && isDataPhase && !shouldReduceMotion && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="6" fill="none" stroke="#3b82f6" strokeWidth="1" opacity="0.3"><animate attributeName="r" values="6;12;6" dur="0.8s" repeatCount="indefinite" /></circle>}
+                        {/* ACK pulse */}
+                        {isRx && isAckPhase && transmission?.ackReceived && !shouldReduceMotion && (
+                            <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="6" fill="#14b8a640" stroke="#14b8a6" strokeWidth="1.5">
+                                <animate attributeName="r" values="6;14;6" dur="0.6s" repeatCount="indefinite" />
+                                <animate attributeName="opacity" values="0.6;0.2;0.6" dur="0.6s" repeatCount="indefinite" />
+                            </circle>
+                        )}
+                    </g>
+                );
+            })}
+        </>
+    );
+});
+BusStubs.displayName = 'BusStubs';
 
 /* ═══════════════════════════════════════════════════════════════
    BusTopology — Main Component
    ═══════════════════════════════════════════════════════════════ */
-export function BusTopology() {
+export default memo(function BusTopology() {
     const [nodes, setNodes] = useState<ECUNode[]>(() => {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
@@ -139,7 +214,17 @@ export function BusTopology() {
     const transmissionRef = useRef<TransmissionState | null>(null);
     const nodesRef = useRef(nodes);
     const completedTransmissionIdsRef = useRef<Set<number>>(new Set());
-    const nextIdRef = useRef(100);
+    
+    // Initialize ID counters based on existing nodes to prevent collisions with persisted data
+    const initialMaxId = useMemo(() => {
+        const ids = nodes.map(n => {
+            const match = n.id.match(/\d+/);
+            return match ? parseInt(match[0], 10) : 0;
+        });
+        return Math.max(100, ...ids);
+    }, []); // only on initial mount
+    
+    const nextIdRef = useRef(initialMaxId);
     const txIdRef = useRef(0);
 
     const bench = useTestBench();
@@ -521,7 +606,6 @@ export function BusTopology() {
                             ? (bench.baudRate >= 1_000_000 ? '1M' : `${bench.baudRate / 1_000}k`)
                             : '500k'
                         }
-                        activeDomain={activeDomain}
                     />
                 ) : (
                     <ListView nodes={nodes} selectedNode={selectedNode} setSelectedNode={setSelectedNode} toggleNode={toggleNode} removeNode={removeNode} />
@@ -647,7 +731,7 @@ export function BusTopology() {
             </AlertDialog.Root>
         </div>
     );
-};
+});
 
 /* ═══════════════════════════════════════════════════════════════
    Transmission Panel — Phase-by-phase CAN frame lifecycle
@@ -698,7 +782,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                         </div>
                         <span className="text-[8px] font-mono text-gray-500 mx-2">|</span>
                         <span className="text-[8px] font-mono text-gray-300">
-                            <span className="text-[#f1f1f1] font-bold">{fromNode?.label ?? '?'}</span>
+                            <span className="text-[#f1f1f1] font-bold">{fromNode?.label ?? '?'}.</span>
                             <ArrowRight size={10} className="text-gray-400 mx-1 inline" />
                             <span className="text-[#f1f1f1] font-bold">{transmission.toId === 'broadcast' ? 'ALL NODES' : toNode?.label ?? '?'}</span>
                         </span>
@@ -846,7 +930,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
 function TopologyView({
     nodes, selectedNode, setSelectedNode, termLeft, termRight,
     setTermLeft, setTermRight, hasTermIssue, onlineCount, svgRef,
-    transmission, controllerBaudStr, activeDomain
+    transmission, controllerBaudStr
 }: {
     nodes: ECUNode[];
     selectedNode: string | null;
@@ -860,7 +944,6 @@ function TopologyView({
     svgRef: React.RefObject<SVGSVGElement | null>;
     transmission: TransmissionState | null;
     controllerBaudStr: string;
-    activeDomain: ECUDomain | null;
 }) {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
@@ -876,7 +959,7 @@ function TopologyView({
 
     const STUB_OFFSET = 12; // Standard distance box edge is from the line
 
-    const txActive = transmission && transmission.phase !== 'idle' && transmission.phase !== 'done';
+    const txActive = !!(transmission && transmission.phase !== 'idle' && transmission.phase !== 'done');
     const sourceNode = txActive ? nodes.find(n => n.id === transmission.fromId) : null;
     const targetNode = txActive && transmission.toId !== 'broadcast' ? nodes.find(n => n.id === transmission.toId) : null;
     const isAckPhase = transmission?.phase === 'ack';
@@ -892,18 +975,21 @@ function TopologyView({
     const goesRight = tgtX !== null ? tgtX > srcX : true; // primary direction
 
     // Determine which nodes are "receiving" (highlighted)
-    const receivingIds = new Set<string>();
-    if (txActive && transmission) {
-        if (transmission.toId === 'broadcast') {
-            nodes.filter(n => n.id !== transmission.fromId && n.online).forEach(n => receivingIds.add(n.id));
-        } else {
-            receivingIds.add(transmission.toId);
+    const receivingIds = useMemo(() => {
+        const ids = new Set<string>();
+        if (txActive && transmission) {
+            if (transmission.toId === 'broadcast') {
+                nodes.filter(n => n.id !== transmission.fromId && n.online).forEach(n => ids.add(n.id));
+            } else {
+                ids.add(transmission.toId);
+            }
         }
-    }
+        return ids;
+    }, [txActive, transmission, nodes]);
 
     return (
         <div className="overflow-x-auto rounded-xl">
-            <div className="relative bg-gray-50 dark:bg-[#0a0a0d] rounded-xl border border-black/10 dark:border-[#161620] overflow-hidden transition-colors" style={{ minHeight: '420px', minWidth: `${Math.max(900, nodes.length * 90)}px` }}>
+            <div className="relative bg-gray-50 dark:bg-[#0a0a0d] rounded-xl border border-black/10 dark:border-[#161620] overflow-hidden transition-colors" style={{ minHeight: '460px', minWidth: `${Math.max(900, nodes.length * 90)}px` }}>
 
             {/* Background grid */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: isDark ? 0.04 : 0.08 }}>
@@ -912,7 +998,7 @@ function TopologyView({
             </svg>
 
             {/* Main SVG wiring */}
-            <svg ref={svgRef} className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
+            <svg ref={svgRef} className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet">
                 <defs>
                     <filter id="glow-cyan"><feGaussianBlur stdDeviation="2" /><feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge></filter>
                     <filter id="glow-magenta"><feGaussianBlur stdDeviation="2" /><feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge></filter>
@@ -967,91 +1053,79 @@ function TopologyView({
                     return <g key={`tw${i}`} opacity={isDark ? "0.12" : "0.25"}><line x1={`${cx}%`} y1={`${BUS_Y_H - 1}%`} x2={`${cx + 0.8}%`} y2={`${BUS_Y_L + 1}%`} stroke={isDark ? "#666" : "#444"} strokeWidth="0.5" /></g>;
                 })}
 
-                {/* Drop stubs */}
-
-                {nodes.map((node, i) => {
-                    const dm = DOMAIN_META[node.domain];
-                    const isSelected = selectedNode === node.id;
-                    const isTx = txActive && transmission?.fromId === node.id;
-                    const isRx = receivingIds.has(node.id);
-                    const stubColor = isTx ? '#22c55eaa' : isRx ? (isAckPhase ? '#14b8a6aa' : '#3b82f6aa') : node.online ? (isSelected ? dm.color + 'aa' : dm.color + '30') : '#ef444420';
-                    const isTop = (i % 2 === 0);
-                    const y1 = isTop ? (BUS_Y_H - STUB_OFFSET) : (BUS_Y_L + STUB_OFFSET);
-                    const connectY = isTop ? BUS_Y_H : BUS_Y_L;
-                    const isDataPhase = transmission?.phase === 'data' || transmission?.phase === 'control';
-
-                    return (
-                        <g key={node.id}>
-                            <line x1={`${node.x}%`} y1={`${y1}%`} x2={`${node.x}%`} y2={`${connectY}%`}
-                                stroke={stubColor} strokeWidth={isTx || isRx ? 2.5 : isSelected ? 2 : 1.5} strokeDasharray={node.online ? 'none' : '4 3'} />
-                            <circle cx={`${node.x}%`} cy={`${BUS_Y_H}%`} r={isTx || isRx ? 5 : isSelected ? 4 : 3}
-                                fill={isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#333'} opacity={node.online ? 1 : 0.3} />
-                            <circle cx={`${node.x}%`} cy={`${BUS_Y_L}%`} r={isTx || isRx ? 5 : isSelected ? 4 : 3}
-                                fill={isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#333'} opacity={node.online ? (node.isLocal ? 0.9 : 0.6) : 0.3} />
-                            {isSelected && (
-                                <text
-                                    x={`${node.x}%`}
-                                    y={isTop ? `${BUS_Y_H - STUB_OFFSET - 24}%` : `${BUS_Y_L + STUB_OFFSET + 30}%`}
-                                    fill={dm.color}
-                                    fontSize="9"
-                                    fontFamily="monospace"
-                                    fontWeight="bold"
-                                    opacity="0.8"
-                                    textAnchor="middle">
-                                    {(isTx || isRx) && (isTx ? (isAckPhase ? 'ACK RECEIVED' : 'TRANSMITTING') : 'RECEIVING')}
-                                </text>
-                            )}
-                            {/* TX glow ring */}
-                            {isTx && !shouldReduceMotion && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="8" fill="none" stroke="#22c55e" strokeWidth="1" opacity="0.4"><animate attributeName="r" values="8;16;8" dur="1s" repeatCount="indefinite" /><animate attributeName="opacity" values="0.4;0.1;0.4" dur="1s" repeatCount="indefinite" /></circle>}
-                            {/* RX pulse ring */}
-                            {isRx && isDataPhase && !shouldReduceMotion && <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="6" fill="none" stroke="#3b82f6" strokeWidth="1" opacity="0.3"><animate attributeName="r" values="6;12;6" dur="0.8s" repeatCount="indefinite" /></circle>}
-                            {/* ACK pulse */}
-                            {isRx && isAckPhase && transmission?.ackReceived && !shouldReduceMotion && (
-                                <circle cx={`${node.x}%`} cy={`${BUS_MID}%`} r="6" fill="#14b8a640" stroke="#14b8a6" strokeWidth="1.5">
-                                    <animate attributeName="r" values="6;14;6" dur="0.6s" repeatCount="indefinite" />
-                                    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="0.6s" repeatCount="indefinite" />
-                                </circle>
-                            )}
-                        </g>
-                    );
-                })}
+                {/* Drop stubs and connections */}
+                <BusStubs 
+                    nodes={nodes} 
+                    selectedNode={selectedNode} 
+                    txActive={txActive} 
+                    transmission={transmission} 
+                    receivingIds={receivingIds} 
+                    isAckPhase={isAckPhase} 
+                    BUS_Y_H={BUS_Y_H} 
+                    BUS_Y_L={BUS_Y_L} 
+                    STUB_OFFSET={STUB_OFFSET} 
+                />
 
                 {/* ─── Directed signal packet: source → target ─── */}
                 {txActive && sourceNode && !isAckPhase && !isEofPhase && (
                     <>
                         {/* CANH packet traveling from source to target */}
-                        <motion.rect y={`${BUS_Y_H - 1.5}%`} height="3%" rx="2"
-                            fill="#00f3ff" filter="url(#glow-signal)"
+                        <motion.rect 
+                            y={`${BUS_Y_H}%`} 
+                            height="8" 
+                            rx="2"
+                            fill="#00f3ff" 
+                            filter="url(#glow-signal)"
                             key={`canh-fwd-${transmission?.id}`}
                             animate={{
                                 x: goesRight ? [`${srcX}%`, `${segRight}%`] : [`${srcX}%`, `${segLeft}%`],
                                 opacity: shouldReduceMotion ? 0.7 : [0.7, 0.5, 0.7],
                             }}
-                            style={{ width: '3%' }}
-                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut' }} />
+                            style={{ width: '24px', transform: 'translateY(-4px)' }}
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut' }} 
+                            aria-hidden="true"
+                        />
                         {/* CANL packet (complementary) */}
-                        <motion.rect y={`${BUS_Y_L - 1.5}%`} height="3%" rx="2"
-                            fill="#bf00ff" filter="url(#glow-signal)"
+                        <motion.rect 
+                            y={`${BUS_Y_L}%`} 
+                            height="8" 
+                            rx="2"
+                            fill="#bf00ff" 
+                            filter="url(#glow-signal)"
                             key={`canl-fwd-${transmission?.id}`}
                             animate={{
                                 x: goesRight ? [`${srcX}%`, `${segRight}%`] : [`${srcX}%`, `${segLeft}%`],
                                 opacity: shouldReduceMotion ? 0.5 : [0.5, 0.4, 0.5],
                             }}
-                            style={{ width: '3%' }}
-                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.08 }} />
+                            style={{ width: '24px', transform: 'translateY(-4px)' }}
+                            transition={{ duration: 1.2, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.08 }} 
+                            aria-hidden="true"
+                        />
                         {/* For broadcast: second packet going the other direction */}
                         {tgtX === null && (
                             <>
-                                <motion.rect y={`${BUS_Y_H - 1.5}%`} height="3%" rx="2"
-                                    fill="#00f3ff" filter="url(#glow-signal)"
+                                <motion.rect 
+                                    y={`${BUS_Y_H}%`} 
+                                    height="8" 
+                                    rx="2"
+                                    fill="#00f3ff" 
+                                    filter="url(#glow-signal)"
                                     animate={{ x: [`${srcX}%`, '4%'], opacity: shouldReduceMotion ? 0.5 : [0.5, 0.3, 0.5] }}
-                                    style={{ width: '3%' }}
-                                    transition={{ duration: 1.4, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.15 }} />
-                                <motion.rect y={`${BUS_Y_L - 1.5}%`} height="3%" rx="2"
-                                    fill="#bf00ff" filter="url(#glow-signal)"
+                                    style={{ width: '24px', transform: 'translateY(-4px)' }}
+                                    transition={{ duration: 1.4, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.15 }} 
+                                    aria-hidden="true"
+                                />
+                                <motion.rect 
+                                    y={`${BUS_Y_L}%`} 
+                                    height="8" 
+                                    rx="2"
+                                    fill="#bf00ff" 
+                                    filter="url(#glow-signal)"
                                     animate={{ x: [`${srcX}%`, '4%'], opacity: shouldReduceMotion ? 0.4 : [0.4, 0.25, 0.4] }}
-                                    style={{ width: '3%' }}
-                                    transition={{ duration: 1.4, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.2 }} />
+                                    style={{ width: '24px', transform: 'translateY(-4px)' }}
+                                    transition={{ duration: 1.4, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.2 }} 
+                                    aria-hidden="true"
+                                />
                             </>
                         )}
                     </>
@@ -1060,24 +1134,36 @@ function TopologyView({
                 {/* ─── ACK return signal: target → source ─── */}
                 {txActive && sourceNode && isAckPhase && (
                     <>
-                        <motion.rect y={`${BUS_Y_H - 1.5}%`} height="3%" rx="2"
-                            fill="#14b8a6" filter="url(#glow-signal)"
+                        <motion.rect 
+                            y={`${BUS_Y_H}%`} 
+                            height="8" 
+                            rx="2"
+                            fill="#14b8a6" 
+                            filter="url(#glow-signal)"
                             key={`ack-h-${transmission?.id}`}
                             animate={{
                                 x: goesRight ? [`${segRight}%`, `${srcX}%`] : [`${segLeft}%`, `${srcX}%`],
                                 opacity: shouldReduceMotion ? 0.7 : [0.7, 0.5, 0.7],
                             }}
-                            style={{ width: '2.5%' }}
-                            transition={{ duration: 0.8, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut' }} />
-                        <motion.rect y={`${BUS_Y_L - 1.5}%`} height="3%" rx="2"
-                            fill="#14b8a6" filter="url(#glow-signal)"
+                            style={{ width: '20px', transform: 'translateY(-4px)' }}
+                            transition={{ duration: 0.8, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut' }} 
+                            aria-hidden="true"
+                        />
+                        <motion.rect 
+                            y={`${BUS_Y_L}%`} 
+                            height="8" 
+                            rx="2"
+                            fill="#14b8a6" 
+                            filter="url(#glow-signal)"
                             key={`ack-l-${transmission?.id}`}
                             animate={{
                                 x: goesRight ? [`${segRight}%`, `${srcX}%`] : [`${segLeft}%`, `${srcX}%`],
                                 opacity: shouldReduceMotion ? 0.5 : [0.5, 0.4, 0.5],
                             }}
-                            style={{ width: '2.5%' }}
-                            transition={{ duration: 0.8, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.06 }} />
+                            style={{ width: '20px', transform: 'translateY(-4px)' }}
+                            transition={{ duration: 0.8, repeat: shouldReduceMotion ? 0 : Infinity, ease: 'easeInOut', delay: 0.06 }} 
+                            aria-hidden="true"
+                        />
                     </>
                 )}
 
@@ -1190,9 +1276,7 @@ function TopologyView({
                         anchorY={isTop ? (BUS_Y_H - STUB_OFFSET) : (BUS_Y_L + STUB_OFFSET)}
                         isBottom={!isTop}
                         isTx={isTx} isRx={isRx}
-                        txPhase={txActive ? transmission?.phase ?? null : null}
                         controllerBaudStr={controllerBaudStr}
-                        activeDomain={activeDomain}
                         boxWidth={boxWidth} />
                 );
             })}
@@ -1235,13 +1319,7 @@ function TopologyView({
 /* ═══════════════════════════════════════════════════════════════
    ECU Box
    ═══════════════════════════════════════════════════════════════ */
-function ECUBox({
-    node, isSelected, onSelect, anchorY, isBottom,
-    isTx, isRx, txPhase,
-    controllerBaudStr,
-    activeDomain,
-    boxWidth = 80
-}: {
+const ECUBox = memo(({ node, isSelected, onSelect, anchorY, isBottom, isTx, isRx, controllerBaudStr, boxWidth }: {
     node: ECUNode;
     isSelected: boolean;
     onSelect: () => void;
@@ -1249,104 +1327,93 @@ function ECUBox({
     isBottom: boolean;
     isTx: boolean;
     isRx: boolean;
-    txPhase: FramePhase | null;
     controllerBaudStr: string;
-    activeDomain: ECUDomain | null;
-    boxWidth?: number;
-}) {
+    boxWidth: number;
+}) => {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
-    const shouldReduceMotion = useReducedMotion();
     const dm = DOMAIN_META[node.domain];
-    const borderGlow = isTx ? '#22c55e' : isRx ? '#3b82f6' : isSelected ? dm.color : undefined;
-    const hasBaudMismatch = node.online && node.baudRate !== controllerBaudStr;
-    const isDimmed = activeDomain !== null && node.domain !== activeDomain;
-
-    const scale = boxWidth / 80;
-    const isSmall = scale < 0.8;
-
+    const borderGlow = isTx ? '#22c55e' : isRx ? '#3b82f6' : isSelected ? dm.color : null;
+    
     return (
-        <div className="absolute flex flex-col items-center transition-all duration-300"
-            style={{ 
-                left: `${node.x}%`, 
-                top: isBottom ? `${anchorY}%` : undefined,
-                bottom: !isBottom ? `${100 - anchorY}%` : undefined,
-                transform: 'translateX(-50%)', 
-                width: `${boxWidth}px`, 
-                zIndex: isSelected || isTx || isRx ? 20 : 10, 
-                opacity: isDimmed ? 0.25 : 1 
-            }}>
-            <motion.button onClick={onSelect}
-                whileHover={shouldReduceMotion ? {} : { scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
-                className={`w-full rounded-lg border text-center transition-all duration-200 cursor-pointer relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0a0a0d] ${isSelected ? 'ring-1 ring-offset-1 ring-offset-white dark:ring-offset-[#0a0a0d]' : ''}`}
-                animate={{
-                    borderColor: borderGlow ? borderGlow + '80' : (node.online ? (isDark ? '#222230' : '#e5e7eb') : (isDark ? '#1a0a0a' : '#fee2e2')),
-                    boxShadow: isTx ? `0 0 20px #22c55e40, inset 0 1px 0 #22c55e15` : isRx ? `0 0 16px #3b82f640, inset 0 1px 0 #3b82f615` : isSelected ? `0 0 16px ${dm.glow}, inset 0 1px 0 ${dm.color}15` : node.online ? 'inset 0 1px 0 rgba(255,255,255,0.06)' : 'none',
-                }}
-                style={{
-                    backgroundColor: isTx ? (isDark ? '#0a1a0a' : '#f0fdf4') : isRx ? (isDark ? '#0a0a1a' : '#eff6ff') : node.online ? (isDark ? '#0d0d12' : '#ffffff') : (isDark ? '#0c0a0a' : '#fef2f2'),
-                    padding: isSmall ? '4px 2px 3px' : '8px 6px 6px'
-                }}>
-
-                {/* TX/RX badge */}
-                <AnimatePresence>
-                    {(isTx || isRx) && !isSmall && (
-                        <motion.div className="absolute -top-1 -right-1 px-1 py-[1px] rounded text-[8px] font-mono font-black uppercase z-10"
-                            initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
-                            style={{ backgroundColor: isTx ? '#22c55e' : '#3b82f6', color: '#000' }}>
-                            {isTx ? 'TX' : 'RX'}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Baud mismatch badge */}
-                <AnimatePresence>
-                    {hasBaudMismatch && !isTx && !isRx && !isSmall && (
-                        <motion.div
-                            className="absolute -top-1 -left-1 px-1 py-[1px] rounded text-[8px] font-mono font-black uppercase z-10"
-                            initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
-                            title={`Node baud: ${node.baudRate}, controller: ${controllerBaudStr}`}
-                            style={{ backgroundColor: '#f59e0b', color: '#000' }}>
-                            {node.baudRate}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Phase indicator on TX node */}
-                {isTx && txPhase && !isSmall && (
-                    <motion.div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-[1px] rounded text-[8px] font-mono font-bold uppercase z-10 whitespace-nowrap"
-                        key={txPhase}
-                        initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                        style={{ backgroundColor: PHASE_INFO[txPhase].color + '20', color: PHASE_INFO[txPhase].color, border: `1px solid ${PHASE_INFO[txPhase].color}40` }}>
-                        {PHASE_INFO[txPhase].label}
-                    </motion.div>
-                )}
-
-                {/* Status LED */}
-                {!isSmall && (
-                    <div className="flex items-center justify-center mb-1">
-                        <motion.div className="w-2 h-2 rounded-full"
-                            animate={{
-                                backgroundColor: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#ef4444',
-                                boxShadow: isTx ? '0 0 8px #22c55e80' : isRx ? '0 0 8px #3b82f680' : node.online ? `0 0 6px ${dm.glow}` : '0 0 4px #ef444460',
-                            }} />
+        <Tooltip
+            content={
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: dm.color }} />
+                        <span className="text-[10px] font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider">{node.label}</span>
                     </div>
+                    {node.description && (
+                        <p className="text-[9px] font-mono text-light-400 dark:text-gray-400 leading-relaxed border-t border-black/5 dark:border-[#1a1a20] pt-1 mt-1 transition-colors">
+                            {node.description}
+                        </p>
+                    )}
+                    <div className="flex items-center gap-2 mt-1.5">
+                        <span className="text-[8px] font-mono text-cyan-600 dark:text-[#00f3ff] font-bold">{node.canId}</span>
+                        <span className="text-[8px] font-mono text-light-300 dark:text-gray-700">|</span>
+                        <span className="text-[8px] font-mono text-light-400 dark:text-gray-500 uppercase">{dm.label}</span>
+                    </div>
+                </div>
+            }
+            side={isBottom ? 'bottom' : 'top'}
+            delayDuration={400}
+        >
+            <div className="absolute transition-all duration-500 z-10"
+                style={{ left: `${node.x}%`, top: `${anchorY}%`, width: `${boxWidth}px`, transform: `translateX(-50%) translateY(${isBottom ? '0' : '-100%'})` }}>
+                <motion.button
+                onClick={onSelect}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={cn(
+                    "w-full flex flex-col items-center bg-white dark:bg-[#0a0a0f] rounded-xl p-2.5 border shadow-xl relative transition-all duration-300",
+                    isSelected ? "z-20 scale-[1.02]" : "z-10",
+                    isDark ? "shadow-black/60" : "shadow-slate-200/50"
                 )}
+                style={{
+                    borderColor: borderGlow ? borderGlow : (node.online ? (isDark ? '#222230' : '#94a3b8') : (isDark ? '#1a0a0a' : '#f87171')),
+                    borderWidth: borderGlow ? 2 : 1,
+                    boxShadow: borderGlow && isDark ? `0 0 15px ${borderGlow}25` : 'none'
+                }}
+                aria-label={`Node ${node.label} (${node.canId}). Domain: ${node.domain}. ${node.online ? 'Online' : 'Offline'}`}
+                aria-pressed={isSelected}
+            >
+                {/* Node Status Indicator */}
+                <div className="flex w-full justify-between items-center mb-2 px-0.5">
+                    <div className="flex flex-col items-start">
+                         <span className={cn("text-[8px] font-black tracking-tight transition-colors uppercase", isDark ? "text-gray-400" : "text-gray-500")}>ID</span>
+                         <span className={cn("text-[10px] font-bold font-mono transition-colors", isSelected ? "text-cyber-blue" : (isDark ? "text-white" : "text-slate-900"))}>{node.canId}</span>
+                    </div>
+                    {node.online && (
+                        <div className="flex items-center gap-1.5">
+                            {(isTx || isRx) && (
+                                <span className={cn(
+                                    "flex h-4 items-center px-1.5 rounded text-[7px] font-black border animate-pulse transition-colors uppercase tracking-wider",
+                                    isTx ? "bg-green-500/10 text-green-500 border-green-500/20" : "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                                )}>
+                                    {isTx ? 'TX' : 'RX'}
+                                </span>
+                            )}
+                            <div className="flex items-center gap-1">
+                                <span className={cn("w-1.5 h-1.5 rounded-full transition-all duration-500", node.online ? "bg-green-500 shadow-[0_0_4px_#22c55e]" : "bg-red-500")} />
+                                <span className={cn("text-[7px] font-black uppercase tracking-tighter transition-colors", node.online ? "text-green-500" : "text-red-500")}>
+                                    {node.online ? 'ON' : 'OFF'}
+                                </span>
+                            </div>
+                        </div>
+                    )}
+                </div>
 
-                <Tooltip content={node.description || `ECU: ${node.label}`} side={isBottom ? 'bottom' : 'top'}>
-                    <span className="font-mono font-black uppercase tracking-tight block leading-tight truncate px-1"
-                        style={{
-                            color: isTx ? '#22c55e' : isRx ? '#3b82f6' : node.online ? dm.color : '#555',
-                            fontSize: isSmall ? '8px' : '9px'
-                        }}>
-                        {node.label}
-                    </span>
-                </Tooltip>
+                <div className={cn("text-[9px] font-black tracking-tighter mb-1.5 transition-colors uppercase truncate w-full px-1", isSelected ? (isDark ? "text-white" : "text-slate-900") : (isDark ? "text-gray-300" : "text-slate-700"))}>{node.label}</div>
 
-                {!isSmall && (
+                {node.online && (
                     <>
-                        <span className="text-[9px] font-mono text-light-500 dark:text-gray-400 block mt-0.5 transition-colors">{node.canId}</span>
-                        <span className="text-[8px] font-mono uppercase tracking-wider block mt-1 px-1 py-[1px] rounded-sm mx-auto w-fit"
+                        <div className="flex flex-wrap gap-1 justify-center mb-1">
+                            {node.baudRate !== controllerBaudStr && (
+                                <span className="text-[6px] font-mono px-1 py-0.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded uppercase font-bold" title="Baudrate mismatch!">MISMATCH</span>
+                            )}
+                            {node.isLocal && <span className="text-[6px] font-mono px-1 py-0.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded uppercase font-bold">LOCAL</span>}
+                        </div>
+                        <span className="text-[7px] font-mono uppercase tracking-wider block mt-1 px-1 py-[1px] rounded-sm mx-auto w-fit"
                             style={{ backgroundColor: dm.color + '10', color: dm.color + '90', border: `1px solid ${dm.color}20` }}>
                             {dm.label}
                         </span>
@@ -1360,19 +1427,21 @@ function ECUBox({
                 )}
             </motion.button>
         </div>
+        </Tooltip>
     );
-};
+});
+ECUBox.displayName = 'ECUBox';
 
 /* ═══════════════════════════════════════════════════════════════
    Termination Resistor
    ═══════════════════════════════════════════════════════════════ */
-function TermResistor({ side, isOn, onToggle, busYH, busYL }: {
+const TermResistor = memo(({ side, isOn, onToggle, busYH, busYL }: {
     side: 'left' | 'right';
     isOn: boolean;
     onToggle: () => void;
     busYH: number;
     busYL: number;
-}) {
+}) => {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const isLeft = side === 'left';
@@ -1397,7 +1466,8 @@ function TermResistor({ side, isOn, onToggle, busYH, busYL }: {
             <span className="text-[8px] font-mono font-bold" style={{ color: isOn ? '#22c55e' : '#ef4444' }}>{isOn ? 'ON' : 'OFF'}</span>
         </button>
     );
-}
+});
+TermResistor.displayName = 'TermResistor';
 
 /* ═══════════════════════════════════════════════════════════════
    List View
@@ -1425,7 +1495,14 @@ function ListView({ nodes, selectedNode, setSelectedNode, toggleNode, removeNode
                 return (
                     <tr key={node.id} onClick={() => setSelectedNode(isSel ? null : node.id)}
                         className={`border-b border-black/[0.03] dark:border-[#111118] cursor-pointer transition-colors ${isSel ? 'bg-gray-100 dark:bg-[#111118]' : 'hover:bg-gray-50 dark:hover:bg-[#0d0d12]'}`}>
-                        <td className="py-2 px-3"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: node.online ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${node.online ? '#22c55e60' : '#ef444460'}` : 'none' }} /></td>
+                        <td className="py-2 px-3">
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: node.online ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${node.online ? '#22c55e60' : '#ef444460'}` : 'none' }} />
+                                <span className={cn("text-[8px] font-bold uppercase transition-colors", node.online ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500")}>
+                                    {node.online ? 'ON' : 'OFF'}
+                                </span>
+                            </div>
+                        </td>
                         <td className="py-2 px-3 font-bold text-dark-900 dark:text-gray-300 uppercase transition-colors">{node.label}</td>
                         <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.canId}</td>
                         <td className="py-2 px-3"><span className="px-1.5 py-0.5 rounded-sm text-[8px]" style={{ backgroundColor: dm.color + '15', color: dm.color, border: `1px solid ${dm.color}25` }}>{dm.label}</span></td>
@@ -1534,7 +1611,12 @@ function NodeDetailPanel({
         <div className="bg-white dark:bg-[#0c0c0f] px-5 py-4 transition-colors" onKeyDown={editing ? handleKeyDown : undefined}>
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                    <motion.div className="w-3 h-3 rounded-full" animate={{ backgroundColor: onlineColor, boxShadow: isDark ? `0 0 8px ${onlineGlow}` : 'none' }} />
+                    <div className="flex flex-col items-center gap-1">
+                        <motion.div className="w-3 h-3 rounded-full" animate={{ backgroundColor: onlineColor, boxShadow: isDark ? `0 0 8px ${onlineGlow}` : 'none' }} />
+                        <span className={cn("text-[7px] font-black uppercase tracking-tighter transition-colors", node.online ? "text-green-500" : "text-red-500")}>
+                            {node.online ? 'ON' : 'OFF'}
+                        </span>
+                    </div>
                     <div className="flex items-center gap-2 group">
                         <div>
                             <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-tight transition-colors">

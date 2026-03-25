@@ -54,5 +54,7 @@ export function useMomentaryAction({ isActive, onStart, onEnd }: UseMomentaryAct
         handleKeyUp,
         handlePointerDown,
         handlePointerUp,
+        handlePointerLeave: handlePointerUp,
+        handlePointerCancel: handlePointerUp,
     };
 }

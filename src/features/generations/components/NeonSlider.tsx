@@ -60,6 +60,40 @@ export function NeonSlider({
         setIsDragging(false);
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        const range = max - min;
+        const largeStep = Math.max(Math.round(range * 0.1), 1);
+        
+        switch (e.key) {
+            case 'ArrowRight':
+            case 'ArrowUp':
+                e.preventDefault();
+                onChange(Math.min(max, value + 1));
+                break;
+            case 'ArrowLeft':
+            case 'ArrowDown':
+                e.preventDefault();
+                onChange(Math.max(min, value - 1));
+                break;
+            case 'Home':
+                e.preventDefault();
+                onChange(min);
+                break;
+            case 'End':
+                e.preventDefault();
+                onChange(max);
+                break;
+            case 'PageUp':
+                e.preventDefault();
+                onChange(Math.min(max, value + largeStep));
+                break;
+            case 'PageDown':
+                e.preventDefault();
+                onChange(Math.max(min, value - largeStep));
+                break;
+        }
+    };
+
     // Load-based color gradient: cyan → yellow → red
     const getLoadColor = () => {
         if (percent > 80) return 'from-red-500 to-red-400';
@@ -87,52 +121,20 @@ export function NeonSlider({
             {/* Custom track */}
             <div
                 ref={trackRef}
-                className="group relative h-3 cursor-pointer rounded-full bg-gray-100 dark:bg-white/[0.06] outline-none"
+                className="group relative h-4 w-full cursor-pointer touch-none outline-none focus-visible:ring-2 focus-visible:ring-cyber-blue rounded-full bg-gray-100 dark:bg-white/[0.06]"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
                 onPointerCancel={handlePointerUp}
+                onKeyDown={handleKeyDown}
                 role="slider"
                 aria-label={label}
+                aria-orientation="horizontal"
                 aria-valuemin={min}
                 aria-valuemax={max}
                 aria-valuenow={value}
+                aria-valuetext={valueSuffix ? `${value}${valueSuffix}` : `${value}`}
                 tabIndex={0}
-                onKeyDown={(e) => {
-                    const range = max - min;
-                    const largeStep = Math.max(Math.round(range * 0.1), 1);
-                    
-                    switch (e.key) {
-                        case 'ArrowRight':
-                        case 'ArrowUp':
-                            e.preventDefault();
-                            onChange(Math.min(max, value + 1));
-                            break;
-                        case 'ArrowLeft':
-                        case 'ArrowDown':
-                            e.preventDefault();
-                            onChange(Math.max(min, value - 1));
-                            break;
-                        case 'Home':
-                            e.preventDefault();
-                            onChange(min);
-                            break;
-                        case 'End':
-                            e.preventDefault();
-                            onChange(max);
-                            break;
-                        case 'PageUp':
-                            e.preventDefault();
-                            onChange(Math.min(max, value + largeStep));
-                            break;
-                        case 'PageDown':
-                            e.preventDefault();
-                            onChange(Math.max(min, value - largeStep));
-                            break;
-                        default:
-                            break;
-                    }
-                }}
             >
                 {/* Filled track */}
                 <div

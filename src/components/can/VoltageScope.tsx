@@ -110,7 +110,7 @@ export const VoltageScope: React.FC = () => {
         panelBdr:  isDark ? '#14142a' : '#e5e7eb',
         gridFine:  isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
         gridMajor: isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.09)',
-        axisText:  isDark ? 'rgba(255,255,255,0.50)' : 'rgba(0,0,0,0.50)',
+        axisText:  isDark ? 'rgba(255,255,255,0.60)' : 'rgba(0,0,0,0.60)',
         ch1:       isDark ? '#00d4ff' : '#0077aa',  
         ch1Dim:    isDark ? 'rgba(0,212,255,0.12)' : 'rgba(0,119,170,0.12)',
         ch2:       isDark ? '#c850ff' : '#8822cc',  
@@ -297,7 +297,7 @@ export const VoltageScope: React.FC = () => {
 
         // ── Helper: voltage axis ──
         const drawVAxis = (h: number, vMin: number, vMax: number, unit: string, step: number, v: ViewState) => {
-            ctx.font = '9px monospace';
+            ctx.font = '12px monospace';
             ctx.fillStyle = C.axisText;
             ctx.textAlign = 'right';
             for (let val = vMin; val <= vMax; val += step) {
@@ -312,7 +312,7 @@ export const VoltageScope: React.FC = () => {
 
         // ── Helper: time axis ──
         const drawTimeAxis = (w: number, h: number, cols: number, tdiv: number, v: ViewState) => {
-            ctx.font = '9px monospace';
+            ctx.font = '12px monospace';
             ctx.fillStyle = C.axisText;
             for (let i = 0; i <= cols; i++) {
                 const bx = (i / cols) * w;
@@ -343,8 +343,8 @@ export const VoltageScope: React.FC = () => {
             ctx.lineWidth = 1;
             ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
             if (title) {
-                ctx.fillStyle = isDark ? 'rgba(255,255,255,0.22)' : 'rgba(0,0,0,0.25)';
-                ctx.font = '600 8px sans-serif';
+                ctx.fillStyle = isDark ? 'rgba(255,255,255,0.32)' : 'rgba(0,0,0,0.35)';
+                ctx.font = 'bold 12px sans-serif';
                 ctx.textAlign = 'left';
                 ctx.fillText(title, x + 6, y + 11);
             }
@@ -448,7 +448,7 @@ export const VoltageScope: React.FC = () => {
                 ctx.setLineDash([1, 3]); ctx.lineWidth = 0.5;
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(PLOT_W, y); ctx.stroke();
                 ctx.setLineDash([]);
-                ctx.globalAlpha = 0.3; ctx.font = '7px monospace'; ctx.fillStyle = th.color;
+                ctx.globalAlpha = 0.3; ctx.font = '11px monospace'; ctx.fillStyle = th.color;
                 ctx.textAlign = 'left'; ctx.fillText(th.label, 4, y - 3);
                 ctx.globalAlpha = 1;
             }
@@ -482,7 +482,7 @@ export const VoltageScope: React.FC = () => {
             ctx.setLineDash([]); ctx.globalAlpha = 1;
             ctx.fillStyle = trigColor;
             ctx.beginPath(); ctx.moveTo(PLOT_W, trigY); ctx.lineTo(PLOT_W + 6, trigY - 4); ctx.lineTo(PLOT_W + 6, trigY + 4); ctx.fill();
-            ctx.font = '600 8px monospace'; ctx.textAlign = 'left';
+            ctx.font = '600 11px monospace'; ctx.textAlign = 'left';
             ctx.fillText(trigLabel, PLOT_W + 8, trigY + 3);
             ctx.restore();
 
@@ -493,7 +493,7 @@ export const VoltageScope: React.FC = () => {
                     ctx.strokeStyle = color; ctx.setLineDash([4, 2]); ctx.lineWidth = 1; ctx.globalAlpha = 0.7;
                     ctx.beginPath(); ctx.moveTo(tx, 0); ctx.lineTo(tx, WAVE_H); ctx.stroke();
                     ctx.setLineDash([]); ctx.globalAlpha = 1;
-                    ctx.fillStyle = color; ctx.font = '700 8px monospace'; ctx.textAlign = 'center';
+                    ctx.fillStyle = color; ctx.font = '700 11px monospace'; ctx.textAlign = 'center';
                     ctx.fillText(label, tx, 20);
                 };
                 drawCur(s.cursorA, C.cursor, 'A');
@@ -534,7 +534,7 @@ export const VoltageScope: React.FC = () => {
                 ctx.strokeStyle = C.recessive;
                 ctx.beginPath(); ctx.moveTo(0, recLineY); ctx.lineTo(PLOT_W, recLineY); ctx.stroke();
                 ctx.setLineDash([]);
-                ctx.font = '7px monospace'; ctx.globalAlpha = 0.5; ctx.textAlign = 'right';
+                ctx.font = '11px monospace'; ctx.globalAlpha = 0.5; ctx.textAlign = 'right';
                 ctx.fillStyle = C.dominant;
                 ctx.fillText('DOM ≥1.5V', PLOT_W - 4, clamp(domLineY - 3, 8, DIFF_H - 4));
                 ctx.fillStyle = C.recessive;
@@ -566,7 +566,7 @@ export const VoltageScope: React.FC = () => {
 
             if (eyeData.length < 20) {
                 ctx.fillStyle = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.35)';
-                ctx.font = '600 10px sans-serif'; ctx.textAlign = 'center';
+                ctx.font = '600 12px sans-serif'; ctx.textAlign = 'center';
                 ctx.fillText('COLLECTING TRANSITIONS...', PLOT_W / 2, EYE_H / 2 + 5);
                 return;
             }
@@ -605,7 +605,7 @@ export const VoltageScope: React.FC = () => {
             ctx.globalAlpha = 1;
 
             // Measurements
-            ctx.font = '8px monospace'; ctx.fillStyle = isEyeReady ? C.dominant : C.recessive; ctx.textAlign = 'right';
+            ctx.font = '11px monospace'; ctx.fillStyle = isEyeReady ? C.dominant : C.recessive; ctx.textAlign = 'right';
             ctx.fillText(isEyeReady ? 'SIGNAL STABLE' : 'INTEGRATING...', PLOT_W - 8, EYE_H - 6);
         }, eyeBdr);
 
@@ -633,7 +633,7 @@ export const VoltageScope: React.FC = () => {
                 ctx.strokeRect(PLOT_W / 2 - tw / 2, 4, tw, DECODE_H - 8);
 
                 ctx.fillStyle = '#00f3ff';
-                ctx.font = 'bold 9px monospace'; ctx.textAlign = 'center';
+                ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
                 ctx.fillText('WAITING FOR PROBE CONNECTION...', PLOT_W / 2, DECODE_H / 2 + 3);
                 return;
             }
@@ -671,7 +671,7 @@ export const VoltageScope: React.FC = () => {
                 }
             }
 
-            ctx.font = '600 9px monospace'; ctx.textAlign = 'center';
+            ctx.font = '600 11px monospace'; ctx.textAlign = 'center';
 
             regions.forEach((r) => {
                 const w = Math.max(r.x2 - r.x1, 2);
@@ -698,12 +698,12 @@ export const VoltageScope: React.FC = () => {
                 ctx.globalAlpha = 1;
             });
 
-            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; ctx.font = '9px monospace'; ctx.textAlign = 'left';
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; ctx.font = '11px monospace'; ctx.textAlign = 'left';
             ctx.fillText('DECODE', 4, 9);
 
             // Frame count readout (right-aligned) - Keep this for now, though redundant with status bar
             ctx.fillStyle = frameCount > 0 ? (isDark ? 'rgba(0,255,136,0.5)' : 'rgba(0,180,100,0.6)') : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)');
-            ctx.font = '9px monospace';
+            ctx.font = '11px monospace';
             ctx.textAlign = 'right';
             ctx.fillText(
                 frameCount === 1 ? '1 frame' : `${frameCount} frames`,
@@ -722,7 +722,7 @@ export const VoltageScope: React.FC = () => {
         ctx.strokeRect(M.left + 0.5, STATUS_Y + 0.5, PLOT_W - 1, STATUS_H - 1);
 
         const statusMidY = STATUS_Y + STATUS_H / 2 + 3;
-        ctx.font = '600 8.5px monospace';
+        ctx.font = '600 11px monospace';
 
         // Left: cursor measurement
         if (s.cursorMode === 'time' && samples.length > 2) {
@@ -756,7 +756,7 @@ export const VoltageScope: React.FC = () => {
         // ════════════════════════════════════════════
         // Header info bar
         // ════════════════════════════════════════════
-        ctx.font = '600 9px monospace'; ctx.textAlign = 'left';
+        ctx.font = '600 11px monospace'; ctx.textAlign = 'left';
         let hx = M.left;
         if (s.ch1.enabled) { 
             ctx.fillStyle = C.ch1; 
@@ -1238,38 +1238,46 @@ export const VoltageScope: React.FC = () => {
         <div className="space-y-0">
             <div className="bg-white dark:bg-[#0a0a12] rounded-xl border border-black/10 dark:border-[#14142a] shadow-lg overflow-hidden transition-colors">
                 {/* Top Bar */}
-                <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-[#0c0c16] border-b border-black/5 dark:border-[#14142a] transition-colors">
-                    <div className="flex items-center gap-3">
-                        <span className="text-xs font-bold text-light-600 dark:text-gray-300 tracking-wide">CAN-SCOPE</span>
-                        <span className="text-[9px] text-light-400 dark:text-gray-600 font-mono transition-colors">CSO-2000 SERIES</span>
-                        <span className="text-[9px] text-light-500 dark:text-gray-700 font-mono border border-black/10 dark:border-[#1a1a2e] px-1.5 py-0.5 rounded transition-colors">ISO 11898</span>
+                <div className="flex flex-col md:flex-row md:items-center justify-between px-4 py-3 md:py-2 bg-gray-50 dark:bg-[#0c0c16] border-b border-black/5 dark:border-[#14142a] gap-3 md:gap-0 transition-colors">
+                    <div className="flex items-center flex-wrap gap-2 sm:gap-3">
+                        <span className="text-sm font-bold text-light-700 dark:text-gray-200 tracking-wide uppercase">CAN-Scope</span>
+                        <div className="flex items-center gap-2">
+                             <span className="text-[10px] sm:text-[11px] text-light-500 dark:text-gray-500 font-mono transition-colors">CSO-2000 SERIES</span>
+                            <span className="text-[10px] sm:text-[11px] text-light-600 dark:text-gray-600 font-mono border border-black/10 dark:border-[#1a1a2e] px-2 py-0.5 rounded transition-colors bg-white/50 dark:bg-black/20">ISO 11898</span>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-0.5 mr-2">
-                            <SmallBtn icon={<Minus size={10} />} onClick={zoomOut} title="Zoom out" />
+                    <div className="flex items-center flex-wrap gap-2 sm:gap-4">
+                        <div className="flex items-center gap-1">
+                            <SmallBtn icon={<Minus size={14} />} onClick={zoomOut} title="Zoom out" />
                             <button onClick={resetView} title="Reset view (R)"
-                                className="px-2 py-0.5 text-[10px] font-mono text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/5 dark:border-[#1a1a2e] transition-colors rounded">
-                                {view.zoomX !== 1 || view.zoomY !== 1 ? `${view.zoomX.toFixed(1)}×${view.zoomY.toFixed(1)}` : '1:1'}
+                                className="px-2.5 py-1 text-[12px] font-mono text-light-600 dark:text-gray-400 hover:text-dark-950 dark:hover:text-white bg-white dark:bg-[#0e0e18] border border-black/10 dark:border-[#1a1a2e] transition-colors rounded min-h-[44px] min-w-[44px] shadow-sm">
+                                {view.zoomX !== 1 || view.zoomY !== 1 ? `${view.zoomX.toFixed(1)}x${view.zoomY.toFixed(1)}` : '1:1'}
                             </button>
-                            <SmallBtn icon={<Plus size={10} />} onClick={zoomIn} title="Zoom in" />
+                            <SmallBtn icon={<Plus size={14} />} onClick={zoomIn} title="Zoom in" />
                         </div>
-                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border"
-                            style={{ borderColor: compliance.color + '40', backgroundColor: compliance.color + '08' }}>
-                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: compliance.color, boxShadow: `0 0 4px ${compliance.color}` }} />
-                            <span className="text-[10px] font-mono font-bold" style={{ color: compliance.color }}>ISO {compliance.label}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                            <div className={`w-2 h-2 rounded-full ${scope.runMode === 'run' ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : scope.runMode === 'single' ? 'bg-amber-400' : 'bg-red-400'}`} />
-                            <span className="text-[10px] font-mono text-gray-500 uppercase tracking-tight">{scope.runMode === 'run' ? 'Acquiring' : scope.runMode === 'single' ? 'Armed' : 'Stopped'}</span>
+                        
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded border shadow-sm transition-all"
+                                style={{ borderColor: compliance.color + '40', backgroundColor: compliance.color + '0C' }}>
+                                <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: compliance.color, boxShadow: `0 0 6px ${compliance.color}` }} />
+                                <span className="text-[11px] font-mono font-bold uppercase tracking-tight" style={{ color: compliance.color }}>ISO {compliance.label}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-1.5 px-2 py-1 bg-black/5 dark:bg-white/5 rounded-md min-w-[90px] justify-center">
+                                <div className={`w-2 h-2 rounded-full ${scope.runMode === 'run' ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]' : scope.runMode === 'single' ? 'bg-amber-400' : 'bg-red-400'}`} />
+                                <span className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-tighter font-bold">
+                                    {scope.runMode === 'run' ? 'Acquiring' : scope.runMode === 'single' ? 'Armed' : 'Stopped'}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-col xl:flex-row gap-0">
-                    {/* Left Rail (Controls only) */}
-                    <div className="xl:w-64 w-full p-2.5 xl:border-r border-black/5 dark:border-[#14142a] flex flex-col gap-3 bg-gray-100 dark:bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner transition-colors">
+                    {/* Left Rail (Controls) */}
+                    <div className="xl:w-64 w-full p-3 xl:border-r border-black/5 dark:border-[#14142a] flex flex-col sm:grid sm:grid-cols-2 xl:flex xl:flex-col gap-3 bg-gray-100/50 dark:bg-[#06060c] overflow-y-auto max-h-[600px] xl:max-h-[540px] custom-scrollbar shadow-inner transition-colors">
                         <MetricGroup title="Acquire" icon={<Zap size={11} />}>
-                            <div className="grid grid-cols-2 gap-2 p-1">
+                            <div className="grid grid-cols-2 gap-2">
                                 <ScopeBtn label={scope.runMode === 'run' ? 'Stop' : 'Run'} active={scope.runMode === 'run'}
                                     color={scope.runMode === 'run' ? '#00ff9f' : '#ff003c'}
                                     onClick={() => setScope(p => ({ ...p, runMode: p.runMode === 'run' ? 'stop' : 'run' }))} />
@@ -1279,7 +1287,7 @@ export const VoltageScope: React.FC = () => {
                         </MetricGroup>
 
                         <MetricGroup title="CH1 CANH" icon={<Activity size={11} />} color={C.ch1} active={scope.activeCh === 'ch1'}>
-                            <div className="flex flex-col gap-2 p-1">
+                            <div className="flex flex-col gap-2.5">
                                 <ScopeBtn label={scope.ch1.enabled ? 'Enabled' : 'Disabled'} active={scope.ch1.enabled} color={C.ch1}
                                     onClick={() => updateCh('ch1', { enabled: !scope.ch1.enabled })} />
                                 <Stepper label="V/div" value={`${scope.ch1.vdiv}V`}
@@ -1292,7 +1300,7 @@ export const VoltageScope: React.FC = () => {
                         </MetricGroup>
 
                         <MetricGroup title="CH2 CANL" icon={<Activity size={11} />} color={C.ch2} active={scope.activeCh === 'ch2'}>
-                            <div className="flex flex-col gap-2 p-1">
+                            <div className="flex flex-col gap-2.5">
                                 <ScopeBtn label={scope.ch2.enabled ? 'Enabled' : 'Disabled'} active={scope.ch2.enabled} color={C.ch2}
                                     onClick={() => updateCh('ch2', { enabled: !scope.ch2.enabled })} />
                                 <Stepper label="V/div" value={`${scope.ch2.vdiv}V`}
@@ -1304,8 +1312,8 @@ export const VoltageScope: React.FC = () => {
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="Horizontal & Trigger" icon={<Crosshair size={11} />}>
-                            <div className="flex flex-col gap-3 p-1">
+                        <MetricGroup title="Time & Trigger" icon={<Crosshair size={11} />}>
+                            <div className="flex flex-col gap-3">
                                 <Stepper label="Time/div" value={`${scope.tdiv}µs`}
                                     onUp={() => { 
                                         setScope(p => ({ ...p, tdiv: stepOpt(TDIV_OPTIONS, p.tdiv, 1) }));
@@ -1316,14 +1324,14 @@ export const VoltageScope: React.FC = () => {
                                         setView({ zoomX: 1, zoomY: 1, panX: 0, panY: 0 });
                                     }} />
                                 
-                                <div className="space-y-1">
-                                 <div className="text-[10px] font-mono text-light-400 dark:text-gray-500 uppercase px-0.5 mb-1">Trigger Mode</div>
+                                <div className="space-y-1.5 px-0.5">
+                                 <div className="text-[10px] font-black text-light-500 dark:text-gray-500 uppercase tracking-widest">Trigger Mode</div>
                                     {(() => {
                                         const trigColors: Record<'auto' | 'SOF' | 'error' | 'ID', string> = {
-                                            auto:  '#ffd000',   // yellow
-                                            SOF:   '#00d4ff',   // cyan
-                                            error: '#ff4444',   // red
-                                            ID:    '#4488ff',   // blue
+                                            auto:  '#ffd000',
+                                            SOF:   '#00d4ff',
+                                            error: '#ff4444',
+                                            ID:    '#4488ff',
                                         };
                                         const buttonColor = trigColors[scope.triggerMode];
                                         return <ScopeBtn label={scope.triggerMode.toUpperCase()} active color={buttonColor}
@@ -1340,67 +1348,74 @@ export const VoltageScope: React.FC = () => {
                         </MetricGroup>
 
                         <MetricGroup title="Display" icon={<Monitor size={11} />}>
-                            <div className="flex flex-col gap-2 p-1">
-                                <ScopeBtn label={scope.math ? 'Differential On' : 'Differential Off'} active={scope.math} color={C.diff}
+                            <div className="flex flex-col gap-2.5">
+                                <ScopeBtn label={scope.math ? 'Diff On' : 'Diff Off'} active={scope.math} color={C.diff}
                                     onClick={() => setScope(p => ({ ...p, math: !p.math }))} />
-                                <ScopeBtn label={scope.cursorMode === 'off' ? 'Measurement Off' : 'Measurement On'} active={scope.cursorMode !== 'off'} color={C.cursor}
+                                <ScopeBtn label={scope.cursorMode === 'off' ? 'Cursors Off' : 'Cursors On'} active={scope.cursorMode !== 'off'} color={C.cursor}
                                     onClick={() => setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' }))} />
-                                <ScopeBtn label={scope.persistence ? 'Persistence On' : 'Persistence Off'} active={scope.persistence} color="#8855ff"
+                                <ScopeBtn label={scope.persistence ? 'Persistent' : 'Static'} active={scope.persistence} color="#8855ff"
                                     onClick={() => setScope(p => ({ ...p, persistence: !p.persistence }))} />
                             </div>
                         </MetricGroup>
                     </div>
 
-                    <div className="flex-1 relative">
+                    <div className="flex-1 relative bg-[#050508]">
                         <canvas ref={canvasRef}
-                            className="w-full cursor-crosshair touch-none focus:outline-none focus-visible:ring-1 focus-visible:ring-cyan-500/40"
+                            className="w-full cursor-crosshair touch-none focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
                             style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}` }}
                             tabIndex={0} role="img"
-                            aria-label="CAN bus physical layer oscilloscope — scroll to zoom, right-drag to pan"
+                            aria-label="CAN bus physical layer oscilloscope - scroll to zoom, right-click drag to pan"
 
                             onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
                             onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
                             onContextMenu={e => e.preventDefault()} onKeyDown={handleKeyDown} />
-                        <div className="absolute bottom-1.5 left-1.5 flex gap-1.5 pointer-events-none">
-                            <Hint text="Scroll: Zoom" /><Hint text="Ctrl/Shift+Scroll: Axis" /><Hint text="Drag: Pan" /><Hint text="C: Cursors" />
+                        <div className="absolute bottom-2 left-2 flex flex-wrap gap-1.5 pointer-events-none opacity-60 sm:opacity-100">
+                            <Hint text="Scroll: Zoom" /><Hint text="Shift+Scroll: Axis" /><Hint text="R: Reset" /><Hint text="C: Cursors" />
                         </div>
                     </div>
 
-                    {/* Right Rail (Metrics only) */}
-                    <div className="xl:w-64 w-full p-2.5 xl:border-l border-black/5 dark:border-[#14142a] flex flex-col gap-3 bg-gray-100 dark:bg-[#06060c] overflow-y-auto max-h-[540px] custom-scrollbar shadow-inner transition-colors">
+                    {/* Right Rail (Metrics) */}
+                    <div className="xl:w-64 w-full p-3 xl:border-l border-black/5 dark:border-[#14142a] flex flex-col sm:grid sm:grid-cols-2 xl:flex xl:flex-col gap-3 bg-gray-100/50 dark:bg-[#06060c] overflow-y-auto max-h-[600px] xl:max-h-[540px] custom-scrollbar shadow-inner transition-colors">
                         <MetricGroup title="Signal Quality" icon={<Zap size={11} />} subTitle={metrics.isGated ? 'Gated' : undefined}>
-                            <MetricRow label="CANH Vpp" value={`${metrics.ch1Vpp.toFixed(2)} V`} color={C.ch1} />
-                            <MetricRow label="CANH Avg" value={`${metrics.ch1Avg.toFixed(2)} V`} color={C.ch1} />
-                            <MetricRow label="CANL Vpp" value={`${metrics.ch2Vpp.toFixed(2)} V`} color={C.ch2} />
-                            <MetricRow label="CANL Avg" value={`${metrics.ch2Avg.toFixed(2)} V`} color={C.ch2} />
-                            <MetricRow label="Vdiff" value={`${metrics.vdiff.toFixed(2)} V`} color={C.diff} />
-                        </MetricGroup>
-                        <MetricGroup title="Edge Timing" icon={<Ruler size={11} />}>
-                            <MetricRow label="Rise" value={`${metrics.riseTime} ns`} />
-                            <MetricRow label="Fall" value={`${metrics.fallTime} ns`} />
-                            <MetricRow label="Symmetry" value={`${metrics.symmetry}%`}
-                                status={metrics.symmetry > 80 ? 'pass' : metrics.symmetry > 60 ? 'warn' : 'fail'} />
-                        </MetricGroup>
-                        <MetricGroup title="Bus Status" icon={<PlugZap size={11} />}>
-                            <MetricRow label="Load" value={`${metrics.busLoad}%`}
-                                status={metrics.busLoad < 70 ? 'pass' : metrics.busLoad < 85 ? 'warn' : 'fail'} />
-                            <MetricRow label="Bit Rate" value={`~${metrics.bitRate} kbps`} />
-                            
-                            <div className="pt-2 mt-2 border-t border-black/5 dark:border-white/5 space-y-1">
-                                <div className="text-[10px] font-mono text-light-400 dark:text-gray-500 uppercase px-0.5 mb-1.5">Compliance (ISO 11898)</div>
-                                <MetricRow label="CANH Level" value={metrics.isoCANH ? 'VALID' : 'OUT-OF-SPEC'} 
-                                    status={metrics.isoCANH ? 'pass' : 'fail'} />
-                                <MetricRow label="CANL Level" value={metrics.isoCANL ? 'VALID' : 'OUT-OF-SPEC'} 
-                                    status={metrics.isoCANL ? 'pass' : 'fail'} />
-                                <MetricRow label="Differential" value={metrics.isoDiff ? 'VALID' : 'LOW-SWING!'} 
-                                    status={metrics.isoDiff ? 'pass' : 'fail'} />
+                            <div className="space-y-0.5">
+                                <MetricRow label="CANH Vpp" value={`${metrics.ch1Vpp.toFixed(2)} V`} color={C.ch1} />
+                                <MetricRow label="CANH Avg" value={`${metrics.ch1Avg.toFixed(2)} V`} color={C.ch1} />
+                                <MetricRow label="CANL Vpp" value={`${metrics.ch2Vpp.toFixed(2)} V`} color={C.ch2} />
+                                <MetricRow label="CANL Avg" value={`${metrics.ch2Avg.toFixed(2)} V`} color={C.ch2} />
+                                <MetricRow label="Vdiff" value={`${metrics.vdiff.toFixed(2)} V`} color={C.diff} />
                             </div>
                         </MetricGroup>
-                        <MetricGroup title="Eye Diagram" icon={<Eye size={11} />}>
-                            <MetricRow label="Eye Width" value={`${metrics.eyeWidth}%`}
-                                status={metrics.eyeWidth > 70 ? 'pass' : metrics.eyeWidth > 50 ? 'warn' : 'fail'} />
-                            <MetricRow label="Eye Height" value={`${metrics.eyeHeight}%`}
-                                status={metrics.eyeHeight > 60 ? 'pass' : metrics.eyeHeight > 40 ? 'warn' : 'fail'} />
+                        <MetricGroup title="Edge Timing" icon={<Ruler size={11} />}>
+                            <div className="space-y-0.5">
+                                <MetricRow label="Rise" value={`${metrics.riseTime} ns`} />
+                                <MetricRow label="Fall" value={`${metrics.fallTime} ns`} />
+                                <MetricRow label="Symmetry" value={`${metrics.symmetry}%`}
+                                    status={metrics.symmetry > 80 ? 'pass' : metrics.symmetry > 60 ? 'warn' : 'fail'} />
+                            </div>
+                        </MetricGroup>
+                        <MetricGroup title="Bus Status" icon={<PlugZap size={11} />}>
+                            <div className="space-y-0.5">
+                                <MetricRow label="Bus Load" value={`${metrics.busLoad}%`}
+                                    status={metrics.busLoad < 70 ? 'pass' : metrics.busLoad < 85 ? 'warn' : 'fail'} />
+                                <MetricRow label="Bit Rate" value={`~${metrics.bitRate}k`} />
+                                
+                                <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/10 space-y-1">
+                                    <MetricRow label="CANH Lvl" value={metrics.isoCANH ? 'VALID' : 'OOS'} 
+                                        status={metrics.isoCANH ? 'pass' : 'fail'} />
+                                    <MetricRow label="CANL Lvl" value={metrics.isoCANL ? 'VALID' : 'OOS'} 
+                                        status={metrics.isoCANL ? 'pass' : 'fail'} />
+                                    <MetricRow label="Diff Lvl" value={metrics.isoDiff ? 'VALID' : 'LOW!'} 
+                                        status={metrics.isoDiff ? 'pass' : 'fail'} />
+                                </div>
+                            </div>
+                        </MetricGroup>
+                        <MetricGroup title="Eye Map" icon={<Eye size={11} />}>
+                            <div className="space-y-0.5">
+                                <MetricRow label="Eye Width" value={`${metrics.eyeWidth}%`}
+                                    status={metrics.eyeWidth > 70 ? 'pass' : metrics.eyeWidth > 50 ? 'warn' : 'fail'} />
+                                <MetricRow label="Eye Height" value={`${metrics.eyeHeight}%`}
+                                    status={metrics.eyeHeight > 60 ? 'pass' : metrics.eyeHeight > 40 ? 'warn' : 'fail'} />
+                            </div>
                         </MetricGroup>
                     </div>
                 </div>
@@ -1415,14 +1430,14 @@ export const VoltageScope: React.FC = () => {
 
 const Hint: React.FC<{ text: string }> = ({ text }) => {
     return (
-        <span className="text-[9px] font-mono text-light-500 dark:text-gray-700 bg-black/5 dark:bg-black/50 px-1 py-0.5 rounded whitespace-nowrap transition-colors shadow-sm">{text}</span>
+        <span className="text-[11px] font-mono text-light-500 dark:text-gray-700 bg-black/5 dark:bg-black/50 px-1.5 py-0.5 rounded whitespace-nowrap transition-colors shadow-sm">{text}</span>
     );
 };
 
 const SmallBtn: React.FC<{ icon: React.ReactNode; onClick: () => void; title: string }> = ({ icon, onClick, title }) => {
     return (
         <button onClick={onClick} title={title}
-            className="w-5 h-5 flex items-center justify-center text-[10px] font-mono text-light-400 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/5 dark:border-[#1a1a2e] rounded transition-colors hover:bg-gray-200 dark:hover:bg-[#14142a]">
+            className="w-11 h-11 flex items-center justify-center text-[14px] font-mono text-light-600 dark:text-gray-400 hover:text-dark-950 dark:hover:text-white bg-gray-100 dark:bg-[#0e0e18] border border-black/10 dark:border-[#1a1a2e] rounded transition-colors hover:bg-gray-200 dark:hover:bg-[#14142a]">
             {icon}
         </button>
     );
@@ -1431,7 +1446,7 @@ const SmallBtn: React.FC<{ icon: React.ReactNode; onClick: () => void; title: st
 const ScopeBtn: React.FC<{ label: string; active?: boolean; color?: string; onClick: () => void }> = ({ label, active, color, onClick }) => {
     return (
         <button onClick={onClick}
-            className={`w-full px-2.5 py-1.5 rounded border text-[9px] font-mono font-bold tracking-tighter uppercase transition-all duration-200 active:scale-[0.97] group flex items-center justify-center gap-2 ${
+            className={`w-full px-3 py-3 rounded border text-[12px] font-mono font-bold tracking-tight uppercase transition-all duration-200 active:scale-[0.97] group flex items-center justify-center gap-2 ${
                 active ? 'border-opacity-100 shadow-[0_0_10px_-2px_rgba(0,0,0,0.5)]' : 'bg-gray-50 dark:bg-[#0a0a12] border-black/5 dark:border-[#1a1a2e] text-light-400 dark:text-gray-600 border-dashed hover:border-light-600 dark:hover:border-gray-700'
             }`}
             style={{ 
@@ -1440,7 +1455,7 @@ const ScopeBtn: React.FC<{ label: string; active?: boolean; color?: string; onCl
                 backgroundColor: active ? `${color}10` : undefined,
                 boxShadow: active ? `inset 0 0 12px ${color}15, 0 0 5px ${color}10` : undefined
             }}>
-            <div className={`w-1 h-1 rounded-full transition-all duration-300 ${active ? 'animate-pulse' : 'bg-gray-300 dark:bg-gray-800'}`} style={{ backgroundColor: active ? color : undefined, boxShadow: active ? `0 0 4px ${color}` : undefined }} />
+            <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${active ? 'animate-pulse' : 'bg-gray-300 dark:bg-gray-800'}`} style={{ backgroundColor: active ? color : undefined, boxShadow: active ? `0 0 4px ${color}` : undefined }} />
             {label}
         </button>
     );
@@ -1449,16 +1464,16 @@ const ScopeBtn: React.FC<{ label: string; active?: boolean; color?: string; onCl
 const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown: () => void }> = ({ label, value, onUp, onDown }) => {
     return (
         <div className="flex flex-col gap-1 px-1">
-            <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 uppercase tracking-widest">{label}</span>
-            <div className="flex items-center bg-gray-100 dark:bg-[#0d0d16] border border-black/5 dark:border-[#1a1a2e] rounded-md overflow-hidden shadow-inner group-hover:border-black/10 dark:group-hover:border-[#2a2a4e] transition-colors">
-                <button onClick={onDown} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-r border-black/5 dark:border-[#1a1a2e]">
-                    <Minus size={10} aria-hidden="true" />
+            <span className="text-[11px] font-mono text-light-400 dark:text-gray-500 uppercase tracking-widest">{label}</span>
+            <div className="flex items-center bg-gray-100 dark:bg-[#0d0d16] border border-black/5 dark:border-[#1a1a2e] rounded-md shadow-inner group-hover:border-black/10 dark:group-hover:border-[#2a2a4e] transition-colors">
+                <button onClick={onDown} className="w-11 h-11 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-sm font-mono border-r border-black/5 dark:border-[#1a1a2e]">
+                    <Minus size={14} aria-hidden="true" />
                 </button>
                 <div className="flex-1 py-1 px-1.5 flex items-center justify-center min-w-[60px]">
-                    <span className="text-[10px] font-mono font-bold text-dark-950 dark:text-gray-300 tabular-nums">{value}</span>
+                    <span className="text-[12px] font-mono font-bold text-dark-950 dark:text-gray-300 tabular-nums">{value}</span>
                 </div>
-                <button onClick={onUp} className="px-2 py-1 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-xs font-mono border-l border-black/5 dark:border-[#1a1a2e]">
-                    <Plus size={10} aria-hidden="true" />
+                <button onClick={onUp} className="w-11 h-11 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-sm font-mono border-l border-black/5 dark:border-[#1a1a2e]">
+                    <Plus size={14} aria-hidden="true" />
                 </button>
             </div>
         </div>
@@ -1474,17 +1489,17 @@ const MetricGroup: React.FC<{ title: string; icon: React.ReactNode; children: Re
                 borderColor: active ? color : undefined,
                 boxShadow: active ? `inset 0 0 15px ${color}10, 0 0 5px ${color}05` : undefined
             }}>
-            <div className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+            <div className="text-[11px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                     {color ? (
-                        <span className="text-[11px]" style={{ color: color }} aria-hidden="true">◆</span>
+                        <span className="text-[12px]" style={{ color: color }} aria-hidden="true">◆</span>
                     ) : (
-                        <span className="text-[11px] font-normal opacity-70 flex items-center" aria-hidden="true">{icon}</span>
+                        <span className="text-[12px] font-normal opacity-70 flex items-center" aria-hidden="true">{icon}</span>
                     )}
                     {title}
                 </div>
                 {subTitle && (
-                    <span className="text-[9px] text-amber-500 font-bold bg-amber-500/10 px-1 rounded ring-1 ring-amber-500/20" role="status">
+                    <span className="text-[10px] text-amber-500 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded ring-1 ring-amber-500/20" role="status">
                         {subTitle}
                     </span>
                 )}
@@ -1498,11 +1513,18 @@ const MetricRow: React.FC<{ label: string; value: string; color?: string; status
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     return (
-        <div className="flex justify-between items-center py-0.5">
-            <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 transition-colors">{label}</span>
-            <div className="flex items-center gap-1.5">
-                {status && <span className={`w-2 h-2 rounded-full shadow-sm ${status === 'pass' ? 'bg-emerald-400 shadow-emerald-400/20' : status === 'warn' ? 'bg-amber-400 shadow-amber-400/20' : 'bg-red-400 shadow-red-400/20'}`} />}
-                <span className="text-[10px] font-mono font-bold tracking-tight" style={{ color: color || (isDark ? '#f3f4f6' : '#1f2937') }}>{value}</span>
+        <div className="flex justify-between items-center py-1">
+            <span className="text-[12px] font-mono text-light-400 dark:text-gray-500 transition-colors uppercase tracking-tight">{label}</span>
+            <div className="flex items-center gap-2">
+                {status && (
+                    <div className="flex items-center gap-1">
+                        <span className={`w-2.5 h-2.5 rounded-full shadow-sm ${status === 'pass' ? 'bg-emerald-400' : status === 'warn' ? 'bg-amber-400' : 'bg-red-400'}`} />
+                        <span className={`text-[9px] font-bold uppercase transition-colors ${status === 'pass' ? 'text-emerald-500' : status === 'warn' ? 'text-amber-500' : 'text-red-500'}`}>
+                            {status}
+                        </span>
+                    </div>
+                )}
+                <span className="text-[12px] font-mono font-bold tracking-tight" style={{ color: color || (isDark ? '#f3f4f6' : '#020617') }}>{value}</span>
             </div>
         </div>
     );

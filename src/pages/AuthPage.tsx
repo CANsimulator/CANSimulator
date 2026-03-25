@@ -74,40 +74,40 @@ export const AuthPage: React.FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                     {!isLogin && (
                         <div className="space-y-1">
-                            <label htmlFor="auth-name" className="text-[10px] text-gray-500 uppercase font-mono">Display Name</label>
+                            <label htmlFor="auth-name" className="text-[11px] text-gray-700 dark:text-gray-300 uppercase font-mono">Display Name</label>
                             <input
                                 id="auth-name"
                                 required={!isLogin}
                                 value={form.displayName}
                                 onChange={(e) => setForm(p => ({ ...p, displayName: e.target.value }))}
-                                className="w-full bg-dark-950/50 border border-white/10 rounded px-3 py-2 text-white placeholder-gray-600 focus:border-cyber-blue outline-none transition-colors"
+                                className="w-full bg-white dark:bg-dark-950/50 border border-gray-300 dark:border-white/10 rounded px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-cyber-blue outline-none transition-colors"
                                 placeholder="Neo"
                             />
                         </div>
                     )}
                     
                     <div className="space-y-1">
-                        <label htmlFor="auth-email" className="text-[10px] text-gray-500 uppercase font-mono">Email</label>
+                        <label htmlFor="auth-email" className="text-[11px] text-gray-700 dark:text-gray-300 uppercase font-mono">Email</label>
                         <input
                             id="auth-email"
                             type="email"
                             required
                             value={form.email}
                             onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))}
-                            className="w-full bg-dark-950/50 border border-white/10 rounded px-3 py-2 text-white placeholder-gray-600 focus:border-cyber-blue outline-none transition-colors"
+                            className="w-full bg-white dark:bg-dark-950/50 border border-gray-300 dark:border-white/10 rounded px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-cyber-blue outline-none transition-colors"
                             placeholder="user@grid.net"
                         />
                     </div>
 
                     <div className="space-y-1">
-                        <label htmlFor="auth-password" className="text-[10px] text-gray-500 uppercase font-mono">Password</label>
+                        <label htmlFor="auth-password" className="text-[11px] text-gray-700 dark:text-gray-300 uppercase font-mono">Password</label>
                         <input
                             id="auth-password"
                             type="password"
                             required
                             value={form.password}
                             onChange={(e) => setForm(p => ({ ...p, password: e.target.value }))}
-                            className="w-full bg-dark-950/50 border border-white/10 rounded px-3 py-2 text-white placeholder-gray-600 focus:border-cyber-blue outline-none transition-colors"
+                            className="w-full bg-white dark:bg-dark-950/50 border border-gray-300 dark:border-white/10 rounded px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-cyber-blue outline-none transition-colors"
                             placeholder="••••••••"
                         />
                     </div>
@@ -116,7 +116,7 @@ export const AuthPage: React.FC = () => {
                         <div className="bg-cyber-pink/10 border border-cyber-pink/20 rounded p-3">
                             <p className="text-cyber-pink text-xs font-mono">{displayError}</p>
                             {isLogin && rateLimitInfo && rateLimitInfo.attemptsRemaining < 5 && (
-                                <p className="text-gray-400 text-[10px] font-mono mt-1">
+                                <p className="text-gray-400 text-[11px] font-mono mt-1">
                                     Attempts remaining: {rateLimitInfo.attemptsRemaining}
                                 </p>
                             )}

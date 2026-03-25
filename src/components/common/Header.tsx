@@ -7,6 +7,7 @@ import { useState, useRef, useEffect, memo } from 'react';
 import { Link, useNavigate, NavLink } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { cn } from '../../utils/cn';
 
 // Navigation links
@@ -30,17 +31,29 @@ export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
+    const mobileMenuRef = useRef<HTMLDivElement>(null);
+    const mobileButtonRef = useRef<HTMLButtonElement>(null);
 
-    // Close user menu when clicking outside
+    // Trap focus in mobile menu when open
+    useFocusTrap(mobileMenuRef, mobileMenuOpen, () => setMobileMenuOpen(false));
+
+    // Close menus when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+            // User menu
+            if (showUserMenu && userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
                 setShowUserMenu(false);
+            }
+            // Mobile menu (only if open and click is outside both button and menu)
+            if (mobileMenuOpen && 
+                mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node) &&
+                mobileButtonRef.current && !mobileButtonRef.current.contains(event.target as Node)) {
+                setMobileMenuOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    }, [mobileMenuOpen, showUserMenu]);
 
     const handleLogout = () => {
         logout();
@@ -90,7 +103,7 @@ export function Header() {
                             <span className="text-xl font-black tracking-tight text-gray-900 dark:text-white leading-none mb-1 group-hover:text-cyber-blue transition-colors uppercase">
                                 CAN<span className="text-cyber-blue font-light">Simulator</span>
                             </span>
-                            <div className="hidden sm:block text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 uppercase">
+                            <div className="hidden sm:block text-[11px] font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 uppercase">
                                 ISO 11898-1:2015
                             </div>
                         </div>
@@ -188,10 +201,12 @@ export function Header() {
 
                     {/* Mobile Menu Button */}
                     <button
+                        ref={mobileButtonRef}
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className={cn("lg:hidden p-2 rounded-lg transition-colors", isDark ? "text-gray-400" : "text-slate-600")}
-                        aria-label="Toggle mobile menu"
+                        className={cn("lg:hidden p-2 rounded-lg transition-colors border border-transparent focus-visible:border-cyber-blue outline-none", isDark ? "text-gray-400" : "text-slate-600")}
+                        aria-label="Toggle navigation menu"
                         aria-expanded={mobileMenuOpen}
+                        aria-controls="mobile-menu"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             {mobileMenuOpen ? (
@@ -205,10 +220,16 @@ export function Header() {
 
                 {/* Mobile Menu */}
                 {mobileMenuOpen && (
-                    <div className={cn(
-                        "lg:hidden mt-4 pt-4 border-t space-y-2 pb-4 transition-colors",
-                        isDark ? "border-white/5" : "border-black/5"
-                    )}>
+                    <div 
+                        id="mobile-menu"
+                        ref={mobileMenuRef}
+                        role="navigation"
+                        aria-label="Mobile navigation"
+                        className={cn(
+                            "lg:hidden mt-4 pt-4 border-t space-y-2 pb-4 transition-colors",
+                            isDark ? "border-white/5" : "border-black/5"
+                        )}
+                    >
                         {NAV_LINKS.map((link) => (
                             <Link
                                 key={link.to}
@@ -224,7 +245,30 @@ export function Header() {
                                 {link.label}
                             </Link>
                         ))}
+                        <div className={cn("pt-2 mt-2 border-t", isDark ? "border-white/5" : "border-black/5")}>
+                            <Link
+                                to="/privacy-policy"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={cn(
+                                    "block px-4 py-2 text-xs transition-colors",
+                                    isDark ? "text-gray-500 hover:text-white" : "text-gray-500 hover:text-cyan-700"
+                                )}
+                            >
+                                Privacy Policy
+                            </Link>
+                            <Link
+                                to="/terms"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={cn(
+                                    "block px-4 py-2 text-xs transition-colors",
+                                    isDark ? "text-gray-500 hover:text-white" : "text-gray-500 hover:text-cyan-700"
+                                )}
+                            >
+                                Terms of Use
+                            </Link>
+                        </div>
                         {!isLoading && !isAuthenticated && (
+
                             <Link
                                 to="/auth"
                                 onClick={() => setMobileMenuOpen(false)}

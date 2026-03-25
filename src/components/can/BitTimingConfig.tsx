@@ -215,7 +215,7 @@ export function BitTimingConfig() {
                 <div className="flex items-center gap-3">
                     <motion.button
                         onClick={handleReset}
-                        className="px-2 py-1 rounded text-[8px] font-mono font-bold transition-all active:scale-95"
+                        className="px-2 py-1.5 rounded text-[10px] font-mono font-bold transition-all active:scale-95"
                         style={{
                             color: '#ff9f43',
                             backgroundColor: '#ff9f4310',
@@ -233,7 +233,7 @@ export function BitTimingConfig() {
                             animate={{ opacity: shouldReduceMotion ? 0.8 : [1, 0.5, 1] }}
                             transition={{ duration: 2, repeat: shouldReduceMotion ? 0 : Infinity }}
                         />
-                        <span className="text-[9px] font-mono font-bold" style={{ color: analysis.color }}>{analysis.quality}</span>
+                        <span className="text-[11px] font-mono font-bold" style={{ color: analysis.color }}>{analysis.quality}</span>
                     </div>
                 </div>
             </div>
@@ -444,7 +444,7 @@ export function BitTimingConfig() {
                                 />
                                 {!sjwValid && (
                                     <div className="mt-2 p-1.5 rounded bg-[#1c0a0a] border border-red-900/30">
-                                        <span className="text-[9px] font-mono text-red-400 flex items-center gap-1">
+                                        <span className="text-[10px] font-mono text-red-400 flex items-center gap-1">
                                             <AlertTriangle size={10} /> SJW ({timing.sjw}) exceeds min(PH1,PH2) = {sjwMax}
                                         </span>
                                     </div>
@@ -484,17 +484,15 @@ export function BitTimingConfig() {
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-light-600 dark:text-[#9ca3af] transition-colors">
-                                        OSCILLATOR FREQUENCY
-                                    </span>
-                                    <span className="text-[8px] font-mono text-light-400 dark:text-gray-500 transition-colors">Fosc</span>
+                                    <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 transition-colors uppercase">OSCILLATOR FREQUENCY</span>
+                                    <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 transition-colors">Fosc</span>
                                 </div>
                                 <div className="grid grid-cols-5 gap-1">
                                     {[8, 16, 20, 24, 40].map(f => (
                                         <button
                                             key={f}
                                             onClick={() => handleChange('oscillator', f * 1_000_000)}
-                                            className={`px-1 py-1.5 rounded text-[8px] font-mono font-bold border transition-all ${timing.oscillator === f * 1_000_000
+                                            className={`px-1 py-1.5 rounded text-[10px] font-mono font-bold border transition-all ${timing.oscillator === f * 1_000_000
                                                 ? 'bg-cyan-500/10 dark:bg-[#00f3ff10] text-cyan-600 dark:text-[#00f3ff] border-cyan-500/30 dark:border-[#00f3ff40]'
                                                 : 'bg-white dark:bg-[#111] text-light-500 dark:text-gray-400 border-black/10 dark:border-[#222] hover:border-light-600 dark:hover:border-gray-600'
                                                 }`}
@@ -516,7 +514,7 @@ export function BitTimingConfig() {
                         }}
                     >
                         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: analysis.color }} />
-                        <span className="text-[8px] font-mono" style={{ color: analysis.color }}>{analysis.msg}</span>
+                        <span className="text-[11px] font-mono" style={{ color: analysis.color }}>{analysis.msg}</span>
                     </div>
                 </div>
             </div>
@@ -536,21 +534,21 @@ function PresetTabStrip({ presets, activePreset, onApply }: {
     return (
         <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] mb-4 transition-colors">
             <span className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">BAUD RATE PRESETS</span>
-            <div className="relative">
-                <div className="flex gap-1 w-full overflow-x-auto no-scrollbar pb-1">
+            <div className="pb-1">
+                <div className="flex flex-wrap gap-2 w-full">
                     {presets.map(preset => (
                         <button
                             key={preset.name}
                             onClick={() => onApply(preset)}
-                            className="relative flex-none min-w-[70px] px-2 py-2 rounded text-[8px] font-mono font-bold transition-all active:scale-95 transition-colors"
+                            className="relative flex-none px-3 py-2.5 rounded text-[10px] font-mono font-bold transition-all active:scale-95 transition-colors min-h-[44px]"
                             style={{
                                 color: activePreset === preset.name ? (isDark ? '#00f3ff' : '#0891b2') : (isDark ? '#888' : '#666'),
                                 zIndex: activePreset === preset.name ? 1 : 0,
                             }}
                         >
-                            <div className="leading-none">
-                                <div className="text-[10px] font-bold">{preset.name.split(' ')[0]}</div>
-                                <div className="text-[10px] opacity-60">{preset.clock}</div>
+                            <div className="leading-none flex flex-col items-center">
+                                <div className="text-[11px] font-bold">{preset.name.split(' ')[0]}</div>
+                                <div className="text-[10px] opacity-60 mt-1">{preset.clock}</div>
                             </div>
                             {activePreset === preset.name && (
                                 <motion.div
@@ -563,8 +561,6 @@ function PresetTabStrip({ presets, activePreset, onApply }: {
                         </button>
                     ))}
                 </div>
-                {/* Fade indicator */}
-                <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-gray-50 dark:from-[#0c0c0e] to-transparent pointer-events-none" />
             </div>
         </div>
     );

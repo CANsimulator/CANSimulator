@@ -4,6 +4,11 @@ import { canSimulator } from './can-simulator';
 import type { CANMessage } from './can-simulator';
 import { lengthToDlc } from '../../types/can';
 
+import { UDSServer } from './uds-server';
+
+// Initialize UDS Server for Engine ECU
+const engineUdsServer = new UDSServer(0x7E0, 0x7E8);
+
 /**
  * Engine ECU — responds to functional diagnostic requests (0x7DF) and
  * physical requests (0x7E0), emits heartbeat RPM frames.
@@ -13,13 +18,10 @@ export const EngineECU: CANHandler = {
     name: 'Engine Control Unit (ECM)',
     interestedMessageIds: [0x7DF, 0x7E0],
     onReceive: async (message: CANMessage) => {
-        await canSimulator.broadcast({
-            id: 0x7E8,
-            dlc: 4,
-            data: new Uint8Array([0x03, 0x7F, message.data[1] ?? 0x00, 0x11]),
-            type: 'STANDARD',
-            timestamp: Date.now(),
-        });
+        // Log UDS request receipt and delegate to UDS Server
+        if (message.id === 0x7DF || message.id === 0x7E0) {
+            await engineUdsServer.handleMessage(message);
+        }
     },
 };
 

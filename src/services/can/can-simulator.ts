@@ -258,6 +258,32 @@ class CANSimulator {
         return Number(raw) * scale + offset;
     }
 
+    /** Piecewise Linear Interpolation (Map raw to non-linear physical e.g. sensors) */
+    interpolateSignal(points: { raw: number; physical: number }[], raw: number): number {
+        if (points.length === 0) return raw;
+        if (points.length === 1) return points[0].physical;
+
+        // Sort by raw value
+        const sorted = [...points].sort((a, b) => a.raw - b.raw);
+
+        // Clamping or extension
+        if (raw <= sorted[0].raw) return sorted[0].physical;
+        if (raw >= sorted[sorted.length - 1].raw) return sorted[sorted.length - 1].physical;
+
+        // Find segments
+        for (let i = 0; i < sorted.length - 1; i++) {
+            const p1 = sorted[i];
+            const p2 = sorted[i + 1];
+
+            if (raw >= p1.raw && raw <= p2.raw) {
+                // Linear Formula: y = y0 + (x - x0) * (y1 - y0) / (x1 - x0)
+                const fraction = (raw - p1.raw) / (p2.raw - p1.raw);
+                return p1.physical + fraction * (p2.physical - p1.physical);
+            }
+        }
+        return raw;
+    }
+
     /** Simulate bit-by-bit arbitration between multiple nodes */
     simulateArbitration(nodes: { id: number; name: string }[]): {
         winnerIndex: number;

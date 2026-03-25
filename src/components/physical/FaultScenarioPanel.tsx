@@ -333,6 +333,7 @@ const LivePill: React.FC<{ label: string; value: string; ok: boolean }> = ({ lab
     >
         <span className="text-light-500 dark:text-gray-500 transition-colors">{label}</span>
         <span className="font-bold transition-colors" style={{ color: ok ? '#22c55e' : '#ef4444' }}>{value}</span>
+        <span className="text-[6px] opacity-70 ml-0.5">{ok ? 'OK' : 'FAIL'}</span>
     </div>
 );
 
