@@ -73,8 +73,13 @@ export interface UDSResponse {
  */
 export class UDSServer {
   private p2Ms = 50; // Typical P2 timing
-  
-  constructor(public ecuId: number, public responseId: number) {}
+  public ecuId: number;
+  public responseId: number;
+
+  constructor(ecuId: number, responseId: number) {
+    this.ecuId = ecuId;
+    this.responseId = responseId;
+  }
 
   async handleMessage(message: CANMessage): Promise<void> {
     
