@@ -23,21 +23,19 @@
           window.history.replaceState(
             null,
             null,
-            // l.pathname is '/CANSimulator/' — slice off the trailing slash,
-            // then append decoded[0] which is e.g. '/physical'.
-            l.pathname.slice(0, -1) + decoded[0] +
+            l.pathname.slice(0, -1) + (decoded[0][0] === '/' ? decoded[0] : '/' + decoded[0]) +
             (decoded[1] ? '?' + decoded[1] : '') +
             l.hash
           );
         }
       }(window.location));
     </script>
-    <script type="module" crossorigin src="/CANSimulator/assets/index-L7I66EVq.js"></script>
-    <link rel="modulepreload" crossorigin href="/CANSimulator/assets/vendor-misc-ExLXgmXT.js">
-    <link rel="modulepreload" crossorigin href="/CANSimulator/assets/vendor-core-DzGuVJs-.js">
-    <link rel="modulepreload" crossorigin href="/CANSimulator/assets/vendor-utils-BK0EIzQ5.js">
-    <link rel="modulepreload" crossorigin href="/CANSimulator/assets/vendor-motion-CtTKEW5_.js">
-    <link rel="stylesheet" crossorigin href="/CANSimulator/assets/index-EuBUedLD.css">
+    <script type="module" crossorigin src="/CANSimulator/assets/index-DN328LBH.js"></script>
+    <link rel="modulepreload" crossorigin href="/CANSimulator/assets/vendor-misc-Bt-Smn6O.js">
+    <link rel="modulepreload" crossorigin href="/CANSimulator/assets/vendor-core-Bwol5nZ0.js">
+    <link rel="modulepreload" crossorigin href="/CANSimulator/assets/vendor-utils-9aatTJyQ.js">
+    <link rel="modulepreload" crossorigin href="/CANSimulator/assets/vendor-motion-CwUsX64N.js">
+    <link rel="stylesheet" crossorigin href="/CANSimulator/assets/index-D7bpaclS.css">
   <style>*,*::before,*::after{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}:root,[data-theme="dark"]{color-scheme:dark}[data-theme="light"]{color-scheme:light}.min-h-screen{min-height:100vh}.flex{display:flex}.items-center{align-items:center}.justify-center{justify-content:center}.bg-dark-950{background-color:#020617}.text-cyan-500{color:#06b6d4}.font-mono{font-family:ui-monospace,SFMono-Regular,monospace}</style></head>
   <body class="bg-dark-900 scroll-smooth">
     <div id="root"></div>

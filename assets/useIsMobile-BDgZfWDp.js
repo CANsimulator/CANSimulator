@@ -1,1 +1,0 @@
-import{r as i}from"./vendor-core-DzGuVJs-.js";function c(e=768){const[o,n]=i.useState(()=>typeof window<"u"?window.innerWidth<e:!1);return i.useEffect(()=>{const t=window.matchMedia(`(max-width: ${e-1}px)`),s=r=>n(r.matches);return n(t.matches),t.addEventListener("change",s),()=>t.removeEventListener("change",s)},[e]),o}export{c as u};

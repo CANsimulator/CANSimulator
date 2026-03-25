@@ -1,0 +1,1 @@
+import{j as o}from"./vendor-core-Bwol5nZ0.js";import{c as r}from"./index-DN328LBH.js";const l=({children:x,className:a,variant:t="default"})=>{const m={default:"max-w-7xl",narrow:"max-w-5xl",wide:"max-w-[1440px]"}[t];return o.jsx("div",{className:r("mx-auto px-4 sm:px-6 lg:px-8 w-full",m,a),children:x})};export{l as C};
