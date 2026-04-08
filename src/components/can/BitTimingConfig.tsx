@@ -64,7 +64,7 @@ function decodeRegisters(btr0: number, btr1: number, oscillatorResource: number)
 }
 
 function toHex(n: number) {
-    return '0x' + n.toString(16).toUpperCase().padStart(2, '0');
+    return n.toString(16).toUpperCase().padStart(2, '0');
 }
 
 function toBin(n: number) {
@@ -232,6 +232,8 @@ export function BitTimingConfig() {
                             style={{ backgroundColor: analysis.color, boxShadow: `0 0 4px ${analysis.color}` }}
                             animate={{ opacity: shouldReduceMotion ? 0.8 : [1, 0.5, 1] }}
                             transition={{ duration: 2, repeat: shouldReduceMotion ? 0 : Infinity }}
+                            role="img"
+                            aria-label={`Status: ${analysis.quality}`}
                         />
                         <span className="text-[11px] font-mono font-bold" style={{ color: analysis.color }}>{analysis.quality}</span>
                     </div>

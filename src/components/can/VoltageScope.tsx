@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { 
     Zap, 
     Activity, 
-    Monitor, 
-    Ruler, 
     PlugZap, 
     Eye, 
     Minus,
     Plus,
-    Crosshair
+    Crosshair,
+    Maximize2,
+    Cpu
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { normToCanvasX, canvasXToNorm, calculateVDiff } from '../../utils/scope-math';
 import { 
     ISO, 
@@ -31,14 +32,14 @@ import { useTheme } from '../../context/ThemeContext';
 // ─── Layout Constants ───────────────────────────────────────
 const CANVAS_W = 900;
 const CANVAS_H = 540;
-const M = { top: 28, right: 8, bottom: 4, left: 52 }; // margins
+const M = { top: 28, right: 16, bottom: 4, left: 52 }; // margins (Updated: Right margin increased to 16px to prevent label clipping)
 const PLOT_W = CANVAS_W - M.left - M.right;
 
 // Panel heights (proportional)
 const WAVE_H = 200;   // CANH/CANL waveform
 const DIFF_H = 90;    // Differential voltage
 const EYE_H = 100;    // Eye diagram
-const DECODE_H = 28;  // Protocol decode strip
+const DECODE_H = 36;  // Protocol decode strip (Increased from 28px to resolve #217)
 const GAP = 8;        // between panels
 const EYE_MAX_OVERLAYS = 200;
 
@@ -138,6 +139,7 @@ export const VoltageScope: React.FC = () => {
     const isDraggingCursor = useRef<'A' | 'B' | null>(null);
     const waveStateRef = useRef<WaveState>(createInitialWaveState());
     const singleFlashRef = useRef<number>(-1000);
+    const miniEyeCanvasRef = useRef<HTMLCanvasElement>(null);
 
     const [scope, setScope] = useState<ScopeState>({
         ch1: { enabled: true, vdiv: 1, offset: 0 },
@@ -164,6 +166,7 @@ export const VoltageScope: React.FC = () => {
         eyeWidth: 0, eyeHeight: 0,
         isoCANH: true, isoCANL: true, isoDiff: true,
         isGated: false,
+        eyePending: true,
     });
 
     const scopeRef = useRef(scope);
@@ -436,22 +439,39 @@ export const VoltageScope: React.FC = () => {
             ctx.beginPath(); ctx.moveTo(0, recY); ctx.lineTo(PLOT_W, recY); ctx.stroke();
             ctx.setLineDash([]);
 
-            // ISO threshold labels
+            // ISO threshold labels (Relocated to right to avoid left-side markers/axis)
             const thresholds = [
                 { v: ISO.CANH_DOM_MIN + (s.ch1.offset - avgOffset), label: 'CANH min 2.75V', color: C.ch1, scale: ch1 },
                 { v: ISO.CANL_DOM_MAX + (s.ch2.offset - avgOffset), label: 'CANL max 2.25V', color: C.ch2, scale: ch2 },
             ];
-            for (const th of thresholds) {
-                const y = vToPanel(th.v, th.scale.vMin, th.scale.vMax, WAVE_H, vw);
-                if (y < 0 || y > WAVE_H) continue;
-                ctx.strokeStyle = th.color; ctx.globalAlpha = 0.15;
+            
+            // Sort to handle overlap avoidance from top to bottom
+            const activeThresholds = thresholds
+                .map(th => ({ ...th, y: vToPanel(th.v, th.scale.vMin, th.scale.vMax, WAVE_H, vw) }))
+                .filter(th => th.y >= 0 && th.y <= WAVE_H)
+                .sort((a, b) => a.y - b.y);
+
+            let lastLabelY = -50;
+            for (const th of activeThresholds) {
+                // Draw threshold line
+                ctx.strokeStyle = th.color; ctx.globalAlpha = 0.2;
                 ctx.setLineDash([1, 3]); ctx.lineWidth = 0.5;
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(PLOT_W, y); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, th.y); ctx.lineTo(PLOT_W, th.y); ctx.stroke();
                 ctx.setLineDash([]);
-                ctx.globalAlpha = 0.3; ctx.font = '11px monospace'; ctx.fillStyle = th.color;
-                ctx.textAlign = 'left'; ctx.fillText(th.label, 4, y - 3);
-                ctx.globalAlpha = 1;
+
+                // Overlap avoidance: minimum 16px vertical spacing between labels
+                let textY = th.y - 4;
+                if (textY < lastLabelY + 16) textY = lastLabelY + 16;
+                // Clamp within panel
+                textY = clamp(textY, 10, WAVE_H - 4);
+
+                // Semi-transparent background pill for readability
+                ctx.globalAlpha = 0.65; ctx.font = '10px monospace'; ctx.fillStyle = th.color;
+                ctx.textAlign = 'right';
+                ctx.fillText(th.label, PLOT_W - 6, textY);
+                lastLabelY = textY;
             }
+            ctx.globalAlpha = 1;
 
             drawGrid(PLOT_W, WAVE_H, 10, 8, vw);
             drawVAxis(WAVE_H, vMin, vMax, 'V', activeVdiv, vw);
@@ -478,12 +498,13 @@ export const VoltageScope: React.FC = () => {
             
             ctx.save();
             ctx.strokeStyle = trigColor; ctx.setLineDash([3, 3]); ctx.lineWidth = 0.8; ctx.globalAlpha = 0.5;
-            ctx.beginPath(); ctx.moveTo(0, trigY); ctx.lineTo(PLOT_W, trigY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, trigY); ctx.lineTo(PLOT_W - 14, trigY); ctx.stroke();
             ctx.setLineDash([]); ctx.globalAlpha = 1;
             ctx.fillStyle = trigColor;
-            ctx.beginPath(); ctx.moveTo(PLOT_W, trigY); ctx.lineTo(PLOT_W + 6, trigY - 4); ctx.lineTo(PLOT_W + 6, trigY + 4); ctx.fill();
-            ctx.font = '600 11px monospace'; ctx.textAlign = 'left';
-            ctx.fillText(trigLabel, PLOT_W + 8, trigY + 3);
+            // Left-pointing triangle fully inside panel bounds
+            ctx.beginPath(); ctx.moveTo(PLOT_W - 2, trigY); ctx.lineTo(PLOT_W - 10, trigY - 5); ctx.lineTo(PLOT_W - 10, trigY + 5); ctx.fill();
+            ctx.font = '700 9px monospace'; ctx.textAlign = 'right';
+            ctx.fillText(trigLabel, PLOT_W - 12, trigY + 3);
             ctx.restore();
 
             // Cursors
@@ -607,6 +628,71 @@ export const VoltageScope: React.FC = () => {
             // Measurements
             ctx.font = '11px monospace'; ctx.fillStyle = isEyeReady ? C.dominant : C.recessive; ctx.textAlign = 'right';
             ctx.fillText(isEyeReady ? 'SIGNAL STABLE' : 'INTEGRATING...', PLOT_W - 8, EYE_H - 6);
+
+            // Synchronize Mini-Eye sidebar Diagram (Issue #216)
+            const mCanv = miniEyeCanvasRef.current;
+            if (mCanv && eyeData.length > 5) {
+                const mctx = mCanv.getContext('2d');
+                if (mctx) {
+                    const mw = mCanv.width; const mh = mCanv.height;
+                    mctx.clearRect(0, 0, mw, mh);
+                    mctx.globalAlpha = isEyeReady ? 0.35 : 0.15;
+                    mctx.lineWidth = 1;
+                    for (const bit of eyeData.slice(-50)) { // Performance: draw latest 50
+                        if (bit.length < 2) continue;
+                        if (s.ch1.enabled) {
+                            mctx.strokeStyle = C.ch1; mctx.beginPath();
+                            for (let j = 0; j < bit.length; j++) {
+                                const mx = (j / (bit.length - 1)) * mw;
+                                const my = (1 - (bit[j].canh / 5)) * mh;
+                                if (j === 0) mctx.moveTo(mx, my); else mctx.lineTo(mx, my);
+                            }
+                            mctx.stroke();
+                        }
+                        if (s.ch2.enabled) {
+                            mctx.strokeStyle = C.ch2; mctx.beginPath();
+                            for (let j = 0; j < bit.length; j++) {
+                                const mx = (j / (bit.length - 1)) * mw;
+                                const my = (1 - (bit[j].canl / 5)) * mh;
+                                if (j === 0) mctx.moveTo(mx, my); else mctx.lineTo(mx, my);
+                            }
+                            mctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            // Reference Labels — overlap-aware, fully inside panel
+            ctx.save();
+            ctx.font = '10px monospace'; ctx.textAlign = 'right'; ctx.globalAlpha = 0.55;
+
+            // Collect labels sorted top→bottom, then push down any that overlap
+            type EyeLabel = { color: string; text: string; y: number };
+            const eyeLabels: EyeLabel[] = [];
+            if (s.ch1.enabled) {
+                const yH = vToPanel(ISO.CANH_DOM_TYP, ISO.V_MIN, ISO.V_MAX, EYE_H, noZoom);
+                eyeLabels.push({ color: C.ch1, text: 'CANH 3.5V', y: yH });
+            }
+            {
+                const yR = vToPanel(ISO.V_REC, ISO.V_MIN, ISO.V_MAX, EYE_H, noZoom);
+                eyeLabels.push({ color: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)', text: 'REC 2.5V', y: yR });
+            }
+            if (s.ch2.enabled) {
+                const yL = vToPanel(ISO.CANL_DOM_TYP, ISO.V_MIN, ISO.V_MAX, EYE_H, noZoom);
+                eyeLabels.push({ color: C.ch2, text: 'CANL 1.5V', y: yL });
+            }
+            eyeLabels.sort((a, b) => a.y - b.y);
+
+            let lastEyeLabelY = -50;
+            for (const lbl of eyeLabels) {
+                let ty = lbl.y - 3;
+                if (ty < lastEyeLabelY + 13) ty = lastEyeLabelY + 13;
+                ty = clamp(ty, 8, EYE_H - 4);
+                ctx.fillStyle = lbl.color;
+                ctx.fillText(lbl.text, PLOT_W - 6, ty);
+                lastEyeLabelY = ty;
+            }
+            ctx.restore();
         }, eyeBdr);
 
         // ════════════════════════════════════════════
@@ -627,14 +713,14 @@ export const VoltageScope: React.FC = () => {
             // Highlighted wait state for better visibility
             if (!s.ch1.enabled && !s.ch2.enabled) {
                 const tw = 130;
-                ctx.fillStyle = 'rgba(0, 243, 255, 0.08)';
+                ctx.fillStyle = 'rgba(0, 243, 255, 0.12)';
                 ctx.fillRect(PLOT_W / 2 - tw / 2, 4, tw, DECODE_H - 8);
-                ctx.strokeStyle = 'rgba(0, 243, 255, 0.2)';
+                ctx.strokeStyle = 'rgba(0, 243, 255, 0.4)';
                 ctx.strokeRect(PLOT_W / 2 - tw / 2, 4, tw, DECODE_H - 8);
 
                 ctx.fillStyle = '#00f3ff';
-                ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
-                ctx.fillText('WAITING FOR PROBE CONNECTION...', PLOT_W / 2, DECODE_H / 2 + 3);
+                ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center';
+                ctx.fillText('WAITING FOR PROBE CONNECTION...', PLOT_W / 2, DECODE_H / 2 + 5);
                 return;
             }
             
@@ -671,7 +757,7 @@ export const VoltageScope: React.FC = () => {
                 }
             }
 
-            ctx.font = '600 11px monospace'; ctx.textAlign = 'center';
+            ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center';
 
             regions.forEach((r) => {
                 const w = Math.max(r.x2 - r.x1, 2);
@@ -680,26 +766,30 @@ export const VoltageScope: React.FC = () => {
 
                 // Strip Background
                 ctx.fillStyle = r.color;
-                ctx.globalAlpha = 0.15;
-                ctx.fillRect(r.x1, 2, w, DECODE_H - 4);
+                ctx.globalAlpha = 0.35;
+                ctx.fillRect(r.x1, 4, w, DECODE_H - 8);
 
                 // Strip Border
                 ctx.strokeStyle = r.color;
-                ctx.globalAlpha = 0.4;
+                ctx.globalAlpha = 0.7;
                 ctx.lineWidth = 1;
-                ctx.strokeRect(r.x1, 2, w, DECODE_H - 4);
-                
-                // Label (only if wide enough)
-                if (w > 20) {
-                    ctx.globalAlpha = 0.9;
+                ctx.strokeRect(r.x1, 4, w, DECODE_H - 8);
+
+                // Label (show if wide enough to hold at least partial text)
+                if (w > 14) {
+                    ctx.globalAlpha = 1.0;
                     ctx.fillStyle = r.color;
-                    ctx.fillText(r.name, midX, DECODE_H / 2 + 3);
+                    // Clip label to strip width
+                    ctx.save();
+                    ctx.beginPath(); ctx.rect(r.x1 + 2, 0, w - 4, DECODE_H); ctx.clip();
+                    ctx.fillText(r.name, midX, DECODE_H / 2 + 5);
+                    ctx.restore();
                 }
                 ctx.globalAlpha = 1;
             });
 
-            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'; ctx.font = '11px monospace'; ctx.textAlign = 'left';
-            ctx.fillText('DECODE', 4, 9);
+            ctx.fillStyle = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)'; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'left';
+            ctx.fillText('DECODE', 4, 13);
 
             // Frame count readout (right-aligned) - Keep this for now, though redundant with status bar
             ctx.fillStyle = frameCount > 0 ? (isDark ? 'rgba(0,255,136,0.5)' : 'rgba(0,180,100,0.6)') : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)');
@@ -708,7 +798,7 @@ export const VoltageScope: React.FC = () => {
             ctx.fillText(
                 frameCount === 1 ? '1 frame' : `${frameCount} frames`,
                 PLOT_W - 4,
-                9
+                13
             );
         });
 
@@ -833,6 +923,9 @@ export const VoltageScope: React.FC = () => {
         }
 
     }, [vToPanel, sToX, C, isDark]);
+    
+    const MIN_EYE_SAMPLES = 100;
+
     const computeMetrics = useCallback(() => {
         let samples = samplesRef.current;
         if (samples.length < 10) return;
@@ -962,6 +1055,7 @@ export const VoltageScope: React.FC = () => {
             isoCANL: !!isoCANL, 
             isoDiff: !!isoDiff, 
             isGated,
+            eyePending: eyeWins.length < MIN_EYE_SAMPLES,
         });
     }, []);
 
@@ -1347,19 +1441,30 @@ export const VoltageScope: React.FC = () => {
                             </div>
                         </MetricGroup>
 
-                        <MetricGroup title="Display" icon={<Monitor size={11} />}>
-                            <div className="flex flex-col gap-2.5">
-                                <ScopeBtn label={scope.math ? 'Diff On' : 'Diff Off'} active={scope.math} color={C.diff}
-                                    onClick={() => setScope(p => ({ ...p, math: !p.math }))} />
-                                <ScopeBtn label={scope.cursorMode === 'off' ? 'Cursors Off' : 'Cursors On'} active={scope.cursorMode !== 'off'} color={C.cursor}
-                                    onClick={() => setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' }))} />
-                                <ScopeBtn label={scope.persistence ? 'Persistent' : 'Static'} active={scope.persistence} color="#8855ff"
-                                    onClick={() => setScope(p => ({ ...p, persistence: !p.persistence }))} />
-                            </div>
-                        </MetricGroup>
+                        {/* Display controls moved to horizontal tab bar (Issue #218) */}
                     </div>
 
-                    <div className="flex-1 relative bg-[#050508]">
+                    <div className="flex-1 relative bg-[#050508] flex flex-col min-w-0">
+                        {/* Integrated Control Tab Bar (Resolves #218) */}
+                        <div className="flex items-stretch h-11 bg-gray-100/80 dark:bg-[#0b0b14]/80 backdrop-blur-md border-b border-black/5 dark:border-white/5 overflow-x-auto custom-scrollbar-none">
+                            <ScopeToggle label="DIFF MATH" active={scope.math} color={C.diff} icon={<Maximize2 size={13}/>}
+                                onClick={() => setScope(p => ({ ...p, math: !p.math }))} />
+                            <ScopeToggle label="CURSORS" active={scope.cursorMode !== 'off'} color={C.cursor} icon={<Crosshair size={13}/>}
+                                onClick={() => setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' }))} />
+                            <ScopeToggle label="PERSISTENCE" active={scope.persistence} color="#8855ff" icon={<Zap size={13}/>}
+                                onClick={() => setScope(p => ({ ...p, persistence: !p.persistence }))} />
+                            
+                            <div className="flex-1 border-r border-black/5 dark:border-white/5" />
+
+                            <div className="flex items-center px-4 gap-3 border-l border-black/5 dark:border-white/5">
+                                <div className="flex items-center gap-1.5 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-help" title="Hardware Sample Rate">
+                                    <Cpu size={12} className="text-light-500 dark:text-gray-400" />
+                                    <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 font-bold uppercase tracking-widest leading-none">1.2 MS/s</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="relative flex-1">
                         <canvas ref={canvasRef}
                             className="w-full cursor-crosshair touch-none focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
                             style={{ aspectRatio: `${CANVAS_W}/${CANVAS_H}` }}
@@ -1369,52 +1474,114 @@ export const VoltageScope: React.FC = () => {
                             onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}
                             onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
                             onContextMenu={e => e.preventDefault()} onKeyDown={handleKeyDown} />
-                        <div className="absolute bottom-2 left-2 flex flex-wrap gap-1.5 pointer-events-none opacity-60 sm:opacity-100">
-                            <Hint text="Scroll: Zoom" /><Hint text="Shift+Scroll: Axis" /><Hint text="R: Reset" /><Hint text="C: Cursors" />
+                        <aside 
+                            className="absolute bottom-3 left-3 flex flex-wrap gap-2 pointer-events-none"
+                            aria-label="Oscilloscope keyboard shortcuts"
+                        >
+                            <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-sm px-2 py-1 rounded border border-white/10 shadow-xl">
+                                <kbd className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[9px] font-mono font-bold text-cyber-blue bg-cyber-blue/10 border border-cyber-blue/30 rounded shadow-[0_0_8px_rgba(0,243,255,0.2)]">SCRL</kbd>
+                                <span className="text-[10px] font-mono text-gray-300 uppercase tracking-wider">Zoom</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-sm px-2 py-1 rounded border border-white/10 shadow-xl">
+                                <kbd className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[9px] font-mono font-bold text-cyber-blue bg-cyber-blue/10 border border-cyber-blue/30 rounded shadow-[0_0_8px_rgba(0,243,255,0.2)]">SHIFT</kbd>
+                                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-tight">+</span>
+                                <kbd className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[9px] font-mono font-bold text-cyber-blue bg-cyber-blue/10 border border-cyber-blue/30 rounded shadow-[0_0_8px_rgba(0,243,255,0.2)]">SCRL</kbd>
+                                <span className="text-[10px] font-mono text-gray-300 uppercase tracking-wider">Axis</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-sm px-2 py-1 rounded border border-white/10 shadow-xl">
+                                <kbd className="flex items-center justify-center min-w-[20px] h-5 px-1 text-[9px] font-mono font-bold text-cyber-blue bg-cyber-blue/10 border border-cyber-blue/30 rounded shadow-[0_0_8px_rgba(0,243,255,0.2)]">R</kbd>
+                                <span className="text-[10px] font-mono text-gray-300 uppercase tracking-wider">Reset</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-sm px-2 py-1 rounded border border-white/10 shadow-xl">
+                                <kbd className="flex items-center justify-center min-w-[20px] h-5 px-1 text-[9px] font-mono font-bold text-cyber-blue bg-cyber-blue/10 border border-cyber-blue/30 rounded shadow-[0_0_8px_rgba(0,243,255,0.2)]">C</kbd>
+                                <span className="text-[10px] font-mono text-gray-300 uppercase tracking-wider">Cursors</span>
+                            </div>
+                        </aside>
                         </div>
                     </div>
 
                     {/* Right Rail (Metrics) */}
                     <div className="xl:w-64 w-full p-3 xl:border-l border-black/5 dark:border-[#14142a] flex flex-col sm:grid sm:grid-cols-2 xl:flex xl:flex-col gap-3 bg-gray-100/50 dark:bg-[#06060c] overflow-y-auto max-h-[600px] xl:max-h-[540px] custom-scrollbar shadow-inner transition-colors">
-                        <MetricGroup title="Signal Quality" icon={<Zap size={11} />} subTitle={metrics.isGated ? 'Gated' : undefined}>
+                        {/* PANEL 1: SIGNAL QUALITY */}
+                        <MetricGroup 
+                            title="Signal Quality" 
+                            icon={<Zap size={11} />} 
+                            hardwareId="SQ-20"
+                            color="#00f3ff"
+                            status={(metrics.ch1Vpp > 4.5 || metrics.ch2Vpp > 4.5 || metrics.vdiff < 1.4) ? 'fail' : 'pass'}
+                        >
                             <div className="space-y-0.5">
-                                <MetricRow label="CANH Vpp" value={`${metrics.ch1Vpp.toFixed(2)} V`} color={C.ch1} />
-                                <MetricRow label="CANH Avg" value={`${metrics.ch1Avg.toFixed(2)} V`} color={C.ch1} />
-                                <MetricRow label="CANL Vpp" value={`${metrics.ch2Vpp.toFixed(2)} V`} color={C.ch2} />
-                                <MetricRow label="CANL Avg" value={`${metrics.ch2Avg.toFixed(2)} V`} color={C.ch2} />
-                                <MetricRow label="Vdiff" value={`${metrics.vdiff.toFixed(2)} V`} color={C.diff} />
+                                <MetricRow label="VDIFF (DOM)" value={`${metrics.vdiff.toFixed(2)}V`} isPrimary
+                                    status={metrics.isoDiff ? 'pass' : 'fail'} color="#00ff88" />
+                                <MetricRow label="CH1 P-P" value={`${metrics.ch1Vpp.toFixed(2)}V`} />
+                                <MetricRow label="CH2 P-P" value={`${metrics.ch2Vpp.toFixed(2)}V`} />
                             </div>
                         </MetricGroup>
-                        <MetricGroup title="Edge Timing" icon={<Ruler size={11} />}>
+
+                        {/* PANEL 2: EDGE TIMING */}
+                        <MetricGroup 
+                            title="Pulse Timing" 
+                            icon={<Activity size={11} />} 
+                            hardwareId="ET-15"
+                            color="#f59e0b"
+                            status={metrics.riseTime > 350 ? 'fail' : metrics.riseTime > 250 ? 'warn' : 'pass'}
+                        >
                             <div className="space-y-0.5">
-                                <MetricRow label="Rise" value={`${metrics.riseTime} ns`} />
-                                <MetricRow label="Fall" value={`${metrics.fallTime} ns`} />
-                                <MetricRow label="Symmetry" value={`${metrics.symmetry}%`}
-                                    status={metrics.symmetry > 80 ? 'pass' : metrics.symmetry > 60 ? 'warn' : 'fail'} />
+                                <MetricRow label="Rise Time" value={`${metrics.riseTime}ns`} 
+                                    status={metrics.riseTime < 300 ? 'pass' : 'warn'} color="#f59e0b" />
+                                <MetricRow label="Fall Time" value={`${metrics.fallTime}ns`} />
+                                <MetricRow label="Symmetry" value={`${metrics.symmetry}%`} />
                             </div>
                         </MetricGroup>
-                        <MetricGroup title="Bus Status" icon={<PlugZap size={11} />}>
+
+                        {/* PANEL 3: BUS STATUS */}
+                        <MetricGroup 
+                            title="Bus Health" 
+                            icon={<PlugZap size={11} />} 
+                            hardwareId="BH-09"
+                            color="#bf00ff"
+                            status={metrics.busLoad > 85 ? 'fail' : metrics.busLoad > 65 ? 'warn' : 'pass'}
+                        >
                             <div className="space-y-0.5">
-                                <MetricRow label="Bus Load" value={`${metrics.busLoad}%`}
-                                    status={metrics.busLoad < 70 ? 'pass' : metrics.busLoad < 85 ? 'warn' : 'fail'} />
+                                <MetricRow label="Bus Load" value={`${metrics.busLoad}%`} isPrimary
+                                    status={metrics.busLoad < 70 ? 'pass' : metrics.busLoad < 85 ? 'warn' : 'fail'} color="#bf00ff" />
                                 <MetricRow label="Bit Rate" value={`~${metrics.bitRate}k`} />
                                 
                                 <div className="pt-2 mt-1 border-t border-black/5 dark:border-white/10 space-y-1">
-                                    <MetricRow label="CANH Lvl" value={metrics.isoCANH ? 'VALID' : 'OOS'} 
+                                    <MetricRow label="ISO-CANH" value={metrics.isoCANH ? 'VALID' : 'OOS'} 
                                         status={metrics.isoCANH ? 'pass' : 'fail'} />
-                                    <MetricRow label="CANL Lvl" value={metrics.isoCANL ? 'VALID' : 'OOS'} 
+                                    <MetricRow label="ISO-CANL" value={metrics.isoCANL ? 'VALID' : 'OOS'} 
                                         status={metrics.isoCANL ? 'pass' : 'fail'} />
-                                    <MetricRow label="Diff Lvl" value={metrics.isoDiff ? 'VALID' : 'LOW!'} 
-                                        status={metrics.isoDiff ? 'pass' : 'fail'} />
                                 </div>
                             </div>
                         </MetricGroup>
-                        <MetricGroup title="Eye Map" icon={<Eye size={11} />}>
-                            <div className="space-y-0.5">
-                                <MetricRow label="Eye Width" value={`${metrics.eyeWidth}%`}
-                                    status={metrics.eyeWidth > 70 ? 'pass' : metrics.eyeWidth > 50 ? 'warn' : 'fail'} />
-                                <MetricRow label="Eye Height" value={`${metrics.eyeHeight}%`}
-                                    status={metrics.eyeHeight > 60 ? 'pass' : metrics.eyeHeight > 40 ? 'warn' : 'fail'} />
+
+                        {/* PANEL 4: EYE MAP */}
+                        <MetricGroup 
+                            title="Eye Map" 
+                            icon={<Eye size={11} />} 
+                            hardwareId="EM-32"
+                            color="#00ff88"
+                            status={metrics.eyePending ? 'pending' : (metrics.eyeWidth < 50 || metrics.eyeHeight < 40) ? 'fail' : 'pass'}
+                        >
+                            <div className="space-y-2">
+                                <div className="relative group/eyemap">
+                                    <canvas ref={miniEyeCanvasRef} width={220} height={60} 
+                                        className="w-full h-14 bg-black/40 rounded-lg border border-white/5 shadow-inner transition-all group-hover/eyemap:border-white/10" />
+                                    {metrics.eyePending && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+                                            <span className="text-[9px] font-mono text-cyan-400 animate-pulse uppercase tracking-widest font-black">Syncing...</span>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="grid grid-cols-1 gap-0.5">
+                                    <MetricRow label="Eye Opening" 
+                                        value={metrics.eyePending ? "..." : `${metrics.eyeWidth}%`} isPrimary
+                                        status={metrics.eyePending ? 'pending' : (metrics.eyeWidth > 70 ? 'pass' : metrics.eyeWidth > 50 ? 'warn' : 'fail')} />
+                                    <MetricRow label="Vertical" 
+                                        value={metrics.eyePending ? "..." : `${metrics.eyeHeight}%`}
+                                        status={metrics.eyePending ? 'pending' : (metrics.eyeHeight > 60 ? 'pass' : metrics.eyeHeight > 40 ? 'warn' : 'fail')} />
+                                </div>
                             </div>
                         </MetricGroup>
                     </div>
@@ -1428,11 +1595,6 @@ export const VoltageScope: React.FC = () => {
 // Sub-components
 // ═══════════════════════════════════════════════════════════════
 
-const Hint: React.FC<{ text: string }> = ({ text }) => {
-    return (
-        <span className="text-[11px] font-mono text-light-500 dark:text-gray-700 bg-black/5 dark:bg-black/50 px-1.5 py-0.5 rounded whitespace-nowrap transition-colors shadow-sm">{text}</span>
-    );
-};
 
 const SmallBtn: React.FC<{ icon: React.ReactNode; onClick: () => void; title: string }> = ({ icon, onClick, title }) => {
     return (
@@ -1461,10 +1623,27 @@ const ScopeBtn: React.FC<{ label: string; active?: boolean; color?: string; onCl
     );
 };
 
+const ScopeToggle: React.FC<{ label: string; active?: boolean; color: string; icon: React.ReactNode; onClick: () => void }> = ({ label, active, color, icon, onClick }) => {
+    return (
+        <button onClick={onClick}
+            className={`px-5 flex items-center gap-2.5 font-mono text-[11px] font-black uppercase tracking-widest transition-all border-r border-black/5 dark:border-white/5 relative group select-none ${
+                active ? 'text-dark-950 dark:text-white' : 'text-light-400 dark:text-gray-600 hover:text-light-600 dark:hover:text-gray-400'
+            }`}>
+            {active && (
+                <div className="absolute inset-x-0 -bottom-px h-0.5 bg-current" style={{ color }} />
+            )}
+            <div className={`transition-all duration-300 p-1 rounded-sm ${active ? 'bg-current shadow-[0_0_12px_rgba(0,0,0,0.2)]' : 'bg-black/5 dark:bg-white/5'}`} style={{ color: active ? color : undefined }}>
+                {React.cloneElement(icon as React.ReactElement<any>, { size: 12, className: active ? 'text-black' : 'text-inherit' })}
+            </div>
+            {label}
+        </button>
+    );
+};
+
 const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown: () => void }> = ({ label, value, onUp, onDown }) => {
     return (
         <div className="flex flex-col gap-1 px-1">
-            <span className="text-[11px] font-mono text-light-400 dark:text-gray-500 uppercase tracking-widest">{label}</span>
+            <span className="text-[11px] font-sans text-light-400 dark:text-gray-500 uppercase tracking-widest">{label}</span>
             <div className="flex items-center bg-gray-100 dark:bg-[#0d0d16] border border-black/5 dark:border-[#1a1a2e] rounded-md shadow-inner group-hover:border-black/10 dark:group-hover:border-[#2a2a4e] transition-colors">
                 <button onClick={onDown} className="w-11 h-11 flex items-center justify-center text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#ffffff05] transition-all text-sm font-mono border-r border-black/5 dark:border-[#1a1a2e]">
                     <Minus size={14} aria-hidden="true" />
@@ -1480,51 +1659,132 @@ const Stepper: React.FC<{ label: string; value: string; onUp: () => void; onDown
     );
 };
 
-const MetricGroup: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode; color?: string; subTitle?: string; active?: boolean }> = ({ title, icon, children, color, subTitle, active }) => {
+const MetricGroup: React.FC<{ 
+    title: string; 
+    icon: React.ReactNode; 
+    children: React.ReactNode; 
+    color?: string; 
+    subTitle?: string; 
+    active?: boolean;
+    status?: 'pass' | 'warn' | 'fail' | 'pending';
+    hardwareId?: string;
+}> = ({ title, icon, children, color, subTitle, active, status = 'pass', hardwareId }) => {
+    const isCritical = status === 'fail';
+    const isWarning = status === 'warn';
+    const isPending = status === 'pending';
+    
     return (
-        <div className={`w-full p-2.5 rounded-lg bg-gray-50 dark:bg-[#0a0a14] border-black/5 dark:border-[#14142a] border transition-all duration-300 ${active ? 'ring-1 ring-inset ring-black/5 dark:ring-white/10 ring-opacity-50' : ''}`} 
-            style={{ 
-                borderLeftColor: color, 
-                borderLeftWidth: color ? '3px' : '1px',
-                borderColor: active ? color : undefined,
+        <div className={`w-full p-2.5 rounded-xl border relative overflow-hidden transition-all duration-500 ${
+            isCritical ? 'bg-red-500/8 dark:bg-red-950/15 border-red-500/60 shadow-[0_0_24px_rgba(239,68,68,0.18)]' :
+            isWarning ? 'bg-amber-500/5 dark:bg-amber-950/10 border-amber-500/40' :
+            'bg-gray-50 dark:bg-[#080810] border-black/5 dark:border-[#1a1a2e]'
+        }`}
+            style={{
+                borderLeftColor: isCritical ? '#ef4444' : isWarning ? '#f59e0b' : color,
+                borderLeftWidth: isCritical ? '4px' : '3px',
+                borderTopColor: isCritical ? 'rgba(239,68,68,0.4)' : undefined,
+                borderTopWidth: isCritical ? '1px' : undefined,
                 boxShadow: active ? `inset 0 0 15px ${color}10, 0 0 5px ${color}05` : undefined
             }}>
-            <div className="text-[11px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+            
+            {/* Fail-state Scanlines Overlay */}
+            {isCritical && (
+                <motion.div 
+                    className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.07]"
+                    style={{ 
+                        backgroundImage: `linear-gradient(rgba(239, 68, 68, 0.1) 50%, transparent 50%)`,
+                        backgroundSize: '100% 4px'
+                    }}
+                    animate={{ y: [0, 4] }}
+                    transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+                />
+            )}
+
+            <div className="text-[10px] font-sans font-black text-light-500 dark:text-gray-400 uppercase tracking-[0.15em] mb-2.5 flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-1.5">
-                    {color ? (
-                        <span className="text-[12px]" style={{ color: color }} aria-hidden="true">◆</span>
-                    ) : (
-                        <span className="text-[12px] font-normal opacity-70 flex items-center" aria-hidden="true">{icon}</span>
-                    )}
+                    <span className="text-[12px] opacity-80 flex items-center" style={{ color: isCritical ? '#ef4444' : isWarning ? '#f59e0b' : color }} aria-hidden="true">
+                        {icon}
+                    </span>
                     {title}
                 </div>
-                {subTitle && (
-                    <span className="text-[10px] text-amber-500 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded ring-1 ring-amber-500/20" role="status">
-                        {subTitle}
-                    </span>
-                )}
+                <div className="flex items-center gap-2">
+                    {hardwareId && (
+                        <span className="text-[8px] font-mono text-light-400 dark:text-gray-600 opacity-60 border border-current px-1 rounded-sm">
+                            {hardwareId}
+                        </span>
+                    )}
+                    {subTitle && (
+                        <span className="text-[9px] text-amber-500 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded ring-1 ring-amber-500/20" role="status">
+                            {subTitle}
+                        </span>
+                    )}
+                </div>
             </div>
-            <div className="space-y-1">{children}</div>
+            <div className="space-y-1 relative z-10">{children}</div>
+            
+            {/* Pending Sync Blue Pulse */}
+            {isPending && (
+                <motion.div 
+                    className="absolute inset-0 bg-blue-500 opacity-0 pointer-events-none"
+                    animate={{ opacity: [0, 0.05, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                />
+            )}
         </div>
     );
 };
 
-const MetricRow: React.FC<{ label: string; value: string; color?: string; status?: 'pass' | 'warn' | 'fail' }> = ({ label, value, color, status }) => {
+const MetricRow: React.FC<{ 
+    label: string; 
+    value: string; 
+    color?: string; 
+    status?: 'pass' | 'warn' | 'fail' | 'pending';
+    isPrimary?: boolean;
+}> = ({ label, value, color, status, isPrimary }) => {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
+    
     return (
-        <div className="flex justify-between items-center py-1">
-            <span className="text-[12px] font-mono text-light-400 dark:text-gray-500 transition-colors uppercase tracking-tight">{label}</span>
-            <div className="flex items-center gap-2">
+        <div className={`flex justify-between items-center py-1.5 ${isPrimary ? 'border-b border-black/5 dark:border-white/5 pb-2 mb-1.5' : ''}`}>
+            <span className={`font-sans text-light-400 dark:text-gray-500 transition-colors uppercase tracking-tight ${isPrimary ? 'text-[11px] font-black opacity-80' : 'text-[11px] font-medium'}`}>
+                {label}
+            </span>
+            <div className="flex items-center gap-2.5">
                 {status && (
-                    <div className="flex items-center gap-1">
-                        <span className={`w-2.5 h-2.5 rounded-full shadow-sm ${status === 'pass' ? 'bg-emerald-400' : status === 'warn' ? 'bg-amber-400' : 'bg-red-400'}`} />
-                        <span className={`text-[9px] font-bold uppercase transition-colors ${status === 'pass' ? 'text-emerald-500' : status === 'warn' ? 'text-amber-500' : 'text-red-500'}`}>
+                    <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full ring-1 ring-inset ${
+                        status === 'pass' ? 'bg-emerald-500/10 ring-emerald-500/30' :
+                        status === 'warn' ? 'bg-amber-500/10 ring-amber-500/30' :
+                        status === 'pending' ? 'bg-blue-500/10 ring-blue-500/30' :
+                        'bg-red-500/15 ring-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)]'
+                    }`}>
+                        <motion.div
+                            className={`rounded-full ${
+                                status === 'fail' ? 'w-2 h-2 bg-red-400 shadow-[0_0_8px_#ef4444]' :
+                                status === 'pass' ? 'w-1.5 h-1.5 bg-emerald-400 shadow-[0_0_5px_#10b981]' :
+                                status === 'warn' ? 'w-1.5 h-1.5 bg-amber-400 shadow-[0_0_5px_#f59e0b]' :
+                                'w-1.5 h-1.5 bg-blue-400'
+                            }`}
+                            animate={status === 'fail' ? { opacity: [1, 0.3, 1], scale: [1, 1.2, 1] } : status === 'pending' ? { scale: [1, 1.3, 1] } : {}}
+                            transition={{ duration: 1.2, repeat: Infinity }}
+                            role="img"
+                            aria-label={`Status: ${status}`}
+                        />
+                        <span className={`font-black uppercase tracking-widest ${
+                            status === 'fail' ? 'text-[9px] text-red-400' :
+                            status === 'pass' ? 'text-[8px] text-emerald-500' :
+                            status === 'warn' ? 'text-[8px] text-amber-500' :
+                            'text-[8px] text-blue-500'
+                        }`}>
                             {status}
                         </span>
                     </div>
                 )}
-                <span className="text-[12px] font-mono font-bold tracking-tight" style={{ color: color || (isDark ? '#f3f4f6' : '#020617') }}>{value}</span>
+                <span 
+                    className={`font-mono font-black tracking-tighter tabular-nums transition-all ${isPrimary ? 'text-[14px]' : 'text-[11px]'}`} 
+                    style={{ color: color || (isDark ? '#f3f4f6' : '#020617') }}
+                >
+                    {value}
+                </span>
             </div>
         </div>
     );

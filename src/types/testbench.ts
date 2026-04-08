@@ -48,7 +48,7 @@ export const BIT_TIMING_PRESETS: readonly BitTimingPreset[] = [
     },
     {
         id: '1m',
-        name: '1 Mbit/s',
+        name: '1000 kbit/s',
         clock: '16 MHz',
         baudRate: 1_000_000,
         timing: { sync: 1, prop: 3, phase1: 2, phase2: 2, sjw: 1, brp: 1, oscillator: 16_000_000 },
@@ -133,4 +133,6 @@ export interface TestBenchState {
     registerResetEyeBuffer: (fn: () => void) => void;
     /** FaultScenarioPanel calls this to clear stale eye-diagram on fault changes */
     resetEyeBuffer: () => void;
+    isArmed: boolean;
+    setArmed: (armed: boolean) => void;
 }

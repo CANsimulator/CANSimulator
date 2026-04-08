@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo, memo } from 'react';
+import { Sparklines, SparklinesLine } from 'react-sparklines';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
     ArrowRight,
@@ -8,6 +9,7 @@ import {
     Check
 } from 'lucide-react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import * as Dialog from '@radix-ui/react-dialog';
 import { cn } from '../../utils/cn';
 import { useTestBench } from '../../context/TestBenchContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -210,6 +212,7 @@ export default memo(function BusTopology() {
         }
     });
     const [activeDomain, setActiveDomain] = useState<ECUDomain | null>(null);
+    const [undoNode, setUndoNode] = useState<{ node: ECUNode; timer: ReturnType<typeof setTimeout> } | null>(null);
     const svgRef = useRef<SVGSVGElement>(null);
     const transmissionRef = useRef<TransmissionState | null>(null);
     const nodesRef = useRef(nodes);
@@ -473,7 +476,17 @@ export default memo(function BusTopology() {
     }, [bench?.baudRate, transmission]);
 
     const toggleNode = (id: string) => setNodes(prev => prev.map(n => n.id === id ? { ...n, online: !n.online } : n));
-    const removeNode = (id: string) => { if (selectedNode === id) setSelectedNode(null); setNodes(prev => prev.filter(n => n.id !== id)); };
+    const removeNode = (id: string) => {
+        const nodeToRemove = nodes.find(n => n.id === id);
+        if (!nodeToRemove) return;
+        if (selectedNode === id) setSelectedNode(null);
+        setNodes(prev => prev.filter(n => n.id !== id));
+        // Clear any existing undo timer
+        if (undoNode) clearTimeout(undoNode.timer);
+        // Set up undo with 6-second window
+        const timer = setTimeout(() => setUndoNode(null), 6000);
+        setUndoNode({ node: nodeToRemove, timer });
+    };
     const updateNode = useCallback((id: string, updates: Partial<ECUNode>) => {
         setNodes(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n));
     }, []);
@@ -503,8 +516,8 @@ export default memo(function BusTopology() {
                         </svg>
                     </div>
                     <div>
-                        <h2 className="text-xs font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider leading-none transition-colors">CAN Bus Wiring Harness</h2>
-                        <p className="text-[8px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest mt-0.5 transition-colors">ISO 11898-2 Physical Topology</p>
+                        <h2 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider leading-none transition-colors">CAN Bus Wiring Harness</h2>
+                        <p className="text-[10px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest mt-0.5 transition-colors">ISO 11898-2 Physical Topology</p>
                     </div>
                 </div>
 
@@ -512,7 +525,7 @@ export default memo(function BusTopology() {
                     <div className="flex bg-black/5 dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md overflow-hidden transition-colors">
                         {(['topology', 'list'] as const).map(m => (
                             <button key={m} onClick={() => setViewMode(m)}
-                                className={`px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider transition-all ${viewMode === m ? 'bg-white/10 dark:bg-[#1a1a20] text-cyber-blue' : 'text-light-400 dark:text-gray-400 hover:text-dark-950 dark:hover:text-gray-200'}`}>
+                                className={`px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider transition-all ${viewMode === m ? 'bg-white/10 dark:bg-[#1a1a20] text-cyber-blue' : 'text-light-400 dark:text-gray-400 hover:text-dark-950 dark:hover:text-gray-200'}`}>
                                 {m}
                             </button>
                         ))}
@@ -530,7 +543,7 @@ export default memo(function BusTopology() {
                         }}
                         aria-pressed={showEducation}
                         title="Toggle educational descriptions for each CAN frame phase"
-                        className={`px-2 py-1 rounded-md text-[9px] font-mono font-bold uppercase border transition-all ${
+                        className={`px-2 py-1 rounded-md text-[10px] font-mono font-bold uppercase border transition-all ${
                             showEducation
                                 ? 'bg-[#f59e0b15] text-[#f59e0b] border-[#f59e0b40]'
                                 : 'text-gray-600 border-[#222] hover:text-gray-400'
@@ -542,13 +555,13 @@ export default memo(function BusTopology() {
                         </span>
                     </button>
                     <button onClick={() => setShowAddDialog(true)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#00f3ff10] border border-[#00f3ff30] text-[#00f3ff] text-[8px] font-mono font-bold uppercase tracking-wider hover:bg-[#00f3ff20] active:scale-95 transition-all">
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#00f3ff10] border border-[#00f3ff30] text-[#00f3ff] text-[10px] font-mono font-bold uppercase tracking-wider hover:bg-[#00f3ff20] active:scale-95 transition-all">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                         Add ECU
                     </button>
                     <button
                         onClick={() => setShowResetConfirm(true)}
-                        className="px-3 py-1.5 rounded-md bg-[#ef444410] border border-[#ef444430] text-[#ef4444] text-[8px] font-mono font-bold uppercase tracking-wider hover:bg-[#ef444420] active:scale-95 transition-all"
+                        className="px-3 py-1.5 rounded-md bg-[#ef444410] border border-[#ef444430] text-[#ef4444] text-[10px] font-mono font-bold uppercase tracking-wider hover:bg-[#ef444420] active:scale-95 transition-all"
                     >
                         Reset
                     </button>
@@ -564,8 +577,8 @@ export default memo(function BusTopology() {
                                 <span className="text-red-500 text-xs">!</span>
                             </div>
                             <div>
-                                <span className="text-[9px] font-mono font-bold text-red-400 uppercase tracking-wider block mb-1">Impedance Mismatch Detected</span>
-                                <span className="text-[8px] font-mono text-red-400/70 leading-relaxed block">
+                                <span className="text-[10px] font-mono font-bold text-red-400 uppercase tracking-wider block mb-1">Impedance Mismatch Detected</span>
+                                <span className="text-[9px] font-mono text-red-400/70 leading-relaxed block">
                                     {!termLeft && !termRight ? 'Both' : !termLeft ? 'Near-end (R1)' : 'Far-end (R2)'} termination missing.
                                     Signal reflections will corrupt bit edges. Expect FORM and BIT errors above 250 kbit/s.
                                 </span>
@@ -614,7 +627,7 @@ export default memo(function BusTopology() {
 
             {/* ═══ Domain Legend ═══ */}
             <div className="px-5 py-2 border-t border-black/5 dark:border-[#1a1a20] bg-gray-50/80 dark:bg-[#0c0c0f] flex items-center gap-4 flex-wrap transition-colors">
-                <span className="text-[8px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest">Domains:</span>
+                <span className="text-[10px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-widest">Domains:</span>
                 {Object.entries(DOMAIN_META).map(([key, meta]) => {
                     const count = nodes.filter(n => n.domain === key).length;
                     const isActive = activeDomain === key;
@@ -624,12 +637,12 @@ export default memo(function BusTopology() {
                                 activeDomain !== null && !isActive ? 'opacity-40' : 'opacity-100'
                             }`}>
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: meta.color, boxShadow: isDark ? `0 0 4px ${meta.glow}` : 'none' }} />
-                            <span className="text-[9px] font-mono text-light-600 dark:text-gray-300 uppercase tracking-wider transition-colors">{meta.label} ({count})</span>
+                            <span className="text-[10px] font-mono text-light-600 dark:text-gray-300 uppercase tracking-wider transition-colors">{meta.label} ({count})</span>
                         </button>
                     );
                 })}
                 {activeDomain !== null && (
-                    <button onClick={() => setActiveDomain(null)} className="text-[8px] font-mono text-gray-500 hover:text-gray-300 transition-colors">
+                    <button onClick={() => setActiveDomain(null)} className="text-[10px] font-mono text-gray-500 hover:text-gray-300 transition-colors">
                         Clear ×
                     </button>
                 )}
@@ -664,6 +677,37 @@ export default memo(function BusTopology() {
                 </div>
             )}
 
+            {/* ═══ Undo Remove Toast ═══ */}
+            <AnimatePresence>
+                {undoNode && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
+                        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white dark:bg-[#1a1a20] border border-black/10 dark:border-[#333] shadow-2xl backdrop-blur-sm transition-colors"
+                    >
+                        <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 transition-colors">
+                            Removed <span className="font-bold text-dark-950 dark:text-[#f1f1f1]">{undoNode.node.label}</span>
+                        </span>
+                        <button
+                            onClick={() => {
+                                clearTimeout(undoNode.timer);
+                                setNodes(prev => [...prev, undoNode.node].sort((a, b) => a.x - b.x));
+                                setUndoNode(null);
+                            }}
+                            className="px-3 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-cyan-500/10 dark:bg-[#00f3ff15] border border-cyan-500/30 dark:border-[#00f3ff40] text-cyan-600 dark:text-[#00f3ff] hover:bg-cyan-500/20 dark:hover:bg-[#00f3ff25] transition-all active:scale-95"
+                        >
+                            Undo
+                        </button>
+                        <button
+                            onClick={() => { clearTimeout(undoNode.timer); setUndoNode(null); }}
+                            className="text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400 transition-colors p-0.5"
+                            aria-label="Dismiss"
+                        >
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* ═══ Add ECU Dialog ═══ */}
             <AnimatePresence>
                 {showAddDialog && (
@@ -682,7 +726,7 @@ export default memo(function BusTopology() {
                     <FrameBuilderDialog
                         fromNode={nodes.find(n => n.id === frameSendFrom)!}
                         allNodes={nodes}
-                        onSend={(toId, msgType, dlc, data) => { sendSignal(frameSendFrom, toId, msgType, dlc, data); setShowFrameBuilder(false); setFrameSendFrom(null); }}
+                        onSend={(toId, msgType, dlc, data, keepOpen) => { sendSignal(frameSendFrom, toId, msgType, dlc, data); if (!keepOpen) { setShowFrameBuilder(false); setFrameSendFrom(null); } }}
                         onClose={() => { setShowFrameBuilder(false); setFrameSendFrom(null); }}
                         isBusy={isBusy}
                     />
@@ -701,14 +745,14 @@ export default memo(function BusTopology() {
                              Reset Topology?
                         </AlertDialog.Title>
                         
-                        <AlertDialog.Description className="text-light-400 dark:text-gray-400 font-mono text-[9px] leading-relaxed uppercase tracking-tight mb-6 opacity-80">
-                            Warning: This operation will remove all custom ECU nodes and restore the bus wiring harness to its default ISO configuration. 
+                        <AlertDialog.Description className="text-light-400 dark:text-gray-400 font-mono text-[10px] leading-relaxed tracking-tight mb-6 opacity-80">
+                            Warning: This operation will remove all custom ECU nodes and restore the bus wiring harness to its default ISO configuration.
                             <span className="block mt-2 text-red-500/80 font-bold">This action cannot be undone and will clear local storage data.</span>
                         </AlertDialog.Description>
                         
                         <div className="flex gap-2 justify-end">
                             <AlertDialog.Cancel asChild>
-                                <button className="px-3 py-1.5 text-[8px] font-mono font-bold uppercase tracking-wider text-light-600 dark:text-gray-400 hover:text-dark-950 dark:hover:text-white border border-black/10 dark:border-[#2a2a30] rounded-md transition-all active:scale-95">
+                                <button className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-light-600 dark:text-gray-400 hover:text-dark-950 dark:hover:text-white border border-black/10 dark:border-[#2a2a30] rounded-md transition-all active:scale-95">
                                     Cancel
                                 </button>
                             </AlertDialog.Cancel>
@@ -720,7 +764,7 @@ export default memo(function BusTopology() {
                                         setSelectedNode(null);
                                         setShowResetConfirm(false);
                                     }}
-                                    className="px-3 py-1.5 text-[8px] font-mono font-bold uppercase tracking-wider text-white bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 rounded-md transition-all active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
+                                    className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-white bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 rounded-md transition-all active:scale-95 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
                                 >
                                     Force Reset
                                 </button>
@@ -777,22 +821,22 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                             <motion.div className="w-2.5 h-2.5 rounded-full"
                                 animate={{ backgroundColor: pi.color, boxShadow: `0 0 8px ${pi.color}80` }}
                                 transition={{ duration: 0.3 }} />
-                            <span className="text-[10px] font-mono font-black uppercase tracking-wider" style={{ color: pi.color }}>{pi.label}</span>
-                            {pi.bits && <span className="text-[8px] font-mono text-gray-400 ml-1">({pi.bits})</span>}
+                            <span className="text-[11px] font-mono font-black uppercase tracking-wider" style={{ color: pi.color }}>{pi.label}</span>
+                            {pi.bits && <span className="text-[9px] font-mono text-gray-400 ml-1">({pi.bits})</span>}
                         </div>
-                        <span className="text-[8px] font-mono text-gray-500 mx-2">|</span>
-                        <span className="text-[8px] font-mono text-gray-300">
+                        <span className="text-[9px] font-mono text-gray-500 mx-2">|</span>
+                        <span className="text-[10px] font-mono text-gray-300">
                             <span className="text-[#f1f1f1] font-bold">{fromNode?.label ?? '?'}.</span>
                             <ArrowRight size={10} className="text-gray-400 mx-1 inline" />
                             <span className="text-[#f1f1f1] font-bold">{transmission.toId === 'broadcast' ? 'ALL NODES' : toNode?.label ?? '?'}</span>
                         </span>
-                        <span className="text-[8px] font-mono px-1.5 py-0.5 rounded border ml-1"
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded border ml-1"
                             style={{ color: pi.color, borderColor: pi.color + '30', backgroundColor: pi.color + '08' }}>
                             {transmission.messageType.toUpperCase()}
                         </span>
                     </div>
                     <button onClick={onDismiss}
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] hover:border-[#444] transition-all active:scale-95">
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider border border-[#222] text-gray-500 hover:text-[#f1f1f1] hover:border-[#444] transition-all active:scale-95">
                         <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                         {isDone ? 'Dismiss' : 'Cancel'}
                     </button>
@@ -819,7 +863,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                                             transition={{ duration: 0.15 }}
                                         />
                                     </motion.div>
-                                    <span className={`text-[9px] font-mono uppercase tracking-wider truncate w-full text-center ${isActive ? 'font-bold' : ''}`}
+                                    <span className={`text-[10px] font-mono uppercase tracking-wider truncate w-full text-center ${isActive ? 'font-bold' : ''}`}
                                         style={{ color: isActive ? phaseColor : isCompleted ? phaseColor + '80' : '#333' }}>
                                         {PHASE_INFO[phase].label}
                                     </span>
@@ -856,7 +900,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                                         ))}
                                     </div>
                                 )}
-                                <span className="text-[8px] font-mono font-bold uppercase z-10 relative" style={{ color: isActive ? phaseColor : isCompleted ? phaseColor + '80' : '#555' }}>
+                                <span className="text-[9px] font-mono font-bold uppercase z-10 relative" style={{ color: isActive ? phaseColor : isCompleted ? phaseColor + '80' : '#555' }}>
                                     {phase === 'data' ? `${transmission.dlc}B` : PHASE_INFO[phase].label}
                                 </span>
                                 {/* ACK indicator */}
@@ -873,9 +917,9 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                 {/* Data bytes display */}
                 {(transmission.phase === 'data' || PHASE_ORDER.indexOf(transmission.phase) > PHASE_ORDER.indexOf('data')) && (
                     <div className="flex items-center gap-1 mb-3">
-                        <span className="text-[8px] font-mono text-gray-400 uppercase mr-1">Data:</span>
+                        <span className="text-[9px] font-mono text-gray-400 uppercase mr-1">Data:</span>
                         {transmission.dataBytes.map((b, i) => (
-                            <motion.span key={i} className="text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border"
+                            <motion.span key={i} className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border"
                                 initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.05 }}
                                 style={{ color: '#a855f7', borderColor: '#a855f720', backgroundColor: '#a855f708' }}>
@@ -890,7 +934,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                     <motion.div className="p-2.5 rounded-md bg-[#0a0a0e] border border-[#1a1a20]"
                         key={transmission.phase}
                         initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}>
-                        <span className="text-[8px] font-mono text-gray-300 leading-relaxed block">{phaseDescription}</span>
+                        <span className="text-[10px] font-mono text-gray-300 leading-relaxed block">{phaseDescription}</span>
                     </motion.div>
                 )}
 
@@ -899,8 +943,8 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                     <motion.div className="mt-2 p-2.5 rounded-md bg-[#1c0808] border border-red-900/30"
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         <div className="flex items-start gap-2">
-                            <span className="text-red-500 text-[10px]">!</span>
-                            <span className="text-[8px] font-mono text-red-400/80 leading-relaxed">{transmission.error}</span>
+                            <span className="text-red-500 text-[11px]">!</span>
+                            <span className="text-[10px] font-mono text-red-400/80 leading-relaxed">{transmission.error}</span>
                         </div>
                     </motion.div>
                 )}
@@ -913,7 +957,7 @@ function TransmissionPanel({ transmission, nodes, showEducation, onDismiss }: {
                             <motion.div className="w-3 h-3 rounded-full bg-green-500"
                                 initial={{ scale: 0 }} animate={{ scale: [0, 1.3, 1] }} transition={{ duration: 0.4 }}
                                 style={{ boxShadow: '0 0 8px #22c55e60' }} />
-                            <span className="text-[9px] font-mono font-bold text-green-400 uppercase tracking-wider">
+                            <span className="text-[10px] font-mono font-bold text-green-400 uppercase tracking-wider">
                                 Frame delivered successfully — ACK received from {transmission.toId === 'broadcast' ? 'all online nodes' : (nodes.find(n => n.id === transmission.toId)?.label ?? 'receiver')}
                             </span>
                         </div>
@@ -950,8 +994,8 @@ function TopologyView({
     const shouldReduceMotion = useReducedMotion();
 
     const nodeCount = nodes.length;
-    const boxScale = nodeCount > 9 ? Math.max(0.65, 9 / nodeCount) : 1;
-    const boxWidth = 80 * boxScale;
+    const boxScale = nodeCount > 8 ? Math.max(0.75, 8 / nodeCount) : 1.1;
+    const boxWidth = 100 * boxScale;
     
     const BUS_Y_H = 44;
     const BUS_Y_L = 56;
@@ -988,8 +1032,8 @@ function TopologyView({
     }, [txActive, transmission, nodes]);
 
     return (
-        <div className="overflow-x-auto rounded-xl">
-            <div className="relative bg-gray-50 dark:bg-[#0a0a0d] rounded-xl border border-black/10 dark:border-[#161620] overflow-hidden transition-colors" style={{ minHeight: '460px', minWidth: `${Math.max(900, nodes.length * 90)}px` }}>
+        <div className="overflow-x-auto rounded-xl scrollbar-thin scrollbar-thumb-cyber-blue/30 scrollbar-track-transparent" style={{ backgroundImage: 'linear-gradient(to right, var(--tw-shadow-color, #0a0a0d) 0, transparent 30px), linear-gradient(to left, var(--tw-shadow-color, #0a0a0d) 0, transparent 30px), linear-gradient(to right, rgba(0,0,0,0.25) 0, transparent 30px), linear-gradient(to left, rgba(0,0,0,0.25) 0, transparent 30px)', backgroundPosition: 'left center, right center, left center, right center', backgroundRepeat: 'no-repeat', backgroundSize: '30px 100%, 30px 100%, 30px 100%, 30px 100%', backgroundAttachment: 'local, local, scroll, scroll' }}>
+            <div className="relative bg-gray-50 dark:bg-[#0a0a0d] rounded-xl border border-black/10 dark:border-[#161620] overflow-hidden transition-colors" style={{ minHeight: '520px', minWidth: `${Math.max(1100, nodes.length * 160)}px` }}>
 
             {/* Background grid */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: isDark ? 0.04 : 0.08 }}>
@@ -998,7 +1042,9 @@ function TopologyView({
             </svg>
 
             {/* Main SVG wiring */}
-            <svg ref={svgRef} className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet">
+            <svg ref={svgRef} className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet"
+                role="img"
+                aria-label={`CAN bus topology with ${nodeCount} nodes, ${onlineCount} online. ${termLeft && termRight ? 'Both termination resistors active' : !termLeft && !termRight ? 'Both termination resistors missing — impedance mismatch' : `${!termLeft ? 'Near-end R1' : 'Far-end R2'} termination missing`}. ${txActive && transmission ? `Active transmission from ${sourceNode?.label ?? 'unknown'} in ${transmission.phase} phase` : 'No active transmission'}`}>
                 <defs>
                     <filter id="glow-cyan"><feGaussianBlur stdDeviation="2" /><feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge></filter>
                     <filter id="glow-magenta"><feGaussianBlur stdDeviation="2" /><feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge></filter>
@@ -1181,8 +1227,8 @@ function TopologyView({
             </svg>
 
             {/* Wire labels */}
-            <div className="absolute text-[9px] font-mono font-black tracking-widest pointer-events-none transition-colors" style={{ left: '5.5%', top: `${BUS_Y_H - 4.5}%`, color: isDark ? '#00f3ff70' : '#00b4ccdd' }}>CANH</div>
-            <div className="absolute text-[9px] font-mono font-black tracking-widest pointer-events-none transition-colors" style={{ left: '5.5%', top: `${BUS_Y_L + 1.5}%`, color: isDark ? '#bf00ff70' : '#9d00ccdd' }}>CANL</div>
+            <div className="absolute text-[10px] font-mono font-black tracking-widest pointer-events-none transition-colors" style={{ left: '5.5%', top: `${BUS_Y_H - 4.5}%`, color: isDark ? '#00f3ff70' : '#00b4ccdd' }}>CANH</div>
+            <div className="absolute text-[10px] font-mono font-black tracking-widest pointer-events-none transition-colors" style={{ left: '5.5%', top: `${BUS_Y_L + 1.5}%`, color: isDark ? '#bf00ff70' : '#9d00ccdd' }}>CANL</div>
 
             {/* ─── Floating data packet label between wires ─── */}
             {txActive && sourceNode && transmission && (
@@ -1204,13 +1250,13 @@ function TopologyView({
                             borderColor: isAckPhase ? '#14b8a640' : '#00f3ff30',
                         }}>
                         {/* Direction arrow */}
-                        <span className="text-[8px]" style={{ color: isAckPhase ? '#14b8a6' : '#00f3ff' }}>
+                        <span className="text-[10px]" style={{ color: isAckPhase ? '#14b8a6' : '#00f3ff' }}>
                             {isAckPhase
-                                ? (goesRight ? <ArrowLeft size={8} /> : <ArrowRight size={8} />)
-                                : (goesRight ? <ArrowRight size={8} /> : <ArrowLeft size={8} />)
+                                ? (goesRight ? <ArrowLeft size={10} /> : <ArrowRight size={10} />)
+                                : (goesRight ? <ArrowRight size={10} /> : <ArrowLeft size={10} />)
                             }
                         </span>
-                        <span className="text-[8px] font-mono font-bold uppercase whitespace-nowrap" style={{ color: isAckPhase ? '#14b8a6' : '#00f3ff' }}>
+                        <span className="text-[10px] font-mono font-bold uppercase whitespace-nowrap" style={{ color: isAckPhase ? '#14b8a6' : '#00f3ff' }}>
                             {isAckPhase
                                 ? 'ACK'
                                 : isEofPhase
@@ -1230,10 +1276,10 @@ function TopologyView({
                     initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 dark:bg-[#0a0a0f]/90 border border-black/10 dark:border-[#222] backdrop-blur-sm transition-colors">
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" style={{ boxShadow: isDark ? '0 0 4px #22c55e80' : 'none' }} />
-                        <span className="text-[8px] font-mono font-bold text-green-600 dark:text-green-400">{sourceNode.label}</span>
-                        {isAckPhase ? <ArrowLeft size={8} className="text-light-400 dark:text-gray-600" /> : <ArrowRight size={8} className="text-light-400 dark:text-gray-600" />}
+                        <span className="text-[10px] font-mono font-bold text-green-600 dark:text-green-400">{sourceNode.label}</span>
+                        {isAckPhase ? <ArrowLeft size={10} className="text-light-400 dark:text-gray-600" /> : <ArrowRight size={10} className="text-light-400 dark:text-gray-600" />}
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500" style={{ boxShadow: isDark ? '0 0 4px #3b82f680' : 'none' }} />
-                        <span className="text-[8px] font-mono font-bold text-blue-600 dark:text-blue-400">
+                        <span className="text-[10px] font-mono font-bold text-blue-600 dark:text-blue-400">
                             {transmission.toId === 'broadcast' ? 'ALL' : (targetNode?.label ?? '?')}
                         </span>
                     </div>
@@ -1288,7 +1334,7 @@ function TopologyView({
                         <motion.div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#22c55e15] border border-[#22c55e40]"
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                             <div className={`w-2 h-2 rounded-full bg-green-500 ${!shouldReduceMotion ? 'animate-pulse' : ''}`} />
-                            <span className="text-[8px] font-mono font-bold text-green-400 uppercase">{sourceNode.label} TX</span>
+                            <span className="text-[10px] font-mono font-bold text-green-400 uppercase">{sourceNode.label} TX</span>
                         </motion.div>
                     )}
                     {[...receivingIds].map(id => {
@@ -1298,18 +1344,26 @@ function TopologyView({
                             <motion.div key={id} className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3b82f615] border border-[#3b82f640]"
                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                                 <div className={`w-2 h-2 rounded-full bg-blue-500 ${!shouldReduceMotion ? 'animate-pulse' : ''}`} />
-                                <span className="text-[8px] font-mono font-bold text-blue-400 uppercase">{n.label} RX</span>
+                                <span className="text-[10px] font-mono font-bold text-blue-400 uppercase">{n.label} RX</span>
                             </motion.div>
                         );
                     })}
                 </div>
             )}
 
+            {/* Accessible topology summary (visually hidden) */}
+            <div className="sr-only" role="status" aria-live="polite">
+                CAN bus topology: {nodeCount} nodes ({onlineCount} online, {nodeCount - onlineCount} offline).
+                Termination: R1 {termLeft ? 'on' : 'off'}, R2 {termRight ? 'on' : 'off'}.
+                {hasTermIssue && ' Warning: impedance mismatch detected.'}
+                {txActive && transmission && ` Active transmission: ${sourceNode?.label} to ${transmission.toId === 'broadcast' ? 'all nodes' : (targetNode?.label ?? 'target')}, phase: ${transmission.phase}.`}
+            </div>
+
             {/* Bus info strip */}
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-gradient-to-t from-gray-100 dark:from-[#0a0a0d] to-transparent transition-colors">
-                <span className="text-[10px] font-mono text-light-500 dark:text-gray-400">R1 120{'\u03A9'} {termLeft ? 'ON' : 'OFF'}</span>
-                <span className="text-[10px] font-mono text-light-500 dark:text-gray-400">Twisted-pair differential bus &middot; ISO 11898-2 &middot; Z₀ = 120{'\u03A9'}</span>
-                <span className="text-[10px] font-mono text-light-500 dark:text-gray-400">R2 120{'\u03A9'} {termRight ? 'ON' : 'OFF'}</span>
+                <span className="text-[11px] font-mono text-light-500 dark:text-gray-400">R1 120{'\u03A9'} {termLeft ? 'ON' : 'OFF'}</span>
+                <span className="text-[11px] font-mono text-light-500 dark:text-gray-400">Twisted-pair differential bus &middot; ISO 11898-2 &middot; Z₀ = 120{'\u03A9'}</span>
+                <span className="text-[11px] font-mono text-light-500 dark:text-gray-400">R2 120{'\u03A9'} {termRight ? 'ON' : 'OFF'}</span>
             </div>
             </div>
         </div>
@@ -1333,7 +1387,31 @@ const ECUBox = memo(({ node, isSelected, onSelect, anchorY, isBottom, isTx, isRx
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const dm = DOMAIN_META[node.domain];
-    const borderGlow = isTx ? '#22c55e' : isRx ? '#3b82f6' : isSelected ? dm.color : null;
+    
+    // Determine the "active" color based on priority: Tx > Rx > Selected > Domain Default
+    const activeColor = isTx ? '#22c55e' : isRx ? '#3b82f6' : isSelected ? '#00f3ff' : dm.color;
+    const borderGlow = isTx ? '#22c55e' : isRx ? '#3b82f6' : isSelected ? '#00f3ff' : null;
+    
+    const [history, setHistory] = useState<number[]>([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    const prevTotal = useRef(node.txCount + node.rxCount);
+    const lastUpdate = useRef(Date.now());
+    const [rate, setRate] = useState(0);
+
+    useEffect(() => {
+        const currentTotal = node.txCount + node.rxCount;
+        const now = Date.now();
+        const elapsed = (now - lastUpdate.current) / 1000;
+        
+        if (elapsed >= 0.5) {
+            const diff = currentTotal - prevTotal.current;
+            if (diff >= 0) {
+                setRate(Math.round(diff / elapsed));
+                setHistory(prev => [...prev.slice(1), diff]);
+            }
+            prevTotal.current = currentTotal;
+            lastUpdate.current = now;
+        }
+    }, [node.txCount, node.rxCount]);
     
     return (
         <Tooltip
@@ -1344,14 +1422,23 @@ const ECUBox = memo(({ node, isSelected, onSelect, anchorY, isBottom, isTx, isRx
                         <span className="text-[10px] font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider">{node.label}</span>
                     </div>
                     {node.description && (
-                        <p className="text-[9px] font-mono text-light-400 dark:text-gray-400 leading-relaxed border-t border-black/5 dark:border-[#1a1a20] pt-1 mt-1 transition-colors">
+                        <p className="text-[10px] font-mono text-light-400 dark:text-gray-400 leading-relaxed border-t border-black/5 dark:border-[#1a1a20] pt-1 mt-1 transition-colors">
                             {node.description}
                         </p>
                     )}
-                    <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-[8px] font-mono text-cyan-600 dark:text-[#00f3ff] font-bold">{node.canId}</span>
-                        <span className="text-[8px] font-mono text-light-300 dark:text-gray-700">|</span>
-                        <span className="text-[8px] font-mono text-light-400 dark:text-gray-500 uppercase">{dm.label}</span>
+                    <div className="flex items-center gap-4 mt-2 border-t border-black/5 dark:border-[#1a1a20] pt-2">
+                         <div className="flex flex-col">
+                             <span className="text-[8px] uppercase text-gray-500 font-bold">TX</span>
+                             <span className="text-[10px] font-mono font-bold text-green-500">{node.txCount}</span>
+                         </div>
+                         <div className="flex flex-col">
+                             <span className="text-[8px] uppercase text-gray-500 font-bold">RX</span>
+                             <span className="text-[10px] font-mono font-bold text-blue-500">{node.rxCount}</span>
+                         </div>
+                         <div className="flex flex-col">
+                             <span className="text-[8px] uppercase text-gray-500 font-bold">Rate</span>
+                             <span className="text-[10px] font-mono font-bold text-cyber-blue">{rate} msg/s</span>
+                         </div>
                     </div>
                 </div>
             }
@@ -1360,73 +1447,158 @@ const ECUBox = memo(({ node, isSelected, onSelect, anchorY, isBottom, isTx, isRx
         >
             <div className="absolute transition-all duration-500 z-10"
                 style={{ left: `${node.x}%`, top: `${anchorY}%`, width: `${boxWidth}px`, transform: `translateX(-50%) translateY(${isBottom ? '0' : '-100%'})` }}>
+                
                 <motion.button
-                onClick={onSelect}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={cn(
-                    "w-full flex flex-col items-center bg-white dark:bg-[#0a0a0f] rounded-xl p-2.5 border shadow-xl relative transition-all duration-300",
-                    isSelected ? "z-20 scale-[1.02]" : "z-10",
-                    isDark ? "shadow-black/60" : "shadow-slate-200/50"
-                )}
-                style={{
-                    borderColor: borderGlow ? borderGlow : (node.online ? (isDark ? '#222230' : '#94a3b8') : (isDark ? '#1a0a0a' : '#f87171')),
-                    borderWidth: borderGlow ? 2 : 1,
-                    boxShadow: borderGlow && isDark ? `0 0 15px ${borderGlow}25` : 'none'
-                }}
-                aria-label={`Node ${node.label} (${node.canId}). Domain: ${node.domain}. ${node.online ? 'Online' : 'Offline'}`}
-                aria-pressed={isSelected}
-            >
-                {/* Node Status Indicator */}
-                <div className="flex w-full justify-between items-center mb-2 px-0.5">
-                    <div className="flex flex-col items-start">
-                         <span className={cn("text-[8px] font-black tracking-tight transition-colors uppercase", isDark ? "text-gray-400" : "text-gray-500")}>ID</span>
-                         <span className={cn("text-[10px] font-bold font-mono transition-colors", isSelected ? "text-cyber-blue" : (isDark ? "text-white" : "text-slate-900"))}>{node.canId}</span>
-                    </div>
+                    onClick={onSelect}
+                    whileHover={{ scale: 1.02, y: isBottom ? 2 : -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={cn(
+                        "w-full flex flex-col items-center bg-white dark:bg-[#0a0a0f] rounded-xl overflow-hidden border relative transition-all duration-300",
+                        isSelected ? "z-20 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.8)]" : "z-10 shadow-lg",
+                        !node.online && "grayscale-[0.5] opacity-80"
+                    )}
+                    style={{
+                        borderColor: borderGlow ? borderGlow : (node.online ? (isDark ? dm.color + '30' : dm.color + '50') : (isDark ? '#222' : '#e2e8f0')),
+                        background: node.online ? (isDark 
+                            ? `linear-gradient(135deg, #0a0a0f 0%, ${dm.color}08 100%)` 
+                            : `linear-gradient(135deg, #ffffff 0%, ${dm.color}05 100%)`) : 'inherit',
+                    }}
+                    aria-label={`Node ${node.label} (${node.canId}). Domain: ${node.domain}. ${node.online ? 'Online' : 'Offline'}`}
+                    aria-pressed={isSelected}
+                >
+                    {/* Domain Header Accent */}
                     {node.online && (
-                        <div className="flex items-center gap-1.5">
-                            {(isTx || isRx) && (
-                                <span className={cn(
-                                    "flex h-4 items-center px-1.5 rounded text-[7px] font-black border animate-pulse transition-colors uppercase tracking-wider",
-                                    isTx ? "bg-green-500/10 text-green-500 border-green-500/20" : "bg-blue-500/10 text-blue-500 border-blue-500/20"
-                                )}>
-                                    {isTx ? 'TX' : 'RX'}
-                                </span>
-                            )}
-                            <div className="flex items-center gap-1">
-                                <span className={cn("w-1.5 h-1.5 rounded-full transition-all duration-500", node.online ? "bg-green-500 shadow-[0_0_4px_#22c55e]" : "bg-red-500")} />
-                                <span className={cn("text-[7px] font-black uppercase tracking-tighter transition-colors", node.online ? "text-green-500" : "text-red-500")}>
-                                    {node.online ? 'ON' : 'OFF'}
-                                </span>
+                        <div className="absolute top-0 left-0 right-0 h-[3px] z-30" style={{ backgroundColor: dm.color, boxShadow: isDark ? `0 0 10px ${dm.color}60` : 'none' }} />
+                    )}
+
+                    {/* Corner Accents (Cyber Aesthetic) */}
+                    {node.online && isSelected && (
+                        <>
+                            <div className="absolute top-1 left-1 w-2 h-2 border-t-2 border-l-2 z-40" style={{ borderColor: activeColor }} />
+                            <div className="absolute top-1 right-1 w-2 h-2 border-t-2 border-r-2 z-40" style={{ borderColor: activeColor }} />
+                            <div className="absolute bottom-1 left-1 w-2 h-2 border-b-2 border-l-2 z-40" style={{ borderColor: activeColor }} />
+                            <div className="absolute bottom-1 right-1 w-2 h-2 border-b-2 border-r-2 z-40" style={{ borderColor: activeColor }} />
+                        </>
+                    )}
+
+                    {/* Main Card Content */}
+                    <div className={cn("w-full transition-opacity duration-300 p-2.5", !node.online && "opacity-0 pointer-events-none")}>
+                        {/* Top Metadata Row */}
+                        <div className="flex w-full justify-between items-start mb-2 pt-1 px-0.5">
+                            <div className="flex flex-col items-start">
+                                <span className={cn("text-[7px] font-black tracking-widest uppercase opacity-50 mb-0.5", isDark ? "text-gray-400" : "text-gray-500")}>HEX ID</span>
+                                <span className={cn("text-[10px] font-bold font-mono tracking-tight", isSelected ? "text-cyber-blue" : (isDark ? "text-white" : "text-slate-900"))}>{node.canId}</span>
+                            </div>
+                            <div className="flex flex-col items-end gap-1.5 pt-0.5">
+                                <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-full bg-black/10 dark:bg-white/5 border border-black/5 dark:border-white/10">
+                                    <motion.div 
+                                        className="w-1.5 h-1.5 rounded-full" 
+                                        animate={{ 
+                                            backgroundColor: node.online ? '#22c55e' : '#666',
+                                            boxShadow: node.online ? '0 0 6px #22c55e80' : 'none'
+                                        }} 
+                                    />
+                                    <span className={cn("text-[7px] font-black uppercase tracking-wider", node.online ? "text-green-500" : "text-gray-400")}>
+                                        {node.online ? 'ACTV' : 'OFF'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Node Label House */}
+                        <div className="relative mb-3 py-1 bg-black/5 dark:bg-white/5 rounded-lg border border-black/5 dark:border-white/5 overflow-hidden">
+                             <div className="absolute left-0 top-0 bottom-0 w-[2px]" style={{ backgroundColor: dm.color }} />
+                             <div className={cn("text-[10px] sm:text-[12px] font-black tracking-tight uppercase truncate px-3", isSelected ? (isDark ? "text-white" : "text-slate-950") : (isDark ? "text-gray-200" : "text-slate-800"))}>
+                                 {node.label}
+                             </div>
+                        </div>
+
+                        {/* Telemetry Section */}
+                        {node.online && (
+                            <div className="w-full flex flex-col gap-2">
+                                {/* Oscilloscope Sparkline */}
+                                <div className="relative group/spark">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover/spark:opacity-100 transition-opacity pointer-events-none" />
+                                    <div className="w-full h-6 relative bg-black/20 dark:bg-black/60 rounded-md border border-black/10 dark:border-white/5 overflow-hidden flex flex-col justify-center">
+                                         {/* Grid lines */}
+                                         <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '10px 10px' }} />
+                                         
+                                         <Sparklines data={history} limit={15} width={100} height={30} margin={4}>
+                                             <SparklinesLine color={activeColor} style={{ strokeWidth: 3, fill: 'none', filter: isDark ? `drop-shadow(0 0 3px ${activeColor}80)` : 'none' }} />
+                                         </Sparklines>
+                                         
+                                         {/* Direction Overlays */}
+                                         <AnimatePresence>
+                                             {(isTx || isRx) && (
+                                                 <motion.div 
+                                                     initial={{ opacity: 0, x: isTx ? -10 : 10 }} 
+                                                     animate={{ opacity: 1, x: 0 }} 
+                                                     exit={{ opacity: 0 }}
+                                                     className={cn(
+                                                         "absolute inset-y-0 flex items-center px-1.5 z-20 pointer-events-none",
+                                                         isTx ? "left-0 bg-gradient-to-r from-green-500/20 to-transparent" : "right-0 bg-gradient-to-l from-blue-500/20 to-transparent"
+                                                     )}
+                                                 >
+                                                     <span className={cn("text-[6px] font-black uppercase tracking-[0.2em]", isTx ? "text-green-500" : "text-blue-500")}>
+                                                         {isTx ? 'TRANSMITTING' : 'RECEIVING'}
+                                                     </span>
+                                                 </motion.div>
+                                             )}
+                                         </AnimatePresence>
+                                    </div>
+                                </div>
+
+                                {/* Metrics Row */}
+                                <div className="flex items-center justify-between px-0.5">
+                                    <div className="flex flex-col">
+                                         <span className="text-[6px] font-black text-gray-500 uppercase tracking-widest transition-colors mb-0.5">Throughput</span>
+                                         <span className="text-[9px] font-mono font-black" style={{ color: dm.color }}>{rate} <span className="text-[7px] font-normal opacity-70">msg/s</span></span>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                         <span className="text-[6px] font-black text-gray-500 uppercase tracking-widest transition-colors mb-0.5">Domain</span>
+                                         <span className="text-[9px] font-black uppercase tracking-tighter" style={{ color: dm.color }}>{dm.label}</span>
+                                    </div>
+                                </div>
+
+                                {/* Warnings/Badges */}
+                                <div className="flex flex-wrap gap-1 justify-center mt-0.5">
+                                    {node.baudRate !== controllerBaudStr && (
+                                        <div className="flex items-center gap-1 px-1.5 py-0.5 bg-red-500/10 border border-red-500/30 rounded text-[7px] font-black text-red-500 uppercase">
+                                            <span className="w-1 h-1 rounded-full bg-red-500 animate-ping" />
+                                            Baud Error
+                                        </div>
+                                    )}
+                                    {node.isLocal && <span className="px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/30 rounded text-[7px] font-black text-amber-500 uppercase tracking-wider">Local Host</span>}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Offline Surface Overlay */}
+                    {!node.online && (
+                        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-3 bg-gray-50/95 dark:bg-[#0a0a0f]/95 overflow-hidden">
+                            {/* Warning hatch pattern */}
+                            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #f00, #f00 10px, transparent 10px, transparent 20px)' }} />
+                            
+                            <div className="relative flex flex-col items-center gap-2">
+                                <div className="w-8 h-8 rounded-full border border-red-500/20 flex items-center justify-center bg-red-500/5">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" className="opacity-60">
+                                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10" />
+                                    </svg>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <span className={cn("text-[10px] font-black uppercase tracking-tight mb-0.5", isDark ? "text-gray-400" : "text-gray-500")}>
+                                        {node.label}
+                                    </span>
+                                    <span className="text-[8px] font-black text-red-600 dark:text-red-500 border border-red-600/30 dark:border-red-500/30 px-1.5 py-0.5 rounded-sm bg-red-500/5 tracking-[0.15em] uppercase">
+                                        Station Offline
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     )}
-                </div>
-
-                <div className={cn("text-[9px] font-black tracking-tighter mb-1.5 transition-colors uppercase truncate w-full px-1", isSelected ? (isDark ? "text-white" : "text-slate-900") : (isDark ? "text-gray-300" : "text-slate-700"))}>{node.label}</div>
-
-                {node.online && (
-                    <>
-                        <div className="flex flex-wrap gap-1 justify-center mb-1">
-                            {node.baudRate !== controllerBaudStr && (
-                                <span className="text-[6px] font-mono px-1 py-0.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded uppercase font-bold" title="Baudrate mismatch!">MISMATCH</span>
-                            )}
-                            {node.isLocal && <span className="text-[6px] font-mono px-1 py-0.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded uppercase font-bold">LOCAL</span>}
-                        </div>
-                        <span className="text-[7px] font-mono uppercase tracking-wider block mt-1 px-1 py-[1px] rounded-sm mx-auto w-fit"
-                            style={{ backgroundColor: dm.color + '10', color: dm.color + '90', border: `1px solid ${dm.color}20` }}>
-                            {dm.label}
-                        </span>
-                    </>
-                )}
-
-                {!node.online && (
-                    <div className="absolute inset-0 bg-white/70 dark:bg-black/70 flex flex-col items-center justify-center rounded-lg backdrop-blur-[1px] transition-colors">
-                        <span className="text-[8px] font-mono text-red-600 dark:text-red-500 font-bold uppercase transition-colors">OFF</span>
-                    </div>
-                )}
-            </motion.button>
-        </div>
+                </motion.button>
+            </div>
         </Tooltip>
     );
 });
@@ -1449,21 +1621,22 @@ const TermResistor = memo(({ side, isOn, onToggle, busYH, busYL }: {
     return (
         <button
             type="button"
-            className="group absolute z-20 flex flex-col items-center bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
-            style={{ [side]: '1%', top: `${midY - 8}%` }}
+            className="group absolute z-20 flex flex-col items-center bg-transparent p-3 -m-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 min-w-[44px] min-h-[44px]"
+            style={{ [side]: '0%', top: `${midY - 10}%` }}
             onClick={onToggle}
             aria-pressed={isOn}
-            aria-label={`Toggle ${isLeft ? 'R1' : 'R2'} termination resistor`}
+            aria-label={`Toggle ${isLeft ? 'R1' : 'R2'} termination resistor — currently ${isOn ? 'enabled' : 'disabled'}`}
+            title={`Click to ${isOn ? 'disable' : 'enable'} ${isLeft ? 'near-end (R1)' : 'far-end (R2)'} 120\u03A9 termination`}
         >
-            <div className={`relative w-8 h-14 rounded-md border flex flex-col items-center justify-center gap-[2px] transition-all duration-300 group-hover:scale-105 ${isOn ? '' : 'opacity-50'}`}
+            <div className={`relative w-8 h-14 rounded-md border flex flex-col items-center justify-center gap-[2px] transition-all duration-300 group-hover:scale-110 ${isOn ? '' : 'opacity-50'}`}
                 style={{ borderColor: isOn ? (isLeft ? '#00f3ff40' : '#bf00ff40') : (isDark ? '#333' : '#e5e7eb'), backgroundColor: isDark ? '#0a0a0f' : '#ffffff', boxShadow: (isOn && isDark) ? `0 0 12px ${isLeft ? '#00f3ff15' : '#bf00ff15'}` : 'none' }}>
                 {[0, 1, 2, 3, 4].map(i => <div key={i} className="w-5 h-[1.5px] rounded-full transition-colors duration-300" style={{ backgroundColor: isOn ? (isLeft ? '#00f3ff35' : '#bf00ff35') : (isDark ? '#1a1a20' : '#f1f5f9') }} />)}
                 <motion.div className="absolute -bottom-2.5 w-3.5 h-3.5 rounded-full border-2"
                     animate={{ backgroundColor: isOn ? '#22c55e' : (isDark ? '#111' : '#f8fafc'), borderColor: isOn ? '#22c55e60' : (isDark ? '#333' : '#e2e8f0'), boxShadow: (isOn && isDark) ? '0 0 8px #22c55e50' : 'none' }} />
             </div>
-            <span className="mt-2 text-[8px] font-mono font-bold uppercase tracking-wider transition-colors" style={{ color: isOn ? (isLeft ? '#00f3ff' : '#bf00ff') : (isDark ? '#444' : '#94a3b8') }}>{isLeft ? 'R1' : 'R2'}</span>
-            <span className="text-[8px] font-mono font-bold" style={{ color: isOn ? (isDark ? '#888' : '#64748b') : '#ef444480' }}>120{'\u03A9'}</span>
-            <span className="text-[8px] font-mono font-bold" style={{ color: isOn ? '#22c55e' : '#ef4444' }}>{isOn ? 'ON' : 'OFF'}</span>
+            <span className="mt-2 text-[10px] font-mono font-bold uppercase tracking-wider transition-colors" style={{ color: isOn ? (isLeft ? '#00f3ff' : '#bf00ff') : (isDark ? '#444' : '#94a3b8') }}>{isLeft ? 'R1' : 'R2'}</span>
+            <span className="text-[10px] font-mono font-bold" style={{ color: isOn ? (isDark ? '#888' : '#64748b') : '#ef444480' }}>120{'\u03A9'}</span>
+            <span className="text-[10px] font-mono font-bold" style={{ color: isOn ? '#22c55e' : '#ef4444' }}>{isOn ? 'ON' : 'OFF'}</span>
         </button>
     );
 });
@@ -1483,7 +1656,7 @@ function ListView({ nodes, selectedNode, setSelectedNode, toggleNode, removeNode
     const isDark = theme === 'dark';
     return (
         <div className="overflow-x-auto">
-        <table className="w-full text-[8px] font-mono">
+        <table className="w-full text-[10px] font-mono">
             <thead><tr className="border-b border-black/5 dark:border-[#1a1a20] transition-colors">
                 {['Status', 'ECU Name', 'CAN ID', 'Domain', 'Baud', 'Stub', 'TX', 'RX', 'Errors', 'Actions'].map(h => (
                     <th key={h} className="text-left py-2 px-3 text-light-400 dark:text-gray-600 font-bold uppercase tracking-wider">{h}</th>
@@ -1494,31 +1667,42 @@ function ListView({ nodes, selectedNode, setSelectedNode, toggleNode, removeNode
                 const isSel = selectedNode === node.id;
                 return (
                     <tr key={node.id} onClick={() => setSelectedNode(isSel ? null : node.id)}
-                        className={`border-b border-black/[0.03] dark:border-[#111118] cursor-pointer transition-colors ${isSel ? 'bg-gray-100 dark:bg-[#111118]' : 'hover:bg-gray-50 dark:hover:bg-[#0d0d12]'}`}>
-                        <td className="py-2 px-3">
+                        className={cn(
+                            "border-b border-black/[0.03] dark:border-[#111118] cursor-pointer transition-all relative",
+                            isSel ? "bg-gray-100 dark:bg-[#111118]" : "hover:bg-gray-50 dark:hover:bg-[#0d0d12]"
+                        )}>
+                        <td className="py-2.5 px-3 whitespace-nowrap relative">
+                            {isSel && <div className="absolute left-0 top-0 bottom-0 w-[4px]" style={{ backgroundColor: dm.color, boxShadow: isDark ? `0 0 10px ${dm.color}60` : 'none' }} />}
                             <div className="flex items-center gap-1.5">
-                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: node.online ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${node.online ? '#22c55e60' : '#ef444460'}` : 'none' }} />
-                                <span className={cn("text-[8px] font-bold uppercase transition-colors", node.online ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500")}>
+                                <div className={cn("w-2 h-2", node.online ? "rounded-full" : "rounded-sm")} style={{ backgroundColor: node.online ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${node.online ? '#22c55e60' : '#ef444460'}` : 'none' }} />
+                                <span className={cn("text-[10px] font-bold uppercase transition-colors", node.online ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500")}>
                                     {node.online ? 'ON' : 'OFF'}
                                 </span>
                             </div>
                         </td>
-                        <td className="py-2 px-3 font-bold text-dark-900 dark:text-gray-300 uppercase transition-colors">{node.label}</td>
-                        <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.canId}</td>
-                        <td className="py-2 px-3"><span className="px-1.5 py-0.5 rounded-sm text-[8px]" style={{ backgroundColor: dm.color + '15', color: dm.color, border: `1px solid ${dm.color}25` }}>{dm.label}</span></td>
-                        <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.baudRate}</td>
-                        <td className="py-2 px-3 text-light-500 dark:text-gray-500 transition-colors">{node.stubLength}m</td>
-                        <td className="py-2 px-3 text-green-500">{node.txCount}</td>
-                        <td className="py-2 px-3 text-blue-400">{node.rxCount}</td>
-                        <td className="py-2 px-3" style={{ color: node.errorCount > 0 ? '#ef4444' : (isDark ? '#333' : '#cbd5e1') }}>{node.errorCount}</td>
-                        <td className="py-2 px-3">
+                        <td className="py-2.5 px-3 font-bold text-dark-900 dark:text-gray-300 uppercase transition-colors whitespace-nowrap">
+                            <span style={{ color: isSel ? dm.color : 'inherit' }}>{node.label}</span>
+                        </td>
+                        <td className="py-2.5 px-3 text-light-500 dark:text-gray-500 transition-colors whitespace-nowrap">{node.canId}</td>
+                        <td className="py-2.5 px-3 whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dm.color }} />
+                                <span className="px-1.5 py-0.5 rounded-sm text-[9px] font-black uppercase tracking-tighter" style={{ backgroundColor: dm.color + '15', color: dm.color, border: `1px solid ${dm.color}25` }}>{dm.label}</span>
+                            </div>
+                        </td>
+                        <td className="py-2.5 px-3 text-light-500 dark:text-gray-500 transition-colors whitespace-nowrap">{node.baudRate}</td>
+                        <td className="py-2.5 px-3 text-light-500 dark:text-gray-500 transition-colors whitespace-nowrap">{node.stubLength}m</td>
+                        <td className="py-2.5 px-3 text-green-500 font-bold whitespace-nowrap">{node.txCount.toLocaleString()}</td>
+                        <td className="py-2.5 px-3 text-blue-400 font-bold whitespace-nowrap">{node.rxCount.toLocaleString()}</td>
+                        <td className="py-2.5 px-3 whitespace-nowrap" style={{ color: node.errorCount > 0 ? '#ef4444' : (isDark ? '#333' : '#cbd5e1') }}>{node.errorCount.toLocaleString()}</td>
+                        <td className="py-2.5 px-3 whitespace-nowrap">
                             <div className="flex items-center gap-2">
                                 <button onClick={(e) => { e.stopPropagation(); toggleNode(node.id); }}
-                                    className={`px-2 py-0.5 rounded text-[9px] font-bold border transition-colors ${node.online ? 'text-red-400 border-red-500/30 hover:bg-red-500/10' : 'text-green-600 dark:text-green-400 border-green-500/30 hover:bg-green-500/10'}`}>
+                                    className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-colors ${node.online ? 'text-red-400 border-red-500/30 hover:bg-red-500/10' : 'text-green-600 dark:text-green-400 border-green-500/30 hover:bg-green-500/10'}`}>
                                     {node.online ? 'OFF' : 'ON'}
                                 </button>
                                 <button onClick={(e) => { e.stopPropagation(); removeNode(node.id); }}
-                                    className="px-2 py-0.5 rounded text-[9px] font-bold text-light-400 dark:text-gray-600 border border-black/10 dark:border-[#222] hover:text-red-400 hover:border-red-500/30 transition-colors">DEL</button>
+                                    className="px-2 py-0.5 rounded text-[10px] font-bold text-light-400 dark:text-gray-600 border border-black/10 dark:border-[#222] hover:text-red-400 hover:border-red-500/30 transition-colors">DEL</button>
                             </div>
                         </td>
                     </tr>
@@ -1527,11 +1711,7 @@ function ListView({ nodes, selectedNode, setSelectedNode, toggleNode, removeNode
         </table>
         </div>
     );
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   Node Detail Panel
-   ═══════════════════════════════════════════════════════════════ */
+}
 function NodeDetailPanel({
     node, onToggle, onRemove, onClose, onSendSignal, onBaudChange, onUpdateNode,
     allNodes, existingNodes, isBusy, onOpenFrameBuilder, onResetCounters
@@ -1542,7 +1722,7 @@ function NodeDetailPanel({
     onClose: () => void;
     onSendSignal: (from: string, to: string | 'broadcast', msgType?: MessageType, dlc?: number, data?: string[]) => void;
     onBaudChange: (baud: string) => void;
-    onUpdateNode: (updates: Partial<Pick<ECUNode, 'label' | 'description' | 'canId' | 'domain' | 'stubLength'>>) => void;
+    onUpdateNode: (updates: Partial<Pick<ECUNode, 'label' | 'description' | 'canId' | 'domain' | 'stubLength' | 'baudRate'>>) => void;
     allNodes: ECUNode[];
     existingNodes: ECUNode[];
     isBusy: boolean;
@@ -1557,7 +1737,8 @@ function NodeDetailPanel({
         description: node.description || '',
         canId: node.canId,
         domain: node.domain,
-        stubLength: String(node.stubLength)
+        stubLength: String(node.stubLength),
+        baudRate: node.baudRate
     });
 
     useEffect(() => {
@@ -1566,7 +1747,8 @@ function NodeDetailPanel({
             description: node.description || '',
             canId: node.canId,
             domain: node.domain,
-            stubLength: String(node.stubLength)
+            stubLength: String(node.stubLength),
+            baudRate: node.baudRate
         });
         setEditing(false);
     }, [node.id]);
@@ -1582,7 +1764,8 @@ function NodeDetailPanel({
             description: draft.description.trim() || undefined,
             canId: draft.canId,
             domain: draft.domain as ECUDomain,
-            stubLength: parseFloat(draft.stubLength) || node.stubLength
+            stubLength: parseFloat(draft.stubLength) || node.stubLength,
+            baudRate: draft.baudRate
         });
         setEditing(false);
     };
@@ -1593,7 +1776,8 @@ function NodeDetailPanel({
             description: node.description || '',
             canId: node.canId,
             domain: node.domain,
-            stubLength: String(node.stubLength)
+            stubLength: String(node.stubLength),
+            baudRate: node.baudRate
         });
         setEditing(false);
     };
@@ -1608,22 +1792,28 @@ function NodeDetailPanel({
     const onlineGlow = node.online ? dm.glow : '#ef444460';
 
     return (
-        <div className="bg-white dark:bg-[#0c0c0f] px-5 py-4 transition-colors" onKeyDown={editing ? handleKeyDown : undefined}>
-            <div className="flex items-start justify-between mb-4">
+        <div className="bg-white dark:bg-[#0c0c0f] px-5 py-4 transition-colors relative overflow-hidden" onKeyDown={editing ? handleKeyDown : undefined}>
+            {/* Domain Background Tint */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-transparent opacity-[0.03] pointer-events-none" style={{ backgroundImage: `linear-gradient(225deg, ${dm.color} 0%, transparent 70%)` }} />
+            
+            <div className="flex items-start justify-between mb-4 relative z-10">
                 <div className="flex items-center gap-3">
                     <div className="flex flex-col items-center gap-1">
-                        <motion.div className="w-3 h-3 rounded-full" animate={{ backgroundColor: onlineColor, boxShadow: isDark ? `0 0 8px ${onlineGlow}` : 'none' }} />
-                        <span className={cn("text-[7px] font-black uppercase tracking-tighter transition-colors", node.online ? "text-green-500" : "text-red-500")}>
+                        <motion.div className="w-3 h-3 rounded-full" animate={{ backgroundColor: onlineColor, boxShadow: isDark ? `0 0 10px ${onlineGlow}` : 'none' }} />
+                        <span className={cn("text-[9px] font-black uppercase tracking-tighter transition-colors", node.online ? "text-green-500" : "text-red-500")}>
                             {node.online ? 'ON' : 'OFF'}
                         </span>
                     </div>
                     <div className="flex items-center gap-2 group">
                         <div>
-                            <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-tight transition-colors">
+                            <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-tight transition-colors flex items-center gap-2">
                                 {node.label}
-                                {node.isLocal && <span className="ml-2 text-[8px] text-light-400 dark:text-gray-600 font-bold border border-black/10 dark:border-gray-600/30 px-1 rounded uppercase tracking-tighter transition-colors">Local Controller</span>}
+                                <span className="px-1.5 py-0.5 rounded-sm text-[8px] font-black tracking-widest uppercase" style={{ backgroundColor: dm.color + '15', color: dm.color, border: `1px solid ${dm.color}30` }}>
+                                    {dm.label}
+                                </span>
+                                {node.isLocal && <span className="text-[10px] text-light-400 dark:text-gray-600 font-bold border border-black/10 dark:border-gray-600/30 px-1 rounded uppercase tracking-tighter transition-colors">Local Controller</span>}
                             </h3>
-                            <p className="text-[8px] font-mono text-light-500 dark:text-gray-500 transition-colors">{node.canId} &middot; {dm.label} &middot; {node.baudRate}</p>
+                            <p className="text-[10px] font-mono text-light-500 dark:text-gray-500 transition-colors uppercase tracking-widest">{node.canId} &middot; {node.baudRate}</p>
                         </div>
                         {!editing && (
                             <button onClick={() => setEditing(true)} aria-label="Edit ECU"
@@ -1642,41 +1832,48 @@ function NodeDetailPanel({
             </div>
 
             {/* Editing Form OR Stats Display */}
-            <div className="mb-4">
+            <div className="mb-4 relative z-10">
                 {editing ? (
                     <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
                         className="p-4 rounded-lg bg-gray-50 dark:bg-[#111116] border border-black/10 dark:border-[#2a2a32] shadow-xl space-y-4 transition-colors">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
-                                <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
+                                <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">ECU Name</label>
                                 <input value={draft.label} onChange={e => setDraft({ ...draft, label: e.target.value })} autoFocus
                                     className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                             </div>
                             <div>
-                                <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
+                                <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">CAN ID</label>
                                 <input value={draft.canId} onChange={e => setDraft({ ...draft, canId: e.target.value })}
                                     className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none transition-colors ${duplicateNode ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40]'}`} />
-                                {duplicateNode && <p className="text-[8px] font-mono text-red-500 dark:text-red-400 mt-1 uppercase">CAN ID already in use by {duplicateNode.label}</p>}
+                                {duplicateNode && <p className="text-[10px] font-mono text-red-500 dark:text-red-400 mt-1 uppercase tracking-tighter">Conflict: {duplicateNode.label}</p>}
                             </div>
                             <div>
-                                <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">Stub Length (m)</label>
+                                <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">Baud Rate</label>
+                                <select value={draft.baudRate} onChange={e => setDraft({ ...draft, baudRate: e.target.value })}
+                                    className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors">
+                                    {BAUD_OPTIONS.map(b => <option key={b} value={b}>{b}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1">Stub (m)</label>
                                 <input type="number" step="0.01" value={draft.stubLength} onChange={e => setDraft({ ...draft, stubLength: e.target.value })}
                                     className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                             </div>
                         </div>
                         <div>
-                            <label className="text-[8px] font-mono text-light-500 dark:text-gray-400 uppercase tracking-wider block mb-1">Description (Tooltip)</label>
+                            <label className="text-[10px] font-mono text-light-500 dark:text-gray-400 uppercase tracking-wider block mb-1">Description (Tooltip)</label>
                             <input value={draft.description} onChange={e => setDraft({ ...draft, description: e.target.value })}
                                 placeholder="e.g. Engine ECU - ECM"
                                 className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-2.5 py-1.5 text-[10px] font-mono text-dark-950 dark:text-[#f1f1f1] focus:outline-none focus:border-cyber-blue/40 dark:focus:border-[#00f3ff40] transition-colors" />
                         </div>
 
                         <div>
-                            <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5">Network Domain</label>
+                            <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5">Network Domain</label>
                             <div className="flex flex-wrap gap-1">
                                 {(Object.entries(DOMAIN_META) as [ECUDomain, typeof DOMAIN_META[ECUDomain]][]).map(([key, meta]) => (
                                     <button key={key} onClick={() => setDraft({ ...draft, domain: key })}
-                                        className={`px-2 py-1 rounded text-[9px] font-mono font-bold uppercase border transition-all ${draft.domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400'}`}
+                                        className={`px-2 py-1 rounded text-[10px] font-mono font-bold uppercase border transition-all ${draft.domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400'}`}
                                         style={draft.domain === key ? { backgroundColor: meta.color + '15', color: meta.color, borderColor: meta.color + '50' } : undefined}>
                                         {meta.label}
                                     </button>
@@ -1686,12 +1883,12 @@ function NodeDetailPanel({
 
                         <div className="flex justify-end gap-2 pt-1">
                             <button onClick={handleCancel}
-                                className="px-3 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">
+                                className="px-3 py-1.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">
                                 Cancel
                             </button>
                             <button onClick={handleSave}
                                 disabled={!draft.label.trim() || draft.canId.length < 4 || !!duplicateNode}
-                                className="px-4 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-[#00f3ff15] border border-[#00f3ff40] text-[#00f3ff] hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                                className="px-4 py-1.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-[#00f3ff15] border border-[#00f3ff40] text-[#00f3ff] hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                                 Save Changes
                             </button>
                         </div>
@@ -1708,16 +1905,17 @@ function NodeDetailPanel({
                                 { k: 'Errors', v: node.errorCount.toLocaleString(), c: node.errorCount > 0 ? '#ef4444' : '#333' },
                                 { v: dm.label.toUpperCase(), c: dm.color, k: 'Domain' },
                             ].map(s => (
-                                <div key={s.k} className="px-3 py-2 rounded-md bg-gray-50 dark:bg-[#111116] border border-black/5 dark:border-[#1a1a22] transition-colors">
-                                    <span className="text-[9px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-wider block mb-0.5 transition-colors">{s.k}</span>
-                                    <span className="text-[10px] font-mono font-bold" style={{ color: s.c }}>{s.v}</span>
+                                <div key={s.k} className="px-3 py-2 rounded-md bg-gray-50 dark:bg-[#111116] border border-black/5 dark:border-[#1a1a22] transition-colors relative overflow-hidden">
+                                    {s.k === 'Domain' && <div className="absolute left-0 top-0 bottom-0 w-[2px]" style={{ backgroundColor: dm.color }} />}
+                                    <span className="text-[10px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-wider block mb-0.5 transition-colors">{s.k}</span>
+                                    <span className="text-[11px] font-mono font-bold" style={{ color: s.c }}>{s.v}</span>
                                 </div>
                             ))}
                         </div>
                         <div className="flex items-center justify-end">
                             <button
                                 onClick={onResetCounters}
-                                className="flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#1a1a22] hover:text-dark-950 dark:hover:text-[#f1f1f1] hover:border-black/20 dark:hover:border-[#333] transition-all active:scale-95"
+                                className="flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#1a1a22] hover:text-dark-950 dark:hover:text-[#f1f1f1] hover:border-black/20 dark:hover:border-[#333] transition-all active:scale-95"
                                 title="Reset TX, RX, and error counters for this node"
                             >
                                 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -1738,7 +1936,7 @@ function NodeDetailPanel({
                     <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 uppercase mr-1 transition-colors">Baud:</span>
                     {BAUD_OPTIONS.map(b => (
                         <button key={b} onClick={() => onBaudChange(b)}
-                            className={`px-2 py-1 rounded text-[9px] font-mono font-bold border transition-all ${node.baudRate === b ? 'bg-cyber-blue/15 text-cyber-blue border-cyber-blue/40 dark:bg-[#00f3ff15] dark:text-[#00f3ff] dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:border-black/20 dark:hover:border-[#333]'}`}>
+                            className={`px-2 py-1 rounded text-[10px] font-mono font-bold border transition-all ${node.baudRate === b ? 'bg-cyber-blue/15 text-cyber-blue border-cyber-blue/40 dark:bg-[#00f3ff15] dark:text-[#00f3ff] dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:border-black/20 dark:hover:border-[#333]'}`}>
                             {b}
                         </button>
                     ))}
@@ -1750,20 +1948,30 @@ function NodeDetailPanel({
                 <div className="flex items-center gap-1 flex-wrap">
                     <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 uppercase mr-1 transition-colors">Send to:</span>
                     {isBusy && (
-                        <span className="text-[8px] font-mono font-bold text-amber-500 dark:text-amber-400 border border-amber-500/30 bg-amber-500/10 rounded px-1.5 py-0.5 ml-1 animate-pulse">
+                        <span className="text-[10px] font-mono font-bold text-amber-500 dark:text-amber-400 border border-amber-500/30 bg-amber-500/10 rounded px-1.5 py-0.5 ml-1 animate-pulse">
                             Bus busy
                         </span>
                     )}
-                    {allNodes.filter(n => n.id !== node.id && n.online).map(target => (
+                    {allNodes.filter(n => n.id !== node.id && n.online).map(target => {
+                        const hasMismatch = target.baudRate !== node.baudRate;
+                        return (
                         <button key={target.id} onClick={() => onSendSignal(node.id, target.id)}
                             disabled={isBusy || !node.online}
-                            className="px-2 py-1 rounded text-[9px] font-mono font-bold text-light-500 dark:text-gray-500 border border-black/10 dark:border-[#222] hover:text-cyber-blue dark:hover:text-[#00f3ff] hover:border-cyber-blue/40 dark:hover:border-[#00f3ff40] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                            title={hasMismatch ? `Baud mismatch: ${node.label} (${node.baudRate}) \u2192 ${target.label} (${target.baudRate}) \u2014 frame will produce errors` : `Send to ${target.label}`}
+                            className={cn(
+                                "px-2 py-1 rounded text-[10px] font-mono font-bold border transition-all disabled:opacity-30 disabled:cursor-not-allowed",
+                                hasMismatch
+                                    ? "text-amber-500 dark:text-amber-400 border-amber-500/30 hover:text-amber-400 hover:border-amber-500/50"
+                                    : "text-light-500 dark:text-gray-500 border-black/10 dark:border-[#222] hover:text-cyber-blue dark:hover:text-[#00f3ff] hover:border-cyber-blue/40 dark:hover:border-[#00f3ff40]"
+                            )}>
+                            {hasMismatch && <span className="mr-0.5 text-amber-500" title="Baud rate mismatch">&#9888;</span>}
                             {target.label}
                         </button>
-                    ))}
+                        );
+                    })}
                     <button onClick={() => onSendSignal(node.id, 'broadcast')}
                         disabled={isBusy || !node.online}
-                        className="px-2 py-1 rounded text-[9px] font-mono font-bold text-yellow-600 dark:text-yellow-500/70 border border-yellow-500/20 hover:text-yellow-500 dark:hover:text-yellow-400 hover:border-yellow-500/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                        className="px-2 py-1 rounded text-[10px] font-mono font-bold text-yellow-600 dark:text-yellow-500/70 border border-yellow-500/20 hover:text-yellow-500 dark:hover:text-yellow-400 hover:border-yellow-500/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                         ALL
                     </button>
                 </div>
@@ -1773,24 +1981,24 @@ function NodeDetailPanel({
                 {/* Frame builder */}
                 <button onClick={onOpenFrameBuilder}
                     disabled={isBusy || !node.online}
-                    className="px-3 py-1 rounded text-[9px] font-mono font-bold text-[#a855f7] border border-[#a855f730] hover:bg-[#a855f710] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                    className="px-3 py-1 rounded text-[10px] font-mono font-bold text-[#a855f7] border border-[#a855f730] hover:bg-[#a855f710] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                     Build Frame...
                 </button>
 
                 <div className="flex-1" />
 
                 <button onClick={onToggle}
-                    className={`px-4 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border transition-all active:scale-95 ${node.online ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20' : 'bg-green-500/10 text-green-400 border-green-500/30 hover:bg-green-500/20'}`}>
+                    className={`px-4 py-1.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider border transition-all active:scale-95 ${node.online ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20' : 'bg-green-500/10 text-green-400 border-green-500/30 hover:bg-green-500/20'}`}>
                     {node.online ? 'Disconnect' : 'Connect'}
                 </button>
                 <button onClick={onRemove}
-                    className="px-4 py-1.5 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-600 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 hover:border-red-500/30 transition-all active:scale-95">
+                    className="px-4 py-1.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-600 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 hover:border-red-500/30 transition-all active:scale-95">
                     Remove
                 </button>
             </div>
         </div>
     );
-};
+}
 
 /* ═══════════════════════════════════════════════════════════════
    Message Log Panel
@@ -1799,6 +2007,7 @@ function MessageLogPanel({ log, onClear }: { log: MessageLogEntry[]; onClear: ()
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const [expanded, setExpanded] = useState(true);
+    const [expandedEntryId, setExpandedEntryId] = useState<number | null>(null);
 
     const downloadFile = (content: string, filename: string, mimeType: string) => {
         const blob = new Blob([content], { type: mimeType });
@@ -1829,7 +2038,7 @@ function MessageLogPanel({ log, onClear }: { log: MessageLogEntry[]; onClear: ()
             <div className="w-full flex items-center justify-between px-5 py-2 hover:bg-gray-50 dark:hover:bg-[#0e0e12] transition-colors">
                 <button onClick={() => setExpanded(!expanded)}
                     className="flex items-center gap-2">
-                    <span className="text-[8px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-wider transition-colors">Message Log</span>
+                    <span className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-wider transition-colors">Message Log</span>
                     <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 transition-colors">({log.length})</span>
                     <span className="text-light-400 dark:text-gray-600 text-[10px] transition-colors">{expanded ? <ChevronUp size={10} /> : <ChevronDown size={10} />}</span>
                 </button>
@@ -1849,33 +2058,59 @@ function MessageLogPanel({ log, onClear }: { log: MessageLogEntry[]; onClear: ()
             <AnimatePresence>
                 {expanded && (
                     <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
-                        <div className="max-h-48 overflow-y-auto px-5 pb-3 space-y-1">
-                            {log.map((entry) => (
+                        <div className="max-h-64 overflow-y-auto px-5 pb-3 space-y-1">
+                            {log.map((entry) => {
+                                const isEntryExpanded = expandedEntryId === entry.id;
+                                return (
                                 <motion.div key={`${entry.id}-${entry.timestamp}`}
                                     initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}
-                                    className={`flex items-center gap-3 px-3 py-1.5 rounded-md text-[8px] font-mono transition-colors ${entry.success ? 'bg-gray-50 dark:bg-[#111116]' : 'bg-red-50 dark:bg-[#1a0808]'}`}>
-                                    <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                                        style={{ backgroundColor: entry.success ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${entry.success ? '#22c55e60' : '#ef444460'}` : 'none' }} />
-                                    <span className="text-light-400 dark:text-gray-600 w-16 flex-shrink-0 transition-colors uppercase">{new Date(entry.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-                                    <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.fromLabel}</span>
-                                    <ArrowRight size={10} className="text-light-400 dark:text-gray-600 transition-colors" />
-                                    <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.toLabel}</span>
-                                    <span className="px-1 py-[1px] rounded border text-[8px] uppercase"
-                                        style={{
-                                            color: entry.messageType === 'diagnostic' ? '#00f3ff' : entry.messageType === 'remote' ? '#f59e0b' : '#a855f7',
-                                            borderColor: entry.messageType === 'diagnostic' ? '#00f3ff20' : entry.messageType === 'remote' ? '#f59e0b20' : '#a855f720'
-                                        }}>
-                                        {entry.messageType}
-                                    </span>
-                                    <span className="text-light-400 dark:text-gray-500 transition-colors">{entry.dlc}B</span>
-                                    <span className="text-light-400 dark:text-gray-600 flex-1 truncate transition-colors">[{entry.data.join(' ')}]</span>
-                                    {entry.error && (
-                                        <span className="text-red-400 text-[8px] truncate max-w-[160px] cursor-help" title={entry.error}>
-                                            {entry.error}
+                                    onClick={() => setExpandedEntryId(isEntryExpanded ? null : entry.id)}
+                                    className={`cursor-pointer rounded-md text-[10px] font-mono transition-colors ${entry.success ? 'bg-gray-50 dark:bg-[#111116] hover:bg-gray-100 dark:hover:bg-[#151518]' : 'bg-red-50 dark:bg-[#1a0808] hover:bg-red-100 dark:hover:bg-[#200a0a]'}`}>
+                                    <div className="flex items-center gap-3 px-3 py-1.5">
+                                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                                            style={{ backgroundColor: entry.success ? '#22c55e' : '#ef4444', boxShadow: isDark ? `0 0 4px ${entry.success ? '#22c55e60' : '#ef444460'}` : 'none' }} />
+                                        <span className="text-light-400 dark:text-gray-600 w-16 flex-shrink-0 transition-colors">{new Date(entry.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                                        <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.fromLabel}</span>
+                                        <ArrowRight size={10} className="text-light-400 dark:text-gray-600 transition-colors" />
+                                        <span className="text-dark-900 dark:text-gray-300 font-bold w-14 flex-shrink-0 transition-colors text-center">{entry.toLabel}</span>
+                                        <span className="px-1 py-[1px] rounded border text-[10px] uppercase"
+                                            style={{
+                                                color: entry.messageType === 'diagnostic' ? '#00f3ff' : entry.messageType === 'remote' ? '#f59e0b' : '#a855f7',
+                                                borderColor: entry.messageType === 'diagnostic' ? '#00f3ff20' : entry.messageType === 'remote' ? '#f59e0b20' : '#a855f720'
+                                            }}>
+                                            {entry.messageType}
                                         </span>
+                                        <span className="text-light-400 dark:text-gray-500 transition-colors">{entry.dlc}B</span>
+                                        <span className="text-light-400 dark:text-gray-600 flex-1 truncate transition-colors">[{entry.data.join(' ')}]</span>
+                                        {entry.error && !isEntryExpanded && (
+                                            <span className="text-red-400 text-[10px] truncate max-w-[200px]">
+                                                {entry.error}
+                                            </span>
+                                        )}
+                                        <span className="text-light-400 dark:text-gray-600 text-[9px]">{isEntryExpanded ? <ChevronUp size={10} /> : <ChevronDown size={10} />}</span>
+                                    </div>
+                                    {isEntryExpanded && (
+                                        <div className="px-3 pb-2 pt-1 border-t border-black/5 dark:border-[#1a1a20] space-y-1 ml-5">
+                                            <div className="flex gap-4">
+                                                <span className="text-light-400 dark:text-gray-500">Data:</span>
+                                                <span className="text-dark-900 dark:text-gray-300 font-bold break-all">[{entry.data.join(' ')}]</span>
+                                            </div>
+                                            {entry.error && (
+                                                <div className="flex gap-4">
+                                                    <span className="text-red-400">Error:</span>
+                                                    <span className="text-red-400 break-all">{entry.error}</span>
+                                                </div>
+                                            )}
+                                            <div className="flex gap-4 text-light-400 dark:text-gray-600">
+                                                <span>Status: {entry.success ? 'Success' : 'Failed'}</span>
+                                                <span>DLC: {entry.dlc}</span>
+                                                <span>Time: {new Date(entry.timestamp).toISOString()}</span>
+                                            </div>
+                                        </div>
                                     )}
                                 </motion.div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </motion.div>
                 )}
@@ -1890,7 +2125,7 @@ function MessageLogPanel({ log, onClear }: { log: MessageLogEntry[]; onClear: ()
 function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
     fromNode: ECUNode;
     allNodes: ECUNode[];
-    onSend: (toId: string | 'broadcast', msgType: MessageType, dlc: number, data: string[]) => void;
+    onSend: (toId: string | 'broadcast', msgType: MessageType, dlc: number, data: string[], keepOpen?: boolean) => void;
     onClose: () => void;
     isBusy: boolean;
 }) {
@@ -1906,60 +2141,21 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
         setDataBytes(prev => { const n = [...prev]; n[idx] = clamped; return n; });
     };
 
-    const containerRef = useRef<HTMLDivElement>(null);
-    const lastActiveElement = useRef<HTMLElement | null>(null);
-
-    useEffect(() => {
-        lastActiveElement.current = document.activeElement as HTMLElement;
-        return () => {
-            setTimeout(() => {
-                lastActiveElement.current?.focus();
-            }, 50);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!containerRef.current) return;
-        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        const initialFocus = containerRef.current.querySelector('button, input');
-        (initialFocus as HTMLElement)?.focus();
-
-        const handleTab = (e: KeyboardEvent) => {
-            if (e.key !== 'Tab') return;
-            if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                last.focus();
-            } else if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                first.focus();
-            }
-        };
-
-        window.addEventListener('keydown', handleTab);
-        return () => window.removeEventListener('keydown', handleTab);
-    }, []);
-
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-colors" onClick={onClose}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-                ref={containerRef}
-                onClick={e => e.stopPropagation()}
-                className="bg-white dark:bg-[#111116] border border-black/10 dark:border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-lg transition-colors">
+        <Dialog.Root open onOpenChange={(open) => { if (!open) onClose(); }}>
+            <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-colors" />
+                <Dialog.Content
+                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[51] bg-white dark:bg-[#111116] border border-black/10 dark:border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-lg transition-colors focus:outline-none"
+                    onOpenAutoFocus={(e) => e.preventDefault()}>
 
                 <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider mb-1 transition-colors">Build CAN Frame</h3>
-                <p className="text-[8px] font-mono text-light-500 dark:text-gray-500 mb-4 transition-colors">Transmitting from <span className="text-cyber-blue dark:text-[#00f3ff] font-bold">{fromNode.label}</span> ({fromNode.canId})</p>
+                <p className="text-[10px] font-mono text-light-500 dark:text-gray-500 mb-4 transition-colors">Transmitting from <span className="text-cyber-blue dark:text-[#00f3ff] font-bold">{fromNode.label}</span> ({fromNode.canId})</p>
 
                 <div className="space-y-4">
                     {/* Target */}
                     <div>
-                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Target Node</label>
+                        <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Target Node</label>
                         <div className="flex flex-wrap gap-1.5">
                             <button onClick={() => setToId('broadcast')}
                                 className={`px-2.5 py-1.5 rounded text-[9px] font-mono font-bold uppercase border transition-all ${toId === 'broadcast' ? 'bg-orange-500/15 text-orange-600 dark:text-[#f59e0b] border-orange-500/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
@@ -1967,7 +2163,7 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                             </button>
                             {allNodes.filter(n => n.id !== fromNode.id).map(n => (
                                 <button key={n.id} onClick={() => setToId(n.id)}
-                                    className={`px-2.5 py-1.5 rounded text-[8px] font-mono font-bold uppercase border transition-all ${toId === n.id ? 'bg-cyber-blue/15 text-cyber-blue dark:text-[#00f3ff] border-cyber-blue/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
+                                    className={`px-2.5 py-1.5 rounded text-[10px] font-mono font-bold uppercase border transition-all ${toId === n.id ? 'bg-cyber-blue/15 text-cyber-blue dark:text-[#00f3ff] border-cyber-blue/50' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                     {n.label}
                                     {!n.online && <span className="ml-1 text-red-500 dark:text-red-400 normal-case">(off)</span>}
                                 </button>
@@ -1977,13 +2173,13 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
 
                     {/* Message Type */}
                     <div>
-                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Frame Type</label>
+                        <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Frame Type</label>
                         <div className="flex gap-1.5">
                             {([['data', 'Data Frame', 'Standard data payload'], ['remote', 'Remote Frame', 'Request data from target'], ['diagnostic', 'Diagnostic', 'UDS/OBD request']] as const).map(([type, label, desc]) => (
                                 <button key={type} onClick={() => setMsgType(type)}
                                     className={`flex-1 px-3 py-2 rounded border text-left transition-all ${msgType === type ? 'border-cyber-blue/40 bg-cyber-blue/5 dark:border-[#00f3ff40] dark:bg-[#00f3ff08]' : 'border-black/10 dark:border-[#222] hover:border-black/20 dark:hover:border-[#333]'}`}>
-                                    <span className={`text-[8px] font-mono font-bold block transition-colors ${msgType === type ? 'text-cyber-blue dark:text-[#00f3ff]' : 'text-light-400 dark:text-gray-400'}`}>{label}</span>
-                                    <span className="text-[9px] font-mono text-light-400 dark:text-gray-400 block mt-0.5 transition-colors">{desc}</span>
+                                    <span className={`text-[10px] font-mono font-bold block transition-colors ${msgType === type ? 'text-cyber-blue dark:text-[#00f3ff]' : 'text-light-400 dark:text-gray-400'}`}>{label}</span>
+                                    <span className="text-[10px] font-mono text-light-400 dark:text-gray-400 block mt-0.5 transition-colors">{desc}</span>
                                 </button>
                             ))}
                         </div>
@@ -1991,11 +2187,11 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
 
                     {/* DLC */}
                     <div>
-                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Data Length Code (DLC): {dlc} bytes</label>
+                        <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1.5 transition-colors">Data Length Code (DLC): {dlc} bytes</label>
                         <div className="flex gap-1">
                             {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(d => (
                                 <button key={d} onClick={() => setDlc(d)}
-                                    className={`w-8 h-8 rounded text-[8px] font-mono font-bold border transition-all ${dlc === d ? 'bg-cyber-purple/15 text-cyber-purple border-cyber-purple/50 dark:bg-[#a855f715] dark:text-[#a855f7] dark:border-[#a855f750]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
+                                    className={`w-8 h-8 rounded text-[10px] font-mono font-bold border transition-all ${dlc === d ? 'bg-cyber-purple/15 text-cyber-purple border-cyber-purple/50 dark:bg-[#a855f715] dark:text-[#a855f7] dark:border-[#a855f750]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222]'}`}>
                                     {d}
                                 </button>
                             ))}
@@ -2006,13 +2202,13 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                     {dlc > 0 && msgType !== 'remote' && (
                         <div>
                             <div className="flex items-center justify-between mb-1.5">
-                                <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider transition-colors">Data Bytes (hex)</label>
+                                <label className="text-[10px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider transition-colors">Data Bytes (hex)</label>
                                 <button onClick={() => setDataBytes(RANDOM_DATA())} className="text-[10px] font-mono text-light-400 dark:text-gray-400 hover:text-cyber-purple dark:hover:text-[#a855f7] transition-colors">Randomize</button>
                             </div>
                             <div className="flex gap-1.5">
                                 {Array.from({ length: dlc }, (_, i) => (
                                     <div key={i} className="flex flex-col items-center gap-0.5">
-                                        <span className="text-[8px] font-mono text-light-300 dark:text-gray-700 transition-colors">D{i}</span>
+                                        <span className="text-[9px] font-mono text-light-300 dark:text-gray-700 transition-colors">D{i}</span>
                                         <input value={dataBytes[i] ?? '00'} onChange={e => updateByte(i, e.target.value)}
                                             className="w-9 h-8 text-center bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded text-[9px] font-mono font-bold text-cyber-purple dark:text-[#a855f7] focus:outline-none focus:border-cyber-purple/40 dark:focus:border-[#a855f740] uppercase transition-colors"
                                             maxLength={2} />
@@ -2024,7 +2220,7 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
 
                     {/* Frame preview */}
                     <div className="p-3 rounded-md bg-gray-50 dark:bg-[#0a0a0e] border border-black/10 dark:border-[#1a1a20] transition-colors">
-                        <span className="text-[9px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-wider block mb-1 transition-colors">Frame Preview</span>
+                        <span className="text-[10px] font-mono text-light-400 dark:text-gray-400 uppercase tracking-wider block mb-1 transition-colors">Frame Preview</span>
                         <div className="flex gap-[2px] rounded overflow-hidden">
                             {[
                                 { label: 'SOF', color: '#22c55e', w: 'w-4' },
@@ -2037,7 +2233,7 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
                             ].map((seg, i) => (
                                 <div key={i} className={`${seg.w} h-6 flex items-center justify-center px-1 transition-colors`}
                                     style={{ backgroundColor: seg.color + (isDark ? '15' : '10'), borderBottom: `2px solid ${seg.color}${isDark ? '40' : '60'}` }}>
-                                    <span className="text-[8px] font-mono font-bold truncate transition-colors" style={{ color: seg.color }}>{seg.label}</span>
+                                    <span className="text-[9px] font-mono font-bold truncate transition-colors" style={{ color: seg.color }}>{seg.label}</span>
                                 </div>
                             ))}
                         </div>
@@ -2046,22 +2242,29 @@ function FrameBuilderDialog({ fromNode, allNodes, onSend, onClose, isBusy }: {
 
                 {/* Actions */}
                 <div className="flex justify-end gap-2 mt-5">
-                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
+                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
                     <div className="flex items-center gap-2">
                         {isBusy && (
-                            <span className="text-[8px] font-mono font-bold text-amber-500 dark:text-amber-400 border border-amber-500/30 bg-amber-500/10 rounded px-1.5 py-1.5 animate-pulse">
+                            <span className="text-[10px] font-mono font-bold text-amber-500 dark:text-amber-400 border border-amber-500/30 bg-amber-500/10 rounded px-1.5 py-1.5 animate-pulse">
                                 Bus busy
                             </span>
                         )}
+                        <button onClick={() => onSend(toId, msgType, dlc, msgType === 'remote' ? [] : dataBytes.slice(0, dlc), true)}
+                            disabled={isBusy}
+                            title="Send frame and keep dialog open for rapid testing"
+                            className="px-4 py-2 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-cyan-500/10 dark:bg-[#00f3ff10] border border-cyan-500/30 dark:border-[#00f3ff30] text-cyan-600 dark:text-[#00f3ff] hover:bg-cyan-500/20 dark:hover:bg-[#00f3ff20] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                            Send &amp; Keep Open
+                        </button>
                         <button onClick={() => onSend(toId, msgType, dlc, msgType === 'remote' ? [] : dataBytes.slice(0, dlc))}
                             disabled={isBusy}
-                            className="px-5 py-2 rounded-md text-[8px] font-mono font-bold uppercase tracking-wider bg-green-500/10 dark:bg-[#22c55e15] border border-green-500/30 dark:border-[#22c55e40] text-green-600 dark:text-[#22c55e] hover:bg-green-500/20 dark:hover:bg-[#22c55e25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-                            Transmit Frame
+                            className="px-5 py-2 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-green-500/10 dark:bg-[#22c55e15] border border-green-500/30 dark:border-[#22c55e40] text-green-600 dark:text-[#22c55e] hover:bg-green-500/20 dark:hover:bg-[#22c55e25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                            Transmit &amp; Close
                         </button>
                     </div>
                 </div>
-            </motion.div>
-        </motion.div>
+                </Dialog.Content>
+            </Dialog.Portal>
+        </Dialog.Root>
     );
 };
 
@@ -2079,143 +2282,119 @@ function AddECUDialog({ onAdd, onClose, existingPositions, existingNodes }: {
     const [canId, setCanId] = useState('0x');
     const [domain, setDomain] = useState<ECUDomain>('body');
     const [stubLength, setStubLength] = useState('0.20');
-    const [baudRate, setBaudRate] = useState('500k');
+    const [baudRate, setBaudRate] = useState<string>('500k');
 
     const duplicateNode = existingNodes.find(
         n => n.canId.toLowerCase() === canId.toLowerCase() && canId.length >= 4
     );
 
     const findFreePosition = (): number => {
-        // Try to find a balanced spot with 8% gap first (optimal for visual)
         for (let x = 10; x <= 90; x += 2) { if (!existingPositions.some(p => Math.abs(p - x) < 8)) return x; }
-        // If crowded, reduce gap to 5% (minimal for clarity)
         for (let x = 5; x <= 95; x += 2) { if (!existingPositions.some(p => Math.abs(p - x) < 5)) return x; }
-        // Still no? Just append after the rightmost node
         const maxPos = existingPositions.length > 0 ? Math.max(...existingPositions) : 50;
         return Math.min(98, maxPos + 2);
     };
 
     const handleSubmit = () => {
         if (!label.trim() || canId.length < 4 || duplicateNode) return;
-        onAdd({ label: label.trim(), description: description.trim() || undefined, canId, x: findFreePosition(), online: true, domain, stubLength: parseFloat(stubLength) || 0.20, baudRate });
+        onAdd({
+            label: label.trim(),
+            description: description.trim() || undefined,
+            canId,
+            x: findFreePosition(),
+            online: true,
+            domain,
+            stubLength: parseFloat(stubLength) || 0.20,
+            baudRate
+        });
     };
 
-    const containerRef = useRef<HTMLDivElement>(null);
-    const lastActiveElement = useRef<HTMLElement | null>(null);
-
-    useEffect(() => {
-        lastActiveElement.current = document.activeElement as HTMLElement;
-        return () => {
-            setTimeout(() => {
-                lastActiveElement.current?.focus();
-            }, 50);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!containerRef.current) return;
-        const focusable = containerRef.current.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        const initialFocus = containerRef.current.querySelector('input');
-        initialFocus?.focus();
-
-        const handleTab = (e: KeyboardEvent) => {
-            if (e.key !== 'Tab') return;
-            if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                last.focus();
-            } else if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                first.focus();
-            }
-        };
-
-        window.addEventListener('keydown', handleTab);
-        return () => window.removeEventListener('keydown', handleTab);
-    }, []);
-
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-                ref={containerRef}
-                onClick={e => e.stopPropagation()}
-                className="bg-white dark:bg-[#111116] border border-black/10 dark:border-[#2a2a30] rounded-xl shadow-2xl p-6 w-full max-w-md transition-colors">
-                <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-wider mb-4 transition-colors">Add ECU Node</h3>
-                <div className="space-y-3">
-                    <div>
-                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">ECU Name</label>
-                        <input value={label} onChange={e => setLabel(e.target.value)} placeholder="e.g. Airbag SRS"
-                            className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none transition-colors ${!label.trim() && label.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyan-500/50 dark:focus:border-[#00f3ff40]'}`} />
-                        {!label.trim() && label.length > 0 && (
-                            <p className="text-[8px] font-mono text-red-500 dark:text-red-400 mt-1">
-                                ECU name is required.
-                            </p>
-                        )}
+        <Dialog.Root open onOpenChange={(open) => { if (!open) onClose(); }}>
+            <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
+                <Dialog.Content
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
+                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[51] bg-white dark:bg-[#0c0c0f] border border-black/10 dark:border-[#2a2a30] rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.3)] dark:shadow-[0_0_50px_rgba(0,243,255,0.05)] p-6 w-full max-w-md transition-colors focus:outline-none overflow-hidden"
+                >
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
+                
+                <div className="flex items-center justify-between mb-5">
+                    <h3 className="text-sm font-mono font-black text-dark-950 dark:text-[#f1f1f1] uppercase tracking-widest transition-colors flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-sm bg-cyan-500 animate-pulse" />
+                        Provision New ECU Node
+                    </h3>
+                    <button onClick={onClose} className="text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400 p-1 transition-colors">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                    </button>
+                </div>
+                
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-500 uppercase tracking-widest block mb-1.5 transition-colors">ECU Label</label>
+                            <input value={label} onChange={e => setLabel(e.target.value)} placeholder="e.g. Engine ECM" autoFocus
+                                className="w-full bg-gray-50/50 dark:bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] border-black/10 dark:border-[#222] focus:outline-none focus:border-cyan-500/40 dark:focus:border-[#00f3ff40] transition-colors" />
+                        </div>
+                        <div>
+                            <label className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-500 uppercase tracking-widest block mb-1.5 transition-colors">CAN Identifier</label>
+                            <input value={canId} onChange={e => setCanId(e.target.value)}
+                                className={`w-full bg-gray-50/50 dark:bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] focus:outline-none transition-colors ${duplicateNode ? 'border-red-500/50 focus:border-red-400 bg-red-50/5 dark:bg-red-500/5' : 'border-black/10 dark:border-[#222] focus:border-cyan-500/40 dark:focus:border-[#00f3ff40]'}`} />
+                            {duplicateNode && <p className="text-[9px] font-mono text-red-500 dark:text-red-400 mt-1 uppercase tracking-tighter">ID Collision: {duplicateNode.label}</p>}
+                        </div>
                     </div>
+
                     <div>
-                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Description (Tooltip)</label>
-                        <input value={description} onChange={e => setDescription(e.target.value)} placeholder="e.g. Engine ECU - ECM"
-                            className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none focus:border-cyan-500/50 dark:focus:border-[#00f3ff40] transition-colors" />
+                        <label className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-500 uppercase tracking-widest block mb-1.5 transition-colors">Description</label>
+                        <input value={description} onChange={e => setDescription(e.target.value)} placeholder="Node functionality details..."
+                            className="w-full bg-gray-50/50 dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] focus:outline-none focus:border-cyan-500/40 dark:focus:border-[#00f3ff40] transition-colors" />
                     </div>
-                    <div>
-                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">CAN ID</label>
-                        <input value={canId} onChange={e => setCanId(e.target.value)} placeholder="0x7E2"
-                            className={`w-full bg-white dark:bg-[#0a0a0e] border rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none transition-colors ${canId.length < 4 && canId.length > 0 ? 'border-red-500/50 focus:border-red-400' : 'border-black/10 dark:border-[#222] focus:border-cyan-500/50 dark:focus:border-[#00f3ff40]'}`} />
-                        {duplicateNode && (
-                            <p className="text-[8px] font-mono text-red-500 dark:text-red-400 mt-1">
-                                CAN ID {canId} is already in use by {duplicateNode.label}
-                            </p>
-                        )}
-                        {canId.length < 4 && canId.length > 0 && !duplicateNode && (
-                            <p className="text-[8px] font-mono text-light-400 dark:text-gray-500 mt-1 uppercase tracking-tighter transition-colors">
-                                ID must be 4+ characters (e.g., 0x7E0)
-                            </p>
-                        )}
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-500 uppercase tracking-widest block mb-1.5 transition-colors">Baud Rate</label>
+                            <select value={baudRate} onChange={e => setBaudRate(e.target.value)}
+                                className="w-full bg-gray-50/50 dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] focus:outline-none focus:border-cyan-500/40 dark:focus:border-[#00f3ff40] transition-colors">
+                                {BAUD_OPTIONS.map(b => <option key={b} value={b}>{b}</option>)}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-500 uppercase tracking-widest block mb-1.5 transition-colors">Stub (m)</label>
+                            <input value={stubLength} onChange={e => setStubLength(e.target.value)} type="number" step="0.01"
+                                className="w-full bg-gray-50/50 dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] focus:outline-none focus:border-cyan-500/40 dark:focus:border-[#00f3ff40] transition-colors" />
+                        </div>
                     </div>
+
                     <div>
-                        <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Domain</label>
+                        <label className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-500 uppercase tracking-widest block mb-2 transition-colors">Network Domain</label>
                         <div className="flex flex-wrap gap-1.5">
                             {(Object.entries(DOMAIN_META) as [ECUDomain, typeof DOMAIN_META[ECUDomain]][]).map(([key, meta]) => (
                                 <button key={key} onClick={() => setDomain(key)}
-                                    className={`px-2.5 py-1 rounded text-[9px] font-mono font-bold uppercase border transition-all ${domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-900 dark:hover:text-gray-400'}`}
+                                    className={`px-2 py-1.5 rounded text-[10px] font-mono font-bold uppercase border transition-all ${domain === key ? '' : 'border-black/10 dark:border-[#222] text-light-400 dark:text-gray-600 hover:text-dark-400 dark:hover:text-gray-400'}`}
                                     style={domain === key ? { backgroundColor: meta.color + '15', color: meta.color, borderColor: meta.color + '50' } : undefined}>
                                     {meta.label}
                                 </button>
                             ))}
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Stub Length (m)</label>
-                            <input value={stubLength} onChange={e => setStubLength(e.target.value)} placeholder="0.20"
-                                className="w-full bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#222] rounded-md px-3 py-2 text-xs font-mono text-dark-900 dark:text-[#f1f1f1] placeholder:text-gray-300 dark:placeholder:text-gray-700 focus:outline-none focus:border-cyan-500/50 dark:focus:border-[#00f3ff40] transition-colors" />
-                        </div>
-                        <div>
-                            <label className="text-[8px] font-mono text-light-500 dark:text-gray-500 uppercase tracking-wider block mb-1 transition-colors">Baud Rate</label>
-                            <div className="flex gap-1">
-                                {BAUD_OPTIONS.map(b => (
-                                    <button key={b} onClick={() => setBaudRate(b)}
-                                        className={`px-2 py-1.5 rounded text-[9px] font-mono font-bold border transition-all flex-1 ${baudRate === b ? 'bg-cyan-500/10 dark:bg-[#00f3ff15] text-cyan-600 dark:text-[#00f3ff] border-cyan-500/30 dark:border-[#00f3ff40]' : 'text-light-400 dark:text-gray-600 border-black/10 dark:border-[#222] hover:text-dark-900 dark:hover:text-gray-400 transition-colors'}`}>{b}</button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
                 </div>
-                <div className="flex justify-end gap-2 mt-5">
-                    <button onClick={onClose} className="px-4 py-2 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">Cancel</button>
-                    <button onClick={handleSubmit} disabled={!label.trim() || canId.length < 4 || !!duplicateNode}
-                        className="px-4 py-2 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider bg-cyan-500/10 dark:bg-[#00f3ff15] border border-cyan-500/30 dark:border-[#00f3ff40] text-cyan-600 dark:text-[#00f3ff] hover:bg-cyan-500/20 dark:hover:bg-[#00f3ff25] transition-all disabled:opacity-30 disabled:cursor-not-allowed">Add to Bus</button>
+
+                <div className="flex justify-end gap-2 mt-8">
+                    <button onClick={onClose}
+                        className="px-4 py-2 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider border border-black/10 dark:border-[#222] text-light-500 dark:text-gray-500 hover:text-dark-950 dark:hover:text-[#f1f1f1] transition-all">
+                        Cancel
+                    </button>
+                    <button onClick={handleSubmit}
+                        disabled={!label.trim() || canId.length < 4 || !!duplicateNode}
+                        className="px-6 py-2 rounded-md text-[10px] font-mono font-bold uppercase tracking-widest bg-cyan-500/10 dark:bg-[#00f3ff10] border border-cyan-500/40 dark:border-[#00f3ff40] text-cyan-600 dark:text-[#00f3ff] hover:bg-cyan-500/20 dark:hover:bg-[#00f3ff20] transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(0,186,255,0.1)]">
+                        Initialize Node
+                    </button>
                 </div>
-            </motion.div>
-        </motion.div>
+                </Dialog.Content>
+            </Dialog.Portal>
+        </Dialog.Root>
     );
-};
+}
 
 /* ─── Small helpers ─── */
 function StatusBadge({ label, value, color }: { label: string; value: string | number; color: string }) {
@@ -2224,7 +2403,7 @@ function StatusBadge({ label, value, color }: { label: string; value: string | n
     return (
         <div className="flex items-center gap-1.5 px-2 py-1 bg-white dark:bg-[#0a0a0e] border border-black/10 dark:border-[#1a1a20] rounded-md transition-colors">
             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color, boxShadow: isDark ? `0 0 4px ${color}60` : 'none' }} />
-            <span className="text-[9px] font-mono text-light-500 dark:text-gray-400 uppercase tracking-wider transition-colors">{label}</span>
+            <span className="text-[10px] font-mono text-light-500 dark:text-gray-400 uppercase tracking-wider transition-colors">{label}</span>
             <span className="text-[11px] font-mono font-bold transition-colors" style={{ color }}>{value}</span>
         </div>
     );
