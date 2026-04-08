@@ -1,4 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { BitTiming } from '../types/testbench';
+import { 
+    DEFAULT_BIT_TIMING_PRESET, 
+    computeSamplePointPct,
+    computeBaudRate
+} from '../types/testbench';
 
 export type FaultState = 'NONE' | 'H-L-SHORT' | 'H-GND-SHORT' | 'L-GND-SHORT' | 'TERMINATION-MISSING' | 'REFLECTIONS' | 'SHORT_GND' | 'OPEN_CIRCUIT';
 
@@ -8,12 +14,15 @@ interface TestBenchProps {
     totalNodeCount: number;
     terminationLeft: boolean;
     terminationRight: boolean;
+    terminationOk: boolean;
     isArmed: boolean;
     faultState: FaultState;
     transceiverActive: boolean;
     busLoad: number;
     supplyVoltage: number;
     baudRate: number;
+    bitTiming: BitTiming;
+    samplePointPct: number;
     signalDegradation: number;
     maxStubLength: number;
     powerState: 'OFF' | 'ON' | 'CRANKING';
@@ -27,6 +36,7 @@ interface TestBenchProps {
     setTransceiver: (active: boolean) => void;
     setSupplyVoltage: (v: number) => void;
     setBaudRate: (b: number) => void;
+    setBitTiming: (t: BitTiming) => void;
     setSignalDegradation: (d: number) => void;
     setBusLoad: (load: number) => void;
     setMaxStubLength: (len: number) => void;
@@ -50,13 +60,22 @@ export const TestBenchProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const [busLoad, setBusLoad] = useState(38);
     const [supplyVoltage, setSupplyVoltage] = useState(12.4);
     const [baudRate, setBaudRate] = useState(500000);
+    const [bitTiming, setBitTiming] = useState<BitTiming>(DEFAULT_BIT_TIMING_PRESET.timing);
     const [signalDegradation, setSignalDegradation] = useState(0.02);
     const [maxStubLength, setMaxStubLength] = useState(0.3);
     const [powerState, setPowerState] = useState<'OFF' | 'ON' | 'CRANKING'>('ON');
 
+    const terminationOk = terminationLeft && terminationRight;
+    const samplePointPct = computeSamplePointPct(bitTiming);
+
     const applyBitTimingPreset = useCallback((baud: string) => {
         const numericBaud = parseInt(baud.replace('k', '000').replace('M', '000000'));
         setBaudRate(numericBaud);
+    }, []);
+
+    const updateBitTiming = useCallback((t: BitTiming) => {
+        setBitTiming(t);
+        setBaudRate(computeBaudRate(t));
     }, []);
 
     const resetEyeBuffer = useCallback(() => {
@@ -76,7 +95,7 @@ export const TestBenchProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         
         const interval = setInterval(() => {
             // Supply drift
-            setSupplyVoltage(prev => {
+            setSupplyVoltage((prev: number) => {
                 const base = powerState === 'CRANKING' ? 6.2 : 12.4;
                 const drift = (Math.random() - 0.5) * 0.1;
                 return prev + (base - prev) * 0.2 + drift;
@@ -84,9 +103,9 @@ export const TestBenchProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
             // Signal degradation based on termination
             if (!terminationLeft || !terminationRight) {
-                setSignalDegradation(prev => Math.min(0.8, prev + 0.05));
+                setSignalDegradation((prev: number) => Math.min(0.8, prev + 0.05));
             } else {
-                setSignalDegradation(prev => Math.max(0.02, prev - 0.05));
+                setSignalDegradation((prev: number) => Math.max(0.02, prev - 0.05));
             }
         }, 1000);
 
@@ -99,12 +118,15 @@ export const TestBenchProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             totalNodeCount,
             terminationLeft,
             terminationRight,
+            terminationOk,
             isArmed,
             faultState,
             transceiverActive,
             busLoad,
             supplyVoltage,
             baudRate,
+            bitTiming,
+            samplePointPct,
             signalDegradation,
             maxStubLength,
             powerState,
@@ -116,6 +138,7 @@ export const TestBenchProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             setTransceiver,
             setSupplyVoltage,
             setBaudRate,
+            setBitTiming: updateBitTiming,
             setSignalDegradation,
             setBusLoad,
             setMaxStubLength,

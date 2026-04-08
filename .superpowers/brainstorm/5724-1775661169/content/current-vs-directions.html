@@ -1,0 +1,128 @@
+<h2>ECU Node Card Redesign — Direction</h2>
+<p class="subtitle">The cards already have partial color coding (subtle gradient, top accent bar, colored sparklines). How much further should we push the domain visual language?</p>
+
+<div style="margin-bottom: 24px;">
+  <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 12px;">Current State (live screenshot)</h3>
+  <div style="background: #0f0f12; border: 1px solid #222; border-radius: 12px; padding: 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start;">
+    <!-- Current ECM Card (light sim) -->
+    <div style="width: 120px; background: linear-gradient(135deg, #0a0a0f 0%, #f59e0b08 100%); border: 1px solid #f59e0b30; border-radius: 10px; overflow: hidden; position: relative; font-family: monospace;">
+      <div style="height: 3px; background: #f59e0b; box-shadow: 0 0 10px #f59e0b60;"></div>
+      <div style="padding: 8px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <div><div style="font-size: 7px; color: #666; text-transform: uppercase; font-weight: 700;">HEX ID</div><div style="font-size: 10px; color: #fff; font-weight: 700;">0x7E0</div></div>
+          <div style="background: #ffffff10; border: 1px solid #ffffff10; border-radius: 20px; padding: 2px 6px; display: flex; align-items: center; gap: 4px; height: fit-content;">
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e80;"></div>
+            <span style="font-size: 7px; color: #22c55e; font-weight: 700; text-transform: uppercase;">ACTV</span>
+          </div>
+        </div>
+        <div style="background: #ffffff08; border: 1px solid #ffffff08; border-radius: 6px; padding: 4px 10px; margin-bottom: 6px; position: relative; overflow: hidden;">
+          <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #f59e0b;"></div>
+          <span style="font-size: 12px; font-weight: 900; color: #e2e8f0; text-transform: uppercase;">ECM</span>
+        </div>
+        <!-- Sparkline sim -->
+        <div style="background: #00000060; border: 1px solid #ffffff08; border-radius: 4px; height: 24px; margin-bottom: 6px; display: flex; align-items: center; padding: 0 4px; overflow: hidden;">
+          <svg width="100%" height="20" viewBox="0 0 100 20"><polyline points="0,12 10,10 20,8 30,14 40,6 50,10 60,12 70,7 80,9 90,11 100,8" fill="none" stroke="#f59e0b" stroke-width="2" filter="url(#glow)"/><defs><filter id="glow"><feGaussianBlur stdDeviation="1" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <div><div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Throughput</div><div style="font-size: 9px; color: #f59e0b; font-weight: 700;">3 <span style="font-size: 7px; opacity: 0.7;">msg/s</span></div></div>
+          <div style="text-align: right;"><div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Domain</div><div style="font-size: 9px; color: #f59e0b; font-weight: 700; text-transform: uppercase;">Powertrain</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Current ABS/ESP Card -->
+    <div style="width: 120px; background: linear-gradient(135deg, #0a0a0f 0%, #3b82f608 100%); border: 1px solid #3b82f630; border-radius: 10px; overflow: hidden; position: relative; font-family: monospace;">
+      <div style="height: 3px; background: #3b82f6; box-shadow: 0 0 10px #3b82f660;"></div>
+      <div style="padding: 8px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <div><div style="font-size: 7px; color: #666; text-transform: uppercase; font-weight: 700;">HEX ID</div><div style="font-size: 10px; color: #fff; font-weight: 700;">0x740</div></div>
+          <div style="background: #ffffff10; border: 1px solid #ffffff10; border-radius: 20px; padding: 2px 6px; display: flex; align-items: center; gap: 4px; height: fit-content;">
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e80;"></div>
+            <span style="font-size: 7px; color: #22c55e; font-weight: 700; text-transform: uppercase;">ACTV</span>
+          </div>
+        </div>
+        <div style="background: #ffffff08; border: 1px solid #ffffff08; border-radius: 6px; padding: 4px 10px; margin-bottom: 6px; position: relative; overflow: hidden;">
+          <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #3b82f6;"></div>
+          <span style="font-size: 12px; font-weight: 900; color: #e2e8f0; text-transform: uppercase;">ABS/ESP</span>
+        </div>
+        <div style="background: #00000060; border: 1px solid #ffffff08; border-radius: 4px; height: 24px; margin-bottom: 6px; display: flex; align-items: center; padding: 0 4px; overflow: hidden;">
+          <svg width="100%" height="20" viewBox="0 0 100 20"><polyline points="0,8 10,14 20,10 30,6 40,12 50,8 60,14 70,10 80,6 90,12 100,10" fill="none" stroke="#3b82f6" stroke-width="2"/></svg>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <div><div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Throughput</div><div style="font-size: 9px; color: #3b82f6; font-weight: 700;">8 <span style="font-size: 7px; opacity: 0.7;">msg/s</span></div></div>
+          <div style="text-align: right;"><div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Domain</div><div style="font-size: 9px; color: #3b82f6; font-weight: 700; text-transform: uppercase;">Chassis</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="color: #555; font-size: 11px; display: flex; align-items: center; padding-top: 20px;">← Current cards have a subtle 3% gradient + 3px top accent bar + domain-colored sparkline. Barely distinguishable at a glance.</div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Subtle Enhancement</h3>
+      <p>Stronger background tint (15–25% opacity), bolder top accent, domain color on label text. Same layout, improved visibility. Minimal code change.</p>
+      <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <div style="width: 80px; background: linear-gradient(135deg, #0a0a0f 0%, #f59e0b20 100%); border: 1px solid #f59e0b50; border-radius: 8px; overflow: hidden; font-family: monospace;">
+          <div style="height: 4px; background: #f59e0b; box-shadow: 0 0 12px #f59e0b80;"></div>
+          <div style="padding: 6px; text-align: center; font-size: 11px; font-weight: 900; color: #f59e0b; text-transform: uppercase;">ECM</div>
+          <div style="background: #00000040; height: 16px; margin: 0 4px 4px; border-radius: 3px;"></div>
+        </div>
+        <div style="width: 80px; background: linear-gradient(135deg, #0a0a0f 0%, #3b82f620 100%); border: 1px solid #3b82f650; border-radius: 8px; overflow: hidden; font-family: monospace;">
+          <div style="height: 4px; background: #3b82f6; box-shadow: 0 0 12px #3b82f680;"></div>
+          <div style="padding: 6px; text-align: center; font-size: 11px; font-weight: 900; color: #3b82f6; text-transform: uppercase;">ABS</div>
+          <div style="background: #00000040; height: 16px; margin: 0 4px 4px; border-radius: 3px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Domain Header Band</h3>
+      <p>Dedicated colored header band at the top of each card showing domain name + icon. Card body remains dark. Immediately identifies domain before reading the label.</p>
+      <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <div style="width: 80px; background: #0a0a0f; border: 1px solid #f59e0b40; border-radius: 8px; overflow: hidden; font-family: monospace;">
+          <div style="background: linear-gradient(90deg, #f59e0b25, #f59e0b10); border-bottom: 1px solid #f59e0b30; padding: 4px 6px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 7px; color: #f59e0b; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;">POWERTRAIN</span>
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></div>
+          </div>
+          <div style="padding: 6px; text-align: center; font-size: 11px; font-weight: 900; color: #e2e8f0; text-transform: uppercase;">ECM</div>
+          <div style="background: #00000040; height: 16px; margin: 0 4px 4px; border-radius: 3px;"></div>
+        </div>
+        <div style="width: 80px; background: #0a0a0f; border: 1px solid #3b82f640; border-radius: 8px; overflow: hidden; font-family: monospace;">
+          <div style="background: linear-gradient(90deg, #3b82f625, #3b82f610); border-bottom: 1px solid #3b82f630; padding: 4px 6px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 7px; color: #3b82f6; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;">CHASSIS</span>
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></div>
+          </div>
+          <div style="padding: 6px; text-align: center; font-size: 11px; font-weight: 900; color: #e2e8f0; text-transform: uppercase;">ABS/ESP</div>
+          <div style="background: #00000040; height: 16px; margin: 0 4px 4px; border-radius: 3px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Full Domain Badge System</h3>
+      <p>Thick left border (4px) + domain-colored header band + domain badge pill + background glow. Bold, instrument-panel aesthetic. Each domain is unmistakable at a glance.</p>
+      <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <div style="width: 80px; background: linear-gradient(135deg, #0a0a0f, #f59e0b12); border: 1px solid #f59e0b50; border-left: 4px solid #f59e0b; border-radius: 8px; overflow: hidden; font-family: monospace;">
+          <div style="background: linear-gradient(90deg, #f59e0b20, transparent); border-bottom: 1px solid #f59e0b20; padding: 4px 6px;">
+            <span style="font-size: 7px; color: #f59e0b; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;">POWERTRAIN</span>
+          </div>
+          <div style="padding: 6px; text-align: center; font-size: 11px; font-weight: 900; color: #f59e0b; text-transform: uppercase; text-shadow: 0 0 20px #f59e0b40;">ECM</div>
+          <div style="background: #00000040; height: 16px; margin: 0 4px 4px; border-radius: 3px;"></div>
+        </div>
+        <div style="width: 80px; background: linear-gradient(135deg, #0a0a0f, #3b82f612); border: 1px solid #3b82f650; border-left: 4px solid #3b82f6; border-radius: 8px; overflow: hidden; font-family: monospace;">
+          <div style="background: linear-gradient(90deg, #3b82f620, transparent); border-bottom: 1px solid #3b82f620; padding: 4px 6px;">
+            <span style="font-size: 7px; color: #3b82f6; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;">CHASSIS</span>
+          </div>
+          <div style="padding: 6px; text-align: center; font-size: 11px; font-weight: 900; color: #3b82f6; text-transform: uppercase; text-shadow: 0 0 20px #3b82f640;">ABS/ESP</div>
+          <div style="background: #00000040; height: 16px; margin: 0 4px 4px; border-radius: 3px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
