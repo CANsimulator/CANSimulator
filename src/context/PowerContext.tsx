@@ -18,6 +18,7 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [systemVoltage, setSystemVoltage] = useState<SystemVoltage>(12);
     const [targetVoltage, setTargetVoltage] = useState(12.0);
     const [currentLimit, setCurrentLimit] = useState(5.0);
+    const [currentLoad, setCurrentLoad] = useState(0.5);
     const [powerState, setPowerState] = useState<PowerState>('ON');
     const [faultState, setFaultState] = useState<FaultState>('NONE');
 
@@ -50,52 +51,63 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setEcuPower(powerState !== 'OFF');
     }, [powerState]);
 
+    // Keep simulation parameters in a ref to avoid interval thrashing while scrolling
+    const simParamsRef = useRef({ targetVoltage, currentLimit, currentLoad, powerState, faultState });
+    useEffect(() => {
+        simParamsRef.current = { targetVoltage, currentLimit, currentLoad, powerState, faultState };
+    }, [targetVoltage, currentLimit, currentLoad, powerState, faultState]);
+
     // physics simulation loop
     useEffect(() => {
         if (!isSimulatorRoute) return;
 
         const interval = setInterval(() => {
+            const { targetVoltage: tV, currentLimit: cL, currentLoad: cLoad, powerState: pS, faultState: fS } = simParamsRef.current;
+
             // 1. Handle Faults
-            if (faultState === 'SHORT_GND') {
-                setVoltage(prev => prev * 0.7);
-                setCurrent(Math.random() * 5 + 15); // Spike
+            if (fS === 'SHORT_GND') {
+                setVoltage(prev => prev * 0.6); // Rapid drop
+                const spike = Math.random() * 5 + 15;
+                // PSU enters CC mode at currentLimit
+                setCurrent(prev => prev + (Math.min(spike, cL) - prev) * 0.5);
                 return;
             }
-            if (faultState === 'OPEN_CIRCUIT') {
-                setVoltage(prev => prev + (targetVoltage - prev) * 0.3);
-                setCurrent(0);
+            if (fS === 'OPEN_CIRCUIT') {
+                setVoltage(prev => prev + (tV - prev) * 0.3);
+                setCurrent(prev => prev * 0.4); // Rapid drop to near-zero
                 return;
             }
 
             // 2. Handle Power States
-            if (powerState === 'OFF') {
+            if (pS === 'OFF') {
                 setVoltage(prev => Math.max(0, prev * 0.7));
                 setCurrent(prev => Math.max(0, prev * 0.7));
                 return;
             }
 
-            let baseVoltage = targetVoltage;
-            let baseCurrent = 0;
+            let baseVoltage = tV;
+            let baseCurrent = cLoad; // Use user-controlled simulated load
 
-            if (powerState === 'ACC') {
-                baseCurrent = 0.2;
-            } else if (powerState === 'ON') {
-                baseCurrent = 0.5;
-            } else if (powerState === 'CRANKING') {
-                baseCurrent = 8.0;
+            if (pS === 'ACC') {
+                baseCurrent = Math.min(cLoad, 0.2);
+            } else if (pS === 'ON') {
+                // Keep cLoad
+            } else if (pS === 'CRANKING') {
+                baseCurrent = 8.0 + cLoad;
             }
 
             // Apply fluctuations
-            const vRipple = powerState === 'ON' ? (Math.random() - 0.5) * 0.2 : 0.05;
+            const vRipple = pS === 'ON' ? (Math.random() - 0.5) * 0.2 : 0.05;
             let newVoltage = baseVoltage + vRipple;
             const iRipple = (Math.random() - 0.5) * 0.05;
             let newCurrent = baseCurrent + iRipple;
 
-            // Apply Limits
+            // Apply Limits (Constant Current / OCP Mode)
             newVoltage = Math.max(0, Math.min(36, newVoltage));
-            if (newCurrent > currentLimit) {
-                newCurrent = currentLimit;
-                newVoltage = newVoltage * (currentLimit / (baseCurrent + 0.001));
+            if (newCurrent > cL) {
+                newCurrent = cL;
+                // V drop to maintain current limit: V_out = V_set * (I_limit / I_load)
+                newVoltage = newVoltage * (cL / (baseCurrent + 0.001));
             }
 
             setVoltage(prev => prev + (newVoltage - prev) * 0.3);
@@ -103,7 +115,7 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }, 100); // 100ms update for smoother responsiveness
 
         return () => clearInterval(interval);
-    }, [isSimulatorRoute, powerState, faultState, targetVoltage, currentLimit]);
+    }, [isSimulatorRoute]);
 
     const toggleEcuPower = useCallback(() => {
         setPowerState(prev => prev === 'OFF' ? 'ON' : 'OFF');
@@ -120,7 +132,9 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
         if (crankTimerRef.current) clearInterval(crankTimerRef.current);
         crankTimerRef.current = setInterval(() => {
+            const { targetVoltage: tV, currentLimit: cL } = simParamsRef.current;
             const elapsed = Date.now() - startTime;
+            
             if (elapsed >= duration) {
                 if (crankTimerRef.current) {
                     clearInterval(crankTimerRef.current);
@@ -137,11 +151,12 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 crankVolts = 6.0 + (Math.random() * 1.0);
             } else {
                 const progress = (elapsed - 1000) / 500;
-                crankVolts = 7.0 + progress * (targetVoltage - 7.0);
+                crankVolts = 7.0 + progress * (tV - 7.0);
             }
 
+            const rawCurrent = 8.0 + (Math.random() * 2.0);
             setVoltage(crankVolts);
-            setCurrent(8.0 + (Math.random() * 2.0));
+            setCurrent(Math.min(rawCurrent, cL));
         }, 50);
     }, [powerState, targetVoltage]);
 
@@ -196,6 +211,20 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }, 50);
     }, [rpsPowerDownTime]);
 
+    const resetToDefaults = useCallback(() => {
+        setTargetVoltage(12.0);
+        setCurrentLimit(5.0);
+        setCurrentLoad(0.5);
+        setSystemVoltage(12);
+        setPowerState('ON');
+        setFaultState('NONE');
+        setRpsEnabled(false);
+        setRpsCountdown(null);
+        if (crankTimerRef.current) clearInterval(crankTimerRef.current);
+        if (rpsTimerRef.current) clearInterval(rpsTimerRef.current);
+        activeTimers.current.forEach(clearTimeout);
+    }, []);
+
     const value = useMemo(() => ({
         voltage,
         current,
@@ -203,6 +232,7 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         systemVoltage,
         targetVoltage,
         currentLimit,
+        currentLoad,
         powerState,
         faultState,
         rpsEnabled,
@@ -214,7 +244,9 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setSystemVoltage,
         setTargetVoltage,
         setCurrentLimit,
+        setCurrentLoad,
         setFaultState,
+        resetToDefaults,
         simulateCranking,
         setVoltage,
         setCurrent,
@@ -228,12 +260,14 @@ export const PowerProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         systemVoltage,
         targetVoltage,
         currentLimit,
+        currentLoad,
         powerState,
         faultState,
         rpsEnabled,
         rpsPowerDownTime,
         rpsCountdown,
         toggleEcuPower,
+        resetToDefaults,
         simulateCranking,
         triggerRpsPowerDown,
         simulateResetVoltageProfile,

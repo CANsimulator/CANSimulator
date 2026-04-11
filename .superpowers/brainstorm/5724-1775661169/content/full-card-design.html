@@ -1,0 +1,197 @@
+<h2>Full ECU Node Card — Final Design</h2>
+<p class="subtitle">Approach 2: extracted ECUNodeCard component. All 6 domain colours shown — dark mode only (matches app theme).</p>
+
+<div style="background: #08080c; border: 1px solid #1a1a20; border-radius: 14px; padding: 20px;">
+  <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+
+    <!-- ECM — Powertrain / amber -->
+    <div style="width: 118px; background: linear-gradient(135deg, #0a0a0f 0%, #f59e0b12 100%); border: 1px solid #f59e0b40; border-left: 4px solid #f59e0b; border-radius: 10px; overflow: hidden; font-family: 'JetBrains Mono', monospace; position: relative; box-shadow: inset 0 1px 0 #f59e0b10, 0 0 20px #f59e0b08;">
+      <!-- Domain header band -->
+      <div style="background: linear-gradient(90deg, #f59e0b22, #f59e0b08); border-bottom: 1px solid #f59e0b25; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 7px; color: #f59e0b; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;">Powertrain</span>
+        <div style="display: flex; align-items: center; gap: 4px; background: #ffffff08; border: 1px solid #ffffff10; border-radius: 20px; padding: 2px 5px;">
+          <div style="width: 5px; height: 5px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 5px #22c55e80;"></div>
+          <span style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase;">ACTV</span>
+        </div>
+      </div>
+      <div style="padding: 8px 8px 6px;">
+        <!-- HEX ID row -->
+        <div style="margin-bottom: 5px;">
+          <span style="font-size: 7px; color: #444; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">HEX ID</span>
+          <span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-left: 6px;">0x7E0</span>
+        </div>
+        <!-- Label house -->
+        <div style="background: #f59e0b0a; border: 1px solid #f59e0b20; border-radius: 6px; padding: 5px 8px; margin-bottom: 7px; position: relative; overflow: hidden;">
+          <span style="font-size: 13px; font-weight: 900; color: #f59e0b; text-transform: uppercase; letter-spacing: -0.01em; text-shadow: 0 0 20px #f59e0b30;">ECM</span>
+        </div>
+        <!-- State-shifting sparkline -->
+        <div style="background: #00000050; border: 1px solid #ffffff06; border-radius: 5px; height: 26px; margin-bottom: 6px; overflow: hidden; display: flex; align-items: center; padding: 0 4px; position: relative;">
+          <div style="position: absolute; inset: 0; opacity: 0.06;" ></div>
+          <svg width="100%" height="22" viewBox="0 0 110 22">
+            <!-- idle segment (domain color) -->
+            <polyline points="0,14 15,12 30,13" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+            <!-- TX segment (green) -->
+            <polyline points="30,13 45,7 55,5 65,9 75,6" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" filter="url(#gtx)"/>
+            <!-- idle again -->
+            <polyline points="75,6 90,12 110,13" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+            <defs><filter id="gtx"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          </svg>
+          <span style="position: absolute; left: 5px; top: 3px; font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em;">TRANSMITTING</span>
+        </div>
+        <!-- TX / RX counters -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 2px;">
+          <div>
+            <div style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1px;">↑ TX</div>
+            <div style="font-size: 10px; color: #22c55e; font-weight: 900;">142 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div>
+          </div>
+          <div style="width: 1px; height: 22px; background: #ffffff10;"></div>
+          <div style="text-align: right;">
+            <div style="font-size: 6px; color: #3b82f6; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1px;">RX ↓</div>
+            <div style="font-size: 10px; color: #3b82f6; font-weight: 900;">89 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABS/ESP — Chassis / blue -->
+    <div style="width: 118px; background: linear-gradient(135deg, #0a0a0f 0%, #3b82f612 100%); border: 1px solid #3b82f640; border-left: 4px solid #3b82f6; border-radius: 10px; overflow: hidden; font-family: monospace; position: relative;">
+      <div style="background: linear-gradient(90deg, #3b82f622, #3b82f608); border-bottom: 1px solid #3b82f625; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 7px; color: #3b82f6; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;">Chassis</span>
+        <div style="display: flex; align-items: center; gap: 4px; background: #ffffff08; border: 1px solid #ffffff10; border-radius: 20px; padding: 2px 5px;">
+          <div style="width: 5px; height: 5px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 5px #22c55e80;"></div>
+          <span style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase;">ACTV</span>
+        </div>
+      </div>
+      <div style="padding: 8px 8px 6px;">
+        <div style="margin-bottom: 5px;"><span style="font-size: 7px; color: #444; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">HEX ID</span><span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-left: 6px;">0x740</span></div>
+        <div style="background: #3b82f60a; border: 1px solid #3b82f620; border-radius: 6px; padding: 5px 8px; margin-bottom: 7px;">
+          <span style="font-size: 13px; font-weight: 900; color: #3b82f6; text-transform: uppercase; text-shadow: 0 0 20px #3b82f630;">ABS/ESP</span>
+        </div>
+        <!-- Idle sparkline (RX state) -->
+        <div style="background: #00000050; border: 1px solid #ffffff06; border-radius: 5px; height: 26px; margin-bottom: 6px; overflow: hidden; display: flex; align-items: center; padding: 0 4px; position: relative;">
+          <svg width="100%" height="22" viewBox="0 0 110 22">
+            <polyline points="0,13 20,12 35,14" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+            <polyline points="35,14 50,18 60,15 70,20 80,16 95,19 110,17" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" filter="url(#grx)"/>
+            <defs><filter id="grx"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          </svg>
+          <span style="position: absolute; right: 5px; top: 3px; font-size: 6px; color: #3b82f6; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em;">RECEIVING</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 2px;">
+          <div><div style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase; margin-bottom: 1px;">↑ TX</div><div style="font-size: 10px; color: #22c55e; font-weight: 900;">37 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div></div>
+          <div style="width: 1px; height: 22px; background: #ffffff10;"></div>
+          <div style="text-align: right;"><div style="font-size: 6px; color: #3b82f6; font-weight: 900; text-transform: uppercase; margin-bottom: 1px;">RX ↓</div><div style="font-size: 10px; color: #3b82f6; font-weight: 900;">204 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BCM — Body / purple -->
+    <div style="width: 118px; background: linear-gradient(135deg, #0a0a0f 0%, #a855f712 100%); border: 1px solid #a855f740; border-left: 4px solid #a855f7; border-radius: 10px; overflow: hidden; font-family: monospace; position: relative;">
+      <div style="background: linear-gradient(90deg, #a855f722, #a855f708); border-bottom: 1px solid #a855f725; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 7px; color: #a855f7; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;">Body</span>
+        <div style="display: flex; align-items: center; gap: 4px; background: #ffffff08; border: 1px solid #ffffff10; border-radius: 20px; padding: 2px 5px;">
+          <div style="width: 5px; height: 5px; border-radius: 50%; background: #22c55e;"></div>
+          <span style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase;">ACTV</span>
+        </div>
+      </div>
+      <div style="padding: 8px 8px 6px;">
+        <div style="margin-bottom: 5px;"><span style="font-size: 7px; color: #444; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">HEX ID</span><span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-left: 6px;">0x650</span></div>
+        <div style="background: #a855f70a; border: 1px solid #a855f720; border-radius: 6px; padding: 5px 8px; margin-bottom: 7px;">
+          <span style="font-size: 13px; font-weight: 900; color: #a855f7; text-transform: uppercase; text-shadow: 0 0 20px #a855f730;">BCM</span>
+        </div>
+        <div style="background: #00000050; border: 1px solid #ffffff06; border-radius: 5px; height: 26px; margin-bottom: 6px; overflow: hidden; display: flex; align-items: center; padding: 0 4px;">
+          <svg width="100%" height="22" viewBox="0 0 110 22"><polyline points="0,11 20,12 40,11 60,12 80,11 100,12 110,11" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" opacity="0.5"/></svg>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 2px;">
+          <div><div style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase; margin-bottom: 1px;">↑ TX</div><div style="font-size: 10px; color: #22c55e; font-weight: 900;">1 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div></div>
+          <div style="width: 1px; height: 22px; background: #ffffff10;"></div>
+          <div style="text-align: right;"><div style="font-size: 6px; color: #3b82f6; font-weight: 900; text-transform: uppercase; margin-bottom: 1px;">RX ↓</div><div style="font-size: 10px; color: #3b82f6; font-weight: 900;">12 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IC — Infotainment / pink -->
+    <div style="width: 118px; background: linear-gradient(135deg, #0a0a0f 0%, #ec489912 100%); border: 1px solid #ec489940; border-left: 4px solid #ec4899; border-radius: 10px; overflow: hidden; font-family: monospace; position: relative;">
+      <div style="background: linear-gradient(90deg, #ec489922, #ec489908); border-bottom: 1px solid #ec489925; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 7px; color: #ec4899; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;">Infotainment</span>
+        <div style="display: flex; align-items: center; gap: 4px; background: #ffffff08; border: 1px solid #ffffff10; border-radius: 20px; padding: 2px 5px;">
+          <div style="width: 5px; height: 5px; border-radius: 50%; background: #22c55e;"></div>
+          <span style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase;">ACTV</span>
+        </div>
+      </div>
+      <div style="padding: 8px 8px 6px;">
+        <div style="margin-bottom: 5px;"><span style="font-size: 7px; color: #444; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">HEX ID</span><span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-left: 6px;">0x660</span></div>
+        <div style="background: #ec48990a; border: 1px solid #ec489920; border-radius: 6px; padding: 5px 8px; margin-bottom: 7px;">
+          <span style="font-size: 13px; font-weight: 900; color: #ec4899; text-transform: uppercase; text-shadow: 0 0 20px #ec489930;">IC</span>
+        </div>
+        <div style="background: #00000050; border: 1px solid #ffffff06; border-radius: 5px; height: 26px; margin-bottom: 6px; overflow: hidden; display: flex; align-items: center; padding: 0 4px;">
+          <svg width="100%" height="22" viewBox="0 0 110 22"><polyline points="0,11 20,12 40,11 60,12 80,11 100,12 110,11" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" opacity="0.5"/></svg>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 2px;">
+          <div><div style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase; margin-bottom: 1px;">↑ TX</div><div style="font-size: 10px; color: #22c55e; font-weight: 900;">4 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div></div>
+          <div style="width: 1px; height: 22px; background: #ffffff10;"></div>
+          <div style="text-align: right;"><div style="font-size: 6px; color: #3b82f6; font-weight: 900; text-transform: uppercase; margin-bottom: 1px;">RX ↓</div><div style="font-size: 10px; color: #3b82f6; font-weight: 900;">31 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADAS — teal -->
+    <div style="width: 118px; background: linear-gradient(135deg, #0a0a0f 0%, #14b8a612 100%); border: 1px solid #14b8a640; border-left: 4px solid #14b8a6; border-radius: 10px; overflow: hidden; font-family: monospace; position: relative;">
+      <div style="background: linear-gradient(90deg, #14b8a622, #14b8a608); border-bottom: 1px solid #14b8a625; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 7px; color: #14b8a6; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;">ADAS</span>
+        <div style="display: flex; align-items: center; gap: 4px; background: #ffffff08; border: 1px solid #ffffff10; border-radius: 20px; padding: 2px 5px;">
+          <div style="width: 5px; height: 5px; border-radius: 50%; background: #22c55e;"></div>
+          <span style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase;">ACTV</span>
+        </div>
+      </div>
+      <div style="padding: 8px 8px 6px;">
+        <div style="margin-bottom: 5px;"><span style="font-size: 7px; color: #444; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">HEX ID</span><span style="font-size: 10px; color: #94a3b8; font-weight: 700; margin-left: 6px;">0x680</span></div>
+        <div style="background: #14b8a60a; border: 1px solid #14b8a620; border-radius: 6px; padding: 5px 8px; margin-bottom: 7px;">
+          <span style="font-size: 13px; font-weight: 900; color: #14b8a6; text-transform: uppercase; text-shadow: 0 0 20px #14b8a630;">ADAS</span>
+        </div>
+        <div style="background: #00000050; border: 1px solid #ffffff06; border-radius: 5px; height: 26px; margin-bottom: 6px; overflow: hidden; display: flex; align-items: center; padding: 0 4px;">
+          <svg width="100%" height="22" viewBox="0 0 110 22"><polyline points="0,11 20,12 40,11 60,12 80,11 100,12 110,11" fill="none" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" opacity="0.5"/></svg>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 2px;">
+          <div><div style="font-size: 6px; color: #22c55e; font-weight: 900; text-transform: uppercase; margin-bottom: 1px;">↑ TX</div><div style="font-size: 10px; color: #22c55e; font-weight: 900;">0 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div></div>
+          <div style="width: 1px; height: 22px; background: #ffffff10;"></div>
+          <div style="text-align: right;"><div style="font-size: 6px; color: #3b82f6; font-weight: 900; text-transform: uppercase; margin-bottom: 1px;">RX ↓</div><div style="font-size: 10px; color: #3b82f6; font-weight: 900;">0 <span style="font-size: 7px; opacity: 0.5; font-weight: 400;">frm</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBD-GW — Diagnostic / cyan — OFFLINE -->
+    <div style="width: 118px; background: #0a0a0f; border: 1px solid #333; border-left: 4px solid #333; border-radius: 10px; overflow: hidden; font-family: monospace; position: relative; opacity: 0.55;">
+      <div style="background: #111116; border-bottom: 1px solid #1e1e24; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 7px; color: #444; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;">Diagnostic</span>
+        <div style="display: flex; align-items: center; gap: 4px; background: #ffffff05; border: 1px solid #ffffff08; border-radius: 20px; padding: 2px 5px;">
+          <div style="width: 5px; height: 5px; border-radius: 50%; background: #ef4444;"></div>
+          <span style="font-size: 6px; color: #ef4444; font-weight: 900; text-transform: uppercase;">OFF</span>
+        </div>
+      </div>
+      <div style="padding: 8px 8px 6px;">
+        <div style="margin-bottom: 5px;"><span style="font-size: 7px; color: #333; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">HEX ID</span><span style="font-size: 10px; color: #444; font-weight: 700; margin-left: 6px;">0x7DF</span></div>
+        <div style="background: #1a1a20; border: 1px solid #222; border-radius: 6px; padding: 5px 8px; margin-bottom: 7px;">
+          <span style="font-size: 13px; font-weight: 900; color: #444; text-transform: uppercase;">OBD-GW</span>
+        </div>
+        <div style="background: #0a0a0f; border: 1px solid #1a1a20; border-radius: 5px; height: 26px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center;">
+          <span style="font-size: 7px; color: #333; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">— offline —</span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; padding: 0 2px;">
+          <span style="font-size: 8px; color: #333; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">no data</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Domain legend -->
+  <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #1a1a20; justify-content: center;">
+    <span style="font-size: 7px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #444; padding-top: 2px;">Domains:</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:8px;font-weight:700;color:#f59e0b;font-family:monospace;"><span style="width:8px;height:8px;background:#f59e0b;border-radius:2px;"></span>Powertrain</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:8px;font-weight:700;color:#3b82f6;font-family:monospace;"><span style="width:8px;height:8px;background:#3b82f6;border-radius:2px;"></span>Chassis</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:8px;font-weight:700;color:#a855f7;font-family:monospace;"><span style="width:8px;height:8px;background:#a855f7;border-radius:2px;"></span>Body</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:8px;font-weight:700;color:#ec4899;font-family:monospace;"><span style="width:8px;height:8px;background:#ec4899;border-radius:2px;"></span>Infotainment</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:8px;font-weight:700;color:#14b8a6;font-family:monospace;"><span style="width:8px;height:8px;background:#14b8a6;border-radius:2px;"></span>ADAS</span>
+    <span style="display:flex;align-items:center;gap:4px;font-size:8px;font-weight:700;color:#00f3ff;font-family:monospace;"><span style="width:8px;height:8px;background:#00f3ff;border-radius:2px;"></span>Diagnostic</span>
+  </div>
+</div>

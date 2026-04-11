@@ -14,6 +14,7 @@ export interface PowerContextType {
     systemVoltage: SystemVoltage;
     targetVoltage: number;
     currentLimit: number;
+    currentLoad: number;
     powerState: PowerState;
     faultState: FaultState;
     rpsEnabled: boolean;
@@ -26,7 +27,9 @@ export interface PowerContextType {
     setSystemVoltage: (volts: SystemVoltage) => void;
     setTargetVoltage: (volts: number) => void;
     setCurrentLimit: (amps: number) => void;
+    setCurrentLoad: (amps: number) => void;
     setFaultState: (fault: FaultState) => void;
+    resetToDefaults: () => void;
     simulateCranking: () => void;
     setVoltage: (volts: number) => void;
     setCurrent: (amps: number) => void;

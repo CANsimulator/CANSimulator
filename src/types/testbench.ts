@@ -14,6 +14,7 @@ export interface BitTiming {
     sjw: number;
     brp: number;
     oscillator: number; // Hz, e.g., 16000000
+    sam: number; // 0 = single sample, 1 = triple sample
 }
 
 export interface BitTimingPreset {
@@ -30,28 +31,28 @@ export const BIT_TIMING_PRESETS: readonly BitTimingPreset[] = [
         name: '125 kbit/s',
         clock: '16 MHz',
         baudRate: 125_000,
-        timing: { sync: 1, prop: 7, phase1: 4, phase2: 4, sjw: 1, brp: 4, oscillator: 16_000_000 },
+        timing: { sync: 1, prop: 7, phase1: 4, phase2: 4, sjw: 1, brp: 4, oscillator: 16_000_000, sam: 0 },
     },
     {
         id: '250k',
         name: '250 kbit/s',
         clock: '16 MHz',
         baudRate: 250_000,
-        timing: { sync: 1, prop: 7, phase1: 4, phase2: 4, sjw: 1, brp: 2, oscillator: 16_000_000 },
+        timing: { sync: 1, prop: 7, phase1: 4, phase2: 4, sjw: 1, brp: 2, oscillator: 16_000_000, sam: 0 },
     },
     {
         id: '500k',
         name: '500 kbit/s',
         clock: '16 MHz',
         baudRate: 500_000,
-        timing: { sync: 1, prop: 7, phase1: 4, phase2: 4, sjw: 1, brp: 1, oscillator: 16_000_000 },
+        timing: { sync: 1, prop: 7, phase1: 4, phase2: 4, sjw: 1, brp: 1, oscillator: 16_000_000, sam: 0 },
     },
     {
         id: '1m',
         name: '1000 kbit/s',
         clock: '16 MHz',
         baudRate: 1_000_000,
-        timing: { sync: 1, prop: 3, phase1: 2, phase2: 2, sjw: 1, brp: 1, oscillator: 16_000_000 },
+        timing: { sync: 1, prop: 3, phase1: 2, phase2: 2, sjw: 1, brp: 1, oscillator: 16_000_000, sam: 0 },
     },
 ] as const;
 
@@ -74,7 +75,8 @@ export function isSameBitTiming(left: BitTiming, right: BitTiming): boolean {
         && left.phase2 === right.phase2
         && left.sjw === right.sjw
         && left.brp === right.brp
-        && left.oscillator === right.oscillator;
+        && left.oscillator === right.oscillator
+        && left.sam === right.sam;
 }
 
 export function findBitTimingPresetById(id: BitTimingPreset['id']): BitTimingPreset | undefined {

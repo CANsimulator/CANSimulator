@@ -8,7 +8,7 @@ import { PowerProvider } from './context/PowerContext';
 import { TestBenchProvider } from './context/TestBenchContext';
 import { useScrollToTop } from './hooks/useScrollToTop';
 import Header from './components/common/Header';
-import Footer, { MinimalFooter } from './components/common/Footer';
+import Footer from './components/common/Footer';
 
 // Lazy load pages for better performance
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -68,7 +68,7 @@ function AppLayout() {
               <Outlet />
             </Suspense>
           </main>
-          {showStatusBar ? <MinimalFooter /> : <Footer />}
+          <Footer />
         </div>
       </ErrorBoundary>
     </div>

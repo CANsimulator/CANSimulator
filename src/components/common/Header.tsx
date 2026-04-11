@@ -26,6 +26,7 @@ const NAV_LINKS = [
 export function Header() {
     const { theme, toggleTheme } = useTheme();
     const isDark = theme === 'dark';
+    const logoUrl = `${import.meta.env.BASE_URL}branding/can-simulator-logo-d-icon.svg`;
     const { isAuthenticated, user, logout, isLoading } = useAuth();
     const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -95,8 +96,15 @@ export function Header() {
                     <Link to="/" className="flex items-center gap-3 group transition-all">
                         <div className="relative flex-shrink-0">
                             <div className="absolute inset-0 bg-cyber-blue/20 rounded-xl blur-lg group-hover:bg-cyber-blue/30 transition-all opacity-0 group-hover:opacity-100"></div>
-                            <div className="h-10 sm:h-12 w-10 sm:w-12 rounded-xl bg-gradient-to-br from-cyber-blue to-cyber-purple flex items-center justify-center font-black text-black text-lg shadow-neon/40 relative z-10 transition-transform group-hover:scale-105">
-                                C
+                            <div className={cn(
+                                "h-10 sm:h-12 w-10 sm:w-12 rounded-xl flex items-center justify-center shadow-neon/40 relative z-10 transition-transform group-hover:scale-105 border",
+                                isDark ? "bg-dark-900/80 border-cyber-blue/30" : "bg-white border-cyan-200"
+                            )}>
+                                <img
+                                    src={logoUrl}
+                                    alt="CAN Simulator"
+                                    className="h-7 w-7 sm:h-8 sm:w-8"
+                                />
                             </div>
                         </div>
                         <div className="flex flex-col">

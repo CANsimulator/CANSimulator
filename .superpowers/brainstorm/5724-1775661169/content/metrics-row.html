@@ -1,0 +1,96 @@
+<h2>Card Body — Metrics Row</h2>
+<p class="subtitle">With domain name moved to the header band, what data occupies the bottom of the card? (All options keep the state-shifting sparkline above.)</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Keep Current: Rate + Domain</h3>
+      <p>Throughput (msg/s) on the left, domain text on the right. Simple and familiar — domain text is now redundant with the header band but acts as a quick colour-coded label.</p>
+      <div style="margin-top: 10px; background: #0a0a0f; border-radius: 6px; padding: 6px 8px; font-family: monospace; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222;">
+        <div>
+          <div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Throughput</div>
+          <div style="font-size: 9px; color: #f59e0b; font-weight: 700;">3 <span style="font-size: 7px; opacity: 0.6;">msg/s</span></div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Domain</div>
+          <div style="font-size: 9px; color: #f59e0b; font-weight: 700; text-transform: uppercase;">Powertrain</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Rate + Error Count</h3>
+      <p>Throughput on the left, cumulative error frame count on the right with a red badge when non-zero. Surfaces bus health at a glance — useful for fault injection scenarios.</p>
+      <div style="margin-top: 10px; background: #0a0a0f; border-radius: 6px; padding: 6px 8px; font-family: monospace; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222;">
+        <div>
+          <div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Rate</div>
+          <div style="font-size: 9px; color: #f59e0b; font-weight: 700;">3 <span style="font-size: 7px; opacity: 0.6;">msg/s</span></div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Errors</div>
+          <div style="display: flex; align-items: center; gap: 4px; justify-content: flex-end;">
+            <div style="width: 5px; height: 5px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 6px #ef444480;"></div>
+            <span style="font-size: 9px; color: #ef4444; font-weight: 700;">2</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 6px; background: #0a0a0f; border-radius: 6px; padding: 6px 8px; font-family: monospace; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222;">
+        <div>
+          <div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Rate</div>
+          <div style="font-size: 9px; color: #3b82f6; font-weight: 700;">8 <span style="font-size: 7px; opacity: 0.6;">msg/s</span></div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700;">Errors</div>
+          <div style="font-size: 9px; color: #555; font-weight: 700;">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>TX Count + RX Count</h3>
+      <p>Show cumulative TX frames (↑) and RX frames (↓) side by side. Precise frame counters — shows which nodes are the talkers vs listeners on the bus.</p>
+      <div style="margin-top: 10px; background: #0a0a0f; border-radius: 6px; padding: 6px 8px; font-family: monospace; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222;">
+        <div>
+          <div style="font-size: 6px; color: #22c55e; text-transform: uppercase; font-weight: 700;">↑ TX</div>
+          <div style="font-size: 9px; color: #22c55e; font-weight: 700;">142 <span style="font-size: 7px; opacity: 0.6;">frm</span></div>
+        </div>
+        <div style="width: 1px; height: 20px; background: #222;"></div>
+        <div style="text-align: right;">
+          <div style="font-size: 6px; color: #3b82f6; text-transform: uppercase; font-weight: 700;">RX ↓</div>
+          <div style="font-size: 9px; color: #3b82f6; font-weight: 700;">89 <span style="font-size: 7px; opacity: 0.6;">frm</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="d" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Rate + TX + Errors (3-col)</h3>
+      <p>Three compact columns: msg/s rate, TX frame count, error count. Maximum bus diagnostic data per card. Works well with wider cards.</p>
+      <div style="margin-top: 10px; background: #0a0a0f; border-radius: 6px; padding: 6px 8px; font-family: monospace; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; gap: 4px;">
+        <div style="text-align: center; flex: 1;">
+          <div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Rate</div>
+          <div style="font-size: 9px; color: #f59e0b; font-weight: 700;">3<span style="font-size: 6px; opacity: 0.6;">/s</span></div>
+        </div>
+        <div style="width: 1px; height: 20px; background: #222;"></div>
+        <div style="text-align: center; flex: 1;">
+          <div style="font-size: 6px; color: #22c55e; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">↑ TX</div>
+          <div style="font-size: 9px; color: #22c55e; font-weight: 700;">142</div>
+        </div>
+        <div style="width: 1px; height: 20px; background: #222;"></div>
+        <div style="text-align: center; flex: 1;">
+          <div style="font-size: 6px; color: #555; text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Err</div>
+          <div style="font-size: 9px; color: #555; font-weight: 700;">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

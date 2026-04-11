@@ -78,6 +78,23 @@ html {
   .gradient-text {
     @apply bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent;
   }
+
+  /* Cyber Glow Utilities */
+  .shadow-glow {
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+  }
+  
+  .shadow-glow-sm {
+    text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+  }
+  
+  .shadow-glow-amber {
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.5), 0 0 20px rgba(245, 158, 11, 0.3);
+  }
+
+  .shadow-glow-purple {
+    text-shadow: 0 0 10px rgba(189, 0, 255, 0.5), 0 0 20px rgba(189, 0, 255, 0.3);
+  }
 }
 
 /* Animations */

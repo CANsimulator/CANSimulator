@@ -57,6 +57,23 @@ const PhysicalPageInner: React.FC = () => {
                         <p className="text-xs sm:text-sm font-mono font-bold uppercase tracking-[0.2em] text-light-600 dark:text-[#f1f1f1] transition-colors">
                             CAN Physical Layer Analysis · ISO 11898-2 · Signal Integrity &amp; Power
                         </p>
+                        
+                        {/* Jump Links Navigation (Issue 257) */}
+                        <nav className="mt-4 flex flex-wrap gap-2" aria-label="Section shortcuts">
+                            {[
+                                { id: 'power-supply', label: 'Power Supply' },
+                                { id: 'bit-timing', label: 'Bit Timing' },
+                                { id: 'transceiver', label: 'Transceiver' }
+                            ].map(({ id, label }) => (
+                                <a
+                                    key={id}
+                                    href={`#${id}`}
+                                    className="flex-shrink-0 px-3 py-1 rounded border border-black/10 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-[10px] font-mono font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 transition-all focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                >
+                                    {label}
+                                </a>
+                            ))}
+                        </nav>
                     </div>
                     <div className="flex items-center gap-1.5 xs:gap-3 rounded-lg border border-black/10 dark:border-[#2a2a30] bg-gray-50 dark:bg-[#1a1a1e] px-2 xs:px-3 py-1.5 transition-colors">
                         <div className={`h-1.5 w-1.5 rounded-full ${statusAccent}`} />
@@ -66,7 +83,7 @@ const PhysicalPageInner: React.FC = () => {
                     </div>
                 </header>
 
-                <section className="px-2">
+                <section id="transceiver" className="px-2 scroll-mt-24">
                     <RackLabel number={1} name="Differential Voltage Oscilloscope" badge={baudLabel} />
                     <VoltageScope />
                 </section>
@@ -81,12 +98,12 @@ const PhysicalPageInner: React.FC = () => {
                     <BusTopology />
                 </section>
 
-                <section className="px-2">
+                <section id="power-supply" className="px-2 scroll-mt-24">
                     <RackLabel number={3} name="Lab Power Supply" badge="PPS-3005" />
                     <PowerSupplyDashboard />
                 </section>
 
-                <section className="px-2">
+                <section id="bit-timing" className="px-2 scroll-mt-24">
                     <RackLabel number={4} name="CAN Controller - Bit Timing Registers" badge="MCP2515" />
                     <BitTimingConfig />
                 </section>

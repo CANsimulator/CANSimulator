@@ -52,11 +52,21 @@ export function generateBitStream(): boolean[] {
     return bits;
 }
 
+export interface ChannelOptions {
+    bwLimit?: boolean;
+    coupling?: 'AC' | 'DC';
+}
+
 /**
  * Generates a single sample point based on the provided wave state.
  * Mutates the state object (intended for use with React refs).
  */
-export function generateSample(prev: Sample | null, state: WaveState): Sample {
+export function generateSample(
+    prev: Sample | null, 
+    state: WaveState, 
+    ch1?: ChannelOptions, 
+    ch2?: ChannelOptions
+): Sample {
     const bitPhase = state.globalSampleIndex % BIT_TIME_SAMPLES;
     
     if (bitPhase === 0) {
@@ -71,16 +81,42 @@ export function generateSample(prev: Sample | null, state: WaveState): Sample {
 
     const wasTransition = prev ? prev.isDominant !== isDominant : false;
     const edgePhase = bitPhase / BIT_TIME_SAMPLES;
-    const n = () => (Math.random() - 0.5) * 0.06;
     
-    // Physical layer effects (ringing and overshoot)
-    const ringing = wasTransition && edgePhase < 0.4
-        ? Math.sin(edgePhase * Math.PI * 6) * 0.15 * (1 - edgePhase * 2.5)
+    // Configurable noise and physical layer realism
+    const noise = () => (Math.random() - 0.5) * 0.12; // Increased noise floor slightly for realism
+    
+    // Physical layer effects (ringing, overshoot, and reflections)
+    const ringing = wasTransition && edgePhase < 0.35
+        ? Math.sin(edgePhase * Math.PI * 6) * 0.18 * (1 - edgePhase * 2.8)
         : 0;
-    const overshoot = wasTransition && edgePhase < 0.15 ? 0.12 : 0;
+    
+    // Reflection simulation: a small, delayed echo of the transition
+    const reflection = wasTransition && edgePhase > 0.15 && edgePhase < 0.45
+        ? (isDominant ? -0.08 : 0.08) * Math.cos((edgePhase - 0.2) * Math.PI * 4) * (0.5 - edgePhase)
+        : 0;
 
-    const canh = isDominant ? ISO.CANH_DOM_TYP + n() + ringing + overshoot : ISO.V_REC + n() * 0.5 + ringing * 0.3;
-    const canl = isDominant ? ISO.CANL_DOM_TYP + n() - ringing - overshoot : ISO.V_REC + n() * 0.5 - ringing * 0.3;
+    const overshoot = wasTransition && edgePhase < 0.15 ? 0.14 : 0;
+
+    // ISO 11898 Standard Levels:
+    // Recessive: CAN-H = 2.5V, CAN-L = 2.5V (Vdiff = 0V)
+    // Dominant: CAN-H = 3.5V, CAN-L = 1.5V (Vdiff = 2.0V)
+    let canh = isDominant 
+        ? ISO.CANH_DOM_TYP + noise() + ringing + overshoot + reflection
+        : ISO.V_REC + noise() * 0.6 + ringing * 0.4 + reflection * 0.5;
+    
+    let canl = isDominant 
+        ? ISO.CANL_DOM_TYP + noise() - ringing - overshoot - reflection
+        : ISO.V_REC + noise() * 0.6 - ringing * 0.4 - reflection * 0.5;
+
+    // Apply BW Limit (Cheap Low Pass Filter)
+    if (prev) {
+        if (ch1?.bwLimit) canh = prev.canh * 0.7 + canh * 0.3;
+        if (ch2?.bwLimit) canl = prev.canl * 0.7 + canl * 0.3;
+    }
+
+    // Apply AC Coupling (Remove 2.5V Common Mode DC offset)
+    if (ch1?.coupling === 'AC') canh -= 2.5;
+    if (ch2?.coupling === 'AC') canl -= 2.5;
 
     const sample: Sample = { 
         canh, 

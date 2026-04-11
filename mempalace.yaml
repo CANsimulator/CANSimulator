@@ -1,0 +1,30 @@
+wing: can_simulator
+rooms:
+- name: documentation
+  description: Files from docs/
+- name: learning
+  description: Files from learning/
+- name: output
+  description: Files from output/
+- name: public
+  description: Files from public/
+- name: src
+  description: Files from src/
+- name: supabase
+  description: Files from supabase/
+- name: test_results
+  description: Files from test-results/
+- name: testing
+  description: Files from tests/
+- name: design
+  description: Files from assets/
+- name: frontend
+  description: Files from components/
+- name: configuration
+  description: Files from config/
+- name: backend
+  description: Files from services/
+- name: scripts
+  description: Files from utils/
+- name: general
+  description: Files that don't fit other rooms

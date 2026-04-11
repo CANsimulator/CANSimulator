@@ -57,7 +57,7 @@ export function openRazorpayCheckout(opts: CheckoutOptions): void {
         subscription_id: '', // Set after creating subscription on backend
         name: 'CAN Simulator',
         description: `${plan.name} Plan — ₹${plan.priceInr}/mo`,
-        image: '/logo.svg',
+        image: `${import.meta.env.BASE_URL}branding/can-simulator-logo-d-icon.svg`,
         prefill: {
             name: opts.userName,
             email: opts.userEmail,
