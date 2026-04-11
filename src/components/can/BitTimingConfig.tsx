@@ -272,9 +272,9 @@ export function BitTimingConfig() {
             />
             <div className="mb-4" />
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 {/* ─── Left: Register View ─── */}
-                <div className="xl:col-span-4 space-y-3">
+                <div className="md:col-span-5 xl:col-span-4 space-y-3">
 
                     {/* Register Display (Expandable) */}
                     <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors overflow-hidden">
@@ -386,11 +386,11 @@ export function BitTimingConfig() {
                 </div>
 
                 {/* ─── Center+Right: Visual + Sliders ─── */}
-                <div className="xl:col-span-8 space-y-4">
+                <div className="md:col-span-7 xl:col-span-8 space-y-4">
                     {/* Timing Visual Bar */}
                     <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
                         <Tooltip content="Live visualization of the physical bit bit segments (Nominal Bit Time)">
-                            <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">BIT TIMING DIAGRAM</span>
+                            <span className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">BIT TIMING DIAGRAM</span>
                         </Tooltip>
 
                         <div className="relative">
@@ -486,9 +486,9 @@ export function BitTimingConfig() {
 
                     {/* ─── Parameter Adjustment (Sliders) ─── */}
                     <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
-                        <span className="text-[9px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-3 transition-colors">SEGMENT CONFIGURATION</span>
+                        <span className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-3 transition-colors">SEGMENT CONFIGURATION</span>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div
                                 onMouseEnter={() => setHoveredField('TSEG1')}
                                 onMouseLeave={() => setHoveredField(null)}
@@ -567,7 +567,7 @@ export function BitTimingConfig() {
                                     <button
                                         onClick={() => handleChange('brp', Math.max(1, timing.brp - 1))}
                                         disabled={timing.brp <= 1}
-                                        className="w-8 h-8 flex items-center justify-center rounded bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-light-600 dark:hover:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="w-10 h-10 flex items-center justify-center rounded bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-light-600 dark:hover:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                         aria-label="Decrease BRP"
                                     >−</button>
                                     <input
@@ -577,7 +577,7 @@ export function BitTimingConfig() {
                                         onBlur={handleBrpBlur}
                                         onKeyDown={handleBrpKeyDown}
                                         className={cn(
-                                            "flex-1 h-8 text-center bg-white dark:bg-[#111] border text-dark-900 dark:text-[#f1f1f1] font-mono text-[11px] font-bold outline-none transition-colors",
+                                            "flex-1 h-10 text-center bg-white dark:bg-[#111] border text-dark-900 dark:text-[#f1f1f1] font-mono text-[11px] font-bold outline-none transition-colors",
                                             brpError ? "border-red-500 dark:border-red-500" : "border-black/10 dark:border-[#222] focus:border-light-600 dark:focus:border-[#6b7280]"
                                         )}
                                         aria-label="BRP value"
@@ -587,7 +587,7 @@ export function BitTimingConfig() {
                                     <button
                                         onClick={() => handleChange('brp', Math.min(64, timing.brp + 1))}
                                         disabled={timing.brp >= 64}
-                                        className="w-8 h-8 flex items-center justify-center rounded bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-light-600 dark:hover:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="w-10 h-10 flex items-center justify-center rounded bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[12px] font-bold hover:border-light-600 dark:hover:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                         aria-label="Increase BRP"
                                     >+</button>
                                 </div>
