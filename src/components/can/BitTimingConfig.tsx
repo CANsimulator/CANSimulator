@@ -13,6 +13,11 @@ import {
     type BitTiming,
     type BitTimingPreset,
 } from '../../types/testbench';
+import { 
+    encodeRegisters, 
+    decodeRegisters, 
+    findOptimalTiming 
+} from '../../services/can/bit-timing';
 
 export type { BitTiming };
 
@@ -29,45 +34,6 @@ const shakeVariants = {
     }
 };
 
-// ─── BTR Register Encoding (MCP2515-style) ──────────────────
-function encodeRegisters(t: BitTiming) {
-    // BTR0: [SJW1 SJW0 BRP5 BRP4 BRP3 BRP2 BRP1 BRP0]
-    // BTR1: [SAM TSEG22 TSEG21 TSEG20 TSEG12 TSEG11 TSEG10 TSEG0]
-    const sjwBits = ((t.sjw - 1) & 0x03) << 6;
-    const brpBits = (t.brp - 1) & 0x3F;
-    const btr0 = sjwBits | brpBits;
-
-    const tseg1 = (t.prop + t.phase1 - 1) & 0x0F;
-    const tseg2 = ((t.phase2 - 1) & 0x07) << 4;
-    const samBit = (t.sam & 0x01) << 7;
-    const btr1 = samBit | tseg2 | tseg1;
-
-    return { btr0, btr1 };
-}
-
-function decodeRegisters(btr0: number, btr1: number, oscillatorResource: number): BitTiming {
-    const sjw = ((btr0 >> 6) & 0x03) + 1;
-    const brp = (btr0 & 0x3F) + 1;
-    const tseg2 = ((btr1 >> 4) & 0x07) + 1;
-    const tseg1 = (btr1 & 0x0F) + 1;
-    const sam = (btr1 >> 7) & 0x01;
-
-    // Split tseg1 into prop and phase1. 
-    const prop = Math.max(1, Math.floor(tseg1 / 2));
-    const phase1 = Math.max(1, tseg1 - prop);
-
-    return {
-        sync: 1,
-        prop,
-        phase1,
-        phase2: tseg2,
-        sjw,
-        brp,
-        oscillator: oscillatorResource,
-        sam
-    };
-}
-
 function toHex(n: number) {
     return n.toString(16).toUpperCase().padStart(2, '0');
 }
@@ -76,10 +42,15 @@ function toBin(n: number) {
     return n.toString(2).padStart(8, '0');
 }
 
+
+
 export function BitTimingConfig() {
     const [constraintViolation, setConstraintViolation] = useState(false);
     const [regsExpanded, setRegsExpanded] = useState(false);
     const [hoveredField, setHoveredField] = useState<string | null>(null);
+    const [autoTarget, setAutoTarget] = useState('');
+    const [autoError, setAutoError] = useState('');
+    const [copiedReg, setCopiedReg] = useState<string | null>(null);
 
     const { theme } = useTheme();
     const isDark = theme === 'dark';
@@ -147,6 +118,22 @@ export function BitTimingConfig() {
                 setConstraintViolation(false);
                 constraintTimerRef.current = null;
             }, 500);
+        }
+    };
+
+    const handleAutoCalculate = () => {
+        const kbps = parseFloat(autoTarget);
+        if (isNaN(kbps) || kbps <= 0) {
+            setAutoError('Enter a valid kbit/s value');
+            return;
+        }
+        const result = findOptimalTiming(kbps * 1000, timing.oscillator);
+        if (result) {
+            bench?.setBitTiming(result);
+            setAutoError('');
+            setAutoTarget('');
+        } else {
+            setAutoError(`Cannot achieve ${kbps} kbit/s with ${timing.oscillator / 1_000_000}MHz`);
         }
     };
 
@@ -270,7 +257,31 @@ export function BitTimingConfig() {
                 activePreset={activePreset}
                 onApply={applyPreset}
             />
-            <div className="mb-4" />
+
+            {/* Auto Calculate Controls (Issue #279) */}
+            <div className="flex items-center gap-2 mt-2 px-1 mb-4">
+                <Tooltip content="Automatically find the closest ISO-standard bit timing parameters for a custom bitrate">
+                    <span className="text-[9px] font-mono font-black uppercase tracking-wider text-light-500 dark:text-gray-500 cursor-help transition-colors">AUTO-CODE</span>
+                </Tooltip>
+                <input
+                    type="text"
+                    placeholder="Custom kbit/s"
+                    value={autoTarget}
+                    onChange={e => { setAutoTarget(e.target.value); setAutoError(''); }}
+                    onKeyDown={e => { if (e.key === 'Enter') handleAutoCalculate(); }}
+                    className="w-28 h-7 text-center bg-white dark:bg-[#111] border border-black/10 dark:border-[#222] text-dark-900 dark:text-[#f1f1f1] font-mono text-[10px] outline-none focus:border-light-600 dark:focus:border-[#6b7280] rounded transition-colors"
+                    aria-label="Target baud rate in kbit/s"
+                />
+                <button
+                    onClick={handleAutoCalculate}
+                    className="px-2 py-1 rounded text-[9px] font-mono font-bold border border-[#00f3ff30] text-[#00f3ff] bg-[#00f3ff08] hover:bg-[#00f3ff15] active:scale-95 transition-all"
+                >
+                    CALC
+                </button>
+                {autoError && (
+                    <span role="alert" className="text-[9px] font-mono text-red-500/80 animate-pulse">{autoError}</span>
+                )}
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 {/* ─── Left: Register View ─── */}
@@ -346,34 +357,41 @@ export function BitTimingConfig() {
                     {/* Timing Summary */}
                     <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#0c0c0e] border border-black/5 dark:border-[#222] transition-colors">
                         <span className="text-[10px] font-mono font-bold text-light-500 dark:text-gray-400 uppercase tracking-widest block mb-2 transition-colors">COMPUTED PARAMETERS</span>
-                        {[
-                            { k: 'Baud Rate', v: ((bench?.baudRate ?? 0) / 1000).toFixed(0), u: 'kbit/s', featured: true },
-                            { k: 'Total TQ/bit', v: `${totalTq}`, u: 'TQ' },
-                            { k: 'Sample Point', v: samplePoint.toFixed(1), u: '%', color: analysis.color, featured: true },
-                            { k: 'TSEG1 (PROP+PH1)', v: `${timing.prop + timing.phase1}`, u: 'TQ' },
-                            { k: 'TSEG2 (PH2)', v: `${timing.phase2}`, u: 'TQ' },
-                            { k: 'SJW', v: `${timing.sjw}`, u: 'TQ', color: sjwValid ? undefined : '#ef4444' },
-                        ].map(row => (
-                            <div key={row.k} className="flex justify-between items-center py-0.5">
-                                <span className={cn(
-                                    "font-mono transition-colors",
-                                    row.featured ? "text-[10px] font-bold text-light-900 dark:text-[#f1f1f1]" : "text-[9px] text-light-500 dark:text-gray-400"
-                                )}>{row.k}</span>
-                                <span 
-                                    className={cn(
-                                        "font-mono font-black transition-all leading-tight",
-                                        row.featured ? "text-[15px]" : "text-[9px] font-bold"
-                                    )} 
-                                    style={{ color: row.color || (isDark ? '#f1f1f1' : '#0a0a0f') }}
-                                >
-                                    {row.v} 
-                                    <span className={cn(
-                                        "font-normal transition-colors ml-0.5",
-                                        row.featured ? "text-[10px]" : "text-[9px] text-light-400 dark:text-gray-500"
-                                    )}>{row.u}</span>
-                                </span>
-                            </div>
-                        ))}
+                        
+                        <dl className="grid grid-cols-2 gap-x-2 gap-y-1">
+                            {[
+                                { k: 'Baud Rate', v: ((bench?.baudRate ?? 0) / 1000).toFixed(0), u: 'kbit/s', featured: true },
+                                { k: 'Bit Time', v: bench?.baudRate ? (1_000_000_000 / bench.baudRate).toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0', u: 'ns', featured: true },
+                                { k: 'Sample Point', v: samplePoint.toFixed(1), u: '%', color: analysis.color, featured: true },
+                                { k: 'TQ Duration', v: bench?.baudRate ? (1_000_000_000 / (bench.baudRate * totalTq)).toFixed(1) : '0', u: 'ns' },
+                                { k: 'Total TQ/bit', v: `${totalTq}`, u: 'TQ' },
+                                { k: 'TSEG1 (PROP+PH1)', v: `${timing.prop + timing.phase1}`, u: 'TQ' },
+                                { k: 'TSEG2 (PH2)', v: `${timing.phase2}`, u: 'TQ' },
+                                { k: 'SJW', v: `${timing.sjw}`, u: 'TQ', color: sjwValid ? undefined : '#ef4444' },
+                            ].map(row => (
+                                <React.Fragment key={row.k}>
+                                    <dt className={cn(
+                                        "font-mono flex items-center transition-colors",
+                                        row.featured ? "text-[10px] font-bold text-light-900 dark:text-[#f1f1f1]" : "text-[9px] text-light-500 dark:text-gray-400"
+                                    )}>{row.k}</dt>
+                                    <dd className="text-right flex items-baseline justify-end gap-1">
+                                        <span 
+                                            className={cn(
+                                                "font-mono font-black transition-all leading-tight tabular-nums",
+                                                row.featured ? "text-[15px]" : "text-[9px] font-bold"
+                                            )} 
+                                            style={{ color: row.color || (isDark ? (row.featured ? '#00f3ff' : '#f1f1f1') : '#0a0a0f') }}
+                                        >
+                                            {row.v}
+                                        </span>
+                                        <span className={cn(
+                                            "font-mono font-normal transition-colors",
+                                            row.featured ? "text-[10px]" : "text-[9px] text-light-400 dark:text-gray-500"
+                                        )}>{row.u}</span>
+                                    </dd>
+                                </React.Fragment>
+                            ))}
+                        </dl>
 
                         {!sjwValid && (
                             <div role="alert" className="mt-2 p-1.5 rounded bg-[#1c0a0a] border border-red-900/30">
@@ -528,28 +546,31 @@ export function BitTimingConfig() {
                                     description="Phase_Seg2: Buffer after the sample point used for negative resynchronization."
                                 />
                             </div>
-                            <motion.div
-                                animate={constraintViolation ? 'shake' : 'normal'}
-                                variants={shakeVariants}
+                            <div
                                 onMouseEnter={() => setHoveredField('SJW')}
                                 onMouseLeave={() => setHoveredField(null)}
                             >
-                                <SegmentSlider
-                                    label="SJW"
-                                    color={!sjwValid ? '#ef4444' : '#9ca3af'}
-                                    value={timing.sjw}
-                                    max={Math.min(sjwMax, 4)}
-                                    onChange={(v) => handleChange('sjw', v)}
-                                    description={`Max resync jump width (≤ ${Math.min(sjwMax, 4)} TQ)`}
-                                />
-                                {!sjwValid && (
-                                    <div role="alert" className="mt-2 p-1.5 rounded bg-[#1c0a0a] border border-red-900/30">
-                                        <span className="text-[10px] font-mono text-red-400 flex items-center gap-1">
-                                            <AlertTriangle size={10} /> SJW ({timing.sjw}) exceeds min(PH1,PH2) = {sjwMax}
-                                        </span>
-                                    </div>
-                                )}
-                            </motion.div>
+                                <motion.div
+                                    animate={constraintViolation ? 'shake' : 'normal'}
+                                    variants={shakeVariants}
+                                >
+                                    <SegmentSlider
+                                        label="SJW"
+                                        color={!sjwValid ? '#ef4444' : '#9ca3af'}
+                                        value={timing.sjw}
+                                        max={Math.min(sjwMax, 4)}
+                                        onChange={(v) => handleChange('sjw', v)}
+                                        description={`Max resync jump width (≤ ${Math.min(sjwMax, 4)} TQ)`}
+                                    />
+                                    {!sjwValid && (
+                                        <div role="alert" className="mt-2 p-1.5 rounded bg-[#1c0a0a] border border-red-900/30">
+                                            <span className="text-[10px] font-mono text-red-400 flex items-center gap-1">
+                                                <AlertTriangle size={10} /> SJW ({timing.sjw}) exceeds min(PH1,PH2) = {sjwMax}
+                                            </span>
+                                        </div>
+                                    )}
+                                </motion.div>
+                            </div>
                             <div 
                                 className="space-y-2"
                                 onMouseEnter={() => setHoveredField('BRP')}
@@ -605,10 +626,12 @@ export function BitTimingConfig() {
                                     </Tooltip>
                                     <span className="text-[10px] font-mono text-light-400 dark:text-gray-500 transition-colors">Fosc</span>
                                 </div>
-                                <div className="grid grid-cols-5 gap-1">
+                                <div className="grid grid-cols-5 gap-1" role="radiogroup" aria-label="Oscillator Frequency">
                                     {[8, 16, 20, 24, 40].map(f => (
                                         <button
                                             key={f}
+                                            role="radio"
+                                            aria-checked={timing.oscillator === f * 1_000_000}
                                             onClick={() => handleChange('oscillator', f * 1_000_000)}
                                             className={`px-1 py-1.5 rounded text-[10px] font-mono font-bold border transition-all ${timing.oscillator === f * 1_000_000
                                                 ? 'bg-cyan-500/10 dark:bg-[#00f3ff10] text-cyan-600 dark:text-[#00f3ff] border-cyan-500/30 dark:border-[#00f3ff40]'
@@ -1018,12 +1041,14 @@ function RegisterRow({ name, hex, binary, fields, onCopy, onEdit, isCopied, isEx
             <div className="flex h-7 bg-white dark:bg-[#080808] border border-black/5 dark:border-[#1a1a20] rounded-md overflow-hidden transition-colors">
                 {binary.split('').map((bit, i) => {
                     const field = fields.find(f => {
-                        const [start, end] = f.bits.includes('-') ? f.bits.split('-').map(Number) : [Number(f.bits), Number(f.bits)];
+                        const [start, end] = f.bits.includes(':') ? f.bits.split(':').map(Number) : [Number(f.bits), Number(f.bits)];
                         const bitIndex = 7 - i;
                         const min = Math.min(start, end);
                         const max = Math.max(start, end);
                         return bitIndex >= min && bitIndex <= max;
                     });
+
+                    const isHighlighted = highlightedField && field?.name === highlightedField;
 
                     return (
                         <div
@@ -1031,12 +1056,11 @@ function RegisterRow({ name, hex, binary, fields, onCopy, onEdit, isCopied, isEx
                             className={cn(
                                 "flex-1 flex flex-col items-center justify-center border-r border-black/5 dark:border-white/5 last:border-0 relative group outline-none focus:bg-cyan-500/10 dark:focus:bg-[#00f3ff08] transition-all duration-150",
                                 bit === '1' ? 'bg-black/[0.02] dark:bg-white/[0.02]' : '',
-                                isHighlighted && "ring-1 ring-inset z-10",
+                                isHighlighted && "ring-1 ring-inset z-10 shadow-[0_0_8px_rgba(0,243,255,0.3)]"
                             )}
                             style={{ 
-                                ringColor: isHighlighted ? `${field.color}80` : undefined,
-                                backgroundColor: isHighlighted ? `${field.color}15` : undefined,
-                                boxShadow: isHighlighted ? `inset 0 0 8px ${field.color}40` : undefined
+                                ringColor: isHighlighted ? `${field?.color ?? '#00f3ff'}80` : undefined,
+                                backgroundColor: isHighlighted ? `${field?.color ?? '#00f3ff'}15` : undefined
                             }}
                             role="img"
                             aria-label={`Bit ${7 - i}: ${bit}${field ? ` (${field.name})` : ''}`}

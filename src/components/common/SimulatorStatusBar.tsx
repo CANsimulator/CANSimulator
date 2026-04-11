@@ -67,6 +67,13 @@ export function SimulatorStatusBar({ className }: { className?: string }) {
     const isOnline = bench.transceiverActive && power.powerState !== 'OFF' && power.faultState === 'NONE';
     const isError = power.faultState !== 'NONE';
 
+    const fdModeLabel = (() => {
+        if (!bench.transceiverActive) return 'Disabled (Classic CAN)';
+        const dataRate = bench.baudRate;
+        if (dataRate >= 1000000) return `Enabled (Data: ${(dataRate / 1000000).toFixed(0)} Mbps)`;
+        return `Enabled (Data: ${(dataRate / 1000).toFixed(0)} Kbps)`;
+    })();
+
     return (
         <section className={cn("grid grid-cols-1 md:grid-cols-3 gap-3", className)}>
             <StatusItem 
@@ -79,7 +86,7 @@ export function SimulatorStatusBar({ className }: { className?: string }) {
             />
             <StatusItem 
                 label="CAN FD Mode" 
-                value="Enabled (Data: 2 Mbps)"
+                value={fdModeLabel}
                 icon={Rocket}
                 colorClass="bg-cyber-purple/10 text-cyber-purple"
                 animate={isOnline}
