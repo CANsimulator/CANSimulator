@@ -1,0 +1,13 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="canOrbit" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00F3FF" />
+      <stop offset="100%" stop-color="#BD00FF" />
+    </linearGradient>
+  </defs>
+  <circle cx="128" cy="128" r="92" stroke="url(#canOrbit)" stroke-width="14" fill="none" />
+  <path d="M48 104 C 90 74, 166 74, 208 104" stroke="#00F3FF" stroke-width="12" stroke-linecap="round" fill="none" />
+  <path d="M48 152 C 90 182, 166 182, 208 152" stroke="#FF0099" stroke-width="12" stroke-linecap="round" fill="none" />
+  <circle cx="128" cy="128" r="18" fill="#0B0F17" stroke="#00F3FF" stroke-width="6" />
+  <circle cx="128" cy="128" r="6" fill="#00F3FF" />
+</svg>
