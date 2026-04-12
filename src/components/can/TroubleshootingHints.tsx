@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import type { CANControllerState } from '../../types/can';
+import { DTCListPanel } from './DTCListPanel';
 
 interface TroubleshootingHintsProps {
     state: CANControllerState;
@@ -186,6 +187,10 @@ export const TroubleshootingHints: React.FC<TroubleshootingHintsProps> = ({ stat
                     );
                 })}
             </AnimatePresence>
+
+            <div className="pt-6 mt-6 border-t border-gray-100 dark:border-white/5">
+                <DTCListPanel />
+            </div>
         </div>
     );
 };

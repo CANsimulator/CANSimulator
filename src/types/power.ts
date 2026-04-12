@@ -4,7 +4,7 @@
  */
 
 export type PowerState = 'OFF' | 'ACC' | 'ON' | 'CRANKING';
-export type FaultState = 'NONE' | 'SHORT_GND' | 'OPEN_CIRCUIT';
+export type FaultState = 'NONE' | 'SHORT_GND' | 'OPEN_CIRCUIT' | 'REVERSE_POLARITY';
 export type SystemVoltage = 12 | 24;
 
 export interface PowerContextType {

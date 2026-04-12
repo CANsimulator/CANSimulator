@@ -67,6 +67,13 @@ export const ErrorTypeDeepDive: React.FC = () => {
         setDemo(null);
     }, []);
 
+    const handleGenerateSpecific = useCallback((type: CANErrorType) => {
+        setSelectedType(type);
+        const result = generateErrorDemo(type);
+        setDemo(result);
+        setAnimateKey((k) => k + 1);
+    }, []);
+
     return (
         <section
             className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-dark-900/80 border border-gray-200 dark:border-dark-700 backdrop-blur-sm shadow-sm"
@@ -126,6 +133,32 @@ export const ErrorTypeDeepDive: React.FC = () => {
                         </button>
                     );
                 })}
+                </div>
+            </div>
+
+            {/* Quick Generate Row (Issue #294) */}
+            <div className="mb-6">
+                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] block mb-3 text-center">
+                    Quick Inject / Generate Demo
+                </span>
+                <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl mx-auto">
+                    {ERROR_TYPE_CATALOG.map((err) => (
+                        <motion.button
+                            key={`quick-${err.type}`}
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleGenerateSpecific(err.type)}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all shadow-sm"
+                            style={{
+                                color: err.colorHex,
+                                borderColor: `${err.colorHex}30`,
+                                backgroundColor: `${err.colorHex}08`,
+                            }}
+                        >
+                            <Zap size={12} fill={err.colorHex} />
+                            {err.title}
+                        </motion.button>
+                    ))}
                 </div>
             </div>
 

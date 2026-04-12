@@ -1,0 +1,170 @@
+---
+title: 'CAN Physical Layer'
+description: 'CAN bus physical layer: CANH and CANL differential signaling, dominant vs recessive levels, bus topology, termination resistors, and transceiver behavior (ISO 11898-2).'
+---
+
+# CAN Physical Layer
+
+The CAN physical layer — standardized as **ISO 11898-2** (high-speed) and **ISO 11898-3** (low-speed, fault-tolerant) — defines how binary 1s and 0s become electrical signals on a pair of wires. Everything about CAN's robustness in noisy environments traces back to the decisions made at this level.
+
+## Differential signaling
+
+CAN uses a **two-wire differential pair**: **CANH** (CAN High) and **CANL** (CAN Low). Instead of measuring a voltage against ground, the receiver measures the *difference* between CANH and CANL. Common-mode noise — EMI that shifts both wires equally — cancels out.
+
+### Voltage levels (high-speed CAN)
+
+| Bus state | CANH | CANL | V_diff (CANH − CANL) | Logic level |
+|---|---|---|---|---|
+| **Recessive** | ≈ 2.5 V | ≈ 2.5 V | ≈ 0 V | Logic **1** |
+| **Dominant** | ≈ 3.5 V | ≈ 1.5 V | ≈ 2.0 V | Logic **0** |
+
+A few things to note:
+
+- **Recessive means "floating."** Both wires sit at 2.5 V through internal bias resistors. Nobody is actively driving the bus.
+- **Dominant means "driven."** The transmitting node pulls CANH up to ~3.5 V and CANL down to ~1.5 V, creating a 2.0 V differential.
+- **Dominant always wins over recessive.** If one node drives dominant while another drives recessive on the same bit time, the bus reads dominant. This is the foundation of non-destructive arbitration.
+
+> **Why these names?** Think of it physically: dominant actively overrides the idle state, just as a dominant allele masks a recessive one. The naming comes from the genetics analogy Robert Bosch used in early CAN documentation.
+
+### Receiver threshold
+
+An ISO 11898-2 compliant receiver interprets:
+
+- **V_diff > 0.9 V** → dominant (logic 0)
+- **V_diff < 0.5 V** → recessive (logic 1)
+- **0.5 V ≤ V_diff ≤ 0.9 V** → undefined (hysteresis region)
+
+The wide gap between 0.5 V and 0.9 V gives the receiver noise margin. On a well-terminated bus in a car, the dominant differential typically reads 1.5 V – 3.0 V, far above the threshold.
+
+## Bus topology
+
+High-speed CAN uses a **linear bus** (also called "daisy chain" or "backbone") — a single unshielded twisted pair runs the length of the network, and each node taps into it through a short **stub**.
+
+```
+  ┌─────┐       ┌─────┐       ┌─────┐       ┌─────┐
+  │Node │       │Node │       │Node │       │Node │
+  │  A  │       │  B  │       │  C  │       │  D  │
+  └──┬──┘       └──┬──┘       └──┬──┘       └──┬──┘
+     │stub         │stub         │stub         │stub
+ ────┴─────────────┴─────────────┴─────────────┴────
+   │                   backbone (CANH + CANL)          │
+  ┌┴┐                                                ┌┴┐
+  │R│ 120 Ω                                  120 Ω  │R│
+  └┬┘                                                └┬┘
+   ╧ GND                                          GND ╧
+```
+
+### Key topology rules
+
+1. **Two 120 Ω terminators** — one at each physical end of the backbone. They absorb signal reflections that would distort the differential waveform.
+2. **Stubs must be short** — ideally under 30 cm at 500 kbit/s, shorter at 1 Mbit/s. Long stubs create signal reflections inside the stub that corrupt bus state.
+3. **Star topologies are discouraged** for high-speed CAN. A star creates multiple unterminated branches that reflect. Low-speed (fault-tolerant) CAN can tolerate stars because it runs slower.
+4. **Total bus length depends on bit rate** — at 1 Mbit/s, ISO recommends ≤ 40 m; at 125 kbit/s, up to 500 m is practical.
+
+### Why 120 Ω?
+
+The characteristic impedance of a typical CAN twisted pair (AWG 22 – 24, loosely twisted) is approximately 120 Ω. Matching the termination resistor to the cable impedance minimizes reflections. Two 120 Ω resistors in parallel gives the receiver a 60 Ω DC load on the differential pair, which the transceivers are designed to drive.
+
+> **Troubleshooting tip.** Measure resistance between CANH and CANL with the bus powered off. You should read approximately **60 Ω** (two 120 Ω in parallel). If you read 120 Ω, one terminator is missing. If you read 40 Ω, somebody added an extra one.
+
+## Transceiver
+
+The **CAN transceiver** is the IC that converts between the ECU's single-ended logic-level TX/RX pins and the differential bus. Common transceivers include the TJA1050/TJA1051 (NXP), MCP2551 (Microchip), and SN65HVD230 (TI).
+
+### Transceiver pinout (typical)
+
+| Pin | Direction | Description |
+|---|---|---|
+| **TXD** | In (from MCU) | Logic-level transmit. Low = drive bus dominant. |
+| **RXD** | Out (to MCU) | Logic-level receive. Low when bus is dominant. |
+| **CANH** | Bidirectional | Differential bus wire — high side |
+| **CANL** | Bidirectional | Differential bus wire — low side |
+| **V_CC** | Power | Typically 5 V |
+| **GND** | Power | Ground reference |
+| **STB / S** | In | Standby / silent mode select (optional) |
+
+### How the transceiver drives the bus
+
+1. **MCU pulls TXD low** → transceiver drives CANH up (~3.5 V) and CANL down (~1.5 V) → bus goes **dominant**
+2. **MCU releases TXD high** → transceiver tri-states its outputs → bus returns to **recessive** (both wires biased to ~2.5 V by the termination network)
+3. The transceiver simultaneously reads the bus via RXD, which is how the transmitting node can detect a collision during arbitration — if it sent a recessive bit but reads dominant, another node is asserting.
+
+### Electrical fault protection
+
+Modern transceivers protect against:
+
+- **Bus short to battery or ground** — clamping diodes limit voltage
+- **Bus short between CANH and CANL** — communication degrades but the transceiver survives
+- **ESD** — rated for ±8 kV HBM minimum on bus pins
+- **Thermal shutdown** — if current exceeds safe limits from a shorted termination
+
+## Signal integrity
+
+### Propagation delay
+
+A CAN bit must be read by every node on the bus within the same bit time. As the bus gets longer, the propagation delay from end to end increases. ISO 11898-2 specifies a maximum of **5 μs** round-trip propagation, which directly constrains:
+
+- **Bus length** at a given bit rate
+- **Bit timing parameters** (Prop_Seg compensates for propagation)
+
+At 1 Mbit/s, each bit is only 1 μs. The round-trip propagation budget is tight, limiting the bus to ~40 m. At 125 kbit/s (8 μs per bit), hundreds of meters are practical.
+
+### Bit rate vs maximum bus length
+
+| Bit rate | Nominal bit time | Max recommended length |
+|---|---|---|
+| 1 Mbit/s | 1 μs | ~40 m |
+| 500 kbit/s | 2 μs | ~100 m |
+| 250 kbit/s | 4 μs | ~250 m |
+| 125 kbit/s | 8 μs | ~500 m |
+| 50 kbit/s | 20 μs | ~1000 m |
+
+These are conservative ISO-guideline values. Real-world ranges depend on cable quality, stub lengths, and transceiver loop delay.
+
+### Common-mode range
+
+The differential receiver works as long as both CANH and CANL stay within the common-mode input range, specified as **−2 V to +7 V** for ISO 11898-2. Ground offsets between distant nodes (caused by cable resistance carrying return currents) are tolerated up to this range, which is why CAN works reliably in vehicles with long ground paths.
+
+## Wiring recommendations
+
+| Parameter | Recommendation |
+|---|---|
+| Cable type | Unshielded twisted pair (UTP), 120 Ω nominal |
+| Conductor gauge | AWG 22 – 24 |
+| Twist rate | 1 – 2 twists per inch (tighter is better for EMI rejection) |
+| Termination | 120 Ω at each end of the backbone |
+| Max stub length | < 30 cm at 500 kbit/s; < 10 cm at 1 Mbit/s |
+| Connector | None specified by ISO — DB-9 common in test equipment |
+
+### DB-9 pinout (CiA 303-1)
+
+The CAN in Automation (CiA) association standardized a DB-9 connector pinout used by most test tools and CANopen devices:
+
+| Pin | Signal |
+|---|---|
+| 2 | CANL |
+| 3 | GND (optional) |
+| 7 | CANH |
+| 9 | External power (optional) |
+
+## Low-speed fault-tolerant CAN (ISO 11898-3)
+
+ISO 11898-3 is a separate physical layer that trades bandwidth for fault tolerance:
+
+- Max bit rate: **125 kbit/s**
+- Each transceiver has its own internal termination — no external 120 Ω resistors needed
+- Can detect and communicate through **single-wire faults** (one wire shorted to ground, open, or shorted to battery)
+- Voltage levels differ: CANH swings 0 V – 5 V, CANL swings 0 V – 5 V (not centered on 2.5 V)
+- Used for comfort / body electronics (mirrors, seats, windows) where the bus is not safety-critical at high speed
+
+## Common pitfalls
+
+1. **Missing termination** — the most common cause of "bus works intermittently at low speed but fails at high speed." Without terminators, reflections corrupt the signal.
+2. **Long stubs** — a node connected via a 1-meter cable to a backbone will cause reflections that are invisible at 125 kbit/s but fatal at 500 kbit/s.
+3. **Star wiring** — multiple equal-length branches with terminators at each end creates impedance mismatches and standing waves.
+4. **Ground-loop noise** — if nodes have separate, distant grounds, common-mode voltage between them can exceed the transceiver's −2 V to +7 V window.
+5. **Swapped CANH / CANL** — communication fails silently; the differential is inverted, so the receiver interprets everything as recessive.
+
+## Next: Frame Format
+
+Continue to **[Frame Format](/docs/frame-format)** to see how bits are organized into the fields of a CAN data frame, from Start of Frame through End of Frame.

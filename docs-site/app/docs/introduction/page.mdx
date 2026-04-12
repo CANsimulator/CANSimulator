@@ -1,0 +1,91 @@
+---
+title: 'Introduction to CAN'
+description: 'What the CAN bus protocol is, why Bosch invented it, where it runs today, and how it relates to higher-layer protocols like UDS, J1939, and CANopen.'
+---
+
+# Introduction to CAN
+
+**Controller Area Network (CAN)** is a serial communication protocol designed for robust, real-time messaging between microcontrollers on a shared bus. Originally developed by **Robert Bosch GmbH in 1983** and released publicly in 1986, CAN became the de-facto standard for in-vehicle networking and is now standardized as **ISO 11898**.
+
+This reference assumes you have some embedded-systems background but **no prior CAN knowledge**. By the end of the Fundamentals section you will be able to read a frame on an oscilloscope, explain why a given node won arbitration, and pick sensible bit-timing parameters for a new bus.
+
+## Why CAN exists
+
+Before CAN, automotive electronics were wired point-to-point. Every sensor and actuator had its own harness running back to the ECU that cared about it. As cars gained ABS, airbags, engine management, and body electronics, harnesses grew heavier, more expensive, and harder to diagnose.
+
+Bosch's goal for CAN was specific:
+
+1. **Multi-master broadcast bus** — any node can start a transmission; every node sees every message
+2. **Priority without a master** — highest-priority message wins the bus without a collision
+3. **Robust in electrically noisy environments** — differential signaling, error detection, automatic retry
+4. **Deterministic latency for real-time messages** — once a node wins arbitration, delivery timing is predictable
+5. **Cheap to wire** — two wires, twisted pair, no shielded cable required at low data rates
+
+These constraints shaped every part of the protocol. When you see an unusual design choice later (non-return-to-zero encoding, bit stuffing, destructive-free arbitration), it almost always traces back to one of those five goals.
+
+## Where CAN runs today
+
+CAN is everywhere vehicles and industrial machinery need a reliable, moderate-bandwidth bus:
+
+- **Passenger vehicles** — powertrain, chassis, body, infotainment gateways (500 kbit/s typical)
+- **Commercial and heavy-duty trucks** — **SAE J1939** runs on CAN at 250 kbit/s
+- **Agricultural and construction equipment** — ISOBUS, also J1939-derived
+- **Marine electronics** — **NMEA 2000** is a CAN variant
+- **Industrial automation** — **CANopen** for motion control, sensors, PLCs
+- **Medical devices, elevators, building automation** — anywhere real-time determinism matters more than raw throughput
+
+In a modern passenger car you can expect to find multiple CAN buses running in parallel, often segregated by criticality (for example, a high-speed powertrain CAN and a lower-speed body CAN), interconnected by a **gateway ECU**.
+
+## The CAN stack in one picture
+
+CAN itself only defines the **physical layer** and **data link layer**. Higher-layer protocols add transport, session, and application logic on top.
+
+```
+┌──────────────────────────────────────────────────────┐
+│  Application     UDS (ISO 14229) · J1939 · CANopen   │
+├──────────────────────────────────────────────────────┤
+│  Transport       ISO-TP (ISO 15765-2) segmentation   │
+├──────────────────────────────────────────────────────┤
+│  Data Link       CAN frame, arbitration, CRC, ACK    │  ← ISO 11898-1
+├──────────────────────────────────────────────────────┤
+│  Physical        CANH / CANL, transceiver, wiring    │  ← ISO 11898-2 (high-speed)
+└──────────────────────────────────────────────────────┘
+```
+
+- **Physical layer** (ISO 11898-2) defines electrical levels, transceivers, and cabling — covered in **[Physical Layer](/docs/physical-layer)**
+- **Data link layer** (ISO 11898-1) defines the frame format, bit-wise arbitration, CRC, and error handling — covered in **[Frame Format](/docs/frame-format)**
+- **Transport layer** — CAN frames only carry 8 bytes of payload (64 in CAN FD). Messages longer than that need **ISO-TP (ISO 15765-2)** to segment, flow-control, and reassemble
+- **Application layer** — **UDS** for diagnostics, **J1939** for heavy vehicles, **CANopen** for industrial automation, **OBD-II** for emissions
+
+> **Key takeaway.** When somebody says "UDS over CAN," they actually mean *UDS on top of ISO-TP on top of CAN data link on top of CAN physical*. Each layer has its own spec, its own failure modes, and its own page in this reference.
+
+## Classical CAN vs CAN FD
+
+Two main flavors of CAN exist in the field today:
+
+| Feature | Classical CAN (ISO 11898-1:2015) | CAN FD |
+|---|---|---|
+| Max payload per frame | 8 bytes | 64 bytes |
+| Max arbitration bit rate | 1 Mbit/s | 1 Mbit/s (same) |
+| Max data-phase bit rate | 1 Mbit/s | Up to 8 Mbit/s typical |
+| CRC field | 15-bit | 17-bit (≤16 data bytes) / 21-bit (>16) |
+| Bit rate switch | No | Yes (arbitration → data phase) |
+
+CAN FD ("Flexible Data-rate") keeps classical CAN's arbitration mechanism but switches to a faster bit rate once the winning node owns the bus, and allows larger payloads. Mixed buses are **not** automatically compatible — every node must understand FD frames, or you need a gateway.
+
+This reference focuses on **classical CAN** for the Fundamentals section; FD-specific behavior is called out in dedicated pages once we reach them.
+
+## How to read this reference
+
+Each page follows the same structure:
+
+1. **What the concept is** — short, spec-grounded definition
+2. **Why it exists** — the constraint or failure mode it solves
+3. **Field-by-field / step-by-step detail** — with hex examples
+4. **Interactive widget** — hover, toggle, or drag to see the concept in action
+5. **Common pitfalls** — the things that trip up real engineers
+6. **Links** — to the CAN Simulator app and to cross-referenced pages
+
+## Next: Physical Layer
+
+Continue to **[Physical Layer](/docs/physical-layer)** to see how CANH and CANL actually carry bits on a pair of wires, why the bus needs two 120 Ω terminators, and what "dominant" and "recessive" mean in voltage terms.

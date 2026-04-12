@@ -347,12 +347,22 @@ export const VoltageScope: React.FC = () => {
         // ── Helper: voltage axis ──
         const drawVAxis = (h: number, vMin: number, vMax: number, unit: string, step: number, v: ViewState) => {
             ctx.font = `${fs(12)} monospace`;
-            ctx.fillStyle = C.axisText;
             ctx.textAlign = 'right';
+            
             for (let val = vMin; val <= vMax; val += step) {
                 const y = vToPanel(val, vMin, vMax, h, v);
                 if (y < -5 || y > h + 5) continue;
-                ctx.fillText(`${val.toFixed(1)}${unit}`, -6, y + 3);
+                
+                const label = `${val.toFixed(1)}${unit}`;
+                
+                // Text Halo for readability on top of grid/waves
+                ctx.strokeStyle = isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
+                ctx.lineWidth = lw(3);
+                ctx.strokeText(label, -6, y + 3);
+
+                ctx.fillStyle = C.axisText;
+                ctx.fillText(label, -6, y + 3);
+                
                 ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)';
                 ctx.lineWidth = lw(0.5);
                 ctx.beginPath(); ctx.moveTo(-3, y); ctx.lineTo(0, y); ctx.stroke();
@@ -362,7 +372,6 @@ export const VoltageScope: React.FC = () => {
         // ── Helper: time axis ──
         const drawTimeAxis = (w: number, h: number, cols: number, tdiv: number, v: ViewState) => {
             ctx.font = `${fs(12)} monospace`;
-            ctx.fillStyle = C.axisText;
             for (let i = 0; i <= cols; i++) {
                 const bx = (i / cols) * w;
                 const x = (bx - w / 2) * v.zoomX + w / 2 + v.panX;
@@ -371,16 +380,17 @@ export const VoltageScope: React.FC = () => {
                 const timeVal = i * tdiv;
                 const label = timeVal === 0 ? '0' : `${timeVal}µs`;
                 
-                if (x < 10) {
-                    ctx.textAlign = 'left';
-                    ctx.fillText(label, x + 2, h - 6);
-                } else if (x > w - 10) {
-                    ctx.textAlign = 'right';
-                    ctx.fillText(label, x - 2, h - 6);
-                } else {
-                    ctx.textAlign = 'center';
-                    ctx.fillText(label, x, h - 6);
-                }
+                if (x < 10) ctx.textAlign = 'left';
+                else if (x > w - 10) ctx.textAlign = 'right';
+                else ctx.textAlign = 'center';
+
+                // Shadow/Halo
+                ctx.strokeStyle = isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
+                ctx.lineWidth = lw(3);
+                ctx.strokeText(label, x < 10 ? x + 2 : x > w - 10 ? x - 2 : x, h - 6);
+
+                ctx.fillStyle = C.axisText;
+                ctx.fillText(label, x < 10 ? x + 2 : x > w - 10 ? x - 2 : x, h - 6);
             }
         };
 
@@ -523,6 +533,38 @@ export const VoltageScope: React.FC = () => {
             drawVAxis(WAVE_H, vMin, vMax, 'V', activeVdiv, vw);
             drawTimeAxis(PLOT_W, WAVE_H, 10, s.tdiv, vw);
 
+            // Channel Ground/Offset Indicators on the left side
+            const drawGndMarker = (ch: 'ch1' | 'ch2', color: string, label: string) => {
+                const cfg = s[ch];
+                if (!cfg.enabled) return;
+                const gy = vToPanel(2.5 + (cfg.offset - avgOffset), vMin, vMax, WAVE_H, vw);
+                const isHovered = hoveredElementRef.current === `${ch}-offset`;
+                
+                ctx.save();
+                ctx.fillStyle = color;
+                ctx.globalAlpha = isHovered ? 1 : 0.7;
+                
+                if (isHovered) {
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = color;
+                }
+
+                // Triangle pointer on the left
+                ctx.beginPath();
+                ctx.moveTo(0, gy);
+                ctx.lineTo(8, gy - 6);
+                ctx.lineTo(8, gy + 6);
+                ctx.fill();
+                
+                ctx.fillStyle = isDark ? '#fff' : '#000';
+                ctx.font = `bold ${fs(9)} monospace`;
+                ctx.textAlign = 'center';
+                ctx.fillText(label, 4, gy + 3);
+                ctx.restore();
+            };
+            drawGndMarker('ch1', C.ch1, '1');
+            drawGndMarker('ch2', C.ch2, '2');
+
             if (samples.length < 2) return;
 
             // Traces
@@ -544,12 +586,12 @@ export const VoltageScope: React.FC = () => {
             const trigLabel = s.triggerMode === 'auto' ? 'T' : s.triggerMode.toUpperCase();
             
             ctx.save();
-            ctx.strokeStyle = trigColor; ctx.setLineDash([3, 3]); 
-            ctx.lineWidth = lw(isTrigHovered ? 1.4 : 0.8); 
-            ctx.globalAlpha = isTrigHovered ? 0.9 : 0.5;
+            ctx.strokeStyle = trigColor; ctx.setLineDash([4, 4]); 
+            ctx.lineWidth = lw(isTrigHovered ? 1.5 : 0.8); 
+            ctx.globalAlpha = isTrigHovered ? 1.0 : 0.6;
             
             if (isTrigHovered) {
-                ctx.shadowBlur = 8;
+                ctx.shadowBlur = 12;
                 ctx.shadowColor = trigColor;
             }
 
@@ -560,12 +602,13 @@ export const VoltageScope: React.FC = () => {
             // Left-pointing triangle fully inside panel bounds
             ctx.beginPath(); 
             ctx.moveTo(PLOT_W - 2, trigY); 
-            ctx.lineTo(PLOT_W - (isTrigHovered ? 14 : 10), trigY - 5); 
-            ctx.lineTo(PLOT_W - (isTrigHovered ? 14 : 10), trigY + 5); 
+            ctx.lineTo(PLOT_W - (isTrigHovered ? 16 : 12), trigY - 7); 
+            ctx.lineTo(PLOT_W - (isTrigHovered ? 16 : 12), trigY + 7); 
             ctx.fill();
             
-            ctx.font = `700 ${fs(9)} monospace`; ctx.textAlign = 'right';
-            ctx.fillText(trigLabel, PLOT_W - (isTrigHovered ? 15 : 12), trigY + 3);
+            ctx.font = `bold ${fs(10)} monospace`; ctx.textAlign = 'right';
+            ctx.fillStyle = isDark ? '#fff' : '#000';
+            ctx.fillText(trigLabel, PLOT_W - (isTrigHovered ? 18 : 14), trigY + 3.5);
             ctx.restore();
 
             // Cursors
@@ -1652,11 +1695,17 @@ export const VoltageScope: React.FC = () => {
                         </div>
                         
                         <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded border shadow-sm transition-all hidden sm:flex"
-                                 style={{ borderColor: compliance.color + '40', backgroundColor: compliance.color + '0C' }}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${shouldReduceMotion ? '' : 'animate-pulse'}`} 
-                                     style={{ backgroundColor: compliance.color, boxShadow: `0 0 6px ${compliance.color}` }} />
-                                <span className="text-[11px] font-mono font-bold uppercase tracking-tight" style={{ color: compliance.color }}>ISO {compliance.label}</span>
+                            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 dark:bg-white/5 rounded-lg border shadow-lg transition-all hidden sm:flex backdrop-blur-md"
+                                 style={{ borderColor: `${compliance.color}60`, boxShadow: `0 0 15px ${compliance.color}15` }}>
+                                <div className="relative flex items-center justify-center w-2.5 h-2.5">
+                                    <div className={`absolute inset-0 rounded-full blur-[2px] ${shouldReduceMotion ? '' : 'animate-pulse'}`} 
+                                         style={{ backgroundColor: compliance.color }} />
+                                    <div className="relative w-1.5 h-1.5 rounded-full" 
+                                         style={{ backgroundColor: compliance.color, boxShadow: `0 0 8px ${compliance.color}` }} />
+                                </div>
+                                <span className="text-[10px] font-mono font-black uppercase tracking-widest" style={{ color: compliance.color }}>
+                                    ISO {compliance.label}
+                                </span>
                             </div>
                             
                             <div className="flex items-center gap-1.5 px-2 py-1 bg-black/5 dark:bg-white/5 rounded-md min-w-[90px] justify-center">
@@ -2204,57 +2253,51 @@ const MetricRow: React.FC<{
     color?: string; 
     status?: 'pass' | 'warn' | 'fail' | 'pending';
     isPrimary?: boolean;
-}> = ({ label, value, color, status, isPrimary }) => {
+    tooltipText?: string;
+}> = ({ label, value, color, status, isPrimary, tooltipText }) => {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const shouldReduceMotion = useReducedMotion();
     
+    const StatusBadge = React.memo(() => {
+        if (!status) return null;
+        
+        const config = {
+            pass: { bg: 'bg-emerald-500/10 ring-emerald-500/30', dot: 'bg-emerald-400 shadow-[0_0_8px_#10b981]', text: 'text-emerald-500' },
+            warn: { bg: 'bg-amber-500/10 ring-amber-500/30', dot: 'bg-amber-400 shadow-[0_0_8px_#f59e0b]', text: 'text-amber-500' },
+            fail: { bg: 'bg-red-500/15 ring-red-500/50 shadow-[0_0_12px_rgba(239,68,68,0.2)]', dot: 'bg-red-400 shadow-[0_0_10px_#ef4444]', text: 'text-red-400' },
+            pending: { bg: 'bg-blue-500/10 ring-blue-500/30', dot: 'bg-blue-400', text: 'text-blue-500' }
+        }[status];
+
+        return (
+            <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ring-1 ring-inset ${config.bg}`}>
+                <motion.div
+                    className={`w-1.5 h-1.5 rounded-full ${config.dot}`}
+                    animate={
+                        shouldReduceMotion ? {} :
+                        status === 'fail' ? { opacity: [1, 0.4, 1], scale: [1, 1.25, 1] } :
+                        status === 'pending' ? { scale: [1, 1.4, 1] } : {}
+                    }
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    aria-label={`Status: ${status}`}
+                />
+                <span className={`font-black uppercase tracking-[0.05em] text-[8.5px] ${config.text}`}>
+                    {status}
+                </span>
+            </div>
+        );
+    });
+
     return (
-        <div className={`flex justify-between items-center py-1.5 ${isPrimary ? 'border-b border-black/5 dark:border-white/5 pb-2 mb-1.5' : ''}`}>
-            <span className={`font-sans text-light-400 dark:text-gray-500 transition-colors uppercase tracking-tight ${isPrimary ? 'text-[10px] font-black opacity-80' : 'text-[10px] font-medium'}`}>
+        <div className={`flex justify-between items-center py-2 transition-colors ${isPrimary ? 'border-b border-black/5 dark:border-white/5 pb-2.5 mb-1' : ''}`}>
+            <span className={`font-sans transition-colors uppercase tracking-tight ${isPrimary ? 'text-[10px] font-black text-light-500 dark:text-gray-400' : 'text-[10px] font-medium text-light-400 dark:text-gray-500'}`}>
                 {label}
             </span>
-            <div className="flex items-center gap-2.5">
-                {status && (
-                    <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full ring-1 ring-inset ${
-                        status === 'pass' ? 'bg-emerald-500/10 ring-emerald-500/30' :
-                        status === 'warn' ? 'bg-amber-500/10 ring-amber-500/30' :
-                        status === 'pending' ? 'bg-blue-500/10 ring-blue-500/30' :
-                        'bg-red-500/15 ring-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)]'
-                    }`}>
-                        <motion.div
-                            className={`rounded-full ${
-                                status === 'fail' ? 'w-2 h-2 bg-red-400 shadow-[0_0_8px_#ef4444]' :
-                                status === 'pass' ? 'w-1.5 h-1.5 bg-emerald-400 shadow-[0_0_5px_#10b981]' :
-                                status === 'warn' ? 'w-1.5 h-1.5 bg-amber-400 shadow-[0_0_5px_#f59e0b]' :
-                                'w-1.5 h-1.5 bg-blue-400'
-                            }`}
-                            animate={
-                                shouldReduceMotion
-                                    ? {}
-                                    : status === 'fail'
-                                        ? { opacity: [1, 0.3, 1], scale: [1, 1.2, 1] }
-                                        : status === 'pending'
-                                            ? { scale: [1, 1.3, 1] }
-                                            : {}
-                            }
-                            transition={{ duration: 1.2, repeat: Infinity }}
-                            role="img"
-                            aria-label={`Status: ${status}`}
-                        />
-                        <span className={`font-bold uppercase tracking-widest text-[9px] ${
-                            status === 'fail' ? 'text-red-400' :
-                            status === 'pass' ? 'text-emerald-500' :
-                            status === 'warn' ? 'text-amber-500' :
-                            'text-blue-500'
-                        }`}>
-                            {status}
-                        </span>
-                    </div>
-                )}
+            <div className="flex items-center gap-3">
+                <StatusBadge />
                 <span 
-                    className={`font-mono font-black tracking-tighter tabular-nums transition-all ${isPrimary ? 'text-[13px]' : 'text-[11px]'}`} 
-                    style={{ color: color || (isDark ? '#f3f4f6' : '#020617') }}
+                    className={`font-mono font-black tracking-tighter tabular-nums transition-all ${isPrimary ? 'text-[14px]' : 'text-[12px]'}`} 
+                    style={{ color: color || (isDark ? '#f8fafc' : '#0f172a') }}
                 >
                     {value}
                 </span>

@@ -165,15 +165,18 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
               {rows.map((row, idx) => {
                 const isExpanded = expandedRow === row.label;
                 return (
-                  <tr
+                  <motion.tr
                     key={row.label}
                     onClick={() => toggleRow(row.label)}
-                    style={{
-                      animationDelay: `${idx * 40}ms`,
+                    initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                    animate={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+                    transition={{ 
+                      duration: 0.3, 
+                      delay: idx * 0.05,
+                      ease: "easeOut" 
                     }}
                     className={cn(
                       'cursor-pointer transition-colors duration-150',
-                      !reduceMotion && 'animate-fade-in opacity-0 [animation-fill-mode:forwards]',
                       'odd:bg-gray-100/30 dark:odd:bg-black/20 even:bg-transparent dark:even:bg-black/10',
                       'hover:bg-gray-100 dark:hover:bg-white/[0.04]',
                       isExpanded && 'bg-gray-200/50 dark:bg-white/[0.06]'
@@ -220,7 +223,7 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
                         />
                       )}
                     </td>
-                     <td className="border-b border-gray-100 dark:border-white/5 px-4 py-3 text-sm text-dark-950 dark:text-gray-200 font-medium">
+                      <td className="border-b border-gray-100 dark:border-white/5 px-4 py-3 text-sm text-dark-950 dark:text-gray-200 font-medium">
                       <div className="flex items-center gap-2">
                         <IndicatorIcon
                           isBetter={row.compareBetter}
@@ -236,7 +239,7 @@ export function CompareMatrix({ primary, compare, sideBySide }: CompareMatrixPro
                         />
                       )}
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
             </tbody>

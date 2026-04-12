@@ -2,9 +2,10 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Container } from '../components/ui/Container';
-import { TestTube, Settings, ArrowRight, Gauge, Info, Layers, Plus, Trash2, Activity } from 'lucide-react';
+import { TestTube, Settings, ArrowRight, Gauge, Info, Layers, Plus, Trash2, Activity, Download } from 'lucide-react';
 import { canSimulator } from '../services/can/can-simulator';
 import { cn } from '../utils/cn';
+import { DBCExportModal } from '../components/signals/DBCExportModal';
 
 export default function SignalsPage() {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function SignalsPage() {
         { raw: 100, physical: 0 },
         { raw: 255, physical: 85 }
     ]);
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
     const rawValue = useMemo(() => {
         let raw = 0n;
@@ -185,7 +187,7 @@ export default function SignalsPage() {
 
                                 <div className="flex flex-col items-center justify-center py-6 sm:py-10 relative">
                                     <div className="text-[10px] sm:text-[11px] font-black text-yellow-400 uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-4">Signal Output</div>
-                                    <div className="text-4xl sm:text-5xl md:text-7xl font-black text-dark-950 dark:text-white tracking-tighter leading-none mb-1 flex items-end flex-wrap justify-center gap-1 sm:gap-3 transition-all tabular-nums">
+                                    <div className="text-4xl sm:text-5xl md:text-7xl font-black gradient-text tracking-tighter leading-none mb-1 flex items-end flex-wrap justify-center gap-1 sm:gap-3 transition-all tabular-nums dark:drop-shadow-[0_0_20px_rgba(0,243,255,0.4)]">
                                         {physicalValue.toFixed(2)}
                                         <span className="text-lg sm:text-xl text-gray-500 font-sans tracking-widest mb-1 sm:mb-2 uppercase italic shrink-0">{unit || 'Units'}</span>
                                     </div>
@@ -340,6 +342,16 @@ export default function SignalsPage() {
                                             className="w-full bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-lg p-2 font-mono text-xs text-dark-950 dark:text-white"
                                         />
                                     </div>
+
+                                    <div className="pt-4 border-t border-gray-200 dark:border-white/5">
+                                        <button
+                                            onClick={() => setIsExportModalOpen(true)}
+                                            className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-cyber-blue/10 border border-cyber-blue/30 text-cyber-blue text-xs font-black uppercase tracking-widest hover:bg-cyber-blue/20 transition-all shadow-sm group"
+                                        >
+                                            <Download size={14} className="group-hover:translate-y-0.5 transition-transform" />
+                                            Export as .DBC
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -354,6 +366,12 @@ export default function SignalsPage() {
                     </div>
                 </div>
             </Container>
+
+            <DBCExportModal 
+                isOpen={isExportModalOpen} 
+                onClose={() => setIsExportModalOpen(false)} 
+                signalName="CustomSignal"
+            />
         </div>
     );
 }

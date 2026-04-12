@@ -14,6 +14,8 @@ const ErrorPage: React.FC = () => {
     const [errorState, setErrorState] = useState<CANErrorState>(canSimulator.getErrorState());
     const [activeTab, setActiveTab] = useState<'log' | 'hints'>('log');
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [isDemoRunning, setIsDemoRunning] = useState(false);
+    const demoAbortRef = React.useRef(false);
     const shouldReduceMotion = useReducedMotion();
 
     useEffect(() => {
@@ -27,6 +29,28 @@ const ErrorPage: React.FC = () => {
     const handleReset = () => {
         canSimulator.resetErrors();
         setShowResetConfirm(false);
+        setIsDemoRunning(false);
+        demoAbortRef.current = true;
+    };
+
+    const runDemoSequence = async () => {
+        setIsDemoRunning(true);
+        demoAbortRef.current = false;
+        canSimulator.resetErrors();
+        
+        // Sequence: Inject bit errors every 400ms until Bus-off
+        // 32 injections * 8 = 256
+        for (let i = 0; i < 33; i++) {
+            if (demoAbortRef.current) break;
+            canSimulator.injectError('BIT1');
+            await new Promise(resolve => setTimeout(resolve, 400));
+        }
+        setIsDemoRunning(false);
+    };
+
+    const cancelDemo = () => {
+        demoAbortRef.current = true;
+        setIsDemoRunning(false);
     };
 
     const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
@@ -97,6 +121,27 @@ const ErrorPage: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* Demo / Cancel button */}
+                    <div className="flex items-center gap-2">
+                        {isDemoRunning ? (
+                            <button
+                                onClick={cancelDemo}
+                                className="px-5 py-2.5 bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-500 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-amber-500/20 transition-all active:scale-95 shadow-sm min-h-[44px] flex items-center gap-2"
+                            >
+                                <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                                Abort Demo
+                            </button>
+                        ) : (
+                            <button
+                                onClick={runDemoSequence}
+                                disabled={errorState.tec > 0 || errorState.rec > 0}
+                                className="px-5 py-2.5 bg-cyber-blue/10 border border-cyber-blue/30 text-cyber-blue rounded-xl text-xs font-black uppercase tracking-widest hover:bg-cyber-blue/20 transition-all active:scale-95 disabled:opacity-30 shadow-sm min-h-[44px]"
+                            >
+                                ▶ Run Demo
+                            </button>
+                        )}
+                    </div>
+
                     {/* Reset button */}
                     <div className="relative">
                         {!showResetConfirm ? (
@@ -147,7 +192,12 @@ const ErrorPage: React.FC = () => {
                         ISO 11898-1 Fault Confinement
                     </span>
                 </div>
-                <ErrorStateMachine state={errorState.state} tec={errorState.tec} rec={errorState.rec} />
+                <ErrorStateMachine 
+                    state={errorState.state} 
+                    tec={errorState.tec} 
+                    rec={errorState.rec} 
+                    onStateClick={(target) => canSimulator.jumpToState(target)}
+                />
 
                 <AnimatePresence mode="wait">
                     {errorState.state === 'BUS_OFF' && (

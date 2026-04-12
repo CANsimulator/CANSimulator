@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+
+/* Tailwind v4 dark-mode override: class-based instead of media-query.
+   Keeps nextra theme toggle authoritative over OS preference. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-can-blue: #00b8d4;
+  --color-can-cyan: #00e5ff;
+  --color-can-violet: #7c4dff;
+  --color-can-amber: #ffab00;
+  --color-can-red: #ff3d00;
+  --color-can-green: #00e676;
+  --color-can-ink-900: #0a0f14;
+  --color-can-ink-800: #111823;
+  --color-can-ink-700: #1a2332;
+  --color-can-ink-50: #f4f7fb;
+}
+
+:root {
+  --nextra-primary-hue: 188deg;
+  --nextra-primary-saturation: 100%;
+}
+
+html,
+body {
+  font-family: var(--font-body), system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+code,
+pre,
+kbd,
+.font-mono {
+  font-family: var(--font-mono), 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* Subtle instrument-grade scanline accent for hero areas */
+.can-scanline {
+  background-image: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(0, 229, 255, 0.04) 3px,
+    rgba(0, 229, 255, 0.04) 4px
+  );
+}
+
+/* Hex/byte grid helper used in frame-format pages */
+.can-byte {
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.08em;
+}

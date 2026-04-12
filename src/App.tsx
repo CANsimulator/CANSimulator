@@ -28,6 +28,7 @@ const AuthPage = lazy(() => import('./pages/AuthPage').then(m => ({ default: m.A
 
 import { useLocation, Outlet } from 'react-router-dom';
 import { SimulatorStatusBar } from './components/common/SimulatorStatusBar';
+import { Breadcrumbs } from './components/ui/Breadcrumbs';
 import { MotionConfig } from 'framer-motion';
 
 function AppLayout() {
@@ -60,6 +61,9 @@ function AppLayout() {
             </div>
           )}
           <main id="main-content" className="flex-1 flex flex-col">
+            <div className="max-w-7xl mx-auto w-full px-4 md:px-8 mt-6">
+               <Breadcrumbs />
+            </div>
             <Suspense fallback={
               <div className="flex-1 flex items-center justify-center bg-dark-950/50">
                 <LoadingSpinner />

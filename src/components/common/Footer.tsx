@@ -1,6 +1,6 @@
 /**
  * Footer Component
- * Refined to match the udssimulator.com aesthetic.
+ * Refined to match the CAN Simulator aesthetic.
  * Cyber-Technical "Diagnostic" interface.
  */
 import React, { useState, useEffect, useRef } from 'react';
@@ -11,17 +11,13 @@ import {
     FileText, 
     Activity, 
     Users, 
-    Eye,
-    Heart
+    Eye
 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useCookieConsent } from '../../context/CookieContext';
-import { cn } from '../../utils/cn';
 import { supabase } from '../../config/supabase';
 import { BorderBeam } from '../ui/BorderBeam';
 
 const Footer: React.FC = () => {
-    useCookieConsent();
     const logoUrl = `${import.meta.env.BASE_URL}branding/can-simulator-logo-d-icon.svg`;
     const currentYear = new Date().getFullYear();
     const location = useLocation();
@@ -41,9 +37,11 @@ const Footer: React.FC = () => {
 
         const trackVisit = async () => {
             try {
-                const { data, error } = await supabase.rpc('track_page_visit', { p_visitor_id: visitorId });
-                if (!error && data) {
-                    setSiteStats(data as { total_views: number; unique_visitors: number });
+                if (supabase) {
+                    const { data, error } = await supabase.rpc('track_page_visit', { p_visitor_id: visitorId });
+                    if (!error && data) {
+                        setSiteStats(data as { total_views: number; unique_visitors: number });
+                    }
                 }
             } catch {
                 // Silently fail
@@ -69,13 +67,9 @@ const Footer: React.FC = () => {
     };
 
     return (
-        <footer className="relative mt-20 pt-1 border-t border-cyan-500/20 dark:border-cyan-500/10 bg-white/80 dark:bg-dark-950 backdrop-blur-xl overflow-hidden font-sans">
+        <footer className="relative mt-20 pt-1 border-t border-cyber-blue/20 bg-white/80 dark:bg-dark-950 backdrop-blur-xl overflow-hidden font-sans">
             {!shouldReduceMotion && <BorderBeam size={400} duration={12} delay={0} />}
             
-            {/* Ambient Background Glows */}
-            <div className="absolute top-0 left-1/4 w-[500px] h-[300px] bg-cyan-500/10 dark:bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none -translate-y-1/2" />
-            <div className="absolute bottom-0 right-1/4 w-[500px] h-[300px] bg-purple-500/10 dark:bg-purple-500/5 blur-[120px] rounded-full pointer-events-none translate-y-1/2" />
-
             <div className="max-w-7xl mx-auto px-6 md:px-8 py-20 relative z-10">
                 <motion.div 
                     variants={containerVariants}
@@ -89,8 +83,8 @@ const Footer: React.FC = () => {
                         <motion.div variants={itemVariants} className="space-y-4">
                             <Link to="/" className="inline-flex items-center gap-4 group">
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-cyan-500/40 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                    <div className="relative w-12 h-12 rounded-xl border border-cyan-500/30 bg-white dark:bg-slate-900 flex items-center justify-center group-hover:border-cyan-400 group-hover:scale-105 transition-all duration-300 shadow-lg">
+                                    <div className="absolute inset-0 bg-cyber-blue/40 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                    <div className="relative w-12 h-12 rounded-xl border border-cyber-blue/30 bg-white dark:bg-dark-900 flex items-center justify-center group-hover:border-cyber-blue group-hover:scale-105 transition-all duration-300">
                                         <img
                                             src={logoUrl}
                                             alt="CAN Simulator"
@@ -100,13 +94,13 @@ const Footer: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic leading-none">
-                                        CAN<span className="text-cyan-600 dark:text-cyan-400">Sim</span>
+                                        CAN<span className="text-cyber-blue">SIM</span>
                                     </span>
-                                    <span className="text-[10px] font-mono text-cyan-600/60 dark:text-cyan-400/50 tracking-[0.2em] font-bold">INSTRUMENT_NODE</span>
+                                    <span className="text-[10px] font-mono text-cyber-blue/60 tracking-[0.2em] font-bold">INSTRUMENT_NODE</span>
                                 </div>
                             </Link>
-                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed font-medium opacity-80 border-l-2 border-cyan-500/20 pl-4">
-                                High-fidelity CAN & CAN FD bus simulation. Professional tools for automotive communication engineering and UDS protocol validation.
+                            <p className="text-slate-600 dark:text-gray-400 text-sm leading-relaxed font-bold opacity-80 border-l-2 border-cyber-blue pl-4 italic">
+                                Professional tools for automotive communication engineering and UDS protocol validation.
                             </p>
                         </motion.div>
 
@@ -121,186 +115,123 @@ const Footer: React.FC = () => {
                                     href={social.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="p-2.5 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-white dark:hover:bg-cyan-500/10 transition-all border border-slate-200 dark:border-white/5 hover:border-cyan-500/40 relative group"
+                                    className="p-2.5 rounded-lg bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-cyber-blue hover:bg-white dark:hover:bg-cyber-blue/10 transition-all border border-transparent hover:border-cyber-blue/40"
                                     aria-label={social.label}
                                 >
-                                    <social.icon className="w-5 h-5 relative z-10" />
+                                    <social.icon className="w-5 h-5" />
                                 </a>
                             ))}
                         </motion.div>
                     </div>
 
-                    {/* Navigation Clusters (mimicking udssimulator.com) */}
+                    {/* Navigation Columns */}
                     <div className="lg:col-span-9 grid grid-cols-2 sm:grid-cols-4 gap-8">
-                        {/* Column 2: ECOSYSTEM */}
                         <motion.div variants={itemVariants} className="space-y-6">
-                            <h3 className="text-xs font-mono font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+                            <h3 className="text-xs font-black text-dark-950 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2 italic">
+                                <span className="w-1.5 h-1.5 rounded-full bg-cyber-blue shadow-[0_0_8px_rgba(0,243,255,0.8)]" />
                                 ECOSYSTEM
                             </h3>
                             <ul className="space-y-3">
-                                {([
-                                    { label: 'UDS Simulator', href: 'https://udssimulator.com' },
-                                    { label: 'AI ASIL Analyser', href: 'https://github.com/suduli' },
-                                    { label: 'CAnalyzerAI', href: 'https://github.com/suduli/CAnalyzerAI' },
-                                    { label: 'CAN Metrics', to: '/metrics' }
-                                ] as FooterLinkProps[]).map((l) => (
-                                    <li key={l.label}>
-                                        <FooterLink {...l} accent="cyan" />
-                                    </li>
-                                ))}
+                                <FooterItem label="UDS Simulator" href="https://udssimulator.com" />
+                                <FooterItem label="Network Map" to="/contact" />
+                                <FooterItem label="Fault Analysis" to="/errors" />
+                                <FooterItem label="Performance" to="/simulator" />
                             </ul>
                         </motion.div>
 
-                        {/* Column 3: SIMULATOR */}
                         <motion.div variants={itemVariants} className="space-y-6">
-                            <h3 className="text-xs font-mono font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                            <h3 className="text-xs font-black text-dark-950 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2 italic">
+                                <span className="w-1.5 h-1.5 rounded-full bg-cyber-purple shadow-[0_0_8px_rgba(191,0,255,0.8)]" />
                                 SIMULATOR
                             </h3>
                             <ul className="space-y-3">
-                                {([
-                                    { label: 'ECU Simulator', to: '/simulator' },
-                                    { label: 'Learn CAN', to: '/docs' },
-                                    { label: 'Cluster View', to: '/simulator/cluster' },
-                                    { label: 'vs Vector CANoe', to: '/compare' }
-                                ] as FooterLinkProps[]).map((l) => (
-                                    <li key={l.label}>
-                                        <FooterLink {...l} accent="cyan" />
-                                    </li>
-                                ))}
+                                <FooterItem label="ECU Simulation" to="/simulator" />
+                                <FooterItem label="Bit-Level Ctrl" to="/inspector" />
+                                <FooterItem label="Signal Matrix" to="/signals" />
+                                <FooterItem label="Pricing" to="/pricing" />
                             </ul>
                         </motion.div>
 
-                        {/* Column 4: SERVICES/UDS */}
                         <motion.div variants={itemVariants} className="space-y-6">
-                            <h3 className="text-xs font-mono font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+                            <h3 className="text-xs font-black text-dark-950 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2 italic">
+                                <span className="w-1.5 h-1.5 rounded-full bg-cyber-emerald shadow-[0_0_8px_rgba(0,255,159,0.8)]" />
                                 PROTOCOL
                             </h3>
                             <ul className="space-y-3">
-                                {([
-                                    { label: '0x10 Diagnostic', to: '/docs/0x10' },
-                                    { label: '0x22 Read Data', to: '/docs/0x22' },
-                                    { label: '0x27 Security', to: '/docs/0x27' },
-                                    { label: '0x3E Tester Present', to: '/docs/0x3E' }
-                                ] as FooterLinkProps[]).map((l) => (
-                                    <li key={l.label}>
-                                        <FooterLink {...l} accent="purple" />
-                                    </li>
-                                ))}
+                                <FooterItem label="ISO 11898-1" to="/physical" />
+                                <FooterItem label="Arbitration" to="/arbitration" />
+                                <FooterItem label="ISO 15765-2" to="/generations" />
+                                <FooterItem label="ISO 14229-1" to="/about" />
                             </ul>
                         </motion.div>
 
-                        {/* Column 5: SUPPORT */}
                         <motion.div variants={itemVariants} className="space-y-6">
-                            <h3 className="text-xs font-mono font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                            <h3 className="text-xs font-black text-dark-950 dark:text-white uppercase tracking-[0.2em] flex items-center gap-2 italic">
+                                <span className="w-1.5 h-1.5 rounded-full bg-cyber-pink shadow-[0_0_8px_rgba(255,0,111,0.8)]" />
                                 SUPPORT
                             </h3>
                             <ul className="space-y-3">
-                                {([
-                                    { label: 'About Project', to: '/about' },
-                                    { label: 'Privacy Policy', to: '/privacy-policy' },
-                                    { label: 'Terms of Ops', to: '/terms' },
-                                    { label: 'Donate', to: '/donate', accent: 'pink', icon: Heart }
-                                ] as FooterLinkProps[]).map((l) => (
-                                    <li key={l.label}>
-                                        <FooterLink {...l} />
-                                    </li>
-                                ))}
+                                <FooterItem label="About Us" to="/about" />
+                                <FooterItem label="Contact" to="/contact" />
+                                <FooterItem label="Privacy" to="/privacy-policy" />
+                                <FooterItem label="Terms" to="/terms" />
                             </ul>
                         </motion.div>
                     </div>
                 </motion.div>
 
-                {/* Footer Bottom Bar (Styled as a diagnostic panel) */}
+                {/* Footer Bottom */}
                 <motion.div 
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="mt-20 pt-8 border-t border-slate-300/40 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-8"
+                    className="mt-20 pt-8 border-t border-dark-900/10 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-8"
                 >
-                    <div className="flex flex-col sm:flex-row items-center gap-4 text-[10px] font-mono font-bold text-slate-500 dark:text-slate-500 tracking-[0.1em] order-2 md:order-1">
-                        <p className="uppercase">© {currentYear} SUDULI RESEARCH. ALL RIGHTS RESERVED.</p>
+                    <div className="text-[10px] font-black text-gray-500 tracking-widest uppercase italic">
+                        © {currentYear} SUDULI RESEARCH. ALL RIGHTS RESERVED.
                     </div>
 
-                    {/* Center Diagnostics Pill (Matches udssimulator.com) */}
                     {siteStats && (
-                        <div className="flex items-center gap-4 bg-slate-100/80 dark:bg-white/5 px-6 py-2.5 rounded-full border border-slate-300/40 dark:border-white/10 shadow-inner order-1 md:order-2">
-                            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 font-mono text-[11px] font-bold">
-                                <Activity className="w-3.5 h-3.5 text-cyan-500" />
-                                <span className="opacity-50">DIAG_STATS:</span>
+                        <div className="flex items-center gap-6 bg-gray-100 dark:bg-white/5 px-6 py-2.5 rounded-full border border-gray-200 dark:border-white/10">
+                            <div className="flex items-center gap-2 text-[10px] font-black text-cyber-blue">
+                                <Activity size={12} />
+                                DEPLOY_ONLINE
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-1.5" title="Total page views">
-                                    <Eye className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                                    <span className="text-[11px] font-mono font-black text-slate-800 dark:text-white">{siteStats.total_views.toLocaleString()}</span>
+                                <div className="flex items-center gap-1.5">
+                                    <Eye size={12} className="text-gray-500" />
+                                    <span className="text-[10px] font-mono font-black text-dark-950 dark:text-white">{siteStats.total_views}</span>
                                 </div>
-                                <div className="w-px h-3 bg-slate-300 dark:bg-white/10" />
-                                <div className="flex items-center gap-1.5" title="Unique visitors">
-                                    <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                                    <span className="text-[11px] font-mono font-black text-slate-800 dark:text-white">{siteStats.unique_visitors.toLocaleString()}</span>
+                                <div className="flex items-center gap-1.5">
+                                    <Users size={12} className="text-gray-500" />
+                                    <span className="text-[10px] font-mono font-black text-dark-950 dark:text-white">{siteStats.unique_visitors}</span>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    <div className="flex items-center gap-2 text-[10px] font-mono font-black uppercase tracking-widest text-slate-400 dark:text-white/30 order-3">
-                        <span className="text-cyan-600/60 dark:text-cyan-400/40">REACT 19</span>
-                        <div className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/10" />
-                        <span className="text-purple-600/60 dark:text-purple-400/40">TS 5.9</span>
-                        <div className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/10" />
-                        <span className="text-emerald-600/60 dark:text-emerald-400/40">TAILWIND</span>
+                    <div className="flex items-center gap-4 text-[10px] font-black text-gray-400 dark:text-white/20 tracking-widest uppercase">
+                        <span>R19.1</span>
+                        <span>TS5.9</span>
+                        <span>VITE7</span>
                     </div>
                 </motion.div>
             </div>
-
-            {/* Background Corner Brackets */}
-            <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500/20 pointer-events-none" />
-            <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-cyan-500/20 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-cyan-500/20 pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-500/20 pointer-events-none" />
         </footer>
     );
 };
 
-// --- Helper Components ---
-
-interface FooterLinkProps {
-    label: string;
-    to?: string;
-    href?: string;
-    accent?: 'cyan' | 'purple' | 'emerald' | 'pink';
-    icon?: any;
-}
-
-const FooterLink: React.FC<FooterLinkProps> = ({ label, to, href, accent = 'cyan', icon: Icon }) => {
-    const accentClasses = {
-        cyan: "hover:text-cyan-600 dark:hover:text-cyan-400 group-hover:bg-cyan-500",
-        purple: "hover:text-purple-600 dark:hover:text-purple-400 group-hover:bg-purple-500",
-        emerald: "hover:text-emerald-600 dark:hover:text-emerald-400 group-hover:bg-emerald-500",
-        pink: "hover:text-pink-600 dark:hover:text-pink-400 group-hover:bg-pink-500"
-    };
-
-    const linkContent = (
-        <span className={cn(
-            "text-sm text-slate-600 dark:text-slate-400 transition-colors flex items-center gap-2 group font-semibold",
-            accentClasses[accent]
-        )}>
-            <span className={cn(
-                "w-1 h-1 rounded-full bg-slate-200 dark:bg-white/10 transition-colors",
-                accentClasses[accent].split(' ').pop()
-            )} />
+const FooterItem = ({ label, to, href }: { label: string; to?: string; href?: string }) => {
+    const content = (
+        <span className="text-[11px] font-black text-gray-500 hover:text-cyber-blue transition-colors uppercase tracking-widest flex items-center gap-2 group">
+            <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-white/10 group-hover:bg-cyber-blue transition-colors" />
             {label}
-            {Icon && <Icon className="w-3.5 h-3.5 ml-1 opacity-80" />}
         </span>
     );
 
-    if (to) return <Link to={to}>{linkContent}</Link>;
-    if (href) return <a href={href} target="_blank" rel="noopener noreferrer">{linkContent}</a>;
-    return linkContent;
+    if (to) return <Link to={to}>{content}</Link>;
+    if (href) return <a href={href} target="_blank" rel="noopener noreferrer">{content}</a>;
+    return content;
 };
 
 export default Footer;
-

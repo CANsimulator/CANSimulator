@@ -1,0 +1,191 @@
+---
+title: 'CAN Frame Format'
+description: 'Detailed breakdown of the CAN data frame: SOF, arbitration field, control, data, CRC, ACK, EOF — standard (11-bit) and extended (29-bit) identifiers explained.'
+---
+
+import { FrameAnatomy } from '@/components/FrameAnatomy'
+
+# CAN Frame Format
+
+A **CAN data frame** is the primary mechanism for moving information between nodes on the bus. This page dissects every field of both the **Standard (11-bit ID)** and **Extended (29-bit ID)** frame formats as defined in **ISO 11898-1**.
+
+## Interactive frame viewer
+
+Hover or tap on any field to see its purpose, bit width, and encoding rules.
+
+<FrameAnatomy />
+
+## Frame types
+
+CAN defines four frame types. The **data frame** carries application data and is by far the most common. The other three are protocol-level:
+
+| Frame type | Purpose |
+|---|---|
+| **Data frame** | Carries 0 – 8 bytes of application payload |
+| **Remote frame** | Requests data from another node (same ID, RTR = recessive) |
+| **Error frame** | Signals a detected error; consists of 6 dominant bits + 8 recessive bits |
+| **Overload frame** | Requests extra delay between frames (rarely used in practice) |
+
+This page focuses on the **data frame**. Error frames are covered in [Error Handling](/docs/error-handling).
+
+## Standard data frame (11-bit identifier)
+
+A standard CAN data frame contains 7 fields. The total bit count depends on the data length (0 – 8 bytes) and the number of stuff bits inserted.
+
+```
+ ┌───┬────────────────────┬───────┬──────────────────┬────────────┬─────┬───────┐
+ │SOF│   Arbitration (12) │Ctrl(6)│   Data (0-64)    │  CRC (16)  │ACK 2│EOF (7)│
+ │ 1 │  ID[10:0] + RTR    │IDE+r0 │  DLC → 0-8 bytes │ 15b + del  │S + D│ 7 rec │
+ │   │                    │+ DLC  │                  │            │     │       │
+ └───┴────────────────────┴───────┴──────────────────┴────────────┴─────┴───────┘
+```
+
+### Start of Frame (SOF) — 1 bit
+
+A single **dominant** (0) bit. It marks the beginning of a frame and provides the hard synchronization edge that all receivers use to align their bit timing.
+
+- All nodes synchronize their internal oscillators on the SOF falling edge.
+- A node may only start transmitting when the bus is idle (11 consecutive recessive bits in the intermission / bus-idle period).
+
+### Arbitration field — 12 bits (standard)
+
+| Sub-field | Bits | Description |
+|---|---|---|
+| **Identifier** | 11 | Message priority. Lower numeric value = higher priority. |
+| **RTR** | 1 | Remote Transmission Request. **Dominant (0)** for data frame, **recessive (1)** for remote frame. |
+
+During arbitration, each transmitting node sends its identifier bit by bit while simultaneously reading the bus. If a node sends a **recessive** bit but reads **dominant**, it has lost arbitration and must stop transmitting immediately — without corrupting the winning message.
+
+> **Why lower ID = higher priority.** Dominant (0) overwrites recessive (1) on the bus. A node with ID `0x000` drives dominant on every ID bit, always winning over any node transmitting a higher numeric ID. This is non-destructive: the winning frame is never damaged.
+
+### Control field — 6 bits
+
+| Sub-field | Bits | Description |
+|---|---|---|
+| **IDE** | 1 | Identifier Extension. **Dominant (0)** = standard frame. |
+| **r0** | 1 | Reserved, must be **dominant (0)**. |
+| **DLC** | 4 | Data Length Code. Encodes 0 – 8 data bytes. |
+
+The **DLC** is a 4-bit field, giving values 0 – 15, but only 0 – 8 are valid in classical CAN. A DLC of 9 – 15 is technically allowed on the bus (and some implementations treat it as 8), but ISO 11898-1 specifies a maximum payload of 8 bytes.
+
+| DLC value | Data bytes |
+|---|---|
+| `0000` – `1000` | 0 – 8 |
+| `1001` – `1111` | Treated as 8 in classical CAN |
+
+### Data field — 0 to 64 bits
+
+The actual application payload. Length is determined by the DLC:
+
+- **0 bytes** — valid; used for "signal" messages (event-based, no payload)
+- **8 bytes** — the maximum for classical CAN
+- Byte order on the wire is MSB first for each byte, with the first byte after the control field being byte 0
+
+> **Byte order convention.** CAN itself transmits MSB-first within each byte and the leftmost byte first on the wire. How those bytes are *interpreted* (big-endian "Motorola" vs little-endian "Intel") is defined by the application layer (DBC files, J1939 PGN definitions, etc.), not by the CAN protocol.
+
+### CRC field — 16 bits
+
+| Sub-field | Bits | Description |
+|---|---|---|
+| **CRC sequence** | 15 | CRC-15 calculated over SOF + arbitration + control + data. Generator polynomial: `0x4599`. |
+| **CRC delimiter** | 1 | Always **recessive** (1). Separates CRC from ACK. |
+
+The CRC polynomial detects:
+
+- All single and double bit errors
+- All odd numbers of errors
+- All burst errors up to 15 bits long
+- Any error pattern with a Hamming distance ≥ 6 for frames up to 127 bits (before stuffing)
+
+### ACK field — 2 bits
+
+| Sub-field | Bits | Description |
+|---|---|---|
+| **ACK slot** | 1 | Transmitter sends **recessive**. Any receiver with a matching CRC drives **dominant** to acknowledge. |
+| **ACK delimiter** | 1 | Always **recessive** (1). |
+
+If the transmitter reads the ACK slot and sees **recessive**, no node acknowledged — the message may have been sent to an empty bus, or every receiver detected an error. The transmitter flags an ACK error and retransmits.
+
+### End of Frame (EOF) — 7 bits
+
+Seven consecutive **recessive** (1) bits. This is deliberately longer than the maximum stuff-bit insertion period (5 bits of the same polarity + 1 stuff bit) so that no legitimate data pattern can be confused with EOF.
+
+After EOF, a 3-bit **intermission** (IFS — Inter-Frame Space) of recessive bits follows before the bus is considered idle and another node may start transmitting.
+
+## Extended data frame (29-bit identifier)
+
+The extended format adds 18 more identifier bits for a total of 29. It is backward-compatible at the protocol level but both standard and extended frames can coexist on the same bus.
+
+```
+ ┌───┬──────────────┬───┬───┬──────────────────┬───┬───────┬───┬────────────┐
+ │SOF│  Base ID (11) │SRR│IDE│  Extended ID (18) │RTR│Ctrl(6)│...│  (same)    │
+ │ 1 │  ID[28:18]    │ 1 │ 1 │  ID[17:0]         │   │r1+r0  │   │            │
+ │   │               │rec│rec│                   │   │+DLC   │   │            │
+ └───┴──────────────┴───┴───┴──────────────────┴───┴───────┴───┴────────────┘
+```
+
+### Differences from standard frame
+
+| Field | Standard | Extended |
+|---|---|---|
+| **Identifier** | 11 bits | 29 bits (11 base + 18 extension) |
+| **SRR** | (not present) | Substitute Remote Request — always **recessive**. Occupies the position of the standard RTR. |
+| **IDE** | Dominant (0) | **Recessive (1)** — this is how receivers distinguish standard from extended frames. |
+| **RTR** | After 11-bit ID | After the 18-bit extension |
+| **Reserved bits** | r0 only | r1 + r0 |
+
+### Arbitration between standard and extended frames
+
+If both a standard frame and an extended frame share the same 11 base-ID bits, the standard frame wins. Here is why:
+
+1. Both frames match through the 11 base-ID bits.
+2. At bit position 12, the standard frame sends **RTR** (dominant for a data frame) while the extended frame sends **SRR** (always recessive).
+3. The standard frame sees dominant on the bus, confirming it is still winning. The extended frame sees its recessive bit overridden, knows it lost, and backs off.
+
+## Bit stuffing
+
+After every 5 consecutive bits of the **same polarity** in the SOF-through-CRC region, the transmitter inserts one bit of the **opposite polarity**. This guarantees regular edges for clock synchronization.
+
+- Stuff bits are **not** part of the logical frame — the receiver removes them.
+- Stuff bits increase the on-wire frame length unpredictably. A worst-case standard frame with 8 data bytes can grow from 111 bits to approximately 135 bits.
+- The **CRC delimiter, ACK field, and EOF** are **not** stuff-bit regions. They have fixed polarity and fixed length.
+
+### Example
+
+```
+Data bits:   1 1 1 1 1 | 0 0 0 0 0 | 1 ...
+On the wire: 1 1 1 1 1 [0] 0 0 0 0 0 [1] 1 ...
+                        ↑ stuff bit     ↑ stuff bit
+```
+
+> **Why bit stuffing exists.** CAN uses NRZ (Non-Return-to-Zero) encoding — the signal level stays flat during consecutive same-value bits. Without periodic edges, the receiver's clock drifts. Bit stuffing guarantees an edge at least every 6 bit times.
+
+## CAN frame timing example
+
+For a 500 kbit/s bus with a standard data frame carrying 8 bytes:
+
+| Component | Bits (without stuffing) |
+|---|---|
+| SOF | 1 |
+| Arbitration | 12 |
+| Control | 6 |
+| Data (8 bytes) | 64 |
+| CRC + delimiter | 16 |
+| ACK + delimiter | 2 |
+| EOF | 7 |
+| Intermission | 3 |
+| **Total** | **111** |
+
+At 500 kbit/s, 1 bit = 2 μs. A worst-case 111-bit frame without stuff bits takes **222 μs**. With maximum stuff bits (~24 extra), it could take **~270 μs**. This is the latency budget that real-time system designers must account for when scheduling CAN messages.
+
+## Common pitfalls
+
+1. **Confusing DLC 8+ with CAN FD.** In classical CAN, DLC > 8 is technically transmittable but the data payload is still capped at 8 bytes. Some controllers clamp DLC silently; others reject the frame.
+2. **Forgetting stuff bits when calculating bus load.** If you use `(frame bits × message rate) / bit rate` to estimate bus utilization, use the stuffed bit count, not the nominal count.
+3. **Mixing standard and extended IDs carelessly.** A standard frame with ID `0x100` and an extended frame with base ID `0x100` are **different messages**, but the standard one always wins arbitration, which can cause starvation.
+4. **Assuming byte order.** CAN defines wire-level bit order (MSB first per byte), but the *semantic* byte order (Motorola / Intel) is application-defined. Check the DBC or J1939 PGN spec.
+5. **Ignoring the ACK field in loopback/test setups.** A single node on a bus with no receivers will see ACK errors on every frame because nobody drives the ACK slot dominant.
+
+## Next: Arbitration
+
+Continue to **[Arbitration](/docs/arbitration)** for a worked example showing three nodes competing for the bus, bit by bit.

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from '../components/ui/Container';
 import {
     Binary, Hexagon, RefreshCw, AlertCircle, CheckCircle2,
-    ArrowRight, Cpu, Layers, Zap, ChevronDown, ChevronUp,
+    ArrowRight, Layers, Zap, ChevronDown, ChevronUp,
     Copy, Check, Info
 } from 'lucide-react';
 import { canSimulator } from '../services/can/can-simulator';
@@ -21,22 +21,23 @@ interface FrameField {
     glowColor: string;
     description: string;
     editable: boolean;
+    hex: string;
 }
 
 const STANDARD_FRAME_FIELDS: FrameField[] = [
-    { name: 'Start of Frame', shortName: 'SOF', bits: 1, color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10 dark:bg-amber-500/15', borderColor: 'border-amber-400/30 dark:border-amber-500/30', glowColor: 'shadow-[0_0_12px_rgba(245,158,11,0.15)] dark:shadow-[0_0_12px_rgba(245,158,11,0.2)]', description: 'Always dominant (0). Marks the beginning of a frame.', editable: false },
-    { name: 'Arbitration ID', shortName: 'ID', bits: 11, color: 'text-cyan-600 dark:text-cyber-blue', bgColor: 'bg-cyber-blue/10 dark:bg-cyber-blue/15', borderColor: 'border-cyber-blue/20 dark:border-cyber-blue/30', glowColor: 'shadow-[0_0_12px_rgba(0,243,255,0.15)] dark:shadow-[0_0_12px_rgba(0,243,255,0.2)]', description: 'Message priority identifier (11-bit). Lower ID = Higher priority.', editable: true },
-    { name: 'Remote Request', shortName: 'RTR', bits: 1, color: 'text-purple-600 dark:text-cyber-purple', bgColor: 'bg-cyber-purple/10 dark:bg-cyber-purple/15', borderColor: 'border-cyber-purple/20 dark:border-cyber-purple/30', glowColor: 'shadow-[0_0_12px_rgba(189,0,255,0.15)] dark:shadow-[0_0_12px_rgba(189,0,255,0.2)]', description: 'Remote Transmission Request. Dominant (0) for data frame.', editable: true },
-    { name: 'Identifier Extension', shortName: 'IDE', bits: 1, color: 'text-pink-600 dark:text-cyber-pink', bgColor: 'bg-cyber-pink/10 dark:bg-cyber-pink/15', borderColor: 'border-cyber-pink/20 dark:border-cyber-pink/30', glowColor: 'shadow-[0_0_12px_rgba(255,0,153,0.15)] dark:shadow-[0_0_12px_rgba(255,0,153,0.2)]', description: 'Dominant (0) for standard frame, recessive (1) for extended.', editable: false },
-    { name: 'Reserved', shortName: 'r0', bits: 1, color: 'text-gray-500 dark:text-gray-400', bgColor: 'bg-gray-500/10 dark:bg-gray-500/15', borderColor: 'border-gray-500/20 dark:border-gray-500/30', glowColor: '', description: 'Reserved bit. Must be dominant (0).', editable: false },
-    { name: 'Data Length Code', shortName: 'DLC', bits: 4, color: 'text-emerald-600 dark:text-cyber-green', bgColor: 'bg-cyber-green/10 dark:bg-cyber-green/15', borderColor: 'border-cyber-green/20 dark:border-cyber-green/30', glowColor: 'shadow-[0_0_12px_rgba(0,255,159,0.15)] dark:shadow-[0_0_12px_rgba(0,255,159,0.2)]', description: 'Number of data bytes (0-8 for Classic CAN).', editable: true },
-    { name: 'Data Field', shortName: 'DATA', bits: 64, color: 'text-cyan-700 dark:text-cyan-300', bgColor: 'bg-cyan-500/10 dark:bg-cyan-500/15', borderColor: 'border-cyan-500/20 dark:border-cyan-500/30', glowColor: 'shadow-[0_0_12px_rgba(6,182,212,0.1)] dark:shadow-[0_0_12px_rgba(6,182,212,0.15)]', description: 'Payload data (0-8 bytes based on DLC).', editable: true },
-    { name: 'CRC Sequence', shortName: 'CRC', bits: 15, color: 'text-orange-600 dark:text-orange-400', bgColor: 'bg-orange-500/10 dark:bg-orange-500/15', borderColor: 'border-orange-500/20 dark:border-orange-500/30', glowColor: 'shadow-[0_0_12px_rgba(249,115,22,0.15)] dark:shadow-[0_0_12px_rgba(249,115,22,0.2)]', description: 'Cyclic Redundancy Check for error detection.', editable: false },
-    { name: 'CRC Delimiter', shortName: 'DEL', bits: 1, color: 'text-orange-500 dark:text-orange-300', bgColor: 'bg-orange-400/10', borderColor: 'border-orange-400/20', glowColor: '', description: 'Always recessive (1). Separates CRC from ACK.', editable: false },
-    { name: 'ACK Slot', shortName: 'ACK', bits: 1, color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10 dark:bg-emerald-500/15', borderColor: 'border-emerald-500/20 dark:border-emerald-500/30', glowColor: 'shadow-[0_0_12px_rgba(16,185,129,0.15)] dark:shadow-[0_0_12px_rgba(16,185,129,0.2)]', description: 'Transmitter sends recessive; receivers overwrite with dominant.', editable: false },
-    { name: 'ACK Delimiter', shortName: 'DEL', bits: 1, color: 'text-emerald-500 dark:text-emerald-300', bgColor: 'bg-emerald-400/10', borderColor: 'border-emerald-400/20', glowColor: '', description: 'Always recessive (1).', editable: false },
-    { name: 'End of Frame', shortName: 'EOF', bits: 7, color: 'text-red-600 dark:text-red-400', bgColor: 'bg-red-500/10 dark:bg-red-500/15', borderColor: 'border-red-500/20 dark:border-red-500/30', glowColor: '', description: '7 recessive bits marking end of frame.', editable: false },
-    { name: 'Inter-Frame Space', shortName: 'IFS', bits: 3, color: 'text-gray-500', bgColor: 'bg-gray-600/10', borderColor: 'border-gray-500/20 dark:border-gray-600/20', glowColor: '', description: '3 recessive bits minimum gap between frames.', editable: false },
+    { name: 'Start of Frame', shortName: 'SOF', bits: 1, color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-500/10 dark:bg-amber-500/15', borderColor: 'border-amber-400/30 dark:border-amber-500/30', glowColor: 'shadow-[0_0_12px_rgba(245,158,11,0.15)] dark:shadow-[0_0_12px_rgba(245,158,11,0.2)]', description: 'Always dominant (0). Marks the beginning of a frame.', editable: false, hex: '#f59e0b' },
+    { name: 'Arbitration ID', shortName: 'ID', bits: 11, color: 'text-cyan-600 dark:text-cyber-blue', bgColor: 'bg-cyber-blue/10 dark:bg-cyber-blue/15', borderColor: 'border-cyber-blue/20 dark:border-cyber-blue/30', glowColor: 'shadow-[0_0_12px_rgba(0,243,255,0.15)] dark:shadow-[0_0_12px_rgba(0,243,255,0.2)]', description: 'Message priority identifier (11-bit). Lower ID = Higher priority.', editable: true, hex: '#00f3ff' },
+    { name: 'Remote Request', shortName: 'RTR', bits: 1, color: 'text-purple-600 dark:text-cyber-purple', bgColor: 'bg-cyber-purple/10 dark:bg-cyber-purple/15', borderColor: 'border-cyber-purple/20 dark:border-cyber-purple/30', glowColor: 'shadow-[0_0_12px_rgba(189,0,255,0.15)] dark:shadow-[0_0_12px_rgba(189,0,255,0.2)]', description: 'Remote Transmission Request. Dominant (0) for data frame.', editable: true, hex: '#bf00ff' },
+    { name: 'Identifier Extension', shortName: 'IDE', bits: 1, color: 'text-pink-600 dark:text-cyber-pink', bgColor: 'bg-cyber-pink/10 dark:bg-cyber-pink/15', borderColor: 'border-cyber-pink/20 dark:border-cyber-pink/30', glowColor: 'shadow-[0_0_12px_rgba(255,0,153,0.15)] dark:shadow-[0_0_12px_rgba(255,0,153,0.2)]', description: 'Dominant (0) for standard frame, recessive (1) for extended.', editable: false, hex: '#ff0099' },
+    { name: 'Reserved', shortName: 'r0', bits: 1, color: 'text-gray-500 dark:text-gray-400', bgColor: 'bg-gray-500/10 dark:bg-gray-500/15', borderColor: 'border-gray-500/20 dark:border-gray-500/30', glowColor: '', description: 'Reserved bit. Must be dominant (0).', editable: false, hex: '#6b7280' },
+    { name: 'Data Length Code', shortName: 'DLC', bits: 4, color: 'text-emerald-600 dark:text-cyber-green', bgColor: 'bg-cyber-green/10 dark:bg-cyber-green/15', borderColor: 'border-cyber-green/20 dark:border-cyber-green/30', glowColor: 'shadow-[0_0_12px_rgba(0,255,159,0.15)] dark:shadow-[0_0_12px_rgba(0,255,159,0.2)]', description: 'Number of data bytes (0-8 for Classic CAN).', editable: true, hex: '#00ff9f' },
+    { name: 'Data Field', shortName: 'DATA', bits: 64, color: 'text-cyan-700 dark:text-cyan-300', bgColor: 'bg-cyan-500/10 dark:bg-cyan-500/15', borderColor: 'border-cyan-500/20 dark:border-cyan-500/30', glowColor: 'shadow-[0_0_12px_rgba(6,182,212,0.1)] dark:shadow-[0_0_12px_rgba(6,182,212,0.15)]', description: 'Payload data (0-8 bytes based on DLC).', editable: true, hex: '#06b6d4' },
+    { name: 'CRC Sequence', shortName: 'CRC', bits: 15, color: 'text-orange-600 dark:text-orange-400', bgColor: 'bg-orange-500/10 dark:bg-orange-500/15', borderColor: 'border-orange-500/20 dark:border-orange-500/30', glowColor: 'shadow-[0_0_12px_rgba(249,115,22,0.15)] dark:shadow-[0_0_12px_rgba(249,115,22,0.2)]', description: 'Cyclic Redundancy Check for error detection.', editable: false, hex: '#f97316' },
+    { name: 'CRC Delimiter', shortName: 'DEL', bits: 1, color: 'text-orange-500 dark:text-orange-300', bgColor: 'bg-orange-400/10', borderColor: 'border-orange-400/20', glowColor: '', description: 'Always recessive (1). Separates CRC from ACK.', editable: false, hex: '#fb923c' },
+    { name: 'ACK Slot', shortName: 'ACK', bits: 1, color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-500/10 dark:bg-emerald-500/15', borderColor: 'border-emerald-500/20 dark:border-emerald-500/30', glowColor: 'shadow-[0_0_12px_rgba(16,185,129,0.15)] dark:shadow-[0_0_12px_rgba(16,185,129,0.2)]', description: 'Transmitter sends recessive; receivers overwrite with dominant.', editable: false, hex: '#10b981' },
+    { name: 'ACK Delimiter', shortName: 'DEL', bits: 1, color: 'text-emerald-500 dark:text-emerald-300', bgColor: 'bg-emerald-400/10', borderColor: 'border-emerald-400/20', glowColor: '', description: 'Always recessive (1).', editable: false, hex: '#34d399' },
+    { name: 'End of Frame', shortName: 'EOF', bits: 7, color: 'text-red-600 dark:text-red-400', bgColor: 'bg-red-500/10 dark:bg-red-500/15', borderColor: 'border-red-500/20 dark:border-red-500/30', glowColor: '', description: '7 recessive bits marking end of frame.', editable: false, hex: '#ef4444' },
+    { name: 'Inter-Frame Space', shortName: 'IFS', bits: 3, color: 'text-gray-500', bgColor: 'bg-gray-600/10', borderColor: 'border-gray-500/20 dark:border-gray-600/20', glowColor: '', description: '3 recessive bits minimum gap between frames.', editable: false, hex: '#9ca3af' },
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -84,6 +85,7 @@ export default function InspectorPage() {
     const [crcType, setCrcType] = useState<'CRC15' | 'CRC17' | 'CRC21'>('CRC15');
     const [showBitStuffing, setShowBitStuffing] = useState(true);
     const [showFrameDetails, setShowFrameDetails] = useState(true);
+    const [isEconoMode, setIsEconoMode] = useState(false);
 
     // Build the complete bit-level frame
     const frameBits = useMemo(() => {
@@ -139,6 +141,10 @@ export default function InspectorPage() {
 
         return bits;
     }, [arbId, rtr, dlc, dataBytes]);
+
+    const bitColorMap = useMemo(() => {
+        return frameBits.map(b => STANDARD_FRAME_FIELDS[b.fieldIndex].hex);
+    }, [frameBits]);
 
     // Bit stuffing on the stuffable region (SOF through CRC, before delimiter)
     const stuffingResult = useMemo(() => {
@@ -242,31 +248,45 @@ export default function InspectorPage() {
                 <div className="relative z-10 space-y-10">
 
                     {/* ── Header ───────────────────────────────────────── */}
-                    <div className="space-y-4">
-                         <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyber-blue/10 border border-cyber-blue/20 text-xs font-black text-cyber-blue uppercase tracking-[0.25em]"
-                        >
-                            <Cpu size={14} aria-hidden="true" />
-                            ISO 11898-1 Frame Inspector
-                        </motion.div>
-                        <motion.h1
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyber-blue via-cyan-300 to-cyber-purple italic uppercase tracking-tighter"
-                        >
-                            Bit-Level Inspector
-                        </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-gray-600 dark:text-gray-400 max-w-3xl font-medium"
-                        >
-                            Build a CAN frame from scratch. See every field, every bit, and understand exactly how data travels on the bus.
-                        </motion.p>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                        <div className="space-y-4">
+                             <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className={cn(
+                                    "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.25em] transition-colors duration-500",
+                                    isEconoMode 
+                                        ? "bg-amber-500/10 border border-amber-500/20 text-amber-500"
+                                        : "bg-cyber-blue/10 border border-cyber-blue/20 text-cyber-blue"
+                                )}
+                            >
+                                <Zap size={10} className={cn("transition-transform duration-500", isEconoMode && "scale-110")} />
+                                {isEconoMode ? "Power Save Active" : "Diagnostic Mode"}
+                            </motion.div>
+                            <div>
+                                <h1 className="text-4xl sm:text-6xl font-black text-dark-950 dark:text-white uppercase italic tracking-tighter leading-none">
+                                    Protocol <span className={cn("transition-colors duration-500", isEconoMode ? "text-amber-500" : "text-cyber-blue")}>Inspector</span>
+                                </h1>
+                                <p className="text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest text-[11px] mt-2">
+                                    Low-level bitstream decomposition & analysis
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setIsEconoMode(!isEconoMode)}
+                                className={cn(
+                                    "flex items-center gap-2 px-6 py-3 rounded-2xl border transition-all text-[11px] font-black uppercase tracking-widest min-h-[48px]",
+                                    isEconoMode 
+                                        ? "bg-amber-500 text-black border-amber-600 shadow-[0_0_20px_rgba(245,158,11,0.4)]"
+                                        : "bg-white/5 border-white/10 text-gray-500 hover:border-white/20 hover:text-white"
+                                )}
+                            >
+                                <Zap size={14} className={isEconoMode ? "fill-current" : ""} />
+                                {isEconoMode ? "🔋 EconoMode ON" : "EconoMode OFF"}
+                            </button>
+                        </div>
                     </div>
 
                     {/* ── Frame Builder ─────────────────────────────────── */}
@@ -595,6 +615,7 @@ export default function InspectorPage() {
                                                     }}
                                                     onMouseLeave={() => setHoveredField(null)}
                                                     whileHover={{ scale: 1.1 }}
+                                                    style={{ backgroundColor: bitColorMap[i] + '18' }}
                                                 >
                                                     {bit.value}
                                                     {isEdge && (isFieldHovered || isFieldSelected) && (
@@ -604,6 +625,17 @@ export default function InspectorPage() {
                                             </div>
                                         );
                                     })}
+                                </div>
+                                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-4">
+                                    {STANDARD_FRAME_FIELDS.map(field => (
+                                        <div key={field.name} className="flex items-center gap-1.5">
+                                            <div
+                                                className="w-3 h-3 rounded-sm"
+                                                style={{ backgroundColor: field.hex + '60' }}
+                                            />
+                                            <span className="text-[9px] font-mono uppercase text-gray-500">{field.shortName}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>

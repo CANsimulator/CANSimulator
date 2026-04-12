@@ -16,6 +16,13 @@ export interface CANErrorState {
 
 export type ErrorRole = 'transmitter' | 'receiver';
 
+export interface FreezeFrame {
+    rpm: number;
+    speed: number;
+    temp: number;
+    voltage: number;
+}
+
 export interface ErrorLogEntry {
     id: number;
     errorCode: CANErrorCode;
@@ -26,6 +33,7 @@ export interface ErrorLogEntry {
     prevState: CANControllerState;
     newState: CANControllerState;
     stateChanged: boolean;
+    freezeFrame?: FreezeFrame;
 }
 
 /**
@@ -104,6 +112,7 @@ class CANSimulator {
             prevState,
             newState: this.controllerState,
             stateChanged: prevState !== this.controllerState,
+            freezeFrame: this.captureFreezeFrame(),
         };
         this.errorLog.push(entry);
         if (this.errorLog.length > 200) this.errorLog.shift();
@@ -111,6 +120,16 @@ class CANSimulator {
 
         const evt = { type: errorCode, timestamp: Date.now() };
         this.observers.forEach(obs => obs.onError?.(evt));
+    }
+
+    private captureFreezeFrame(): FreezeFrame {
+        // Mocking vehicle state at time of failure
+        return {
+            rpm: Math.floor(Math.random() * 3000) + 800,
+            speed: Math.floor(Math.random() * 120),
+            temp: 85 + Math.floor(Math.random() * 15),
+            voltage: 13.2 + (Math.random() * 0.8),
+        };
     }
 
     private updateState(): void {
@@ -147,6 +166,22 @@ class CANSimulator {
         this.errorLog = [];
         this.errorLogId = 0;
         this.errorLogListeners.forEach(fn => fn([]));
+        this.updateState();
+    }
+
+    jumpToState(targetState: 'ERROR_ACTIVE' | 'ERROR_PASSIVE' | 'BUS_OFF'): void {
+        switch (targetState) {
+            case 'ERROR_ACTIVE':
+                this.tec = 0;
+                this.rec = 0;
+                break;
+            case 'ERROR_PASSIVE':
+                this.tec = 128;
+                break;
+            case 'BUS_OFF':
+                this.tec = 256;
+                break;
+        }
         this.updateState();
     }
 

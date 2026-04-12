@@ -6,6 +6,7 @@ import { sendContactEmail } from '../services/emailService';
 import { supabase } from '../config/supabase';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../utils/cn';
+import { NetworkMap } from '../components/can/NetworkMap';
 
 export const ContactPage: React.FC = () => {
     const { user } = useAuth();
@@ -93,6 +94,13 @@ export const ContactPage: React.FC = () => {
                     </div>
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-black gradient-text tracking-tighter uppercase italic">CONTACT US</h2>
                     <p className="text-gray-400 mt-2 text-sm">Bug report? Feature request? We're listening.</p>
+                </div>
+
+                <div className="py-2">
+                    <NetworkMap 
+                        onNodeSelect={(sub) => setForm(f => ({ ...f, subject: sub }))} 
+                        activeSubject={form.subject}
+                    />
                 </div>
 
                  {status === 'success' ? (

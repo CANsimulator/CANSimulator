@@ -1,5 +1,4 @@
 import { 
-    DEFAULT_BIT_TIMING_PRESET,
     type BitTiming 
 } from '../../types/testbench';
 

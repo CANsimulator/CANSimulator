@@ -6,6 +6,8 @@ import { FaultScenarioPanel } from '../components/physical/FaultScenarioPanel';
 import { PowerSupplyDashboard } from '../components/power/PowerSupplyDashboard';
 import { useTestBench } from '../context/TestBenchContext';
 
+import { LazyMount } from '../components/ui/LazyMount';
+
 const PhysicalPageInner: React.FC = () => {
     const bench = useTestBench();
 
@@ -95,17 +97,23 @@ const PhysicalPageInner: React.FC = () => {
 
                 <section className="px-2">
                     <RackLabel number={2} name="Bus Wiring Harness" badge={nodesLabel} />
-                    <BusTopology />
+                    <LazyMount minHeight={500}>
+                        <BusTopology />
+                    </LazyMount>
                 </section>
 
                 <section id="power-supply" className="px-2 scroll-mt-24">
                     <RackLabel number={3} name="Lab Power Supply" badge="PPS-3005" />
-                    <PowerSupplyDashboard />
+                    <LazyMount minHeight={400}>
+                        <PowerSupplyDashboard />
+                    </LazyMount>
                 </section>
 
                 <section id="bit-timing" className="px-2 scroll-mt-24">
                     <RackLabel number={4} name="CAN Controller - Bit Timing Registers" badge="MCP2515" />
-                    <BitTimingConfig />
+                    <LazyMount minHeight={600}>
+                        <BitTimingConfig />
+                    </LazyMount>
                 </section>
             </div>
         </div>

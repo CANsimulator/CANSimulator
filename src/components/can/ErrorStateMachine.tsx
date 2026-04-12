@@ -5,6 +5,7 @@ interface ErrorStateMachineProps {
     state: 'ERROR_ACTIVE' | 'ERROR_PASSIVE' | 'BUS_OFF';
     tec: number;
     rec: number;
+    onStateClick?: (state: 'ERROR_ACTIVE' | 'ERROR_PASSIVE' | 'BUS_OFF') => void;
 }
 
 const STATE_CONFIG = {
@@ -46,7 +47,8 @@ const STATE_CONFIG = {
 const StateCard: React.FC<{
     stateKey: 'ERROR_ACTIVE' | 'ERROR_PASSIVE' | 'BUS_OFF';
     isActive: boolean;
-}> = ({ stateKey, isActive }) => {
+    onClick?: () => void;
+}> = ({ stateKey, isActive, onClick }) => {
     const config = STATE_CONFIG[stateKey];
     const shouldReduceMotion = useReducedMotion();
     const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
@@ -59,17 +61,21 @@ const StateCard: React.FC<{
     return (
         <motion.div
             layout
-            role="article"
+            role="button"
+            tabIndex={0}
+            onClick={onClick}
+            onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
             aria-current={isActive ? 'step' : undefined}
-            aria-label={`Controller state: ${config.label}`}
-            className={`relative rounded-2xl border-2 transition-all duration-500 overflow-hidden ${
+            aria-label={`Controller state: ${config.label}. ${isActive ? 'Current State' : 'Click to jump to this state'}`}
+            className={`relative rounded-2xl border-2 transition-all duration-500 overflow-hidden cursor-pointer group ${
                 isActive ? '' : 'opacity-30 grayscale border-gray-200 dark:border-dark-700 bg-gray-50 dark:bg-dark-900/30'
             }`}
             style={{
                 borderColor: isActive ? contrastColor : undefined,
                 backgroundColor: isActive ? `${contrastColor}${isDark ? '08' : '05'}` : undefined,
             }}
-            animate={isActive ? { scale: 1.02 } : { scale: 1 }}
+            whileHover={!isActive ? { scale: 1.01, rotate: 0.1, opacity: 0.6 } : { scale: 1.02 }}
+            animate={isActive ? { scale: 1.02, x: [0, 1, -1, 0] } : { scale: 1 }}
             transition={{ type: 'spring', stiffness: 200 }}
         >
             {/* Active glow pulse */}
@@ -200,16 +206,22 @@ const TransitionArrow: React.FC<{
     );
 };
 
-export const ErrorStateMachine: React.FC<ErrorStateMachineProps> = ({ state }) => {
+export const ErrorStateMachine: React.FC<ErrorStateMachineProps> = ({ state, onStateClick }) => {
     const passiveReached = state === 'ERROR_PASSIVE' || state === 'BUS_OFF';
     const busOffReached = state === 'BUS_OFF';
+
+    const handleCardClick = (target: 'ERROR_ACTIVE' | 'ERROR_PASSIVE' | 'BUS_OFF') => {
+        if (state !== target) {
+            onStateClick?.(target);
+        }
+    };
 
     return (
         <div className="w-full">
             {/* Desktop: horizontal layout */}
             <div className="hidden lg:flex items-stretch gap-2 justify-center">
                 <div className="flex-1 max-w-[280px]">
-                    <StateCard stateKey="ERROR_ACTIVE" isActive={state === 'ERROR_ACTIVE'} />
+                    <StateCard stateKey="ERROR_ACTIVE" isActive={state === 'ERROR_ACTIVE'} onClick={() => handleCardClick('ERROR_ACTIVE')} />
                 </div>
                 <div className="flex items-center">
                     <TransitionArrow
@@ -219,7 +231,7 @@ export const ErrorStateMachine: React.FC<ErrorStateMachineProps> = ({ state }) =
                     />
                 </div>
                 <div className="flex-1 max-w-[280px]">
-                    <StateCard stateKey="ERROR_PASSIVE" isActive={state === 'ERROR_PASSIVE'} />
+                    <StateCard stateKey="ERROR_PASSIVE" isActive={state === 'ERROR_PASSIVE'} onClick={() => handleCardClick('ERROR_PASSIVE')} />
                 </div>
                 <div className="flex items-center">
                     <TransitionArrow
@@ -229,15 +241,15 @@ export const ErrorStateMachine: React.FC<ErrorStateMachineProps> = ({ state }) =
                     />
                 </div>
                 <div className="flex-1 max-w-[280px]">
-                    <StateCard stateKey="BUS_OFF" isActive={state === 'BUS_OFF'} />
+                    <StateCard stateKey="BUS_OFF" isActive={state === 'BUS_OFF'} onClick={() => handleCardClick('BUS_OFF')} />
                 </div>
             </div>
 
             {/* Mobile/Tablet: vertical layout on smallest screens, grid on tablets */}
             <div className="lg:hidden grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <StateCard stateKey="ERROR_ACTIVE" isActive={state === 'ERROR_ACTIVE'} />
-                <StateCard stateKey="ERROR_PASSIVE" isActive={state === 'ERROR_PASSIVE'} />
-                <StateCard stateKey="BUS_OFF" isActive={state === 'BUS_OFF'} />
+                <StateCard stateKey="ERROR_ACTIVE" isActive={state === 'ERROR_ACTIVE'} onClick={() => handleCardClick('ERROR_ACTIVE')} />
+                <StateCard stateKey="ERROR_PASSIVE" isActive={state === 'ERROR_PASSIVE'} onClick={() => handleCardClick('ERROR_PASSIVE')} />
+                <StateCard stateKey="BUS_OFF" isActive={state === 'BUS_OFF'} onClick={() => handleCardClick('BUS_OFF')} />
             </div>
         </div>
     );

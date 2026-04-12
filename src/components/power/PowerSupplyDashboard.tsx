@@ -1,15 +1,13 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
     Zap, 
     Activity, 
-    Power, 
     Settings2, 
     Thermometer,
     RefreshCcw,
     AlertCircle,
     AlertTriangle,
     Info,
-    HelpCircle,
     History,
     ChevronDown,
     ChevronUp

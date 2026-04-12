@@ -6,8 +6,23 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Swords, ChevronRight } from 'lucide-react';
 import { UDSConsole } from '../components/can/UDSConsole';
+import { useTestBench } from '../context/TestBenchContext';
+import { usePower } from '../context/PowerContext';
+
+type NodeStatus = 'Online' | 'Offline' | 'Fault' | 'Host';
 
 export default function SimulatorPage() {
+    const bench = useTestBench();
+    const power = usePower();
+
+    function getNodeStatus(): NodeStatus {
+        if (power.faultState !== 'NONE') return 'Fault';
+        if (!bench.transceiverActive || power.powerState === 'OFF') return 'Offline';
+        return 'Online';
+    }
+
+    const busNodeStatus = getNodeStatus();
+
     return (
         <div className="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-8">
             {/* Main Grid */}
@@ -19,18 +34,28 @@ export default function SimulatorPage() {
                         <h4 className="text-xs font-bold text-cyber-blue uppercase mb-4 tracking-widest">Connected Nodes (Simulated)</h4>
                         <div className="space-y-3">
                             {[
-                                { label: 'Engine ECU (ECM)', id: '0x7E0 / 0x7E8', status: 'Online' },
-                                { label: 'Brake ECU (ABS)', id: '0x7E1 / 0x7E9', status: 'Online' },
-                                { label: 'Diagnostic Tester', id: '0x7DF / Functional', status: 'Host' },
-                            ].map(n => (
-                                <div key={n.id} className="flex items-center justify-between text-xs">
-                                    <div className="flex flex-col">
-                                        <span className="text-gray-600 dark:text-gray-400 font-bold">{n.label}</span>
-                                        <span className="text-[11px] text-gray-400 dark:text-gray-600 font-mono italic">{n.id}</span>
+                                { label: 'Engine ECU (ECM)', id: '0x7E0 / 0x7E8', status: busNodeStatus },
+                                { label: 'Brake ECU (ABS)', id: '0x7E1 / 0x7E9', status: busNodeStatus },
+                                { label: 'Diagnostic Tester', id: '0x7DF / Functional', status: 'Host' as NodeStatus },
+                            ].map(n => {
+                                const statusColor = 
+                                    n.status === 'Online' ? 'text-cyber-green' :
+                                    n.status === 'Fault' ? 'text-red-400' :
+                                    n.status === 'Host' ? 'text-cyber-blue' :
+                                    'text-gray-500';
+
+                                return (
+                                    <div key={n.id} className="flex items-center justify-between text-xs">
+                                        <div className="flex flex-col">
+                                            <span className="text-gray-600 dark:text-gray-400 font-bold">{n.label}</span>
+                                            <span className="text-[11px] text-gray-400 dark:text-gray-600 font-mono italic">{n.id}</span>
+                                        </div>
+                                        <span className={`font-mono font-black ${statusColor} ${n.status === 'Online' ? 'animate-pulse' : ''}`}>
+                                            {n.status}
+                                        </span>
                                     </div>
-                                    <span className="text-cyber-green font-mono font-black animate-pulse">{n.status}</span>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

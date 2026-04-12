@@ -28,7 +28,7 @@ interface ScenarioConfig {
 const SCENARIOS: ScenarioConfig[] = [
     {
         id: 'power-off',
-        label: 'POWER OFF',
+        label: 'POWER KILL',
         icon: Power,
         color: '#ff3131',
         description: 'Complete bench blackout. All ECUs offline and signal flatlined.',
@@ -36,14 +36,14 @@ const SCENARIOS: ScenarioConfig[] = [
     },
     {
         id: 'cranking',
-        label: 'SIM CRANK',
+        label: 'IGN CRANK',
         icon: Key,
         color: '#f59e0b',
         description: 'Voltage sags to 6V, simulating ignition-start battery drop.',
     },
     {
         id: 'short-gnd',
-        label: 'SHORT_GND',
+        label: 'GND SHORT',
         icon: Zap,
         color: '#ff4444',
         description: 'CAN_L / CAN_H short to ground. Heavy signal reflection and error spikes.',
@@ -52,7 +52,7 @@ const SCENARIOS: ScenarioConfig[] = [
     },
     {
         id: 'no-term',
-        label: 'NO TERM',
+        label: 'TERM LOST',
         icon: Activity,
         color: '#f59e0b',
         description: 'Termination resistors removed. Signal ringing and reflections occur.',
@@ -297,8 +297,8 @@ export const FaultScenarioPanel: React.FC = () => {
                                             <scenario.icon size={22} strokeWidth={active ? 2.5 : 2} />
                                         </span>
                                         <span
-                                            className="z-10 text-[8px] font-mono font-black uppercase tracking-widest text-center leading-tight"
-                                            style={{ color: active ? scenario.color : (isDark ? '#777' : '#555') }}
+                                            className="z-10 text-[9px] font-mono font-black uppercase tracking-widest text-center leading-tight transition-colors duration-300"
+                                            style={{ color: active ? scenario.color : (isDark ? '#aaa' : '#444') }}
                                         >
                                             {scenario.label}
                                         </span>
@@ -370,8 +370,8 @@ export const FaultScenarioPanel: React.FC = () => {
                                         <scenario.icon size={22} strokeWidth={active ? 2.5 : 2} />
                                     </span>
                                     <span
-                                        className="z-10 text-[8px] font-mono font-black uppercase tracking-widest text-center leading-tight"
-                                        style={{ color: active ? scenario.color : (isDark ? '#777' : '#555') }}
+                                        className="z-10 text-[9px] font-mono font-black uppercase tracking-widest text-center leading-tight transition-colors duration-300"
+                                        style={{ color: active ? scenario.color : (isDark ? '#aaa' : '#444') }}
                                     >
                                         {scenario.label}
                                     </span>

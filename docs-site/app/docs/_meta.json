@@ -1,0 +1,22 @@
+{
+  "index": {
+    "title": "Overview",
+    "display": "hidden"
+  },
+  "---fundamentals": {
+    "type": "separator",
+    "title": "Fundamentals"
+  },
+  "introduction": "Introduction to CAN",
+  "physical-layer": "Physical Layer",
+  "frame-format": "Frame Format",
+  "---in-progress": {
+    "type": "separator",
+    "title": "Coming Soon"
+  },
+  "arbitration": "Arbitration",
+  "bit-timing": "Bit Timing",
+  "error-handling": "Error Handling",
+  "higher-layers": "Higher-Layer Protocols",
+  "faq": "FAQ"
+}
