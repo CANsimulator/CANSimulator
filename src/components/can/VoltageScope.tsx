@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { 
     Zap, 
     Activity, 
-    PlugZap, 
     Eye, 
     Minus,
     Plus,
@@ -1870,7 +1869,7 @@ export const VoltageScope: React.FC = () => {
                                                     { mode: 'SOF',   label: 'SOF',   color: '#38bdf8' },
                                                     { mode: 'error', label: 'ERR',   color: '#ff4444' },
                                                     { mode: 'ID',    label: 'ID',    color: '#4488ff' },
-                                                ] as const).map(({ mode, label, color }) => {
+                                                ] as const).map(({ mode, label }) => {
                                                     const active = scope.triggerMode === mode;
                                                     return (
                                                         <button key={mode}
@@ -2253,8 +2252,7 @@ const MetricRow: React.FC<{
     color?: string; 
     status?: 'pass' | 'warn' | 'fail' | 'pending';
     isPrimary?: boolean;
-    tooltipText?: string;
-}> = ({ label, value, color, status, isPrimary, tooltipText }) => {
+}> = ({ label, value, color, status, isPrimary }) => {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const shouldReduceMotion = useReducedMotion();
