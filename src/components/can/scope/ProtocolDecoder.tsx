@@ -7,7 +7,6 @@ import {
     Database, 
     FileCheck, 
     ShieldCheck, 
-    AlertCircle,
     ChevronRight
 } from 'lucide-react';
 

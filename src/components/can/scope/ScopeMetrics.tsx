@@ -3,8 +3,6 @@ import {
     Activity, 
     BarChart3, 
     Eye, 
-    ShieldCheck, 
-    ShieldAlert, 
     Info 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -24,7 +22,6 @@ interface ScopeMetricsProps {
 }
 
 export const ScopeMetrics: React.FC<ScopeMetricsProps> = ({ metrics }) => {
-    const isError = !metrics.isoCANH || !metrics.isoCANL || !metrics.isoDiff;
 
     // Helper to format with high precision for the "Cyber" look
     const formatHighPrecision = (val: number, decimals: number = 8) => {
