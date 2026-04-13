@@ -4,6 +4,7 @@ description: 'What the CAN bus protocol is, why Bosch invented it, where it runs
 ---
 
 import { ArticleSchema } from '@/components/ArticleSchema'
+import { ProtocolStack } from '@/components/ProtocolStack'
 
 <ArticleSchema
   title="Introduction to CAN"
@@ -47,17 +48,7 @@ In a modern passenger car you can expect to find multiple CAN buses running in p
 
 CAN itself only defines the **physical layer** and **data link layer**. Higher-layer protocols add transport, session, and application logic on top.
 
-```
-┌──────────────────────────────────────────────────────┐
-│  Application     UDS (ISO 14229) · J1939 · CANopen   │
-├──────────────────────────────────────────────────────┤
-│  Transport       ISO-TP (ISO 15765-2) segmentation   │
-├──────────────────────────────────────────────────────┤
-│  Data Link       CAN frame, arbitration, CRC, ACK    │  ← ISO 11898-1
-├──────────────────────────────────────────────────────┤
-│  Physical        CANH / CANL, transceiver, wiring    │  ← ISO 11898-2 (high-speed)
-└──────────────────────────────────────────────────────┘
-```
+<ProtocolStack />
 
 - **Physical layer** (ISO 11898-2) defines electrical levels, transceivers, and cabling — covered in **[Physical Layer](/docs/physical-layer)**
 - **Data link layer** (ISO 11898-1) defines the frame format, bit-wise arbitration, CRC, and error handling — covered in **[Frame Format](/docs/frame-format)**

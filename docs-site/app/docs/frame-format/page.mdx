@@ -4,6 +4,8 @@ description: 'Detailed breakdown of the CAN data frame: SOF, arbitration field, 
 ---
 
 import { FrameAnatomy } from '@/components/FrameAnatomy'
+import { ExtendedFrameAnatomy } from '@/components/ExtendedFrameAnatomy'
+import { BitStuffingDemo } from '@/components/BitStuffingDemo'
 import { ArticleSchema } from '@/components/ArticleSchema'
 
 <ArticleSchema
@@ -36,15 +38,7 @@ This page focuses on the **data frame**. Error frames are covered in [Error Hand
 
 ## Standard data frame (11-bit identifier)
 
-A standard CAN data frame contains 7 fields. The total bit count depends on the data length (0 – 8 bytes) and the number of stuff bits inserted.
-
-```
- ┌───┬────────────────────┬───────┬──────────────────┬────────────┬─────┬───────┐
- │SOF│   Arbitration (12) │Ctrl(6)│   Data (0-64)    │  CRC (16)  │ACK 2│EOF (7)│
- │ 1 │  ID[10:0] + RTR    │IDE+r0 │  DLC → 0-8 bytes │ 15b + del  │S + D│ 7 rec │
- │   │                    │+ DLC  │                  │            │     │       │
- └───┴────────────────────┴───────┴──────────────────┴────────────┴─────┴───────┘
-```
+A standard CAN data frame contains 7 fields. The total bit count depends on the data length (0 – 8 bytes) and the number of stuff bits inserted. The interactive viewer at the top of this page shows each field — hover for details.
 
 ### Start of Frame (SOF) — 1 bit
 
@@ -122,13 +116,7 @@ After EOF, a 3-bit **intermission** (IFS — Inter-Frame Space) of recessive bit
 
 The extended format adds 18 more identifier bits for a total of 29. It is backward-compatible at the protocol level but both standard and extended frames can coexist on the same bus.
 
-```
- ┌───┬──────────────┬───┬───┬──────────────────┬───┬───────┬───┬────────────┐
- │SOF│  Base ID (11) │SRR│IDE│  Extended ID (18) │RTR│Ctrl(6)│...│  (same)    │
- │ 1 │  ID[28:18]    │ 1 │ 1 │  ID[17:0]         │   │r1+r0  │   │            │
- │   │               │rec│rec│                   │   │+DLC   │   │            │
- └───┴──────────────┴───┴───┴──────────────────┴───┴───────┴───┴────────────┘
-```
+<ExtendedFrameAnatomy />
 
 ### Differences from standard frame
 
@@ -156,13 +144,9 @@ After every 5 consecutive bits of the **same polarity** in the SOF-through-CRC r
 - Stuff bits increase the on-wire frame length unpredictably. A worst-case standard frame with 8 data bytes can grow from 111 bits to approximately 135 bits.
 - The **CRC delimiter, ACK field, and EOF** are **not** stuff-bit regions. They have fixed polarity and fixed length.
 
-### Example
+### Interactive example
 
-```
-Data bits:   1 1 1 1 1 | 0 0 0 0 0 | 1 ...
-On the wire: 1 1 1 1 1 [0] 0 0 0 0 0 [1] 1 ...
-                        ↑ stuff bit     ↑ stuff bit
-```
+<BitStuffingDemo />
 
 > **Why bit stuffing exists.** CAN uses NRZ (Non-Return-to-Zero) encoding — the signal level stays flat during consecutive same-value bits. Without periodic edges, the receiver's clock drifts. Bit stuffing guarantees an edge at least every 6 bit times.
 

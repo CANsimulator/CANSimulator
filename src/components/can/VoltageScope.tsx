@@ -184,9 +184,9 @@ export const VoltageScope: React.FC = () => {
     }, [scope.ch1.enabled, scope.ch2.enabled]);
 
     return (
-        <div className="flex flex-col gap-6 w-full animate-fade-in">
+        <div className="dark flex flex-col gap-4 w-full animate-fade-in bg-[#020617] p-4 -mx-4 scope-instrument">
             {/* Main Scope UI */}
-            <div className="grid grid-cols-[300px_1fr_320px] gap-6 h-[720px]">
+            <div className="grid grid-cols-[300px_1fr_320px] gap-4 h-[720px]">
                 {/* Left: Controls */}
                 <aside className="h-full overflow-hidden">
                     <ScopeControls 
@@ -225,13 +225,13 @@ export const VoltageScope: React.FC = () => {
                     </div>
                     
                     {/* Integrated Quick Action Bar */}
-                    <div className="glass-panel p-2 flex items-center justify-between">
+                    <div className="glass-panel !rounded-none !border-white/5 p-2 flex items-center justify-between">
                         <div className="flex items-center gap-1">
                             <button 
                                 onClick={() => setShowDiff(!showDiff)}
                                 className={cn(
-                                    "px-3 py-1.5 rounded text-[10px] font-mono font-black uppercase transition-all",
-                                    showDiff ? "bg-[#00ff9f]/10 text-[#00ff9f] border border-[#00ff9f]/20" : "text-white/40 hover:text-white hover:bg-white/5 border border-transparent"
+                                    "px-3 py-1.5 text-[10px] font-mono font-black uppercase transition-all shadow-sm",
+                                    showDiff ? "bg-[#00ff9f]/10 text-[#00ff9f] border border-[#00ff9f]/20" : "text-white/40 hover:text-white hover:bg-white/5 border border-white/5"
                                 )}
                             >
                                 DIFF MATH
@@ -239,26 +239,26 @@ export const VoltageScope: React.FC = () => {
                             <button 
                                 onClick={() => setShowEye(!showEye)}
                                 className={cn(
-                                    "px-3 py-1.5 rounded text-[10px] font-mono font-black uppercase transition-all",
-                                    showEye ? "bg-[#00f3ff]/10 text-[#00f3ff] border border-[#00f3ff]/20" : "text-white/40 hover:text-white hover:bg-white/5 border border-transparent"
+                                    "px-3 py-1.5 text-[10px] font-mono font-black uppercase transition-all shadow-sm",
+                                    showEye ? "bg-[#00f3ff]/10 text-[#00f3ff] border border-[#00f3ff]/20" : "text-white/40 hover:text-white hover:bg-white/5 border border-white/5"
                                 )}
                             >
                                 EYE
                             </button>
                             <div className="w-px h-4 bg-white/10 mx-2" />
-                            <button className="p-2 rounded hover:bg-white/5 text-white/40 hover:text-[#00f3ff] transition-all" title="Fast Fourier Transform">
+                            <button className="p-2 hover:bg-white/5 text-white/40 hover:text-[#00f3ff] transition-all" title="Fast Fourier Transform">
                                 <Binary size={16} />
                             </button>
                             <button 
                                 onClick={handleExportCSV}
-                                className="p-2 rounded hover:bg-white/5 text-white/40 hover:text-[#00f3ff] transition-all" title="Export CSV Data"
+                                className="p-2 hover:bg-white/5 text-white/40 hover:text-[#00f3ff] transition-all" title="Export CSV Data"
                             >
                                 <FileJson size={16} />
                             </button>
                             <button 
                                 onClick={() => setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' }))}
                                 className={cn(
-                                    "p-2 rounded transition-all",
+                                    "p-2 transition-all",
                                     scope.cursorMode === 'time' ? "bg-[#00f3ff]/10 text-[#00f3ff]" : "text-white/40 hover:text-[#00f3ff] hover:bg-white/5"
                                 )} 
                                 title="Toggle Cursors"
@@ -271,8 +271,8 @@ export const VoltageScope: React.FC = () => {
                             <div className="flex flex-col items-end">
                                 <span className="text-[8px] font-mono font-black text-white/30 uppercase tracking-[0.2em] leading-none mb-1">Bus Status</span>
                                 <div className="flex items-center gap-2">
+                                    <div className="w-1 h-3 bg-[#00ff9f] shadow-[0_0_4px_#00ff9f]" />
                                     <span className="text-[10px] font-mono font-black text-[#00ff9f]">ACTIVE-ERROR</span>
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[#00ff9f] shadow-[0_0_4px_#00ff9f]" />
                                 </div>
                             </div>
                         </div>
@@ -294,17 +294,17 @@ export const VoltageScope: React.FC = () => {
             </div>
 
             {/* Design System Reference (Issue #255) */}
-            <div className="mt-4 flex flex-wrap gap-4 px-2 opacity-20 hover:opacity-100 transition-opacity">
+            <div className="mt-2 flex flex-wrap gap-6 px-3 py-2 bg-white/[0.02] border-t border-white/5 opacity-30 hover:opacity-100 transition-opacity">
                 {[
-                    { label: 'Voltage Precision', value: '12-bit ADC', icon: <Cpu size={12} /> },
-                    { label: 'Sampling Rate', value: '500 MS/s', icon: <Activity size={12} /> },
-                    { label: 'Memory Depth', value: '256 kpts', icon: <Database size={12} /> },
-                    { label: 'Isolation', value: '2.5 kV RMS', icon: <ShieldCheck size={12} /> }
+                    { label: 'Voltage Precision', value: '12-bit ADC', icon: <Cpu size={10} /> },
+                    { label: 'Sampling Rate', value: '500 MS/s', icon: <Activity size={10} /> },
+                    { label: 'Memory Depth', value: '256 kpts', icon: <Database size={10} /> },
+                    { label: 'Isolation', value: '2.5 kV RMS', icon: <ShieldCheck size={10} /> }
                 ].map((stat) => (
                     <div key={stat.label} className="flex items-center gap-2">
-                        <span className="text-white">{stat.icon}</span>
-                        <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-white/60">{stat.label}:</span>
-                        <span className="text-[9px] font-mono font-black text-[#00f3ff]">{stat.value}</span>
+                        <span className="text-white/40">{stat.icon}</span>
+                        <span className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-white/30">{stat.label}</span>
+                        <span className="text-[9px] font-mono font-black text-[#00f3ff]/80">{stat.value}</span>
                     </div>
                 ))}
             </div>

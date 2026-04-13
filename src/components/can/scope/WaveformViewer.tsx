@@ -315,64 +315,70 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
     return (
         <div ref={containerRef} className="flex flex-col gap-4 w-full h-full relative">
             {/* Header / Info Bar */}
-            <div className="flex items-center justify-between px-4 py-2 glass-panel border-white/5 mx-2 mt-2">
+            <div className="flex items-center justify-between px-4 py-2 glass-panel !rounded-none border-white/5 mx-2 mt-2 bg-white/[0.01]">
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#00f3ff]" />
-                        <span className="text-[10px] font-mono font-black text-white/40 uppercase tracking-widest">CH1: <span className="text-white">{ch1.vdiv}V/div</span></span>
+                        <div className="w-[2px] h-3 bg-[#00f3ff] shadow-[0_0_4px_#00f3ff]" />
+                        <span className="text-[10px] font-mono font-black text-white/30 uppercase tracking-widest">CH1: <span className="text-white/80">{ch1.vdiv}V/div</span></span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#bd00ff]" />
-                        <span className="text-[10px] font-mono font-black text-white/40 uppercase tracking-widest">CH2: <span className="text-white">{ch2.vdiv}V/div</span></span>
+                        <div className="w-[2px] h-3 bg-[#bd00ff] shadow-[0_0_4px_#bd00ff]" />
+                        <span className="text-[10px] font-mono font-black text-white/30 uppercase tracking-widest">CH2: <span className="text-white/80">{ch2.vdiv}V/div</span></span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Clock size={12} className="text-[#00ff9f]" />
-                        <span className="text-[10px] font-mono font-black text-white/40 uppercase tracking-widest">Time: <span className="text-white">{tdiv}µs/div</span></span>
+                    <div className="flex items-center gap-2 border-l border-white/5 pl-6">
+                        <Clock size={12} className="text-[#00ff9f]/60" />
+                        <span className="text-[10px] font-mono font-black text-white/30 uppercase tracking-widest">Time: <span className="text-white/80">{tdiv}µs/div</span></span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-1">
                     <button onClick={onResetView} className={cn(
-                        "flex items-center gap-2 px-3 py-1.5 rounded bg-white/5 border border-white/10 text-white/60 hover:text-[#00f3ff] text-[10px] font-mono font-black uppercase transition-all"
+                        "flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 text-white/40 hover:text-[#00f3ff] hover:bg-white/[0.08] text-[9px] font-mono font-black uppercase tracking-widest transition-all !rounded-none"
                     )}>
-                        <Maximize2 size={12} />
-                        Center Waveform
+                        <Maximize2 size={11} />
+                        Auto-Scale
                     </button>
-                    <div className="w-px h-4 bg-white/10 mx-2" />
-                    <button onClick={onExportPNG} className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#00f3ff]/10 border border-[#00f3ff]/20 text-[#00f3ff] hover:bg-[#00f3ff]/20 text-[10px] font-mono font-black uppercase tracking-widest transition-all">
-                        <Download size={12} />
-                        PNG
+                    <div className="w-px h-4 bg-white/5 mx-2" />
+                    <button onClick={onExportPNG} className="flex items-center gap-2 px-3 py-1.5 bg-[#00f3ff]/5 border border-[#00f3ff]/20 text-[#00f3ff]/80 hover:bg-[#00f3ff]/15 text-[9px] font-mono font-black uppercase tracking-widest transition-all !rounded-none">
+                        <Download size={11} />
+                        Export .IMG
                     </button>
                 </div>
             </div>
 
             {/* Canvas Container */}
-            <div className="relative flex-1 min-h-[500px] glass-panel overflow-y-auto no-scrollbar group mx-2">
+            <div className="relative flex-1 min-h-[500px] glass-panel !rounded-none overflow-y-auto no-scrollbar group mx-2 bg-black border-white/10">
                 <canvas 
                     ref={canvasRef}
                     width={CANVAS_W}
                     height={CANVAS_H}
                     onWheel={handleWheel}
                     onPointerDown={handlePointerDown}
-                    className="w-full cursor-crosshair"
+                    className="w-full cursor-crosshair opacity-90 group-hover:opacity-100 transition-opacity"
                 />
                 
                 {/* Floating Modes */}
-                <div className="absolute top-4 right-4 flex flex-col gap-2">
-                    <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0a0a0f]/80 border border-white/10 text-white/60 hover:text-[#00f3ff] backdrop-blur-md text-[9px] font-mono font-black transition-all">
-                        <LayoutGrid size={12} />
-                        PERSISTENCE
+                <div className="absolute top-4 right-4 flex flex-col gap-1.5">
+                    <button className="flex items-center gap-2 px-3 py-1.5 bg-black/60 border border-white/10 text-white/30 hover:text-[#00f3ff] hover:bg-white/[0.05] backdrop-blur-md text-[8px] font-mono font-black tracking-[0.2em] transition-all !rounded-none">
+                        <LayoutGrid size={11} />
+                        VECTOR MAP
                     </button>
-                    <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0a0a0f]/80 border border-white/10 text-white/60 hover:text-[#00f3ff] backdrop-blur-md text-[9px] font-mono font-black transition-all">
-                        <Settings2 size={12} />
-                        AUTO SET
+                    <button className="flex items-center gap-2 px-3 py-1.5 bg-black/60 border border-white/10 text-white/30 hover:text-[#00ff9f] hover:bg-white/[0.05] backdrop-blur-md text-[8px] font-mono font-black tracking-[0.2em] transition-all !rounded-none">
+                        <Settings2 size={11} />
+                        AUTO CALIB
                     </button>
                 </div>
 
                 {/* Status Overlay */}
-                <div className="absolute bottom-4 left-4 flex items-center gap-4 text-[9px] font-mono font-black uppercase tracking-widest text-white/20">
-                    <span>900px × {CANVAS_H}px</span>
-                    <span className="text-[#00ff9f]">ISO 11898 Compliance: PASS</span>
+                <div className="absolute bottom-4 left-4 flex items-center gap-6 text-[8px] font-mono font-black uppercase tracking-[0.2em] text-white/20">
+                    <div className="flex items-center gap-2">
+                        <div className="w-1 h-1 bg-white/20 animate-pulse" />
+                        <span>Buffer: Stable</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#00ff9f]/40">
+                        <div className="w-1 h-1 bg-[#00ff9f]" />
+                        <span>ISO PHY PASS</span>
+                    </div>
                 </div>
             </div>
         </div>

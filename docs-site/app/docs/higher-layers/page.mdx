@@ -4,6 +4,7 @@ description: 'Protocols that run on top of raw CAN: ISO-TP (ISO 15765-2) transpo
 ---
 
 import { ArticleSchema } from '@/components/ArticleSchema'
+import { ProtocolStack } from '@/components/ProtocolStack'
 
 <ArticleSchema
   title="CAN Higher-Layer Protocols"
@@ -18,17 +19,7 @@ This page introduces the five protocols you will encounter most often and explai
 
 ## The stack at a glance
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Application    UDS (ISO 14229) · J1939 · CANopen · OBD-II  │
-├──────────────────────────────────────────────────────────────┤
-│  Transport      ISO-TP (ISO 15765-2) — segmentation & flow  │
-├──────────────────────────────────────────────────────────────┤
-│  Data Link      CAN frame, arbitration, CRC, ACK            │  ← ISO 11898-1
-├──────────────────────────────────────────────────────────────┤
-│  Physical       CANH / CANL, transceiver, termination        │  ← ISO 11898-2
-└──────────────────────────────────────────────────────────────┘
-```
+<ProtocolStack />
 
 Each higher-layer protocol defines its own addressing, message semantics, and error-handling logic. CAN just delivers the frames.
 

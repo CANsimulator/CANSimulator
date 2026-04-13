@@ -5,6 +5,8 @@ description: 'CAN protocol error detection, error frames, fault confinement stat
 
 import { ArticleSchema } from '@/components/ArticleSchema'
 import { FaultConfinement } from '@/components/FaultConfinement'
+import { ErrorFrameAnatomy } from '@/components/ErrorFrameAnatomy'
+import { FaultStateMachine } from '@/components/FaultStateMachine'
 
 <ArticleSchema
   title="CAN Error Handling"
@@ -51,17 +53,7 @@ Certain bit positions must always be recessive (CRC delimiter, ACK delimiter, EO
 
 When any node detects an error, it immediately broadcasts an **error frame** to destroy the current transmission and alert all other nodes:
 
-```
-┌────────────────────────┬──────────────┐
-│   Error Flag           │  Error       │
-│   (6 dominant bits)    │  Delimiter   │
-│   or 6 recessive bits  │  (8 rec.)    │
-└────────────────────────┴──────────────┘
-```
-
-- **Active error flag:** 6 dominant bits — violates the bit-stuffing rule, so all other nodes also detect an error and respond with their own error flags. The result is a **superposition** of error flags (6 – 12 dominant bits).
-- **Passive error flag:** 6 recessive bits — does not disturb other transmissions. Only sent by error-passive nodes (see below).
-- **Error delimiter:** 8 recessive bits, followed by the normal inter-frame space.
+<ErrorFrameAnatomy />
 
 After the error frame completes, the transmitter **automatically retransmits** the corrupted message. From the application's perspective, the error is invisible — the message simply arrives one frame later.
 
@@ -72,17 +64,7 @@ CAN controllers track two counters to decide how aggressively a node participate
 - **TEC** — Transmit Error Counter
 - **REC** — Receive Error Counter
 
-```
-                 TEC ≤ 127          TEC > 127        TEC > 255
-                 REC ≤ 127          or REC > 127      (transmit only)
-┌──────────┐    ┌──────────────┐    ┌──────────┐
-│  Error-   │───→│  Error-      │───→│  Bus-Off │
-│  Active   │←──│  Passive     │    │          │
-└──────────┘    └──────────────┘    └──────────┘
-     ↑                                    │
-     │       128 × 11 recessive bits      │
-     └────────────────────────────────────┘
-```
+<FaultStateMachine />
 
 ### Interactive demo
 
