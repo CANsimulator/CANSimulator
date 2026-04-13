@@ -10,6 +10,12 @@
 export const PLOT_W = 840; // CANVAS_W (900) - M.left (52) - M.right (8)
 export const PLOT_H_WAVE = 200;
 
+// Panel Stack Heights
+export const PANEL_H_PHYSICAL = 220;
+export const PANEL_H_DIFF = 140;
+export const PANEL_H_EYE = 120;
+export const TOTAL_CANVAS_H = PANEL_H_PHYSICAL + PANEL_H_DIFF + PANEL_H_EYE + 60; // Extra room for axis/labels
+
 interface ViewState {
     zoomX: number;
     zoomY: number;

@@ -5,20 +5,20 @@ description: 'Interactive CAN bus protocol reference: physical layer, frame form
 
 # Documentation
 
-Browse the CAN protocol reference. Topics marked **(Phase 1)** are fully written; others are scaffolded and coming online next.
+Browse the CAN protocol reference. Each page pairs concise, spec-grounded explanations with interactive widgets so you can see how a CAN bus actually behaves.
 
 ## Fundamentals
 
-- **[Introduction](/docs/introduction)** — What CAN is, history, and where it runs *(Phase 1)*
-- **[Physical Layer](/docs/physical-layer)** — CANH / CANL, termination, topology, voltage levels *(Phase 1)*
-- **[Frame Format](/docs/frame-format)** — Standard and extended data frames, field-by-field *(Phase 1)*
+- **[Introduction](/docs/introduction)** — What CAN is, why Bosch invented it, and where it runs today
+- **[Physical Layer](/docs/physical-layer)** — CANH / CANL differential signaling, termination, topology, voltage levels
+- **[Frame Format](/docs/frame-format)** — Standard and extended data frames, field-by-field with interactive viewer
+- **[Arbitration](/docs/arbitration)** — Non-destructive bitwise priority resolution with step-through demo
+- **[Bit Timing](/docs/bit-timing)** — BRP, TSEG1, TSEG2, SJW, sample point — with interactive calculator
+- **[Error Handling](/docs/error-handling)** — Error detection, error frames, fault confinement state machine
 
-## In progress
+## Advanced
 
-- **Arbitration** — How priority is resolved on a shared bus
-- **Bit Timing** — BRP, TSEG1, TSEG2, SJW, and how to pick them
-- **Error Handling** — Error frames, fault confinement, bus-off recovery
-- **Higher-Layer Protocols** — UDS (ISO 14229), J1939, CANopen
-- **FAQ** — Common questions and quick answers
+- **[Higher-Layer Protocols](/docs/higher-layers)** — UDS, ISO-TP, J1939, CANopen, OBD-II
+- **[FAQ](/docs/faq)** — Common questions and quick answers
 
 > Every page links back to the [live CAN Simulator](/) where you can reproduce the concepts on an interactive bus.

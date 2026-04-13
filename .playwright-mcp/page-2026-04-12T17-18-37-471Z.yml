@@ -1,0 +1,526 @@
+- generic [active] [ref=e1]:
+  - link "Skip to Content" [ref=e2] [cursor=pointer]:
+    - /url: "#nextra-skip-nav"
+  - banner [ref=e3]:
+    - navigation [ref=e5]:
+      - link "Home page" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - generic [ref=e8]: ◆
+          - text: CAN Simulator Docs
+      - generic [ref=e11]:
+        - combobox "Search documentation…" [ref=e12]
+        - generic: CTRL K
+      - link "Open Simulator" [ref=e13] [cursor=pointer]:
+        - /url: http://localhost:5173
+        - img [ref=e14]
+        - text: Open Simulator
+  - generic [ref=e16]:
+    - complementary [ref=e17]:
+      - list [ref=e20]:
+        - listitem [ref=e21]:
+          - link "CAN Simulator Docs — Learn the CAN Bus Protocol" [ref=e22] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e23]:
+          - button "Docs" [ref=e24] [cursor=pointer]:
+            - text: Docs
+            - img [ref=e25]
+          - list [ref=e28]:
+            - listitem [ref=e29]:
+              - link "Documentation" [ref=e30] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e31]:
+              - link "CAN Arbitration" [ref=e32] [cursor=pointer]:
+                - /url: /docs/arbitration
+            - listitem [ref=e33]:
+              - link "CAN Bit Timing" [ref=e34] [cursor=pointer]:
+                - /url: /docs/bit-timing
+            - listitem [ref=e35]:
+              - link "CAN Error Handling" [ref=e36] [cursor=pointer]:
+                - /url: /docs/error-handling
+            - listitem [ref=e37]:
+              - link "CAN Protocol FAQ" [ref=e38] [cursor=pointer]:
+                - /url: /docs/faq
+            - listitem [ref=e39]:
+              - link "CAN Frame Format" [ref=e40] [cursor=pointer]:
+                - /url: /docs/frame-format
+            - listitem [ref=e41]:
+              - link "CAN Higher-Layer Protocols" [ref=e42] [cursor=pointer]:
+                - /url: /docs/higher-layers
+            - listitem [ref=e43]:
+              - link "Introduction to CAN" [ref=e44] [cursor=pointer]:
+                - /url: /docs/introduction
+            - listitem [ref=e45]:
+              - link "CAN Physical Layer" [ref=e46] [cursor=pointer]:
+                - /url: /docs/physical-layer
+      - generic [ref=e47]:
+        - button "System" [ref=e424] [cursor=pointer]:
+          - img [ref=e49]
+          - text: System
+        - button "Collapse sidebar" [expanded] [ref=e51] [cursor=pointer]:
+          - img [ref=e52]
+    - article [ref=e55]:
+      - generic [ref=e56]:
+        - link "Docs" [ref=e57] [cursor=pointer]:
+          - /url: /docs
+        - img [ref=e58]
+        - generic "CAN Physical Layer" [ref=e60]
+      - generic [ref=e61]:
+        - button "Copy page" [ref=e62] [cursor=pointer]:
+          - img [ref=e63]
+          - text: Copy page
+        - button [ref=e66] [cursor=pointer]:
+          - img [ref=e67]
+      - main [ref=e69]:
+        - heading "CAN Physical Layer" [level=1] [ref=e70]
+        - paragraph [ref=e71]:
+          - text: The CAN physical layer — standardized as
+          - strong [ref=e72]: ISO 11898-2
+          - text: (high-speed) and
+          - strong [ref=e73]: ISO 11898-3
+          - text: (low-speed, fault-tolerant) — defines how binary 1s and 0s become electrical signals on a pair of wires. Everything about CAN’s robustness in noisy environments traces back to the decisions made at this level.
+        - heading "Differential signalingPermalink for this section" [level=2] [ref=e74]:
+          - text: Differential signaling
+          - link "Permalink for this section" [ref=e75] [cursor=pointer]:
+            - /url: "#differential-signaling"
+            - text: "#"
+        - paragraph [ref=e76]:
+          - text: CAN uses a
+          - strong [ref=e77]: two-wire differential pair
+          - text: ":"
+          - strong [ref=e78]: CANH
+          - text: (CAN High) and
+          - strong [ref=e79]: CANL
+          - text: (CAN Low). Instead of measuring a voltage against ground, the receiver measures the
+          - emphasis [ref=e80]: difference
+          - text: between CANH and CANL. Common-mode noise — EMI that shifts both wires equally — cancels out.
+        - heading "Voltage levels (high-speed CAN)Permalink for this section" [level=3] [ref=e81]:
+          - text: Voltage levels (high-speed CAN)
+          - link "Permalink for this section" [ref=e82] [cursor=pointer]:
+            - /url: "#voltage-levels-high-speed-can"
+            - text: "#"
+        - table [ref=e83]:
+          - rowgroup [ref=e84]:
+            - row "Bus state CANH CANL V_diff (CANH − CANL) Logic level" [ref=e85]:
+              - columnheader "Bus state" [ref=e86]
+              - columnheader "CANH" [ref=e87]
+              - columnheader "CANL" [ref=e88]
+              - columnheader "V_diff (CANH − CANL)" [ref=e89]
+              - columnheader "Logic level" [ref=e90]
+          - rowgroup [ref=e91]:
+            - row "Recessive ≈ 2.5 V ≈ 2.5 V ≈ 0 V Logic 1" [ref=e92]:
+              - cell "Recessive" [ref=e93]:
+                - strong [ref=e94]: Recessive
+              - cell "≈ 2.5 V" [ref=e95]
+              - cell "≈ 2.5 V" [ref=e96]
+              - cell "≈ 0 V" [ref=e97]
+              - cell "Logic 1" [ref=e98]:
+                - text: Logic
+                - strong [ref=e99]: "1"
+            - row "Dominant ≈ 3.5 V ≈ 1.5 V ≈ 2.0 V Logic 0" [ref=e100]:
+              - cell "Dominant" [ref=e101]:
+                - strong [ref=e102]: Dominant
+              - cell "≈ 3.5 V" [ref=e103]
+              - cell "≈ 1.5 V" [ref=e104]
+              - cell "≈ 2.0 V" [ref=e105]
+              - cell "Logic 0" [ref=e106]:
+                - text: Logic
+                - strong [ref=e107]: "0"
+        - paragraph [ref=e108]: "A few things to note:"
+        - list [ref=e109]:
+          - listitem [ref=e110]:
+            - strong [ref=e111]: Recessive means “floating.”
+            - text: Both wires sit at 2.5 V through internal bias resistors. Nobody is actively driving the bus.
+          - listitem [ref=e112]:
+            - strong [ref=e113]: Dominant means “driven.”
+            - text: The transmitting node pulls CANH up to ~3.5 V and CANL down to ~1.5 V, creating a 2.0 V differential.
+          - listitem [ref=e114]:
+            - strong [ref=e115]: Dominant always wins over recessive.
+            - text: If one node drives dominant while another drives recessive on the same bit time, the bus reads dominant. This is the foundation of non-destructive arbitration.
+        - blockquote [ref=e116]:
+          - paragraph [ref=e117]:
+            - strong [ref=e118]: Why these names?
+            - text: "Think of it physically: dominant actively overrides the idle state, just as a dominant allele masks a recessive one. The naming comes from the genetics analogy Robert Bosch used in early CAN documentation."
+        - heading "Receiver thresholdPermalink for this section" [level=3] [ref=e119]:
+          - text: Receiver threshold
+          - link "Permalink for this section" [ref=e120] [cursor=pointer]:
+            - /url: "#receiver-threshold"
+            - text: "#"
+        - paragraph [ref=e121]: "An ISO 11898-2 compliant receiver interprets:"
+        - list [ref=e122]:
+          - listitem [ref=e123]:
+            - strong [ref=e124]: V_diff > 0.9 V
+            - text: → dominant (logic 0)
+          - listitem [ref=e125]:
+            - strong [ref=e126]: V_diff < 0.5 V
+            - text: → recessive (logic 1)
+          - listitem [ref=e127]:
+            - strong [ref=e128]: 0.5 V ≤ V_diff ≤ 0.9 V
+            - text: → undefined (hysteresis region)
+        - paragraph [ref=e129]: The wide gap between 0.5 V and 0.9 V gives the receiver noise margin. On a well-terminated bus in a car, the dominant differential typically reads 1.5 V – 3.0 V, far above the threshold.
+        - heading "Bus topologyPermalink for this section" [level=2] [ref=e130]:
+          - text: Bus topology
+          - link "Permalink for this section" [ref=e131] [cursor=pointer]:
+            - /url: "#bus-topology"
+            - text: "#"
+        - paragraph [ref=e132]:
+          - text: High-speed CAN uses a
+          - strong [ref=e133]: linear bus
+          - text: (also called “daisy chain” or “backbone”) — a single unshielded twisted pair runs the length of the network, and each node taps into it through a short
+          - strong [ref=e134]: stub
+          - text: .
+        - generic [ref=e135]:
+          - paragraph [ref=e136]: "Interactive: CAN bus topology — hover on any element"
+          - img "CAN bus linear topology diagram" [ref=e137]:
+            - generic [ref=e139] [cursor=pointer]: CANH backbone CANL
+            - generic [ref=e140]:
+              - generic [ref=e142] [cursor=pointer]: stub
+              - generic [ref=e144] [cursor=pointer]:
+                - generic [ref=e146]: Node A
+                - generic [ref=e147]: MCU + XCVR
+                - generic [ref=e148]: TX
+                - generic [ref=e149]: RX
+            - generic [ref=e150]:
+              - generic [ref=e152] [cursor=pointer]: stub
+              - generic [ref=e154] [cursor=pointer]:
+                - generic [ref=e156]: Node B
+                - generic [ref=e157]: MCU + XCVR
+                - generic [ref=e158]: TX
+                - generic [ref=e159]: RX
+            - generic [ref=e160]:
+              - generic [ref=e162] [cursor=pointer]: stub
+              - generic [ref=e164] [cursor=pointer]:
+                - generic [ref=e166]: Node C
+                - generic [ref=e167]: MCU + XCVR
+                - generic [ref=e168]: TX
+                - generic [ref=e169]: RX
+            - generic [ref=e170]:
+              - generic [ref=e172] [cursor=pointer]: stub
+              - generic [ref=e174] [cursor=pointer]:
+                - generic [ref=e176]: Node D
+                - generic [ref=e177]: MCU + XCVR
+                - generic [ref=e178]: TX
+                - generic [ref=e179]: RX
+            - generic [ref=e183] [cursor=pointer]: 120 Ω
+            - generic [ref=e187] [cursor=pointer]: 120 Ω
+            - generic [ref=e188]: "Total DC load: 120 Ω ∥ 120 Ω = 60 Ω"
+          - generic [ref=e189]:
+            - generic [ref=e436]: Backbone (CANH + CANL)
+            - paragraph [ref=e437]: "The backbone is a single unshielded twisted pair carrying two differential signals: CANH (high) and CANL (low). The twist rejects electromagnetic interference."
+            - paragraph [ref=e438]: AWG 22–24, ~120 Ω characteristic impedance, 1–2 twists/inch
+        - heading "Key topology rulesPermalink for this section" [level=3] [ref=e191]:
+          - text: Key topology rules
+          - link "Permalink for this section" [ref=e192] [cursor=pointer]:
+            - /url: "#key-topology-rules"
+            - text: "#"
+        - list [ref=e193]:
+          - listitem [ref=e194]:
+            - strong [ref=e195]: Two 120 Ω terminators
+            - text: — one at each physical end of the backbone. They absorb signal reflections that would distort the differential waveform.
+          - listitem [ref=e196]:
+            - strong [ref=e197]: Stubs must be short
+            - text: — ideally under 30 cm at 500 kbit/s, shorter at 1 Mbit/s. Long stubs create signal reflections inside the stub that corrupt bus state.
+          - listitem [ref=e198]:
+            - strong [ref=e199]: Star topologies are discouraged
+            - text: for high-speed CAN. A star creates multiple unterminated branches that reflect. Low-speed (fault-tolerant) CAN can tolerate stars because it runs slower.
+          - listitem [ref=e200]:
+            - strong [ref=e201]: Total bus length depends on bit rate
+            - text: — at 1 Mbit/s, ISO recommends ≤ 40 m; at 125 kbit/s, up to 500 m is practical.
+        - heading "Why 120 Ω?Permalink for this section" [level=3] [ref=e202]:
+          - text: Why 120 Ω?
+          - link "Permalink for this section" [ref=e203] [cursor=pointer]:
+            - /url: "#why-120-ω"
+            - text: "#"
+        - paragraph [ref=e204]: The characteristic impedance of a typical CAN twisted pair (AWG 22 – 24, loosely twisted) is approximately 120 Ω. Matching the termination resistor to the cable impedance minimizes reflections. Two 120 Ω resistors in parallel gives the receiver a 60 Ω DC load on the differential pair, which the transceivers are designed to drive.
+        - blockquote [ref=e205]:
+          - paragraph [ref=e206]:
+            - strong [ref=e207]: Troubleshooting tip.
+            - text: Measure resistance between CANH and CANL with the bus powered off. You should read approximately
+            - strong [ref=e208]: 60 Ω
+            - text: (two 120 Ω in parallel). If you read 120 Ω, one terminator is missing. If you read 40 Ω, somebody added an extra one.
+        - heading "TransceiverPermalink for this section" [level=2] [ref=e209]:
+          - text: Transceiver
+          - link "Permalink for this section" [ref=e210] [cursor=pointer]:
+            - /url: "#transceiver"
+            - text: "#"
+        - paragraph [ref=e211]:
+          - text: The
+          - strong [ref=e212]: CAN transceiver
+          - text: is the IC that converts between the ECU’s single-ended logic-level TX/RX pins and the differential bus. Common transceivers include the TJA1050/TJA1051 (NXP), MCP2551 (Microchip), and SN65HVD230 (TI).
+        - heading "Transceiver pinout (typical)Permalink for this section" [level=3] [ref=e213]:
+          - text: Transceiver pinout (typical)
+          - link "Permalink for this section" [ref=e214] [cursor=pointer]:
+            - /url: "#transceiver-pinout-typical"
+            - text: "#"
+        - table [ref=e215]:
+          - rowgroup [ref=e216]:
+            - row "Pin Direction Description" [ref=e217]:
+              - columnheader "Pin" [ref=e218]
+              - columnheader "Direction" [ref=e219]
+              - columnheader "Description" [ref=e220]
+          - rowgroup [ref=e221]:
+            - row "TXD In (from MCU) Logic-level transmit. Low = drive bus dominant." [ref=e222]:
+              - cell "TXD" [ref=e223]:
+                - strong [ref=e224]: TXD
+              - cell "In (from MCU)" [ref=e225]
+              - cell "Logic-level transmit. Low = drive bus dominant." [ref=e226]
+            - row "RXD Out (to MCU) Logic-level receive. Low when bus is dominant." [ref=e227]:
+              - cell "RXD" [ref=e228]:
+                - strong [ref=e229]: RXD
+              - cell "Out (to MCU)" [ref=e230]
+              - cell "Logic-level receive. Low when bus is dominant." [ref=e231]
+            - row "CANH Bidirectional Differential bus wire — high side" [ref=e232]:
+              - cell "CANH" [ref=e233]:
+                - strong [ref=e234]: CANH
+              - cell "Bidirectional" [ref=e235]
+              - cell "Differential bus wire — high side" [ref=e236]
+            - row "CANL Bidirectional Differential bus wire — low side" [ref=e237]:
+              - cell "CANL" [ref=e238]:
+                - strong [ref=e239]: CANL
+              - cell "Bidirectional" [ref=e240]
+              - cell "Differential bus wire — low side" [ref=e241]
+            - row "V_CC Power Typically 5 V" [ref=e242]:
+              - cell "V_CC" [ref=e243]:
+                - strong [ref=e244]: V_CC
+              - cell "Power" [ref=e245]
+              - cell "Typically 5 V" [ref=e246]
+            - row "GND Power Ground reference" [ref=e247]:
+              - cell "GND" [ref=e248]:
+                - strong [ref=e249]: GND
+              - cell "Power" [ref=e250]
+              - cell "Ground reference" [ref=e251]
+            - row "STB / S In Standby / silent mode select (optional)" [ref=e252]:
+              - cell "STB / S" [ref=e253]:
+                - strong [ref=e254]: STB / S
+              - cell "In" [ref=e255]
+              - cell "Standby / silent mode select (optional)" [ref=e256]
+        - heading "How the transceiver drives the busPermalink for this section" [level=3] [ref=e257]:
+          - text: How the transceiver drives the bus
+          - link "Permalink for this section" [ref=e258] [cursor=pointer]:
+            - /url: "#how-the-transceiver-drives-the-bus"
+            - text: "#"
+        - list [ref=e259]:
+          - listitem [ref=e260]:
+            - strong [ref=e261]: MCU pulls TXD low
+            - text: → transceiver drives CANH up (~3.5 V) and CANL down (~1.5 V) → bus goes
+            - strong [ref=e262]: dominant
+          - listitem [ref=e263]:
+            - strong [ref=e264]: MCU releases TXD high
+            - text: → transceiver tri-states its outputs → bus returns to
+            - strong [ref=e265]: recessive
+            - text: (both wires biased to ~2.5 V by the termination network)
+          - listitem [ref=e266]: The transceiver simultaneously reads the bus via RXD, which is how the transmitting node can detect a collision during arbitration — if it sent a recessive bit but reads dominant, another node is asserting.
+        - heading "Electrical fault protectionPermalink for this section" [level=3] [ref=e267]:
+          - text: Electrical fault protection
+          - link "Permalink for this section" [ref=e268] [cursor=pointer]:
+            - /url: "#electrical-fault-protection"
+            - text: "#"
+        - paragraph [ref=e269]: "Modern transceivers protect against:"
+        - list [ref=e270]:
+          - listitem [ref=e271]:
+            - strong [ref=e272]: Bus short to battery or ground
+            - text: — clamping diodes limit voltage
+          - listitem [ref=e273]:
+            - strong [ref=e274]: Bus short between CANH and CANL
+            - text: — communication degrades but the transceiver survives
+          - listitem [ref=e275]:
+            - strong [ref=e276]: ESD
+            - text: — rated for ±8 kV HBM minimum on bus pins
+          - listitem [ref=e277]:
+            - strong [ref=e278]: Thermal shutdown
+            - text: — if current exceeds safe limits from a shorted termination
+        - heading "Signal integrityPermalink for this section" [level=2] [ref=e279]:
+          - text: Signal integrity
+          - link "Permalink for this section" [ref=e280] [cursor=pointer]:
+            - /url: "#signal-integrity"
+            - text: "#"
+        - heading "Propagation delayPermalink for this section" [level=3] [ref=e281]:
+          - text: Propagation delay
+          - link "Permalink for this section" [ref=e282] [cursor=pointer]:
+            - /url: "#propagation-delay"
+            - text: "#"
+        - paragraph [ref=e283]:
+          - text: A CAN bit must be read by every node on the bus within the same bit time. As the bus gets longer, the propagation delay from end to end increases. ISO 11898-2 specifies a maximum of
+          - strong [ref=e284]: 5 μs
+          - text: "round-trip propagation, which directly constrains:"
+        - list [ref=e285]:
+          - listitem [ref=e286]:
+            - strong [ref=e287]: Bus length
+            - text: at a given bit rate
+          - listitem [ref=e288]:
+            - strong [ref=e289]: Bit timing parameters
+            - text: (Prop_Seg compensates for propagation)
+        - paragraph [ref=e290]: At 1 Mbit/s, each bit is only 1 μs. The round-trip propagation budget is tight, limiting the bus to ~40 m. At 125 kbit/s (8 μs per bit), hundreds of meters are practical.
+        - heading "Bit rate vs maximum bus lengthPermalink for this section" [level=3] [ref=e291]:
+          - text: Bit rate vs maximum bus length
+          - link "Permalink for this section" [ref=e292] [cursor=pointer]:
+            - /url: "#bit-rate-vs-maximum-bus-length"
+            - text: "#"
+        - table [ref=e293]:
+          - rowgroup [ref=e294]:
+            - row "Bit rate Nominal bit time Max recommended length" [ref=e295]:
+              - columnheader "Bit rate" [ref=e296]
+              - columnheader "Nominal bit time" [ref=e297]
+              - columnheader "Max recommended length" [ref=e298]
+          - rowgroup [ref=e299]:
+            - row "1 Mbit/s 1 μs ~40 m" [ref=e300]:
+              - cell "1 Mbit/s" [ref=e301]
+              - cell "1 μs" [ref=e302]
+              - cell "~40 m" [ref=e303]
+            - row "500 kbit/s 2 μs ~100 m" [ref=e304]:
+              - cell "500 kbit/s" [ref=e305]
+              - cell "2 μs" [ref=e306]
+              - cell "~100 m" [ref=e307]
+            - row "250 kbit/s 4 μs ~250 m" [ref=e308]:
+              - cell "250 kbit/s" [ref=e309]
+              - cell "4 μs" [ref=e310]
+              - cell "~250 m" [ref=e311]
+            - row "125 kbit/s 8 μs ~500 m" [ref=e312]:
+              - cell "125 kbit/s" [ref=e313]
+              - cell "8 μs" [ref=e314]
+              - cell "~500 m" [ref=e315]
+            - row "50 kbit/s 20 μs ~1000 m" [ref=e316]:
+              - cell "50 kbit/s" [ref=e317]
+              - cell "20 μs" [ref=e318]
+              - cell "~1000 m" [ref=e319]
+        - paragraph [ref=e320]: These are conservative ISO-guideline values. Real-world ranges depend on cable quality, stub lengths, and transceiver loop delay.
+        - heading "Common-mode rangePermalink for this section" [level=3] [ref=e321]:
+          - text: Common-mode range
+          - link "Permalink for this section" [ref=e322] [cursor=pointer]:
+            - /url: "#common-mode-range"
+            - text: "#"
+        - paragraph [ref=e323]:
+          - text: The differential receiver works as long as both CANH and CANL stay within the common-mode input range, specified as
+          - strong [ref=e324]: −2 V to +7 V
+          - text: for ISO 11898-2. Ground offsets between distant nodes (caused by cable resistance carrying return currents) are tolerated up to this range, which is why CAN works reliably in vehicles with long ground paths.
+        - heading "Wiring recommendationsPermalink for this section" [level=2] [ref=e325]:
+          - text: Wiring recommendations
+          - link "Permalink for this section" [ref=e326] [cursor=pointer]:
+            - /url: "#wiring-recommendations"
+            - text: "#"
+        - table [ref=e327]:
+          - rowgroup [ref=e328]:
+            - row "Parameter Recommendation" [ref=e329]:
+              - columnheader "Parameter" [ref=e330]
+              - columnheader "Recommendation" [ref=e331]
+          - rowgroup [ref=e332]:
+            - row "Cable type Unshielded twisted pair (UTP), 120 Ω nominal" [ref=e333]:
+              - cell "Cable type" [ref=e334]
+              - cell "Unshielded twisted pair (UTP), 120 Ω nominal" [ref=e335]
+            - row "Conductor gauge AWG 22 – 24" [ref=e336]:
+              - cell "Conductor gauge" [ref=e337]
+              - cell "AWG 22 – 24" [ref=e338]
+            - row "Twist rate 1 – 2 twists per inch (tighter is better for EMI rejection)" [ref=e339]:
+              - cell "Twist rate" [ref=e340]
+              - cell "1 – 2 twists per inch (tighter is better for EMI rejection)" [ref=e341]
+            - row "Termination 120 Ω at each end of the backbone" [ref=e342]:
+              - cell "Termination" [ref=e343]
+              - cell "120 Ω at each end of the backbone" [ref=e344]
+            - row "Max stub length < 30 cm at 500 kbit/s; < 10 cm at 1 Mbit/s" [ref=e345]:
+              - cell "Max stub length" [ref=e346]
+              - cell "< 30 cm at 500 kbit/s; < 10 cm at 1 Mbit/s" [ref=e347]
+            - row "Connector None specified by ISO — DB-9 common in test equipment" [ref=e348]:
+              - cell "Connector" [ref=e349]
+              - cell "None specified by ISO — DB-9 common in test equipment" [ref=e350]
+        - heading "DB-9 pinout (CiA 303-1)Permalink for this section" [level=3] [ref=e351]:
+          - text: DB-9 pinout (CiA 303-1)
+          - link "Permalink for this section" [ref=e352] [cursor=pointer]:
+            - /url: "#db-9-pinout-cia-303-1"
+            - text: "#"
+        - paragraph [ref=e353]: "The CAN in Automation (CiA) association standardized a DB-9 connector pinout used by most test tools and CANopen devices:"
+        - table [ref=e354]:
+          - rowgroup [ref=e355]:
+            - row "Pin Signal" [ref=e356]:
+              - columnheader "Pin" [ref=e357]
+              - columnheader "Signal" [ref=e358]
+          - rowgroup [ref=e359]:
+            - row "2 CANL" [ref=e360]:
+              - cell "2" [ref=e361]
+              - cell "CANL" [ref=e362]
+            - row "3 GND (optional)" [ref=e363]:
+              - cell "3" [ref=e364]
+              - cell "GND (optional)" [ref=e365]
+            - row "7 CANH" [ref=e366]:
+              - cell "7" [ref=e367]
+              - cell "CANH" [ref=e368]
+            - row "9 External power (optional)" [ref=e369]:
+              - cell "9" [ref=e370]
+              - cell "External power (optional)" [ref=e371]
+        - heading "Low-speed fault-tolerant CAN (ISO 11898-3)Permalink for this section" [level=2] [ref=e372]:
+          - text: Low-speed fault-tolerant CAN (ISO 11898-3)
+          - link "Permalink for this section" [ref=e373] [cursor=pointer]:
+            - /url: "#low-speed-fault-tolerant-can-iso-11898-3"
+            - text: "#"
+        - paragraph [ref=e374]: "ISO 11898-3 is a separate physical layer that trades bandwidth for fault tolerance:"
+        - list [ref=e375]:
+          - listitem [ref=e376]:
+            - text: "Max bit rate:"
+            - strong [ref=e377]: 125 kbit/s
+          - listitem [ref=e378]: Each transceiver has its own internal termination — no external 120 Ω resistors needed
+          - listitem [ref=e379]:
+            - text: Can detect and communicate through
+            - strong [ref=e380]: single-wire faults
+            - text: (one wire shorted to ground, open, or shorted to battery)
+          - listitem [ref=e381]: "Voltage levels differ: CANH swings 0 V – 5 V, CANL swings 0 V – 5 V (not centered on 2.5 V)"
+          - listitem [ref=e382]: Used for comfort / body electronics (mirrors, seats, windows) where the bus is not safety-critical at high speed
+        - heading "Common pitfallsPermalink for this section" [level=2] [ref=e383]:
+          - text: Common pitfalls
+          - link "Permalink for this section" [ref=e384] [cursor=pointer]:
+            - /url: "#common-pitfalls"
+            - text: "#"
+        - list [ref=e385]:
+          - listitem [ref=e386]:
+            - strong [ref=e387]: Missing termination
+            - text: — the most common cause of “bus works intermittently at low speed but fails at high speed.” Without terminators, reflections corrupt the signal.
+          - listitem [ref=e388]:
+            - strong [ref=e389]: Long stubs
+            - text: — a node connected via a 1-meter cable to a backbone will cause reflections that are invisible at 125 kbit/s but fatal at 500 kbit/s.
+          - listitem [ref=e390]:
+            - strong [ref=e391]: Star wiring
+            - text: — multiple equal-length branches with terminators at each end creates impedance mismatches and standing waves.
+          - listitem [ref=e392]:
+            - strong [ref=e393]: Ground-loop noise
+            - text: — if nodes have separate, distant grounds, common-mode voltage between them can exceed the transceiver’s −2 V to +7 V window.
+          - listitem [ref=e394]:
+            - strong [ref=e395]: Swapped CANH / CANL
+            - text: — communication fails silently; the differential is inverted, so the receiver interprets everything as recessive.
+        - 'heading "Next: Frame FormatPermalink for this section" [level=2] [ref=e396]':
+          - text: "Next: Frame Format"
+          - link "Permalink for this section" [ref=e397] [cursor=pointer]:
+            - /url: "#next-frame-format"
+            - text: "#"
+        - paragraph [ref=e398]:
+          - text: Continue to
+          - strong [ref=e399]:
+            - link "Frame Format" [ref=e400] [cursor=pointer]:
+              - /url: /docs/frame-format
+          - text: to see how bits are organized into the fields of a CAN data frame, from Start of Frame through End of Frame.
+      - generic [ref=e401]:
+        - text: Last updated on
+        - time [ref=e402]: April 12, 2026
+      - link "Introduction to CAN" [ref=e404] [cursor=pointer]:
+        - /url: /docs/introduction
+        - img [ref=e405]
+        - text: Introduction to CAN
+  - generic [ref=e407]:
+    - separator [ref=e408]
+    - contentinfo [ref=e409]:
+      - generic [ref=e410]:
+        - generic [ref=e411]: © 2026 CAN Simulator. Licensed under MIT.
+        - navigation "Footer" [ref=e412]:
+          - link "Open Simulator" [ref=e413] [cursor=pointer]:
+            - /url: http://localhost:5173
+          - link "GitHub" [ref=e414] [cursor=pointer]:
+            - /url: https://github.com/suduli
+  - generic [ref=e419] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e420]:
+      - img [ref=e421]
+    - generic [ref=e425]:
+      - button "Open issues overlay" [ref=e426]:
+        - generic [ref=e427]:
+          - generic [ref=e428]: "0"
+          - generic [ref=e429]: "1"
+        - generic [ref=e430]: Issue
+      - button "Collapse issues badge" [ref=e431]:
+        - img [ref=e432]
+  - alert [ref=e434]

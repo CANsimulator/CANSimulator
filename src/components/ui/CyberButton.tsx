@@ -18,15 +18,15 @@ export const CyberButton: React.FC<CyberButtonProps> = ({
     disabled,
     ...props
 }) => {
-    const baseStyles = "relative px-6 py-3 rounded-lg font-bold transition-all duration-300 overflow-hidden flex items-center justify-center gap-2";
+    const baseStyles = "relative px-6 py-3 rounded-xl font-[Space_Grotesk] tracking-widest transition-all duration-300 overflow-hidden flex items-center justify-center gap-2 border-[0.5px] border-transparent";
 
     const variants = {
-        primary: "bg-white dark:bg-dark-900 border border-cyber-blue/50 text-blue-600 dark:text-cyber-blue hover:text-white hover:bg-cyber-blue/20 shadow-neon/20 hover:shadow-neon",
-        secondary: "bg-white dark:bg-dark-900 border border-cyber-purple/50 text-purple-600 dark:text-cyber-purple hover:text-white hover:bg-cyber-purple/20 shadow-neon-purple/20 hover:shadow-neon-purple",
-        success: "bg-white dark:bg-dark-900 border border-cyber-green/50 text-green-600 dark:text-cyber-green hover:text-dark-950 hover:bg-cyber-green shadow-neon-green/20 hover:shadow-neon-green",
-        outline: "bg-transparent border border-slate-300 dark:border-white/20 text-slate-700 dark:text-white hover:border-slate-400 dark:hover:border-white/40 hover:bg-slate-50 dark:hover:bg-white/5",
-        ghost: "bg-transparent text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border-transparent",
-        active: "bg-gradient-to-r from-cyber-blue to-cyber-purple text-white shadow-neon border-none"
+        primary: "bg-gradient-to-br from-[#006876] to-[#00bcd4] text-[#ffffff] font-bold",
+        secondary: "bg-[#6f48b2] text-[#ffffff] font-bold",
+        success: "bg-gradient-to-br from-[#006876] to-[#00bcd4] text-[#ffffff] font-bold", // Clinical doesn't distinct success, we'll map to primary
+        outline: "bg-transparent text-[#3c494c] border-[#bbc9cc]/15 font-bold hover:bg-[#edeeef]",
+        ghost: "bg-transparent text-[#3c494c] hover:bg-[#edeeef] border-transparent font-medium",
+        active: "bg-[#e1e3e4] text-[#191c1d] border-[#bbc9cc]/15"
     };
 
     const isDisabled = disabled || isLoading;
@@ -40,11 +40,11 @@ export const CyberButton: React.FC<CyberButtonProps> = ({
             {...props}
         >
             {shimmer && !isDisabled && (
-                <span className="absolute inset-0 -translate-x-[100%] bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer opacity-30 pointer-events-none" />
+                <span className="absolute inset-x-0 bottom-0 h-[2px] bg-current opacity-30 transform -translate-x-[100%] animate-shimmer" />
             )}
 
             {!isDisabled && variant !== 'ghost' && variant !== 'outline' && (
-                <span className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-current to-transparent filter blur-xl" />
+                <span className="absolute inset-0 bg-current opacity-0 hover:opacity-[0.05] transition-opacity duration-500" />
             )}
 
             <span className="relative z-10 flex items-center justify-center gap-2">

@@ -3,13 +3,7 @@
  * Pure functions for detecting specific patterns in CAN sample streams.
  */
 
-export interface Sample {
-    canh: number;
-    canl: number;
-    isDominant: boolean;
-    bitIndex: number;
-    t: number;
-}
+import type { Sample } from '../../types/can';
 
 /**
  * Detects a Start-of-Frame (SOF) transition: Recessive -> Dominant

@@ -1,0 +1,493 @@
+- generic [active] [ref=e1]:
+  - link "Skip to Content" [ref=e2] [cursor=pointer]:
+    - /url: "#nextra-skip-nav"
+  - banner [ref=e3]:
+    - navigation [ref=e5]:
+      - link "Home page" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - generic [ref=e8]: ◆
+          - text: CAN Simulator Docs
+      - combobox "Search documentation…" [ref=e12]
+      - link "Open Simulator" [ref=e13] [cursor=pointer]:
+        - /url: http://localhost:5173
+        - img [ref=e14]
+        - text: Open Simulator
+  - generic [ref=e16]:
+    - complementary [ref=e17]:
+      - list [ref=e20]:
+        - listitem [ref=e21]:
+          - link "CAN Simulator Docs — Learn the CAN Bus Protocol" [ref=e22] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e23]:
+          - button "Docs" [ref=e24] [cursor=pointer]:
+            - text: Docs
+            - img [ref=e25]
+          - list [ref=e28]:
+            - listitem [ref=e29]:
+              - link "Documentation" [ref=e30] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e31]:
+              - link "CAN Arbitration" [ref=e32] [cursor=pointer]:
+                - /url: /docs/arbitration
+            - listitem [ref=e33]:
+              - link "CAN Bit Timing" [ref=e34] [cursor=pointer]:
+                - /url: /docs/bit-timing
+            - listitem [ref=e35]:
+              - link "CAN Error Handling" [ref=e36] [cursor=pointer]:
+                - /url: /docs/error-handling
+            - listitem [ref=e37]:
+              - link "CAN Protocol FAQ" [ref=e38] [cursor=pointer]:
+                - /url: /docs/faq
+            - listitem [ref=e39]:
+              - link "CAN Frame Format" [ref=e40] [cursor=pointer]:
+                - /url: /docs/frame-format
+            - listitem [ref=e41]:
+              - link "CAN Higher-Layer Protocols" [ref=e42] [cursor=pointer]:
+                - /url: /docs/higher-layers
+            - listitem [ref=e43]:
+              - link "Introduction to CAN" [ref=e44] [cursor=pointer]:
+                - /url: /docs/introduction
+            - listitem [ref=e45]:
+              - link "CAN Physical Layer" [ref=e46] [cursor=pointer]:
+                - /url: /docs/physical-layer
+      - generic [ref=e47]:
+        - button "Light" [ref=e48] [cursor=pointer]:
+          - img [ref=e49]
+          - text: Light
+        - button "Collapse sidebar" [expanded] [ref=e51] [cursor=pointer]:
+          - img [ref=e52]
+    - navigation "table of contents" [ref=e55]:
+      - generic [ref=e56]:
+        - paragraph [ref=e57]: On This Page
+        - list [ref=e58]:
+          - listitem [ref=e59]:
+            - link "The time quantum (Tq)" [ref=e60] [cursor=pointer]:
+              - /url: "#the-time-quantum-tq"
+          - listitem [ref=e61]:
+            - link "Anatomy of a single bit" [ref=e62] [cursor=pointer]:
+              - /url: "#anatomy-of-a-single-bit"
+          - listitem [ref=e63]:
+            - link "Sample point" [ref=e64] [cursor=pointer]:
+              - /url: "#sample-point"
+          - listitem [ref=e65]:
+            - link "Recommended values" [ref=e66] [cursor=pointer]:
+              - /url: "#recommended-values"
+          - listitem [ref=e67]:
+            - link "Interactive calculator" [ref=e68] [cursor=pointer]:
+              - /url: "#interactive-calculator"
+          - listitem [ref=e69]:
+            - link "Synchronization" [ref=e70] [cursor=pointer]:
+              - /url: "#synchronization"
+          - listitem [ref=e71]:
+            - link "Hard synchronization" [ref=e72] [cursor=pointer]:
+              - /url: "#hard-synchronization"
+          - listitem [ref=e73]:
+            - link "Resynchronization" [ref=e74] [cursor=pointer]:
+              - /url: "#resynchronization"
+          - listitem [ref=e75]:
+            - link "Bit stuffing and sync opportunities" [ref=e76] [cursor=pointer]:
+              - /url: "#bit-stuffing-and-sync-opportunities"
+          - listitem [ref=e77]:
+            - link "Oscillator tolerance" [ref=e78] [cursor=pointer]:
+              - /url: "#oscillator-tolerance"
+          - listitem [ref=e79]:
+            - link "Common bit-timing presets" [ref=e80] [cursor=pointer]:
+              - /url: "#common-bit-timing-presets"
+          - listitem [ref=e81]:
+            - link "Common pitfalls" [ref=e82] [cursor=pointer]:
+              - /url: "#common-pitfalls"
+          - listitem [ref=e83]:
+            - link "Next" [ref=e84] [cursor=pointer]:
+              - /url: "#next"
+        - generic [ref=e85]:
+          - link "Question? Give us feedback" [ref=e86] [cursor=pointer]:
+            - /url: https://github.com/shuding/nextra/issues/new?title=Feedback%20for%20%E2%80%9CCAN%20Bit%20Timing%E2%80%9D&labels=feedback
+            - text: Question? Give us feedback
+            - img [ref=e87]
+          - link "Edit this page" [ref=e90] [cursor=pointer]:
+            - /url: https://github.com/shuding/nextra/app/docs/bit-timing/page.mdx
+            - text: Edit this page
+            - img [ref=e91]
+          - button [disabled] [ref=e94] [cursor=pointer]:
+            - text: Scroll to top
+            - img [ref=e95]
+    - article [ref=e97]:
+      - generic [ref=e98]:
+        - link "Docs" [ref=e99] [cursor=pointer]:
+          - /url: /docs
+        - img [ref=e100]
+        - generic "CAN Bit Timing" [ref=e102]
+      - generic [ref=e103]:
+        - button "Copy page" [ref=e104] [cursor=pointer]:
+          - img [ref=e105]
+          - text: Copy page
+        - button [ref=e108] [cursor=pointer]:
+          - img [ref=e109]
+      - main [ref=e111]:
+        - heading "CAN Bit Timing" [level=1] [ref=e112]
+        - paragraph [ref=e113]:
+          - text: Every node on a CAN bus must agree on exactly when each bit begins and ends. Unlike SPI or I²C, CAN has
+          - strong [ref=e114]: no dedicated clock wire
+          - text: "— instead, each node derives bit boundaries from the bus signal itself using a configurable set of timing parameters. Getting these parameters right is essential: a mismatch of even a fraction of a percent can cause intermittent CRC errors under temperature drift."
+        - heading "The time quantum (Tq)Permalink for this section" [level=2] [ref=e115]:
+          - text: The time quantum (Tq)
+          - link "Permalink for this section" [ref=e116] [cursor=pointer]:
+            - /url: "#the-time-quantum-tq"
+            - text: "#"
+        - paragraph [ref=e117]:
+          - text: The CAN controller’s oscillator clock is divided by the
+          - strong [ref=e118]: Baud Rate Prescaler (BRP)
+          - text: to produce a smaller unit called the
+          - strong [ref=e119]: time quantum (Tq)
+          - text: ":"
+        - code [ref=e122]:
+          - generic [ref=e123]: Tq = BRP / f_osc
+        - paragraph [ref=e124]: For example, a 16 MHz oscillator with BRP = 2 yields Tq = 125 ns.
+        - paragraph [ref=e125]: Every bit period is composed of a whole number of time quanta. By adjusting BRP and the segment lengths below, you control both the bit rate and the sample point.
+        - heading "Anatomy of a single bitPermalink for this section" [level=2] [ref=e126]:
+          - text: Anatomy of a single bit
+          - link "Permalink for this section" [ref=e127] [cursor=pointer]:
+            - /url: "#anatomy-of-a-single-bit"
+            - text: "#"
+        - paragraph [ref=e128]: "A CAN bit is divided into four logical segments, though most controllers merge the first two:"
+        - code [ref=e131]:
+          - generic [ref=e132]: ┌──────────┬────────────────────────────┬─────────────────┐
+          - generic [ref=e133]: │ Sync Seg │ TSEG1 │ TSEG2 │
+          - generic [ref=e134]: │ (1 Tq) │ (Prop Seg + Phase Seg 1) │ (Phase Seg 2) │
+          - generic [ref=e135]: └──────────┴────────────────────────────┴─────────────────┘
+          - generic [ref=e136]: ↑ ↑
+          - generic [ref=e137]: bit start sample point
+        - table [ref=e138]:
+          - rowgroup [ref=e139]:
+            - row "Segment Length Purpose" [ref=e140]:
+              - columnheader "Segment" [ref=e141]
+              - columnheader "Length" [ref=e142]
+              - columnheader "Purpose" [ref=e143]
+          - rowgroup [ref=e144]:
+            - row "Sync Seg Always 1 Tq Hard-sync edge expected here; transitions that arrive during Sync Seg need no correction" [ref=e145]:
+              - cell "Sync Seg" [ref=e146]:
+                - strong [ref=e147]: Sync Seg
+              - cell "Always 1 Tq" [ref=e148]
+              - cell "Hard-sync edge expected here; transitions that arrive during Sync Seg need no correction" [ref=e149]
+            - row "TSEG1 1 – 256 Tq (controller-dependent) Propagation delay compensation + phase error buffer before sampling. Combines Prop Seg + Phase Seg 1 in most register maps" [ref=e150]:
+              - cell "TSEG1" [ref=e151]:
+                - strong [ref=e152]: TSEG1
+              - cell "1 – 256 Tq (controller-dependent)" [ref=e153]
+              - cell "Propagation delay compensation + phase error buffer before sampling. Combines Prop Seg + Phase Seg 1 in most register maps" [ref=e154]:
+                - text: Propagation delay compensation + phase error buffer
+                - emphasis [ref=e155]: before
+                - text: sampling. Combines Prop Seg + Phase Seg 1 in most register maps
+            - row "TSEG2 1 – 128 Tq Phase error buffer after the sample point. Must be at least as large as the Information Processing Time (IPT, usually 1 – 2 Tq)" [ref=e156]:
+              - cell "TSEG2" [ref=e157]:
+                - strong [ref=e158]: TSEG2
+              - cell "1 – 128 Tq" [ref=e159]
+              - cell "Phase error buffer after the sample point. Must be at least as large as the Information Processing Time (IPT, usually 1 – 2 Tq)" [ref=e160]:
+                - text: Phase error buffer
+                - emphasis [ref=e161]: after
+                - text: the sample point. Must be at least as large as the Information Processing Time (IPT, usually 1 – 2 Tq)
+            - row "SJW 1 – min(4, TSEG2) Synchronization Jump Width. Maximum number of Tq the controller may shorten or lengthen a bit to re-sync" [ref=e162]:
+              - cell "SJW" [ref=e163]:
+                - strong [ref=e164]: SJW
+              - cell "1 – min(4, TSEG2)" [ref=e165]
+              - cell "Synchronization Jump Width. Maximum number of Tq the controller may shorten or lengthen a bit to re-sync" [ref=e166]
+        - paragraph [ref=e167]:
+          - strong [ref=e168]: Total bit time
+          - text: = 1 + TSEG1 + TSEG2 time quanta.
+        - paragraph [ref=e169]:
+          - strong [ref=e170]: Bit rate
+          - text: = f_osc / (BRP × (1 + TSEG1 + TSEG2)).
+        - heading "Sample pointPermalink for this section" [level=2] [ref=e171]:
+          - text: Sample point
+          - link "Permalink for this section" [ref=e172] [cursor=pointer]:
+            - /url: "#sample-point"
+            - text: "#"
+        - paragraph [ref=e173]:
+          - text: The
+          - strong [ref=e174]: sample point
+          - text: "is where the controller reads the bus level and decides whether the bit is dominant or recessive. It falls at the boundary between TSEG1 and TSEG2:"
+        - code [ref=e177]:
+          - generic [ref=e178]: Sample Point (%) = (1 + TSEG1) / (1 + TSEG1 + TSEG2) × 100
+        - heading "Recommended valuesPermalink for this section" [level=3] [ref=e179]:
+          - text: Recommended values
+          - link "Permalink for this section" [ref=e180] [cursor=pointer]:
+            - /url: "#recommended-values"
+            - text: "#"
+        - table [ref=e181]:
+          - rowgroup [ref=e182]:
+            - row "Standard / use case Typical sample point" [ref=e183]:
+              - columnheader "Standard / use case" [ref=e184]
+              - columnheader "Typical sample point" [ref=e185]
+          - rowgroup [ref=e186]:
+            - row "CiA (CANopen) 87.5%" [ref=e187]:
+              - cell "CiA (CANopen)" [ref=e188]:
+                - strong [ref=e189]: CiA (CANopen)
+              - cell "87.5%" [ref=e190]
+            - row "SAE J1939 80%" [ref=e191]:
+              - cell "SAE J1939" [ref=e192]:
+                - strong [ref=e193]: SAE J1939
+              - cell "80%" [ref=e194]
+            - row "Automotive (500 kbit/s) 75% – 80%" [ref=e195]:
+              - cell "Automotive (500 kbit/s)" [ref=e196]:
+                - strong [ref=e197]: Automotive (500 kbit/s)
+              - cell "75% – 80%" [ref=e198]
+            - row "General 75% – 87.5%" [ref=e199]:
+              - cell "General" [ref=e200]:
+                - strong [ref=e201]: General
+              - cell "75% – 87.5%" [ref=e202]
+        - paragraph [ref=e203]:
+          - text: A sample point that is
+          - strong [ref=e204]: too early
+          - text: makes the node vulnerable to propagation delay — it might read the bus before the remote transmitter’s bit has fully propagated. A sample point that is
+          - strong [ref=e205]: too late
+          - text: reduces the window for phase-error correction in TSEG2.
+        - heading "Interactive calculatorPermalink for this section" [level=2] [ref=e206]:
+          - text: Interactive calculator
+          - link "Permalink for this section" [ref=e207] [cursor=pointer]:
+            - /url: "#interactive-calculator"
+            - text: "#"
+        - paragraph [ref=e208]: Adjust BRP, TSEG1, and TSEG2 below. The yellow bar marks the sample point. Green text indicates the bit rate matches a standard CAN rate and the sample point falls in the recommended range.
+        - generic [ref=e209]:
+          - paragraph [ref=e210]: "Interactive: CAN bit-timing calculator"
+          - generic [ref=e211]:
+            - generic [ref=e212]:
+              - text: Clock (MHz)
+              - combobox "Clock (MHz)" [ref=e213]:
+                - option "8 MHz"
+                - option "16 MHz" [selected]
+                - option "20 MHz"
+                - option "24 MHz"
+                - option "40 MHz"
+                - option "48 MHz"
+                - option "80 MHz"
+            - generic [ref=e214]:
+              - text: BRP
+              - spinbutton "BRP" [ref=e215]: "2"
+            - generic [ref=e216]:
+              - text: TSEG1
+              - spinbutton "TSEG1" [ref=e217]: "13"
+            - generic [ref=e218]:
+              - text: TSEG2
+              - spinbutton "TSEG2" [ref=e219]: "2"
+            - generic [ref=e220]:
+              - text: SJW
+              - spinbutton "SJW" [ref=e221]: "1"
+          - img "Bit time segments" [ref=e222]:
+            - generic [ref=e223]: Sync
+            - generic [ref=e224]: TSEG1 (13 Tq)
+            - generic "Sample point" [ref=e225]
+            - generic [ref=e226]: TSEG2 (2 Tq)
+          - generic [ref=e227]:
+            - generic [ref=e228]:
+              - generic [ref=e229]: Bit Rate
+              - generic [ref=e230]: 500 kbit/s
+              - generic [ref=e231]: matches 500 kbit/s
+            - generic [ref=e232]:
+              - generic [ref=e233]: Sample Point
+              - generic [ref=e234]: 87.5%
+              - generic [ref=e235]: target 75 – 87.5%
+            - generic [ref=e236]:
+              - generic [ref=e237]: Time Quantum
+              - generic [ref=e238]: 125.0 ns
+            - generic [ref=e239]:
+              - generic [ref=e240]: Total TQ / bit
+              - text: "16"
+              - generic [ref=e241]: 1 + 13 + 2
+        - heading "SynchronizationPermalink for this section" [level=2] [ref=e242]:
+          - text: Synchronization
+          - link "Permalink for this section" [ref=e243] [cursor=pointer]:
+            - /url: "#synchronization"
+            - text: "#"
+        - paragraph [ref=e244]: "CAN nodes synchronize to the bus signal in two ways:"
+        - heading "Hard synchronizationPermalink for this section" [level=3] [ref=e245]:
+          - text: Hard synchronization
+          - link "Permalink for this section" [ref=e246] [cursor=pointer]:
+            - /url: "#hard-synchronization"
+            - text: "#"
+        - paragraph [ref=e247]:
+          - text: Occurs on the
+          - strong [ref=e248]: SOF bit
+          - text: (Start of Frame). Every receiver resets its bit-time counter so that the falling edge of SOF falls within Sync Seg. After hard sync, all subsequent bits in the frame use resynchronization only.
+        - heading "ResynchronizationPermalink for this section" [level=3] [ref=e249]:
+          - text: Resynchronization
+          - link "Permalink for this section" [ref=e250] [cursor=pointer]:
+            - /url: "#resynchronization"
+            - text: "#"
+        - paragraph [ref=e251]:
+          - text: During the frame, edges that arrive
+          - strong [ref=e252]: outside
+          - text: "Sync Seg trigger a phase adjustment:"
+        - list [ref=e253]:
+          - listitem [ref=e254]:
+            - text: If the edge arrives
+            - strong [ref=e255]: before
+            - text: the expected position (in TSEG1), the controller
+            - strong [ref=e256]: shortens
+            - text: the current bit by up to SJW time quanta.
+          - listitem [ref=e257]:
+            - text: If the edge arrives
+            - strong [ref=e258]: after
+            - text: the expected position (in TSEG2), the controller
+            - strong [ref=e259]: lengthens
+            - text: the current bit by up to SJW time quanta.
+        - paragraph [ref=e260]:
+          - text: This is why
+          - strong [ref=e261]: SJW
+          - text: "matters: a larger SJW tolerates more clock drift between nodes but introduces more jitter on the sample point. For most applications, SJW = 1 or 2 is sufficient."
+        - heading "Bit stuffing and sync opportunitiesPermalink for this section" [level=3] [ref=e262]:
+          - text: Bit stuffing and sync opportunities
+          - link "Permalink for this section" [ref=e263] [cursor=pointer]:
+            - /url: "#bit-stuffing-and-sync-opportunities"
+            - text: "#"
+        - paragraph [ref=e264]:
+          - text: CAN uses
+          - strong [ref=e265]: bit stuffing
+          - text: ": after 5 consecutive identical bits, the transmitter inserts a complementary bit. Stuff bits guarantee transitions on the bus at least every 5 bits, which keeps the resynchronization mechanism fed with edges. Without bit stuffing, a long sequence of identical bits could cause receivers to drift out of lock."
+        - heading "Oscillator tolerancePermalink for this section" [level=2] [ref=e266]:
+          - text: Oscillator tolerance
+          - link "Permalink for this section" [ref=e267] [cursor=pointer]:
+            - /url: "#oscillator-tolerance"
+            - text: "#"
+        - paragraph [ref=e268]: "The maximum allowed clock-frequency deviation between any two nodes on the same bus is determined by:"
+        - code [ref=e271]:
+          - generic [ref=e272]: df_max ≤ min( SJW / (2 × 10 × total_Tq), SJW / (20 × total_Tq) )
+        - paragraph [ref=e273]:
+          - text: For a 16 Tq bit with SJW = 1, this gives
+          - strong [ref=e274]: 0.3125%
+          - text: — easily within the tolerance of a ceramic resonator but possibly tight for an RC oscillator. Crystal oscillators (±50 ppm) are always safe.
+        - table [ref=e275]:
+          - rowgroup [ref=e276]:
+            - row "Oscillator type Typical tolerance Suitable for CAN?" [ref=e277]:
+              - columnheader "Oscillator type" [ref=e278]
+              - columnheader "Typical tolerance" [ref=e279]
+              - columnheader "Suitable for CAN?" [ref=e280]
+          - rowgroup [ref=e281]:
+            - row "Crystal ±20 – 50 ppm Always" [ref=e282]:
+              - cell "Crystal" [ref=e283]
+              - cell "±20 – 50 ppm" [ref=e284]
+              - cell "Always" [ref=e285]
+            - row "Ceramic resonator ±0.1 – 0.5% Usually (verify at temperature extremes)" [ref=e286]:
+              - cell "Ceramic resonator" [ref=e287]
+              - cell "±0.1 – 0.5%" [ref=e288]
+              - cell "Usually (verify at temperature extremes)" [ref=e289]
+            - row "Internal RC ±1 – 5% Marginal — usually requires calibration" [ref=e290]:
+              - cell "Internal RC" [ref=e291]
+              - cell "±1 – 5%" [ref=e292]
+              - cell "Marginal — usually requires calibration" [ref=e293]
+        - heading "Common bit-timing presetsPermalink for this section" [level=2] [ref=e294]:
+          - text: Common bit-timing presets
+          - link "Permalink for this section" [ref=e295] [cursor=pointer]:
+            - /url: "#common-bit-timing-presets"
+            - text: "#"
+        - table [ref=e296]:
+          - rowgroup [ref=e297]:
+            - row "Bit rate f_osc BRP TSEG1 TSEG2 TQ/bit Sample Pt" [ref=e298]:
+              - columnheader "Bit rate" [ref=e299]
+              - columnheader "f_osc" [ref=e300]
+              - columnheader "BRP" [ref=e301]
+              - columnheader "TSEG1" [ref=e302]
+              - columnheader "TSEG2" [ref=e303]
+              - columnheader "TQ/bit" [ref=e304]
+              - columnheader "Sample Pt" [ref=e305]
+          - rowgroup [ref=e306]:
+            - row "125 kbit/s 16 MHz 8 13 2 16 87.5%" [ref=e307]:
+              - cell "125 kbit/s" [ref=e308]
+              - cell "16 MHz" [ref=e309]
+              - cell "8" [ref=e310]
+              - cell "13" [ref=e311]
+              - cell "2" [ref=e312]
+              - cell "16" [ref=e313]
+              - cell "87.5%" [ref=e314]
+            - row "250 kbit/s 16 MHz 4 13 2 16 87.5%" [ref=e315]:
+              - cell "250 kbit/s" [ref=e316]
+              - cell "16 MHz" [ref=e317]
+              - cell "4" [ref=e318]
+              - cell "13" [ref=e319]
+              - cell "2" [ref=e320]
+              - cell "16" [ref=e321]
+              - cell "87.5%" [ref=e322]
+            - row "500 kbit/s 16 MHz 2 13 2 16 87.5%" [ref=e323]:
+              - cell "500 kbit/s" [ref=e324]
+              - cell "16 MHz" [ref=e325]
+              - cell "2" [ref=e326]
+              - cell "13" [ref=e327]
+              - cell "2" [ref=e328]
+              - cell "16" [ref=e329]
+              - cell "87.5%" [ref=e330]
+            - row "500 kbit/s 8 MHz 1 13 2 16 87.5%" [ref=e331]:
+              - cell "500 kbit/s" [ref=e332]
+              - cell "8 MHz" [ref=e333]
+              - cell "1" [ref=e334]
+              - cell "13" [ref=e335]
+              - cell "2" [ref=e336]
+              - cell "16" [ref=e337]
+              - cell "87.5%" [ref=e338]
+            - row "1 Mbit/s 16 MHz 1 13 2 16 87.5%" [ref=e339]:
+              - cell "1 Mbit/s" [ref=e340]
+              - cell "16 MHz" [ref=e341]
+              - cell "1" [ref=e342]
+              - cell "13" [ref=e343]
+              - cell "2" [ref=e344]
+              - cell "16" [ref=e345]
+              - cell "87.5%" [ref=e346]
+            - row "1 Mbit/s 8 MHz 1 5 2 8 75.0%" [ref=e347]:
+              - cell "1 Mbit/s" [ref=e348]
+              - cell "8 MHz" [ref=e349]
+              - cell "1" [ref=e350]
+              - cell "5" [ref=e351]
+              - cell "2" [ref=e352]
+              - cell "8" [ref=e353]
+              - cell "75.0%" [ref=e354]
+        - heading "Common pitfallsPermalink for this section" [level=2] [ref=e355]:
+          - text: Common pitfalls
+          - link "Permalink for this section" [ref=e356] [cursor=pointer]:
+            - /url: "#common-pitfalls"
+            - text: "#"
+        - list [ref=e357]:
+          - listitem [ref=e358]:
+            - strong [ref=e359]: Ignoring propagation delay.
+            - text: Long buses (> 20 m at 500 kbit/s) need more time quanta in TSEG1 to accommodate the round-trip signal delay between the two furthest nodes plus transceiver loop delay.
+          - listitem [ref=e360]:
+            - strong [ref=e361]: Mismatched sample points.
+            - text: Every node on the bus must use the same sample point percentage (within oscillator tolerance). If one node samples at 87.5% and another at 62.5%, intermittent bit errors will appear under high bus load.
+          - listitem [ref=e362]:
+            - strong [ref=e363]: SJW too large.
+            - text: While SJW > 1 increases re-sync range, it also increases jitter at the sample point. Start with SJW = 1 and only increase if you see sync errors.
+          - listitem [ref=e364]:
+            - strong [ref=e365]: Forgetting temperature drift.
+            - text: Ceramic resonators can shift ±0.5% across automotive temperature ranges (−40 °C to +125 °C). Always verify bit-timing parameters at both extremes, not just room temperature.
+        - heading "NextPermalink for this section" [level=2] [ref=e366]:
+          - text: Next
+          - link "Permalink for this section" [ref=e367] [cursor=pointer]:
+            - /url: "#next"
+            - text: "#"
+        - paragraph [ref=e368]:
+          - text: Continue to
+          - strong [ref=e369]:
+            - link "Error Handling" [ref=e370] [cursor=pointer]:
+              - /url: /docs/error-handling
+          - text: to learn how CAN detects and recovers from bit errors, CRC failures, and stuck-dominant faults.
+      - generic [ref=e371]:
+        - text: Last updated on
+        - time [ref=e372]: April 12, 2026
+      - generic [ref=e373]:
+        - link "CAN Arbitration" [ref=e374] [cursor=pointer]:
+          - /url: /docs/arbitration
+          - img [ref=e375]
+          - text: CAN Arbitration
+        - link "CAN Error Handling" [ref=e377] [cursor=pointer]:
+          - /url: /docs/error-handling
+          - text: CAN Error Handling
+          - img [ref=e378]
+  - generic [ref=e380]:
+    - separator [ref=e381]
+    - contentinfo [ref=e382]:
+      - generic [ref=e383]:
+        - generic [ref=e384]: © 2026 CAN Simulator. Licensed under MIT.
+        - navigation "Footer" [ref=e385]:
+          - link "Open Simulator" [ref=e386] [cursor=pointer]:
+            - /url: http://localhost:5173
+          - link "GitHub" [ref=e387] [cursor=pointer]:
+            - /url: https://github.com/suduli
+  - button "Open Next.js Dev Tools" [ref=e393] [cursor=pointer]:
+    - img [ref=e394]

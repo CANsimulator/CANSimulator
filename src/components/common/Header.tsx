@@ -59,42 +59,41 @@ export function Header() {
     };
 
     const navContainerClass = cn(
-        "hidden lg:flex items-center gap-1 p-1 rounded-xl border backdrop-blur-sm transition-colors",
+        "hidden lg:flex items-center gap-1 p-1 rounded-xl transition-colors",
         isDark
-            ? "bg-dark-800/50 border-dark-700/50"
-            : "bg-white/80 border-light-200/70 shadow-[0_4px_20px_rgba(15,23,42,0.06)]",
+            ? "bg-[#121314]"
+            : "bg-[#edeeef]", // surface_container
     );
 
     const navLinkClass = (isActive: boolean) => cn(
-        "px-4 py-2 text-xs font-black uppercase tracking-widest rounded-lg transition-all flex items-center gap-2",
+        "px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-xl transition-all flex items-center gap-2 font-[Space_Grotesk]",
         isActive
             ? isDark
-                ? "bg-white/10 text-cyber-blue border border-cyber-blue/20 shadow-[0_0_15px_rgba(0,243,255,0.1)]"
-                : "bg-cyber-blue/5 text-cyber-blue border border-cyber-blue/20"
+                ? "bg-[#1b1c1d] text-[#00fbfb]"
+                : "bg-[#ffffff] text-[#006876] shadow-sm" // surface_container_lowest
             : isDark
-                ? "text-gray-400 hover:text-white hover:bg-white/5"
-                : "text-slate-600 hover:text-cyber-blue hover:bg-cyber-blue/5",
+                ? "text-[#b9cac9] hover:text-[#e4e2e3] hover:bg-[#1b1c1d]"
+                : "text-[#3c494c] hover:text-[#006876] hover:bg-white/50",
     );
 
-    const iconButtonBase = "p-2 rounded-lg transition-all";
+    const iconButtonBase = "p-2 rounded-xl transition-all";
     const iconButtonInactive = isDark
-        ? "text-gray-400 hover:text-white hover:bg-white/5"
-        : "text-slate-600 hover:text-cyber-blue hover:bg-cyber-blue/5";
+        ? "text-[#b9cac9] hover:text-[#e4e2e3] hover:bg-[#1b1c1d]"
+        : "text-[#3c494c] hover:text-[#006876] hover:bg-[#f3f4f5]";
 
     return (
         <header className={cn(
-            "header-container border-b sticky top-0 z-50 transition-colors backdrop-blur-xl",
-            isDark ? "bg-dark-950/80 border-white/5" : "bg-white/80 border-black/5"
+            "header-container sticky top-0 z-50 transition-colors shadow-sm",
+            isDark ? "bg-[#050508]" : "bg-[#f8f9fa]" // surface
         )}>
             <div className="px-4 sm:px-6 py-3">
                 <div className="flex items-center justify-between gap-4">
                     {/* Left: Logo & Branding */}
                     <Link to="/" className="flex items-center gap-3 group transition-all shrink-0">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-cyber-blue/20 rounded-xl blur-lg group-hover:bg-cyber-blue/30 transition-all opacity-0 group-hover:opacity-100"></div>
                             <div className={cn(
-                                "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center relative z-10 transition-transform group-hover:scale-105 border",
-                                isDark ? "bg-dark-900/80 border-cyber-blue/30" : "bg-white border-cyan-200"
+                                "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center relative z-10 transition-transform group-hover:scale-105",
+                                isDark ? "bg-[#121314]" : "bg-[#ffffff] shadow-sm"
                             )}>
                                 <img
                                     src={logoUrl}
@@ -104,10 +103,10 @@ export function Header() {
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-xl font-black tracking-tight text-gray-900 dark:text-white leading-none mb-1 group-hover:text-cyber-blue transition-colors uppercase italic">
-                                CAN<span className="text-cyber-blue">Sim</span>
+                            <span className="text-xl font-[Space_Grotesk] font-bold tracking-tight text-[#191c1d] dark:text-[#e4e2e3] leading-none mb-1 group-hover:text-[#00bcd4] transition-colors">
+                                CAN<span className="text-[#00bcd4]">Sim</span>
                             </span>
-                            <div className="hidden sm:block text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 uppercase">
+                            <div className="hidden sm:block text-[10px] font-bold tracking-[0.2em] text-[#546067] dark:text-gray-400 uppercase">
                                 ISO 11898-1
                             </div>
                         </div>
@@ -115,21 +114,21 @@ export function Header() {
 
                     {/* Search Bar (Mocked) */}
                     <div className="hidden xl:flex flex-1 max-w-sm relative ml-4">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#839493]" />
                         <input
                             type="text"
                             placeholder="SEARCH PROTOCOL..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className={cn(
-                                "w-full pl-10 pr-12 py-2.5 rounded-xl text-[10px] font-black tracking-widest border transition-all outline-none uppercase",
+                                "w-full pl-10 pr-12 py-2.5 rounded-xl text-[10px] font-bold tracking-widest transition-all uppercase focus:outline-none focus:ring-2 focus:ring-[#00bcd4]/50",
                                 isDark 
-                                    ? "bg-dark-900 border-white/5 focus:border-cyber-blue text-white placeholder-gray-600" 
-                                    : "bg-gray-100 border-black/5 focus:border-cyber-blue text-gray-900 placeholder-gray-400"
+                                    ? "bg-[#121314] text-[#e4e2e3] placeholder-[#839493]" 
+                                    : "bg-[#edeeef] text-[#191c1d] placeholder-[#a0adb4]"
                             )}
                         />
                          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <span className="text-[10px] font-mono font-bold text-gray-500 border border-gray-500/30 rounded px-1.5 py-0.5">⌘K</span>
+                            <span className="text-[10px] font-mono font-bold text-[#a0adb4] bg-[#f8f9fa] rounded-md px-1.5 py-0.5">⌘K</span>
                         </div>
                     </div>
 
@@ -173,31 +172,31 @@ export function Header() {
                                 <button
                                     onClick={() => setShowUserMenu(!showUserMenu)}
                                     className={cn(
-                                        "flex items-center gap-2 p-1 rounded-full border transition-all shrink-0",
+                                        "flex items-center gap-2 p-1 rounded-xl transition-all shrink-0",
                                         isDark
-                                            ? "bg-dark-800/50 border-dark-700/50"
-                                            : "bg-white border-light-200",
+                                            ? "bg-[#1b1c1d]"
+                                            : "bg-[#ffffff] shadow-sm hover:shadow-md",
                                     )}
                                 >
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyber-blue to-cyber-purple flex items-center justify-center text-white text-xs font-black">
+                                    <div className="w-8 h-8 rounded-lg bg-[#f3f4f5] dark:bg-[#121314] flex items-center justify-center text-[#191c1d] dark:text-[#e4e2e3] text-xs font-bold font-[Space_Grotesk]">
                                         {user.name?.[0]?.toUpperCase()}
                                     </div>
                                 </button>
                                 {showUserMenu && (
                                     <div className={cn(
-                                        "absolute right-0 mt-3 w-56 py-2 rounded-2xl shadow-2xl z-50 border animate-slide-in-down overflow-hidden",
-                                        isDark ? "bg-dark-950 border-dark-700" : "bg-white border-light-200"
+                                        "absolute right-0 mt-3 w-56 py-2 rounded-xl shadow-[0_12px_32px_-4px_rgba(25,28,29,0.08)] z-50 animate-slide-in-down overflow-hidden",
+                                        isDark ? "bg-[#121314]" : "bg-[#ffffff]"
                                     )}>
-                                        <div className="px-4 py-3 border-b border-white/5 mb-1">
-                                            <p className="text-sm font-black uppercase text-dark-950 dark:text-white">{user.name}</p>
-                                            <p className="text-[11px] text-gray-500 truncate font-mono">{user.email}</p>
+                                        <div className="px-4 py-3 border-b border-[#edeeef] dark:border-[#3a4a49]/15 mb-1">
+                                            <p className="text-sm font-bold font-[Space_Grotesk] uppercase text-[#191c1d] dark:text-[#e4e2e3]">{user.name}</p>
+                                            <p className="text-[11px] text-[#546067] truncate font-mono">{user.email}</p>
                                         </div>
-                                        <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-xs text-red-500 font-bold uppercase hover:bg-red-500/10">Sign Out</button>
+                                        <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-xs text-[#ba1a1a] font-bold uppercase hover:bg-[#ffdad6]">Sign Out</button>
                                     </div>
                                 )}
                             </div>
                         ) : !isLoading && (
-                            <Link to="/auth" className="px-5 py-2 text-[11px] font-black uppercase tracking-widest rounded-full bg-cyber-blue text-black hover:shadow-[0_0_20px_rgba(0,243,255,0.4)] transition-all shrink-0 italic">
+                            <Link to="/auth" className="px-5 py-2 text-[11px] font-bold uppercase tracking-widest rounded-xl bg-gradient-to-br from-[#006876] to-[#00bcd4] text-[#ffffff] shadow-sm hover:shadow-md transition-all shrink-0 font-[Space_Grotesk]">
                                 Auth
                             </Link>
                         )}

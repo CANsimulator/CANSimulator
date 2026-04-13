@@ -3,6 +3,14 @@ title: 'CAN Physical Layer'
 description: 'CAN bus physical layer: CANH and CANL differential signaling, dominant vs recessive levels, bus topology, termination resistors, and transceiver behavior (ISO 11898-2).'
 ---
 
+import { ArticleSchema } from '@/components/ArticleSchema'
+import { BusTopology } from '@/components/BusTopology'
+
+<ArticleSchema
+  title="CAN Physical Layer"
+  description="CAN bus physical layer: CANH and CANL differential signaling, dominant vs recessive levels, bus topology, termination resistors, and transceiver behavior (ISO 11898-2)."
+/>
+
 # CAN Physical Layer
 
 The CAN physical layer — standardized as **ISO 11898-2** (high-speed) and **ISO 11898-3** (low-speed, fault-tolerant) — defines how binary 1s and 0s become electrical signals on a pair of wires. Everything about CAN's robustness in noisy environments traces back to the decisions made at this level.
@@ -40,19 +48,7 @@ The wide gap between 0.5 V and 0.9 V gives the receiver noise margin. On a well-
 
 High-speed CAN uses a **linear bus** (also called "daisy chain" or "backbone") — a single unshielded twisted pair runs the length of the network, and each node taps into it through a short **stub**.
 
-```
-  ┌─────┐       ┌─────┐       ┌─────┐       ┌─────┐
-  │Node │       │Node │       │Node │       │Node │
-  │  A  │       │  B  │       │  C  │       │  D  │
-  └──┬──┘       └──┬──┘       └──┬──┘       └──┬──┘
-     │stub         │stub         │stub         │stub
- ────┴─────────────┴─────────────┴─────────────┴────
-   │                   backbone (CANH + CANL)          │
-  ┌┴┐                                                ┌┴┐
-  │R│ 120 Ω                                  120 Ω  │R│
-  └┬┘                                                └┬┘
-   ╧ GND                                          GND ╧
-```
+<BusTopology />
 
 ### Key topology rules
 

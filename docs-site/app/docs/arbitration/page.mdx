@@ -3,11 +3,90 @@ title: 'CAN Arbitration'
 description: 'How the CAN bus resolves priority between competing nodes using non-destructive bitwise arbitration on the identifier field.'
 ---
 
+import { ArbitrationMini } from '@/components/ArbitrationMini'
+import { ArticleSchema } from '@/components/ArticleSchema'
+
+<ArticleSchema
+  title="CAN Arbitration"
+  description="How the CAN bus resolves priority between competing nodes using non-destructive bitwise arbitration on the identifier field."
+/>
+
 # CAN Arbitration
 
-> **Coming soon.** This page is scaffolded for Phase 2. It will cover non-destructive bitwise arbitration, dominant / recessive bit encoding, priority resolution, and a live worked example with an interactive three-node demo.
+CAN is a **multi-master** bus — any node can begin transmitting when the bus is idle. When two or more nodes start at the same instant, the protocol resolves which one keeps the bus through **non-destructive bitwise arbitration**. No data is lost, no collision recovery is needed, and the highest-priority message is delivered with zero additional latency.
 
-Meanwhile, see:
+## Dominant vs recessive recap
 
-- **[Frame Format](/docs/frame-format)** — how the identifier field used for arbitration is laid out
-- **[Physical Layer](/docs/physical-layer)** — why CAN-L and CAN-H levels make dominant bits win
+On the physical layer ([detailed here](/docs/physical-layer)), a **dominant** bit (logical 0) overwrites a **recessive** bit (logical 1) on the shared wire. If two nodes drive the bus simultaneously — one dominant, one recessive — the bus state is dominant. This electrical behavior is the foundation of CAN arbitration.
+
+## How arbitration works, step by step
+
+1. **Bus idle.** All nodes see 11 consecutive recessive bits (inter-frame space). Any node with a pending message may begin.
+2. **SOF.** Each competing node drives a dominant SOF bit. Because all SOF bits are dominant, no difference is visible yet.
+3. **ID field — bit by bit.** Each node transmits its 11-bit identifier, **MSB first**, while simultaneously reading the bus.
+   - If a node sends **recessive (1)** but reads **dominant (0)**, another node has a higher priority. The losing node **immediately stops transmitting** and becomes a receiver for the winning frame.
+   - If a node sends **dominant (0)** and reads **dominant (0)**, it might still be in contention — or it might be the only one left. It continues to the next bit.
+4. **RTR / SRR bit.** If IDs are identical but one frame is data (RTR = dominant) and the other is remote (RTR = recessive), the data frame wins.
+5. **Winner.** The last node still transmitting owns the bus. It continues with the control, data, CRC, and ACK fields as if no contention ever occurred.
+
+> **Key insight.** Because losing nodes back off silently, the winning frame is transmitted without any corruption. This is what "non-destructive" means — contrast with Ethernet's destructive collision + exponential backoff.
+
+## Priority rule
+
+**Lower numeric ID = higher bus priority.**
+
+A message with ID `0x001` (binary `000 0000 0001`) beats `0x7FF` (binary `111 1111 1111`) because it drives dominant bits earlier in the field. When designing a CAN bus, you assign the **lowest IDs to the most time-critical messages** (e.g., ABS wheel-speed, airbag commands).
+
+### Extended frames (29-bit ID)
+
+In extended CAN, the arbitration field is longer: **SRR + IDE + 18-bit extension**. A standard-frame ID always beats an extended-frame ID with the same base 11 bits because IDE is dominant (0) in the standard frame and recessive (1) in the extended frame.
+
+## Interactive demo
+
+Edit the three node IDs below and step through the arbitration bit by bit. Watch how each losing node drops off as soon as it reads a dominant bit that it did not send.
+
+<ArbitrationMini />
+
+## Worked example
+
+Three ECUs attempt to transmit simultaneously:
+
+| Node | ID (hex) | ID (binary) |
+|---|---|---|
+| ABS | `0x0C0` | `000 1100 0000` |
+| Engine | `0x100` | `001 0000 0000` |
+| Climate | `0x300` | `011 0000 0000` |
+
+- **Bit 0 (MSB):** ABS=0, Engine=0, Climate=0 → bus=0 → all still in
+- **Bit 1:** ABS=0, Engine=0, Climate=1 → bus=0 → **Climate loses** (sent 1, read 0)
+- **Bit 2:** ABS=0, Engine=1 → bus=0 → **Engine loses**
+- **ABS wins.** It finishes transmitting its frame. Engine and Climate will retry after the bus goes idle.
+
+Total arbitration cost: **3 bit times** to resolve 3 nodes. No retransmission, no wasted bandwidth.
+
+## Design considerations
+
+### ID allocation
+
+Most automotive OEMs maintain a **system-wide message matrix** (often called a DBC file in Vector tools) that maps every CAN ID to a specific message, its sending ECU, its cycle time, and its priority. If two ECUs end up with IDs that collide under load, the lower-priority one faces **indefinite deferral** — a liveness problem, not just a latency problem.
+
+### Worst-case latency
+
+For hard-real-time systems, you can compute worst-case message latency analytically:
+
+- A message with ID *m* can be delayed by at most one full-length lower-priority frame (it started just before *m* tried) plus the combined transmission times of all higher-priority messages that can arrive during that window.
+- Tools like [RTaW-Pegase](https://www.realtimeatwork.com/) and academic frameworks (Tindell–Burns analysis) formalize this.
+
+### Bit stuffing during arbitration
+
+Bit stuffing (inserting a complementary bit after 5 identical bits) applies **during the arbitration field**. Both transmitter and receivers must account for stuff bits when comparing their ID against the bus, but the CAN controller handles this transparently in hardware.
+
+## Common pitfalls
+
+1. **ID reuse across buses.** Two nodes with the same ID on the same physical bus will both believe they won arbitration — resulting in corrupted frames. Gateway ECUs must remap IDs when bridging buses.
+2. **Assuming extended-frame priority.** A 29-bit ID `0x000C0000` does **not** have the same priority as 11-bit ID `0x0C0`. The arbitration fields are structurally different.
+3. **Bus load > 70%.** While CAN handles arbitration gracefully, high bus utilization increases worst-case latency for low-priority messages non-linearly. Many OEMs target ≤ 50% bus load for safety-critical segments.
+
+## Next
+
+Continue to **[Bit Timing](/docs/bit-timing)** to learn how nodes synchronize their clocks and where in each bit the controller samples the bus level.

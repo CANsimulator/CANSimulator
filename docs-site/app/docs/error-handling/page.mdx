@@ -3,10 +3,149 @@ title: 'CAN Error Handling'
 description: 'CAN protocol error detection, error frames, fault confinement states (error-active, error-passive, bus-off), and recovery.'
 ---
 
+import { ArticleSchema } from '@/components/ArticleSchema'
+import { FaultConfinement } from '@/components/FaultConfinement'
+
+<ArticleSchema
+  title="CAN Error Handling"
+  description="CAN protocol error detection, error frames, fault confinement states (error-active, error-passive, bus-off), and recovery."
+/>
+
 # CAN Error Handling
 
-> **Coming soon.** This page is scaffolded for Phase 2. It will cover the five CAN error types, error frame structure, the TEC / REC counters, fault confinement state machine, and bus-off recovery.
+CAN was designed for safety-critical systems where a single corrupted message could trigger a hazardous event. The protocol builds error detection and fault isolation **directly into hardware** — no application-layer checksums needed. Every node on the bus participates in error detection on every frame, and a faulty node is progressively isolated so it cannot take down the entire network.
 
-Meanwhile, see:
+## Five error-detection mechanisms
 
-- **[Frame Format](/docs/frame-format)** — the CRC, ACK, and form-check fields error detection relies on
+CAN uses five independent mechanisms to catch errors. Any single-bit error in a frame is guaranteed to be detected (the protocol's Hamming distance is 6 for messages ≤ 112 bits, meaning it detects up to 5 bit errors).
+
+### 1. Bit monitoring
+
+The transmitter compares the bit it sent with the bit it reads back from the bus. Outside the arbitration field (where losing is expected), a mismatch means something is wrong.
+
+### 2. Bit stuffing check
+
+After 5 consecutive identical bits, the transmitter inserts a complementary stuff bit. If a receiver sees 6 consecutive identical bits in the stuffed region, it flags a **stuff error**.
+
+### 3. CRC check
+
+The transmitter computes a 15-bit CRC (polynomial `0x4599`) over the SOF, arbitration, control, and data fields. Receivers compute the same CRC independently and compare. A mismatch triggers a **CRC error**.
+
+### 4. ACK check
+
+The transmitter sends a recessive ACK slot. If no receiver drives it dominant, the transmitter detects an **ACK error** — meaning either no receivers are present or all receivers found a CRC mismatch.
+
+### 5. Form check
+
+Certain bit positions must always be recessive (CRC delimiter, ACK delimiter, EOF). If a node reads a dominant bit in these fixed positions, it raises a **form error**.
+
+| Error type | Who detects | Trigger |
+|---|---|---|
+| Bit error | Transmitter | Sent bit ≠ read-back bit (outside arb field) |
+| Stuff error | Any receiver | 6+ identical bits in stuffed region |
+| CRC error | Any receiver | Computed CRC ≠ received CRC |
+| ACK error | Transmitter | ACK slot stays recessive |
+| Form error | Any receiver | Fixed-format field contains wrong level |
+
+## Error frames
+
+When any node detects an error, it immediately broadcasts an **error frame** to destroy the current transmission and alert all other nodes:
+
+```
+┌────────────────────────┬──────────────┐
+│   Error Flag           │  Error       │
+│   (6 dominant bits)    │  Delimiter   │
+│   or 6 recessive bits  │  (8 rec.)    │
+└────────────────────────┴──────────────┘
+```
+
+- **Active error flag:** 6 dominant bits — violates the bit-stuffing rule, so all other nodes also detect an error and respond with their own error flags. The result is a **superposition** of error flags (6 – 12 dominant bits).
+- **Passive error flag:** 6 recessive bits — does not disturb other transmissions. Only sent by error-passive nodes (see below).
+- **Error delimiter:** 8 recessive bits, followed by the normal inter-frame space.
+
+After the error frame completes, the transmitter **automatically retransmits** the corrupted message. From the application's perspective, the error is invisible — the message simply arrives one frame later.
+
+## Fault confinement state machine
+
+CAN controllers track two counters to decide how aggressively a node participates in error signaling:
+
+- **TEC** — Transmit Error Counter
+- **REC** — Receive Error Counter
+
+```
+                 TEC ≤ 127          TEC > 127        TEC > 255
+                 REC ≤ 127          or REC > 127      (transmit only)
+┌──────────┐    ┌──────────────┐    ┌──────────┐
+│  Error-   │───→│  Error-      │───→│  Bus-Off │
+│  Active   │←──│  Passive     │    │          │
+└──────────┘    └──────────────┘    └──────────┘
+     ↑                                    │
+     │       128 × 11 recessive bits      │
+     └────────────────────────────────────┘
+```
+
+### Interactive demo
+
+Click the event buttons below to simulate transmit/receive errors and successes. Watch the TEC and REC counters change and the node transition between states.
+
+<FaultConfinement />
+
+### Error-Active (normal)
+
+- TEC ≤ 127 **and** REC ≤ 127
+- Node sends **active error flags** (6 dominant bits) and participates fully in bus communication
+- Every successful transmission decrements TEC by 1; every successful reception decrements REC by 1
+- Every detected error increments the relevant counter by 8 (transmit error) or 1 (receive error)
+
+### Error-Passive
+
+- TEC > 127 **or** REC > 127
+- Node sends **passive error flags** (6 recessive bits) — these do not disturb other traffic
+- The node must wait an additional 8-bit "suspend transmission" period after each frame before it can transmit again
+- This slows the faulty node down, giving healthy nodes priority
+
+### Bus-Off
+
+- TEC exceeds 255
+- The node **disconnects from the bus** — it cannot transmit or send error flags
+- Recovery requires detecting 128 occurrences of 11 consecutive recessive bits (= 128 × 11 = 1408 recessive bits), after which TEC and REC reset to 0 and the node returns to Error-Active
+- Most implementations also require a software trigger or power cycle to re-enable the controller
+
+> **Why 128 × 11?** An idle bus has 11 recessive bits between frames (3-bit inter-frame space + 8 recessive bits padding in some implementations). Waiting for 128 idle periods ensures the bus has been stable for a meaningful duration before the faulty node rejoins.
+
+## Counter rules (simplified)
+
+| Event | TEC change | REC change |
+|---|---|---|
+| Successful transmit | −1 | — |
+| Successful receive | — | −1 (if REC > 0) |
+| Transmitter detects error | +8 | — |
+| Receiver detects error | — | +1 |
+| Receiver detects error, is the only receiver | — | +8 |
+| Bit error in active error flag sent by transmitter | +8 | — |
+
+The asymmetric +8 / +1 weighting is deliberate: a node that **causes** errors (e.g., shorted output driver) accumulates TEC eight times faster than a healthy receiver that merely observes them, driving the faulty node toward Bus-Off quickly.
+
+## Practical fault scenarios
+
+### Stuck dominant
+
+A transceiver failure that holds the bus dominant prevents all other nodes from transmitting. The stuck node's TEC climbs rapidly (+8 per error) and it reaches Bus-Off within about 32 error events. Once bus-off, the dominant fault clears and the bus recovers.
+
+### Intermittent CRC errors
+
+Usually caused by a marginal bit-timing mismatch or EMI. Because the error only occurs occasionally, the TEC/REC counters hover without reaching Bus-Off. Diagnosis: compare sample-point settings across all nodes, check cable shielding, and look for correlations with engine RPM or relay switching.
+
+### Missing ACK
+
+A transmitter alone on the bus (no receivers, or all receivers bus-off) will ACK-error on every frame. TEC increments by 8 each time, and the node reaches Bus-Off in 32 frames. This is the expected behavior — a lone transmitter cannot confirm delivery.
+
+## Common pitfalls
+
+1. **Ignoring Bus-Off recovery strategy.** In automotive AUTOSAR, the Bus-Off recovery is often managed by a state machine that waits an escalating delay before allowing re-initialization (e.g., first attempt after 10 ms, second after 100 ms, third after 1 s). Immediate re-init can create a bus-off/recovery oscillation if the root cause persists.
+2. **Assuming application-level ACK means CAN ACK.** CAN ACK only confirms that at least one node received the frame without CRC error. It says nothing about whether the right ECU processed the message. UDS and J1939 have their own response mechanisms.
+3. **Disabling error counters in test rigs.** Some development tools offer "listen-only" mode where the controller does not ACK or send error frames. This is useful for passive sniffing but means no node is providing ACK — the transmitter will ACK-error and eventually bus-off.
+
+## Next
+
+Continue to **[Higher-Layer Protocols](/docs/higher-layers)** to see how UDS, J1939, and CANopen build transport and application logic on top of raw CAN frames.

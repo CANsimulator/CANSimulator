@@ -46,3 +46,8 @@ Cursors are detected using a horizontal hit-test in `handlePointerDown`.
 
 ### Trigger Level & Offsets
 Drag logic for horizontal elements (Trigger, Vertical Offsets) uses similar mapping but focuses on the Y-axis. Transitions use `ns-resize` cursors.
+
+## Shared Data Structures
+The simulation uses a centralized type system to ensure all components share consistent definitions:
+- **`src/types/can.ts`**: Contains core simulation types (`Sample`, `WaveState`, `CANFrame`, `CANFDFrame`) and DLC conversion utilities (`dlcToLength`, `lengthToDlc`).
+- **`src/types/testbench.ts`**: Contains the `TestBenchState` context used by all physical layer components.

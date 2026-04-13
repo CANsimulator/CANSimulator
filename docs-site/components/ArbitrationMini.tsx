@@ -20,7 +20,7 @@ function toBinary11(value: number): string {
 
 interface ArbitrationStep {
   bitIndex: number
-  nodeBits: { nodeIdx: number; bit: '0' | '1' }[]
+  nodeBits: { nodeIdx: number; bit: '0' | '1' | '-' }[]
   busBit: '0' | '1'
   losers: number[]
   explanation: string
@@ -34,7 +34,7 @@ function computeArbitration(ids: number[]): ArbitrationStep[] {
   for (let bitPos = 0; bitPos < 11; bitPos++) {
     const nodeBits = ids.map((_, idx) => ({
       nodeIdx: idx,
-      bit: (eliminated.has(idx) ? '-' : binaries[idx][bitPos]) as '0' | '1',
+      bit: (eliminated.has(idx) ? '-' : binaries[idx][bitPos]) as '0' | '1' | '-',
     }))
 
     const activeBits = nodeBits.filter(
@@ -66,7 +66,7 @@ function computeArbitration(ids: number[]): ArbitrationStep[] {
       nodeBits: nodeBits.map((nb) => ({
         ...nb,
         bit: eliminated.has(nb.nodeIdx) && !newLosers.includes(nb.nodeIdx)
-          ? ('-' as '0' | '1')
+          ? ('-' as const)
           : nb.bit,
       })),
       busBit,

@@ -17,19 +17,7 @@ export const ISO = {
 
 export const BIT_TIME_SAMPLES = 8; // samples per bit period
 
-export interface Sample {
-    canh: number; 
-    canl: number;
-    isDominant: boolean;
-    bitIndex: number; // which bit in the frame
-    t: number;
-}
-
-export interface WaveState {
-    frameBits: boolean[];
-    frameBitIndex: number;
-    globalSampleIndex: number;
-}
+import type { Sample, WaveState } from '../../types/can';
 
 /**
  * Generates a standard CAN 2.0B frame bit stream (simplified)

@@ -3,11 +3,121 @@ title: 'CAN Bit Timing'
 description: 'How to configure CAN bit timing — baud rate prescaler, time segments, synchronization jump width, and sample point calculation.'
 ---
 
+import { BitTimingCalc } from '@/components/BitTimingCalc'
+import { BitAnatomy } from '@/components/BitAnatomy'
+import { ArticleSchema } from '@/components/ArticleSchema'
+
+<ArticleSchema
+  title="CAN Bit Timing"
+  description="How to configure CAN bit timing — baud rate prescaler, time segments, synchronization jump width, and sample point calculation."
+/>
+
 # CAN Bit Timing
 
-> **Coming soon.** This page is scaffolded for Phase 2. It will cover the nominal bit time, `BRP`, `TSEG1`, `TSEG2`, `SJW`, sample point selection, and a live bit-timing calculator.
+Every node on a CAN bus must agree on exactly when each bit begins and ends. Unlike SPI or I²C, CAN has **no dedicated clock wire** — instead, each node derives bit boundaries from the bus signal itself using a configurable set of timing parameters. Getting these parameters right is essential: a mismatch of even a fraction of a percent can cause intermittent CRC errors under temperature drift.
 
-Meanwhile, see:
+## The time quantum (Tq)
 
-- **[Physical Layer](/docs/physical-layer)** — oscillator tolerance and the signals that timing locks onto
-- **[Frame Format](/docs/frame-format)** — how bit stuffing affects the bit count on the wire
+The CAN controller's oscillator clock is divided by the **Baud Rate Prescaler (BRP)** to produce a smaller unit called the **time quantum (Tq)**:
+
+```
+Tq = BRP / f_osc
+```
+
+For example, a 16 MHz oscillator with BRP = 2 yields Tq = 125 ns.
+
+Every bit period is composed of a whole number of time quanta. By adjusting BRP and the segment lengths below, you control both the bit rate and the sample point.
+
+## Anatomy of a single bit
+
+A CAN bit is divided into four logical segments, though most controllers merge the first two:
+
+<BitAnatomy />
+
+**Total bit time** = 1 + TSEG1 + TSEG2 time quanta.
+
+**Bit rate** = f_osc / (BRP × (1 + TSEG1 + TSEG2)).
+
+## Sample point
+
+The **sample point** is where the controller reads the bus level and decides whether the bit is dominant or recessive. It falls at the boundary between TSEG1 and TSEG2:
+
+```
+Sample Point (%) = (1 + TSEG1) / (1 + TSEG1 + TSEG2) × 100
+```
+
+### Recommended values
+
+| Standard / use case | Typical sample point |
+|---|---|
+| **CiA (CANopen)** | 87.5% |
+| **SAE J1939** | 80% |
+| **Automotive (500 kbit/s)** | 75% – 80% |
+| **General** | 75% – 87.5% |
+
+A sample point that is **too early** makes the node vulnerable to propagation delay — it might read the bus before the remote transmitter's bit has fully propagated. A sample point that is **too late** reduces the window for phase-error correction in TSEG2.
+
+## Interactive calculator
+
+Adjust BRP, TSEG1, and TSEG2 below. The yellow bar marks the sample point. Green text indicates the bit rate matches a standard CAN rate and the sample point falls in the recommended range.
+
+<BitTimingCalc />
+
+## Synchronization
+
+CAN nodes synchronize to the bus signal in two ways:
+
+### Hard synchronization
+
+Occurs on the **SOF bit** (Start of Frame). Every receiver resets its bit-time counter so that the falling edge of SOF falls within Sync Seg. After hard sync, all subsequent bits in the frame use resynchronization only.
+
+### Resynchronization
+
+During the frame, edges that arrive **outside** Sync Seg trigger a phase adjustment:
+
+- If the edge arrives **before** the expected position (in TSEG1), the controller **shortens** the current bit by up to SJW time quanta.
+- If the edge arrives **after** the expected position (in TSEG2), the controller **lengthens** the current bit by up to SJW time quanta.
+
+This is why **SJW** matters: a larger SJW tolerates more clock drift between nodes but introduces more jitter on the sample point. For most applications, SJW = 1 or 2 is sufficient.
+
+### Bit stuffing and sync opportunities
+
+CAN uses **bit stuffing**: after 5 consecutive identical bits, the transmitter inserts a complementary bit. Stuff bits guarantee transitions on the bus at least every 5 bits, which keeps the resynchronization mechanism fed with edges. Without bit stuffing, a long sequence of identical bits could cause receivers to drift out of lock.
+
+## Oscillator tolerance
+
+The maximum allowed clock-frequency deviation between any two nodes on the same bus is determined by:
+
+```
+df_max ≤ min( SJW / (2 × 10 × total_Tq),  SJW / (20 × total_Tq) )
+```
+
+For a 16 Tq bit with SJW = 1, this gives **0.3125%** — easily within the tolerance of a ceramic resonator but possibly tight for an RC oscillator. Crystal oscillators (±50 ppm) are always safe.
+
+| Oscillator type | Typical tolerance | Suitable for CAN? |
+|---|---|---|
+| Crystal | ±20 – 50 ppm | Always |
+| Ceramic resonator | ±0.1 – 0.5% | Usually (verify at temperature extremes) |
+| Internal RC | ±1 – 5% | Marginal — usually requires calibration |
+
+## Common bit-timing presets
+
+| Bit rate | f_osc | BRP | TSEG1 | TSEG2 | TQ/bit | Sample Pt |
+|---|---|---|---|---|---|---|
+| 125 kbit/s | 16 MHz | 8 | 13 | 2 | 16 | 87.5% |
+| 250 kbit/s | 16 MHz | 4 | 13 | 2 | 16 | 87.5% |
+| 500 kbit/s | 16 MHz | 2 | 13 | 2 | 16 | 87.5% |
+| 500 kbit/s | 8 MHz | 1 | 13 | 2 | 16 | 87.5% |
+| 1 Mbit/s | 16 MHz | 1 | 13 | 2 | 16 | 87.5% |
+| 1 Mbit/s | 8 MHz | 1 | 5 | 2 | 8 | 75.0% |
+
+## Common pitfalls
+
+1. **Ignoring propagation delay.** Long buses (> 20 m at 500 kbit/s) need more time quanta in TSEG1 to accommodate the round-trip signal delay between the two furthest nodes plus transceiver loop delay.
+2. **Mismatched sample points.** Every node on the bus must use the same sample point percentage (within oscillator tolerance). If one node samples at 87.5% and another at 62.5%, intermittent bit errors will appear under high bus load.
+3. **SJW too large.** While SJW > 1 increases re-sync range, it also increases jitter at the sample point. Start with SJW = 1 and only increase if you see sync errors.
+4. **Forgetting temperature drift.** Ceramic resonators can shift ±0.5% across automotive temperature ranges (−40 °C to +125 °C). Always verify bit-timing parameters at both extremes, not just room temperature.
+
+## Next
+
+Continue to **[Error Handling](/docs/error-handling)** to learn how CAN detects and recovers from bit errors, CRC failures, and stuck-dominant faults.

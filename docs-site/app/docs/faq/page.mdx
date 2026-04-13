@@ -1,14 +1,153 @@
 ---
 title: 'CAN Protocol FAQ'
-description: 'Frequently asked questions about the CAN bus protocol: data rates, maximum length, differences from CAN FD, and common debugging questions.'
+description: 'Frequently asked questions about the CAN bus protocol: data rates, bus length, CAN vs CAN FD, differential signaling, arbitration, error handling, and more.'
 ---
+
+import { FAQSchema } from '@/components/FAQSchema'
+
+<FAQSchema />
 
 # CAN Protocol FAQ
 
-> **Coming soon.** This page is scaffolded for Phase 2. It will answer common questions about CAN with a `FAQPage` schema for rich-result eligibility:
->
-> - What is the maximum data rate of classical CAN?
-> - What is the difference between CAN and CAN FD?
-> - How long can a CAN bus be?
-> - Why does CAN use a differential pair?
-> - How does CAN handle priority between nodes?
+Quick answers to the questions engineers ask most often. Each answer links to the relevant deep-dive page for full detail.
+
+## General
+
+### What is CAN?
+
+**Controller Area Network (CAN)** is a serial communication protocol standardized as **ISO 11898**. It provides multi-master, broadcast messaging over a two-wire differential bus with built-in arbitration, error detection, and automatic retransmission. Originally designed by Robert Bosch GmbH for automotive use, CAN is now used across automotive, industrial, marine, medical, and aerospace domains.
+
+See [Introduction to CAN](/docs/introduction) for the full history and context.
+
+### What is the maximum data rate of classical CAN?
+
+Classical CAN supports a maximum bit rate of **1 Mbit/s**. At this rate the bus length is limited to approximately 40 meters due to propagation delay constraints. Lower bit rates allow longer buses: 500 kbit/s supports ~100 m, and 125 kbit/s supports ~500 m.
+
+See [Physical Layer — Bit rate vs bus length](/docs/physical-layer#bit-rate-vs-maximum-bus-length).
+
+### What is the difference between CAN and CAN FD?
+
+| Feature | Classical CAN | CAN FD |
+|---|---|---|
+| Max payload | 8 bytes | 64 bytes |
+| Data-phase bit rate | Up to 1 Mbit/s | Up to 8 Mbit/s |
+| Arbitration bit rate | Up to 1 Mbit/s | Up to 1 Mbit/s (same) |
+| CRC | 15-bit | 17-bit or 21-bit |
+| Bit rate switching | No | Yes |
+
+CAN FD keeps the same arbitration mechanism but switches to a faster bit rate during the data phase. All nodes on the bus must support FD — a single classical-only node will flag errors on FD frames.
+
+See [Introduction — Classical CAN vs CAN FD](/docs/introduction#classical-can-vs-can-fd).
+
+### How long can a CAN bus be?
+
+It depends on the bit rate. The fundamental constraint is propagation delay: every node must see the same bit value within a single bit time.
+
+| Bit rate | Max recommended length |
+|---|---|
+| 1 Mbit/s | ~40 m |
+| 500 kbit/s | ~100 m |
+| 250 kbit/s | ~250 m |
+| 125 kbit/s | ~500 m |
+| 50 kbit/s | ~1000 m |
+
+These are ISO-guideline values for high-speed CAN (ISO 11898-2). Actual range depends on cable quality, stub lengths, and transceiver loop delay.
+
+See [Physical Layer](/docs/physical-layer#bit-rate-vs-maximum-bus-length).
+
+## Physical Layer
+
+### Why does CAN use a differential pair?
+
+A differential pair (CANH and CANL) rejects **common-mode noise**. Electromagnetic interference from ignition coils, motors, and relays couples equally into both wires. Because the receiver measures the *difference* (CANH minus CANL), the common noise cancels out. This is why CAN works reliably in electrically noisy automotive and industrial environments without shielded cable.
+
+See [Physical Layer — Differential signaling](/docs/physical-layer#differential-signaling).
+
+### What do "dominant" and "recessive" mean?
+
+- **Recessive (logic 1):** Both CANH and CANL sit at ~2.5 V. Nobody is driving the bus.
+- **Dominant (logic 0):** CANH is pulled to ~3.5 V, CANL to ~1.5 V, creating a ~2.0 V differential.
+
+The key property: **dominant always overwrites recessive**. If two nodes transmit simultaneously — one dominant, one recessive — the bus reads dominant. This is the electrical basis of CAN's non-destructive arbitration.
+
+See [Physical Layer — Voltage levels](/docs/physical-layer#voltage-levels-high-speed-can).
+
+### Why 120 ohm termination?
+
+The characteristic impedance of a typical CAN twisted pair (AWG 22–24) is approximately **120 ohms**. Matching the termination resistor to the cable impedance minimizes signal reflections at the cable ends. Two 120 ohm resistors (one at each end of the backbone) in parallel give a 60 ohm DC load, which is what the transceivers are designed to drive.
+
+**Troubleshooting tip:** Measure CANH-to-CANL resistance with the bus powered off. You should read ~60 ohm. 120 ohm = one terminator missing. 40 ohm = extra terminator.
+
+See [Physical Layer — Why 120 ohm?](/docs/physical-layer#why-120-ω)
+
+## Protocol
+
+### How does CAN handle priority?
+
+CAN uses **non-destructive bitwise arbitration**. When multiple nodes start transmitting simultaneously, each sends its identifier bit-by-bit while reading the bus. If a node sends a recessive (1) bit but reads dominant (0), it has lost — a higher-priority node is asserting — and it stops transmitting immediately. The winning frame is never corrupted.
+
+**Lower numeric ID = higher priority** because dominant (0) overwrites recessive (1).
+
+See [Arbitration](/docs/arbitration) for a worked example with three competing nodes.
+
+### How many bytes can a CAN frame carry?
+
+Classical CAN: **0 to 8 bytes** per frame, set by the 4-bit DLC field. CAN FD extends this to **0 to 64 bytes**. For messages longer than 8 bytes (or 64 in FD), you need a transport protocol like **ISO-TP (ISO 15765-2)** to segment and reassemble.
+
+See [Frame Format — Data field](/docs/frame-format#data-field--0-to-64-bits).
+
+### What is bit stuffing?
+
+After every 5 consecutive bits of the **same polarity**, the transmitter inserts one bit of the **opposite polarity**. This guarantees regular transitions for clock synchronization, since CAN uses NRZ encoding (no clock wire). Stuff bits are transparent — the receiver removes them automatically.
+
+Stuff bits apply from SOF through CRC. The CRC delimiter, ACK field, and EOF have fixed polarities and are not stuffed.
+
+See [Frame Format — Bit stuffing](/docs/frame-format#bit-stuffing).
+
+### What happens when a CAN node detects an error?
+
+The detecting node immediately broadcasts an **error frame** (6 dominant bits for error-active nodes, 6 recessive for error-passive nodes). This destroys the current frame, alerting all nodes. The transmitter then automatically retransmits. From the application's perspective, the error is invisible — the message just arrives one frame time later.
+
+CAN tracks errors with two counters (TEC and REC) and progressively isolates faulty nodes: **Error-Active** → **Error-Passive** → **Bus-Off**.
+
+See [Error Handling](/docs/error-handling) for the full fault-confinement state machine.
+
+## Bit Timing
+
+### What is the sample point?
+
+The **sample point** is the exact moment within each bit time when the CAN controller reads the bus level and decides dominant or recessive. It is expressed as a percentage of the total bit time:
+
+```
+Sample Point (%) = (1 + TSEG1) / (1 + TSEG1 + TSEG2) x 100
+```
+
+Typical recommended values range from **75% to 87.5%** depending on the application (CiA recommends 87.5%, J1939 uses 80%).
+
+See [Bit Timing — Sample point](/docs/bit-timing#sample-point).
+
+### Do all nodes need the same bit timing?
+
+All nodes must agree on the **bit rate** and **sample point percentage** (within oscillator tolerance). The individual register values (BRP, TSEG1, TSEG2) can differ between nodes — what matters is that the resulting bit rate and sample point match. A crystal oscillator (±50 ppm) is always safe; ceramic resonators usually work; internal RC oscillators are marginal without calibration.
+
+See [Bit Timing — Oscillator tolerance](/docs/bit-timing#oscillator-tolerance).
+
+## Higher-Layer Protocols
+
+### What is UDS?
+
+**Unified Diagnostic Services (ISO 14229)** is the standard diagnostic protocol for passenger vehicles. It provides request/response services for reading data, clearing DTCs, flashing firmware, and controlling ECU behavior. UDS runs over CAN via **ISO-TP** for transport.
+
+See [Higher-Layer Protocols — UDS](/docs/higher-layers#uds--unified-diagnostic-services-iso-14229).
+
+### What is the difference between CAN and J1939?
+
+CAN is the **data link and physical layer** — it defines how frames get on the wire. **J1939** is a complete application-layer protocol for heavy-duty vehicles that runs *on top of* CAN. J1939 defines message identifiers (PGNs), data definitions (SPNs), address claiming, and its own multi-frame transport — all using CAN's 29-bit extended frame format.
+
+See [Higher-Layer Protocols — J1939](/docs/higher-layers#sae-j1939).
+
+### What is ISO-TP?
+
+**ISO-TP (ISO 15765-2)** is the transport protocol that segments messages longer than 8 bytes into multiple CAN frames and reassembles them at the receiver. It uses four frame types: Single Frame, First Frame, Consecutive Frame, and Flow Control. ISO-TP is required for UDS and OBD-II communication.
+
+See [Higher-Layer Protocols — ISO-TP](/docs/higher-layers#iso-tp--transport-protocol-iso-15765-2).

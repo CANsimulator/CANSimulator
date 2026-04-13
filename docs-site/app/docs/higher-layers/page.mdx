@@ -1,16 +1,249 @@
 ---
 title: 'CAN Higher-Layer Protocols'
-description: 'Protocols that run on top of raw CAN: UDS (ISO 14229), J1939, CANopen, ISO-TP (ISO 15765-2), OBD-II.'
+description: 'Protocols that run on top of raw CAN: ISO-TP (ISO 15765-2) transport layer, UDS (ISO 14229) diagnostics, SAE J1939 heavy-duty, CANopen industrial automation, and OBD-II emissions.'
 ---
+
+import { ArticleSchema } from '@/components/ArticleSchema'
+
+<ArticleSchema
+  title="CAN Higher-Layer Protocols"
+  description="Protocols that run on top of raw CAN: ISO-TP transport layer, UDS diagnostics, SAE J1939 heavy-duty, CANopen industrial automation, and OBD-II emissions."
+/>
 
 # Higher-Layer Protocols
 
-> **Coming soon.** This page is scaffolded for Phase 2. It will introduce the main application-layer protocols that run on top of raw CAN frames and show where CAN stops and each protocol begins.
+CAN itself only defines how bits get on and off the wire (physical layer) and how frames are structured and arbitrated (data link layer). Everything above that — multi-frame messages, diagnostic services, device profiles — is handled by **higher-layer protocols** that sit on top of raw CAN frames.
 
-Topics planned:
+This page introduces the five protocols you will encounter most often and explains where CAN stops and each protocol begins.
 
-- **ISO-TP (ISO 15765-2)** — segmentation, flow control, multi-frame messages
-- **UDS (ISO 14229)** — diagnostic services, sessions, negative response codes
-- **SAE J1939** — heavy-duty vehicle networking, PGNs, address claiming
-- **CANopen** — industrial automation object dictionary and PDOs
-- **OBD-II** — emissions diagnostics on passenger vehicles
+## The stack at a glance
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Application    UDS (ISO 14229) · J1939 · CANopen · OBD-II  │
+├──────────────────────────────────────────────────────────────┤
+│  Transport      ISO-TP (ISO 15765-2) — segmentation & flow  │
+├──────────────────────────────────────────────────────────────┤
+│  Data Link      CAN frame, arbitration, CRC, ACK            │  ← ISO 11898-1
+├──────────────────────────────────────────────────────────────┤
+│  Physical       CANH / CANL, transceiver, termination        │  ← ISO 11898-2
+└──────────────────────────────────────────────────────────────┘
+```
+
+Each higher-layer protocol defines its own addressing, message semantics, and error-handling logic. CAN just delivers the frames.
+
+## ISO-TP — Transport Protocol (ISO 15765-2)
+
+A classical CAN frame carries at most **8 bytes** of payload (64 in CAN FD). Many real-world messages — a UDS diagnostic response containing a VIN, a firmware flash block, a DTC snapshot — exceed that limit. **ISO-TP** segments long messages into multiple CAN frames and reassembles them at the receiver.
+
+### Frame types
+
+| Type | First byte (PCI) | Purpose |
+|---|---|---|
+| **Single Frame (SF)** | `0x0N` | Message fits in one frame. `N` = data length (1 – 7). |
+| **First Frame (FF)** | `0x1N NN` | First segment of a multi-frame message. Contains total byte count. |
+| **Consecutive Frame (CF)** | `0x2N` | Subsequent segment. `N` = sequence number (0 – F, wraps). |
+| **Flow Control (FC)** | `0x3N` | Receiver tells transmitter: continue, wait, or abort. Contains **Block Size (BS)** and **Separation Time (STmin)**. |
+
+### Multi-frame exchange sequence
+
+```
+  Tester                                  ECU
+    │                                      │
+    │─── First Frame (FF) ────────────────→│  "I have 142 bytes to send"
+    │                                      │
+    │←── Flow Control (FC, BS=0, ST=5ms) ──│  "Send all, 5 ms apart"
+    │                                      │
+    │─── Consecutive Frame (CF, SN=1) ────→│
+    │─── Consecutive Frame (CF, SN=2) ────→│
+    │─── ...                               │
+    │─── Consecutive Frame (CF, SN=F) ────→│  sequence wraps to 0
+    │─── Consecutive Frame (CF, SN=0) ────→│
+    │─── ...last CF ──────────────────────→│  transfer complete
+```
+
+### Key parameters
+
+- **Block Size (BS):** How many CFs the receiver can accept before it needs to send another FC. `BS = 0` means "send everything, no pause."
+- **STmin:** Minimum separation time between consecutive frames (0 – 127 ms, or 100 – 900 μs in the `0xF1` – `0xF9` range). Prevents receiver buffer overrun.
+- **Timeout:** If no CF arrives within **1000 ms** (N_Cr timeout), the receiver aborts. If no FC arrives within **1000 ms** (N_Bs timeout), the transmitter aborts.
+
+> **Why ISO-TP matters.** Without it, you cannot send or receive any UDS message longer than 7 bytes. Every `ReadDataByIdentifier`, `RequestDownload`, or `ReadDTCInformation` response that exceeds 7 bytes requires ISO-TP.
+
+## UDS — Unified Diagnostic Services (ISO 14229)
+
+**UDS** is the standard diagnostic protocol for passenger vehicles. It defines a request/response service model where a **diagnostic tester** (scan tool, factory tester, or development PC) communicates with an **ECU** over CAN via ISO-TP.
+
+### Common services
+
+| SID | Service | Typical use |
+|---|---|---|
+| `0x10` | DiagnosticSessionControl | Switch between default, programming, extended sessions |
+| `0x11` | ECUReset | Hard reset, key-off-on reset |
+| `0x22` | ReadDataByIdentifier | Read VIN, software version, calibration data |
+| `0x27` | SecurityAccess | Seed/key unlock for protected operations |
+| `0x2E` | WriteDataByIdentifier | Write calibration values, configuration |
+| `0x31` | RoutineControl | Start/stop/request results of ECU-internal routines |
+| `0x34` | RequestDownload | Begin a firmware flash transfer |
+| `0x36` | TransferData | Send firmware blocks |
+| `0x3E` | TesterPresent | Keep-alive to prevent session timeout |
+| `0x19` | ReadDTCInformation | Read stored diagnostic trouble codes |
+| `0x14` | ClearDiagnosticInformation | Clear DTCs |
+
+### Request / response format
+
+```
+Request:  [SID] [sub-function / DID] [parameters...]
+Positive: [SID + 0x40] [data...]
+Negative: [0x7F] [SID] [NRC]
+```
+
+**Negative Response Codes (NRC)** tell the tester why a request failed:
+
+| NRC | Meaning |
+|---|---|
+| `0x12` | Sub-function not supported |
+| `0x13` | Incorrect message length or invalid format |
+| `0x22` | Conditions not correct |
+| `0x31` | Request out of range |
+| `0x35` | Invalid key (security access) |
+| `0x72` | General programming failure |
+| `0x78` | Request correctly received — response pending |
+
+NRC `0x78` is special: the ECU is still processing and will send the real response later. The tester must wait and not time out.
+
+### Session and security model
+
+UDS uses **sessions** to gate access to sensitive services:
+
+- **Default session (0x01):** Basic read-only diagnostics. Always active at power-on.
+- **Extended session (0x03):** Access to more DIDs, IO control, routine execution.
+- **Programming session (0x02):** Firmware flashing. Usually requires SecurityAccess first.
+
+Each session has a **timeout** (typically 5 s). If the tester does not send `TesterPresent (0x3E)` within that window, the ECU falls back to the default session.
+
+## SAE J1939
+
+**J1939** is the standard for heavy-duty vehicles: trucks, buses, construction equipment, and agricultural machinery. Unlike UDS (which is request/response), J1939 is primarily **broadcast-oriented** — ECUs continuously publish data at defined rates.
+
+### Key concepts
+
+| Concept | Description |
+|---|---|
+| **PGN** (Parameter Group Number) | Identifies a message type (e.g., PGN 61444 = Electronic Engine Controller 1). Maps to a CAN extended ID. |
+| **SPN** (Suspect Parameter Number) | Individual data item within a PGN (e.g., SPN 190 = Engine Speed within PGN 61444). |
+| **Source Address** | 8-bit address of the transmitting node. Embedded in the CAN ID. |
+| **Address Claiming** | Dynamic address negotiation using NAME — a 64-bit identifier encoding manufacturer, function, and instance. |
+| **Transport Protocol** | J1939's own multi-frame protocol (BAM and connection-mode) for messages > 8 bytes. Not ISO-TP. |
+
+### CAN ID structure (29-bit extended)
+
+```
+┌────────┬──────┬────────┬──────────────┐
+│Priority│ Rsvd │  PGN   │Source Address │
+│ (3 bit)│(1 b) │(18 bit)│   (8 bit)    │
+└────────┴──────┴────────┴──────────────┘
+```
+
+- **Priority 3** is typical for engine data; **priority 6** for less critical messages.
+- PGN encodes both the PDU format and PDU specific fields. If PDU format < 240, the "PDU specific" field is a destination address (peer-to-peer). If ≥ 240, it is a group extension (broadcast).
+
+### Broadcast vs peer-to-peer
+
+Most J1939 traffic is broadcast: the engine ECU publishes engine speed, torque, and temperatures every 10 – 100 ms, and every node on the bus can read them. Peer-to-peer messages (like address claims or diagnostic requests) use the destination-specific PDU format.
+
+## CANopen
+
+**CANopen** is the standard application layer for CAN in industrial automation, defined by CAN in Automation (CiA). It runs on classical CAN at 125, 250, 500, or 1000 kbit/s.
+
+### Core architecture
+
+| Component | Description |
+|---|---|
+| **Object Dictionary (OD)** | Every CANopen device exposes its parameters and data through an indexed dictionary (index 0x0000 – 0xFFFF, sub-index 0x00 – 0xFF). |
+| **SDO** (Service Data Object) | Read/write individual OD entries — request/response, like UDS. Used for configuration. |
+| **PDO** (Process Data Object) | Real-time data mapped from the OD. Broadcast at high frequency with no protocol overhead — just raw CAN frames carrying mapped data. |
+| **NMT** (Network Management) | Controls device states: pre-operational, operational, stopped. A single NMT master coordinates the network. |
+| **SYNC** | Periodic synchronization frame. Triggers synchronized PDO transmission across devices. |
+| **EMCY** (Emergency) | High-priority error notification from a device. |
+| **Heartbeat** | Periodic liveness signal. Each node sends its state; the NMT master monitors for missing heartbeats. |
+
+### CAN ID allocation (predefined connection set)
+
+CANopen assigns CAN IDs based on a node's **Node-ID** (1 – 127):
+
+| Object | CAN ID formula | Example (Node 5) |
+|---|---|---|
+| NMT | `0x000` | `0x000` |
+| SYNC | `0x080` | `0x080` |
+| EMCY | `0x080 + Node-ID` | `0x085` |
+| TPDO1 | `0x180 + Node-ID` | `0x185` |
+| RPDO1 | `0x200 + Node-ID` | `0x205` |
+| SDO tx | `0x580 + Node-ID` | `0x585` |
+| SDO rx | `0x600 + Node-ID` | `0x605` |
+| Heartbeat | `0x700 + Node-ID` | `0x705` |
+
+This predefined allocation means a CANopen network can be wired and communicating with minimal configuration — each device just needs a unique Node-ID.
+
+## OBD-II
+
+**On-Board Diagnostics II** is the emissions-related diagnostic standard mandated for all passenger vehicles sold in the US (since 1996), EU (since 2001), and most other markets. It runs over CAN on modern vehicles (ISO 15765-4).
+
+### How it relates to CAN and UDS
+
+OBD-II defines a **subset of diagnostic services** accessible through the 16-pin DLC (Diagnostic Link Connector) under the dashboard. On CAN-based vehicles:
+
+- **Request CAN ID:** `0x7DF` (functional / broadcast) or `0x7E0` – `0x7E7` (physical, per ECU)
+- **Response CAN ID:** `0x7E8` – `0x7EF`
+- **Transport:** ISO-TP (single-frame for most OBD requests)
+
+### OBD-II modes (services)
+
+| Mode | Name | Example |
+|---|---|---|
+| `0x01` | Current data | Engine RPM, coolant temp, vehicle speed |
+| `0x02` | Freeze frame | Snapshot of data at time of DTC |
+| `0x03` | Stored DTCs | Read confirmed trouble codes |
+| `0x04` | Clear DTCs | Clear stored codes and turn off MIL |
+| `0x05` | O2 sensor monitoring | Lambda sensor test results |
+| `0x06` | On-board monitoring | Continuous and non-continuous test results |
+| `0x07` | Pending DTCs | Codes detected but not yet confirmed |
+| `0x09` | Vehicle information | VIN, calibration IDs |
+
+### Example: reading engine RPM
+
+```
+Request:  7DF # [02] [01 0C] [00 00 00 00 00]
+          │     │     │  └─ PID 0x0C = Engine RPM
+          │     │     └──── Mode 01 = Current data
+          │     └────────── 2 bytes of data follow (ISO-TP SF)
+          └──────────────── Broadcast functional address
+
+Response: 7E8 # [04] [41 0C 1A F8] [00 00 00]
+          │     │     │  │  └────── RPM = (0x1AF8) / 4 = 1726 RPM
+          │     │     │  └───────── PID 0x0C echoed back
+          │     │     └──────────── Mode 01 + 0x40 = positive response
+          │     └────────────────── 4 bytes follow
+          └──────────────────────── ECU 1 response address
+```
+
+## Choosing the right protocol
+
+| Use case | Protocol | Why |
+|---|---|---|
+| Passenger vehicle diagnostics | **UDS** over ISO-TP | Industry standard, all OEMs |
+| Emissions scan tool | **OBD-II** (subset of UDS) | Legally mandated, universal PIDs |
+| Heavy-duty / truck / ag | **J1939** | Broadcast-oriented, standardized PGNs |
+| Industrial motion control | **CANopen** | Real-time PDOs, object dictionary |
+| Firmware flashing | **UDS** (0x34/0x36/0x37) | Secure, session-gated transfer |
+
+## Common pitfalls
+
+1. **Confusing CAN ACK with UDS positive response.** CAN ACK means a node received the frame without CRC error. It says nothing about whether the ECU accepted the diagnostic request. Always check the UDS response SID.
+2. **Using ISO-TP timeouts that are too short.** Some ECUs take 2+ seconds to respond to a programming request (NRC `0x78` pending). If your tester times out at 1 s, you will abort a valid transaction.
+3. **Mixing J1939 transport with ISO-TP.** J1939 has its own multi-frame protocol (BAM / connection-mode TP). Do not layer ISO-TP on a J1939 bus unless the application spec explicitly requires it (some unified diagnostics gateways do).
+4. **Hardcoding OBD-II CAN IDs.** While `0x7DF` / `0x7E8` is the most common pair, ISO 15765-4 defines a discovery process. Some vehicles use extended addressing or 29-bit CAN IDs for OBD.
+
+## Next
+
+Continue to the **[FAQ](/docs/faq)** for quick answers to common CAN protocol questions.
