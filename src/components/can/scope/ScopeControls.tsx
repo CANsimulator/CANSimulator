@@ -1,9 +1,6 @@
 import React from 'react';
 import { 
     Zap, 
-    Activity, 
-    Minus,
-    Plus,
     Clock,
     Target,
     Settings2,

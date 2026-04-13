@@ -1,29 +1,22 @@
-import React, { useRef, useEffect, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useRef, useEffect, useCallback } from 'react';
+// import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../utils/cn';
 import { 
     Maximize2, 
-    ZoomIn, 
-    ZoomOut, 
     Download, 
     LayoutGrid,
-    MousePointer2,
-    Crosshair,
     Clock,
-    FileJson,
     Settings2
 } from 'lucide-react';
 import { 
-    PLOT_W, 
     PANEL_H_PHYSICAL,
     PANEL_H_DIFF,
     PANEL_H_EYE,
     normToCanvasX, 
     canvasXToNorm, 
-    clamp,
-    calculateVDiff
+    clamp
 } from '../../../utils/scope-math';
-import { ISO } from '../../../services/can/waveform-generator';
+// import { ISO } from '../../../services/can/waveform-generator';
 import type { Sample } from '../../../types/can';
 
 interface ViewState {
@@ -113,7 +106,7 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
             { type: 'eye', label: 'Eye Diagram — PERSISTENCE', h: PANEL_H_EYE, active: showEye }
         ].filter(p => p.active);
 
-        panels.forEach((panel, pIdx) => {
+        panels.forEach((panel) => {
             const py = currentY;
             const ph = panel.h;
 
@@ -198,7 +191,7 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
 
             // ── Cursors (Global overlay per panel) ──
             if (cursorMode === 'time') {
-                const drawCursor = (pos: number, label: string) => {
+                const drawCursor = (pos: number) => {
                     const x = MARGIN.left + normToCanvasX(pos, view);
                     if (x < MARGIN.left || x > CANVAS_W - MARGIN.right) return;
                     ctx.strokeStyle = '#00f3ff';
@@ -208,8 +201,8 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
                     ctx.stroke();
                     ctx.setLineDash([]);
                 };
-                drawCursor(cursorA, 'A');
-                drawCursor(cursorB, 'B');
+                drawCursor(cursorA);
+                drawCursor(cursorB);
             }
 
             currentY += ph + 20; // Space between panels
@@ -303,7 +296,6 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
         const x = (e.clientX - rect.left) * (CANVAS_W / rect.width);
         if (cursorMode === 'time') {
             const curAX = MARGIN.left + normToCanvasX(cursorA, view);
-            const curBX = MARGIN.left + normToCanvasX(cursorB, view);
             if (Math.abs(x - curAX) < 15) {
                 const moveHandler = (me: PointerEvent) => {
                     const nx = (me.clientX - rect.left) * (CANVAS_W / rect.width) - MARGIN.left;

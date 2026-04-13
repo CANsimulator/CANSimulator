@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CANErrorCode } from '../../types/can';
+import type { CANErrorCode } from '../../types/can';
 import { canSimulator } from '../../services/can/can-simulator';
 import { useTheme } from '../../context/ThemeContext';
 import type { ErrorRole } from '../../services/can/can-simulator';

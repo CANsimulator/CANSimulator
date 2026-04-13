@@ -1,21 +1,18 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+// import { motion } from 'framer-motion';
 import { cn } from '../../utils/cn';
 
 // Project Services & Utils
 import { 
     ISO, 
     generateSample, 
-    createInitialWaveState,
-    BIT_TIME_SAMPLES 
+    createInitialWaveState
 } from '../../services/can/waveform-generator';
 import type { Sample, WaveState } from '../../types/can';
 import { 
-    PLOT_W, 
-    clamp, 
     calculateVDiff 
 } from '../../utils/scope-math';
-import { useTestBench } from '../../context/TestBenchContext';
+// import { useTestBench } from '../../context/TestBenchContext';
 
 // Sub-components
 import { ScopeControls } from './scope/ScopeControls';
@@ -27,14 +24,9 @@ import { ProtocolDecoder } from './scope/ProtocolDecoder';
 import { 
     Cpu, 
     Activity, 
-    History,
-    Gauge,
-    Terminal,
-    Settings,
     Maximize2,
     Database,
     Binary,
-    Search,
     ShieldCheck,
     FileJson
 } from 'lucide-react';
@@ -79,7 +71,7 @@ const getInitialScopeParams = (): ScopeParams => ({
 });
 
 export const VoltageScope: React.FC = () => {
-    const bench = useTestBench();
+    // const bench = useTestBench();
     const [scope, setScope] = useState<ScopeParams>(getInitialScopeParams());
     const [metrics, setMetrics] = useState<any>({
         ch1Vpp: 0, ch1Avg: 0, ch1Min: 0, ch1Max: 0,
@@ -297,7 +289,7 @@ export const VoltageScope: React.FC = () => {
             <div className="w-full">
                 <ProtocolDecoder 
                     frames={decodedFrames}
-                    onRowClick={(id) => {}}
+                    onRowClick={(_id) => {}}
                 />
             </div>
 

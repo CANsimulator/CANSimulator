@@ -11,6 +11,7 @@ const ERROR_COLORS: Record<CANErrorCode, { bg: string; text: string; border: str
     CRC: { bg: 'bg-purple-500/10', text: 'text-purple-600 dark:text-purple-400', border: 'border-purple-500/30' },
     FORM: { bg: 'bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400', border: 'border-blue-500/30' },
     ACK: { bg: 'bg-cyan-500/10', text: 'text-cyan-600 dark:text-cyan-400', border: 'border-cyan-500/30' },
+    OTHER: { bg: 'bg-gray-500/10', text: 'text-gray-600 dark:text-gray-400', border: 'border-gray-500/30' },
 };
 
 const ERROR_LABELS: Record<CANErrorCode, string> = {
@@ -20,6 +21,7 @@ const ERROR_LABELS: Record<CANErrorCode, string> = {
     CRC: 'CRC',
     FORM: 'FORM',
     ACK: 'ACK',
+    OTHER: 'OTHER',
 };
 
 type FilterType = 'ALL' | CANErrorCode;

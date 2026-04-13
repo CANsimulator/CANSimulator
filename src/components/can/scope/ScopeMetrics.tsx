@@ -2,9 +2,7 @@ import React from 'react';
 import { 
     Activity, 
     BarChart3, 
-    Zap, 
     Eye, 
-    Clock, 
     ShieldCheck, 
     ShieldAlert, 
     Info 
