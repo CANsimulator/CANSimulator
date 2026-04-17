@@ -53,19 +53,23 @@ export const ScopeControls: React.FC<ScopeControlsProps> = ({
     onReset
 }) => {
     return (
-        <div className="flex flex-col gap-4 h-full overflow-y-auto no-scrollbar pb-4 pr-1">
+        <div className="flex flex-col gap-4 pb-4 pr-1">
             {/* Acquire Section */}
-            <section className="glass-panel !rounded-none p-4 flex flex-col gap-3 border-white/5 bg-white/[0.01]">
+            <section className="flex-shrink-0 glass-panel !rounded-none p-4 flex flex-col gap-3 border-white/5 bg-white/[0.01]">
                 <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-[10px] font-outfit font-black uppercase tracking-[0.25em] text-[#00f3ff] flex items-center gap-2">
-                        <span className="w-1 h-3 bg-[#00f3ff]"></span>
+                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
                         Acquisition
                     </h3>
-                    <motion.div 
-                        animate={{ opacity: runMode === 'run' ? [0.4, 1, 0.4] : 0.4 }}
+                    <motion.div
+                        animate={{ opacity: runMode === 'run' ? [0.3, 1, 0.3] : 0.3 }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
-                        className="h-3 w-[2px] bg-[#00ff9f] shadow-[0_0_4px_#00ff9f]"
-                    />
+                        className="flex items-center gap-1.5"
+                    >
+                        <div className={cn("w-1.5 h-1.5 rounded-full", runMode === 'run' ? "bg-[#00ff9f]" : "bg-white/30")} />
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-white/40">
+                            {runMode === 'run' ? 'Live' : runMode === 'stop' ? 'Paused' : 'Armed'}
+                        </span>
+                    </motion.div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                     <button 
@@ -108,13 +112,12 @@ export const ScopeControls: React.FC<ScopeControlsProps> = ({
             </section>
 
             {/* Channel Settings */}
-            <section className="glass-panel p-4 flex flex-col gap-4 !rounded-none border-white/5 bg-white/[0.01]">
+            <section className="flex-shrink-0 glass-panel p-4 flex flex-col gap-4 !rounded-none border-white/5 bg-white/[0.01]">
                 <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-[10px] font-outfit font-black uppercase tracking-[0.25em] text-[#00f3ff] flex items-center gap-2">
-                        <span className="w-1 h-3 bg-[#00f3ff]"></span>
-                        Channel Map
+                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
+                        Channels
                     </h3>
-                    <Settings2 size={12} className="text-[#00f3ff]/40" />
+                    <Settings2 size={12} className="text-white/30" />
                 </div>
                 
                 {[
@@ -150,9 +153,9 @@ export const ScopeControls: React.FC<ScopeControlsProps> = ({
 
                         <div className="flex flex-col gap-3 ml-7">
                             <div className="space-y-1.5">
-                                <div className="flex justify-between text-[9px] font-mono font-bold uppercase tracking-widest text-white/30">
-                                    <span>Scale / Vertical</span>
-                                    <span style={{ color: channel.color }}>{channel.cfg.vdiv} V/Div</span>
+                                <div className="flex justify-between items-baseline">
+                                    <span className="text-[11px] font-outfit text-white/50">Vertical scale</span>
+                                    <span className="text-[11px] font-mono tabular-nums" style={{ color: channel.color }}>{channel.cfg.vdiv} V/div</span>
                                 </div>
                                 <div className="flex gap-1">
                                     {VDIV_OPTIONS.map(v => (
@@ -174,9 +177,9 @@ export const ScopeControls: React.FC<ScopeControlsProps> = ({
                             </div>
 
                             <div className="space-y-1.5">
-                                <div className="flex justify-between text-[9px] font-mono font-bold uppercase tracking-widest text-white/30">
-                                    <span>Pos Offset</span>
-                                    <span className="text-white/60">{(channel.cfg.offset >= 0 ? '+' : '') + channel.cfg.offset.toFixed(2)}V</span>
+                                <div className="flex justify-between items-baseline">
+                                    <span className="text-[11px] font-outfit text-white/50">Offset</span>
+                                    <span className="text-[11px] font-mono tabular-nums text-white/70">{(channel.cfg.offset >= 0 ? '+' : '') + channel.cfg.offset.toFixed(2)} V</span>
                                 </div>
                                 <input 
                                     type="range"
@@ -194,20 +197,19 @@ export const ScopeControls: React.FC<ScopeControlsProps> = ({
             </section>
 
             {/* Time & Trigger */}
-            <section className="glass-panel p-4 flex flex-col gap-4 !rounded-none border-white/5 bg-white/[0.01]">
+            <section className="flex-shrink-0 glass-panel p-4 flex flex-col gap-4 !rounded-none border-white/5 bg-white/[0.01]">
                 <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-[10px] font-outfit font-black uppercase tracking-[0.25em] text-[#00f3ff] flex items-center gap-2">
-                        <span className="w-1 h-3 bg-[#00f3ff]"></span>
-                        Time & Trigger
+                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
+                        Time &amp; Trigger
                     </h3>
-                    <Clock size={12} className="text-[#00f3ff]/40" />
+                    <Clock size={12} className="text-white/30" />
                 </div>
 
                 <div className="space-y-4 px-1">
                     <div className="space-y-1.5">
-                        <div className="flex justify-between text-[9px] font-mono font-bold uppercase tracking-widest text-white/30">
-                            <span>Horizontal / TDiv</span>
-                            <span className="text-[#00f3ff]">{tdiv} µs/Div</span>
+                        <div className="flex justify-between items-baseline">
+                            <span className="text-[11px] font-outfit text-white/50">Horizontal scale</span>
+                            <span className="text-[11px] font-mono tabular-nums text-[#00f3ff]">{tdiv} µs/div</span>
                         </div>
                         <div className="grid grid-cols-4 gap-1">
                             {TDIV_OPTIONS.map(t => (
@@ -229,9 +231,9 @@ export const ScopeControls: React.FC<ScopeControlsProps> = ({
 
                     <div className="border-t border-white/5 pt-4 space-y-4">
                         <div className="space-y-1.5">
-                            <div className="flex justify-between text-[9px] font-mono font-bold uppercase tracking-widest text-white/30">
-                                <span>Logic Source</span>
-                                <span className="text-[#00ff9f]">{triggerMode.toUpperCase()}</span>
+                            <div className="flex justify-between items-baseline">
+                                <span className="text-[11px] font-outfit text-white/50">Trigger source</span>
+                                <span className="text-[11px] font-mono uppercase tabular-nums text-[#00ff9f]">{triggerMode}</span>
                             </div>
                             <div className="grid grid-cols-2 gap-1">
                                 {(['auto', 'SOF', 'error', 'ID'] as const).map(mode => (
@@ -252,9 +254,9 @@ export const ScopeControls: React.FC<ScopeControlsProps> = ({
                         </div>
 
                         <div className="space-y-1.5">
-                            <div className="flex justify-between text-[9px] font-mono font-bold uppercase tracking-widest text-white/30">
-                                <span>Level Thresh</span>
-                                <span className="text-white/60">{triggerLevel.toFixed(2)}V</span>
+                            <div className="flex justify-between items-baseline">
+                                <span className="text-[11px] font-outfit text-white/50">Level threshold</span>
+                                <span className="text-[11px] font-mono tabular-nums text-white/70">{triggerLevel.toFixed(2)} V</span>
                             </div>
                             <input 
                                 type="range"
@@ -282,7 +284,7 @@ export const ScopeControls: React.FC<ScopeControlsProps> = ({
 
             <button 
                 onClick={onReset}
-                className="w-full flex items-center justify-center gap-2 py-3 border border-white/10 bg-white/5 text-white/40 hover:text-[#ff4444] hover:bg-[#ff4444]/5 transition-all font-mono text-[10px] font-black uppercase tracking-widest mt-auto !rounded-none"
+                className="flex-shrink-0 w-full flex items-center justify-center gap-2 py-3 border border-white/10 bg-white/5 text-white/40 hover:text-[#ff4444] hover:bg-[#ff4444]/5 transition-all font-mono text-[10px] font-black uppercase tracking-widest mt-auto !rounded-none"
             >
                 <RefreshCw size={12} />
                 Master Reset

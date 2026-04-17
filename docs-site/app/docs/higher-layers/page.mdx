@@ -5,6 +5,12 @@ description: 'Protocols that run on top of raw CAN: ISO-TP (ISO 15765-2) transpo
 
 import { ArticleSchema } from '@/components/ArticleSchema'
 import { ProtocolStack } from '@/components/ProtocolStack'
+import { IsoTpSequence } from '@/components/IsoTpSequence'
+import { J1939CanId } from '@/components/J1939CanId'
+import { UdsServiceTable } from '@/components/UdsServiceTable'
+import { NrcTable } from '@/components/NrcTable'
+import { IsoTpFrameTypes } from '@/components/IsoTpFrameTypes'
+import { ObdPidReference } from '@/components/ObdPidReference'
 
 <ArticleSchema
   title="CAN Higher-Layer Protocols"
@@ -29,29 +35,11 @@ A classical CAN frame carries at most **8 bytes** of payload (64 in CAN FD). Man
 
 ### Frame types
 
-| Type | First byte (PCI) | Purpose |
-|---|---|---|
-| **Single Frame (SF)** | `0x0N` | Message fits in one frame. `N` = data length (1 – 7). |
-| **First Frame (FF)** | `0x1N NN` | First segment of a multi-frame message. Contains total byte count. |
-| **Consecutive Frame (CF)** | `0x2N` | Subsequent segment. `N` = sequence number (0 – F, wraps). |
-| **Flow Control (FC)** | `0x3N` | Receiver tells transmitter: continue, wait, or abort. Contains **Block Size (BS)** and **Separation Time (STmin)**. |
+<IsoTpFrameTypes />
 
 ### Multi-frame exchange sequence
 
-```
-  Tester                                  ECU
-    │                                      │
-    │─── First Frame (FF) ────────────────→│  "I have 142 bytes to send"
-    │                                      │
-    │←── Flow Control (FC, BS=0, ST=5ms) ──│  "Send all, 5 ms apart"
-    │                                      │
-    │─── Consecutive Frame (CF, SN=1) ────→│
-    │─── Consecutive Frame (CF, SN=2) ────→│
-    │─── ...                               │
-    │─── Consecutive Frame (CF, SN=F) ────→│  sequence wraps to 0
-    │─── Consecutive Frame (CF, SN=0) ────→│
-    │─── ...last CF ──────────────────────→│  transfer complete
-```
+<IsoTpSequence />
 
 ### Key parameters
 
@@ -65,21 +53,9 @@ A classical CAN frame carries at most **8 bytes** of payload (64 in CAN FD). Man
 
 **UDS** is the standard diagnostic protocol for passenger vehicles. It defines a request/response service model where a **diagnostic tester** (scan tool, factory tester, or development PC) communicates with an **ECU** over CAN via ISO-TP.
 
-### Common services
+### Services
 
-| SID | Service | Typical use |
-|---|---|---|
-| `0x10` | DiagnosticSessionControl | Switch between default, programming, extended sessions |
-| `0x11` | ECUReset | Hard reset, key-off-on reset |
-| `0x22` | ReadDataByIdentifier | Read VIN, software version, calibration data |
-| `0x27` | SecurityAccess | Seed/key unlock for protected operations |
-| `0x2E` | WriteDataByIdentifier | Write calibration values, configuration |
-| `0x31` | RoutineControl | Start/stop/request results of ECU-internal routines |
-| `0x34` | RequestDownload | Begin a firmware flash transfer |
-| `0x36` | TransferData | Send firmware blocks |
-| `0x3E` | TesterPresent | Keep-alive to prevent session timeout |
-| `0x19` | ReadDTCInformation | Read stored diagnostic trouble codes |
-| `0x14` | ClearDiagnosticInformation | Clear DTCs |
+<UdsServiceTable />
 
 ### Request / response format
 
@@ -91,15 +67,7 @@ Negative: [0x7F] [SID] [NRC]
 
 **Negative Response Codes (NRC)** tell the tester why a request failed:
 
-| NRC | Meaning |
-|---|---|
-| `0x12` | Sub-function not supported |
-| `0x13` | Incorrect message length or invalid format |
-| `0x22` | Conditions not correct |
-| `0x31` | Request out of range |
-| `0x35` | Invalid key (security access) |
-| `0x72` | General programming failure |
-| `0x78` | Request correctly received — response pending |
+<NrcTable />
 
 NRC `0x78` is special: the ECU is still processing and will send the real response later. The tester must wait and not time out.
 
@@ -129,12 +97,7 @@ Each session has a **timeout** (typically 5 s). If the tester does not send `Tes
 
 ### CAN ID structure (29-bit extended)
 
-```
-┌────────┬──────┬────────┬──────────────┐
-│Priority│ Rsvd │  PGN   │Source Address │
-│ (3 bit)│(1 b) │(18 bit)│   (8 bit)    │
-└────────┴──────┴────────┴──────────────┘
-```
+<J1939CanId />
 
 - **Priority 3** is typical for engine data; **priority 6** for less critical messages.
 - PGN encodes both the PDU format and PDU specific fields. If PDU format < 240, the "PDU specific" field is a destination address (peer-to-peer). If ≥ 240, it is a group extension (broadcast).
@@ -188,18 +151,9 @@ OBD-II defines a **subset of diagnostic services** accessible through the 16-pin
 - **Response CAN ID:** `0x7E8` – `0x7EF`
 - **Transport:** ISO-TP (single-frame for most OBD requests)
 
-### OBD-II modes (services)
+### OBD-II modes and PIDs
 
-| Mode | Name | Example |
-|---|---|---|
-| `0x01` | Current data | Engine RPM, coolant temp, vehicle speed |
-| `0x02` | Freeze frame | Snapshot of data at time of DTC |
-| `0x03` | Stored DTCs | Read confirmed trouble codes |
-| `0x04` | Clear DTCs | Clear stored codes and turn off MIL |
-| `0x05` | O2 sensor monitoring | Lambda sensor test results |
-| `0x06` | On-board monitoring | Continuous and non-continuous test results |
-| `0x07` | Pending DTCs | Codes detected but not yet confirmed |
-| `0x09` | Vehicle information | VIN, calibration IDs |
+<ObdPidReference />
 
 ### Example: reading engine RPM
 

@@ -1,19 +1,17 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-// import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '../../../utils/cn';
-import { 
-    Maximize2, 
-    Download, 
+import {
+    Maximize2,
+    Download,
     LayoutGrid,
     Clock,
     Settings2
 } from 'lucide-react';
-import { 
+import {
     PANEL_H_PHYSICAL,
     PANEL_H_DIFF,
     PANEL_H_EYE,
-    normToCanvasX, 
-    canvasXToNorm, 
+    normToCanvasX,
+    canvasXToNorm,
     clamp
 } from '../../../utils/scope-math';
 // import { ISO } from '../../../services/can/waveform-generator';
@@ -43,8 +41,7 @@ interface WaveformViewerProps {
     onResetView: () => void;
 }
 
-const CANVAS_W = 900;
-const CANVAS_H = 600; // Increased to fit panel stack
+const CANVAS_W = 1000;
 const MARGIN = { left: 52, right: 12, top: 40, bottom: 40 };
 
 const CAN_FIELDS = [
@@ -88,6 +85,13 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
         return panelY + (normY * vw.zoomY + vw.panY);
     }, []);
 
+    const dynamicCanvasH = (MARGIN.top + MARGIN.bottom + 
+        PANEL_H_PHYSICAL + 
+        (showDiff ? PANEL_H_DIFF + 20 : 0) + 
+        (showEye ? PANEL_H_EYE + 20 : 0) + 
+        40 // Decoder strip height
+    );
+
     const draw = useCallback(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -96,7 +100,7 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
 
         // Reset
         ctx.fillStyle = '#0a0a0f';
-        ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+        ctx.fillRect(0, 0, CANVAS_W, dynamicCanvasH);
 
         // Calculate panel vertical offsets
         let currentY = MARGIN.top;
@@ -135,10 +139,10 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
             ctx.setLineDash([]);
 
             // ── Panel Label ──
-            ctx.fillStyle = '#64748b';
-            ctx.font = 'bold 9px JetBrains Mono';
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '500 11px Outfit, system-ui, sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText(panel.label.toUpperCase(), MARGIN.left + 5, py + 12);
+            ctx.fillText(panel.label, MARGIN.left + 6, py - 8);
 
             // ── Waveforms for current panel ──
             if (samples.length > 2) {
@@ -148,11 +152,12 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
                 ctx.clip();
 
                 const drawWave = (color: string, getY: (s: Sample) => number, alpha = 1) => {
-                    ctx.shadowBlur = alpha > 0.5 ? 8 : 0;
-                    ctx.shadowColor = color;
+                    ctx.shadowBlur = 0;
                     ctx.strokeStyle = color;
-                    ctx.lineWidth = 1.5;
+                    ctx.lineWidth = 1.25;
                     ctx.globalAlpha = alpha;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
                     ctx.beginPath();
                     for (let i = 0; i < samples.length; i++) {
                         const x = MARGIN.left + sToX(i, samples.length, view);
@@ -247,37 +252,31 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
                 const w = reg.x2 - reg.x1;
                 if (w <= 0) return;
 
-                // Background
-                ctx.globalAlpha = 0.3;
+                // Subtle tinted background
+                ctx.globalAlpha = 0.12;
                 ctx.fillStyle = reg.color;
                 ctx.fillRect(reg.x1, stripY, w, stripH);
-                
-                // Borders
-                ctx.globalAlpha = 0.6;
-                ctx.strokeStyle = reg.color;
-                ctx.lineWidth = 1;
-                ctx.strokeRect(reg.x1 + 0.5, stripY + 0.5, w - 1, stripH - 1);
+
+                // Thin top accent bar (real logic analyzers use this)
+                ctx.globalAlpha = 0.9;
+                ctx.fillStyle = reg.color;
+                ctx.fillRect(reg.x1, stripY, w, 2);
 
                 // Label
-                if (w > 25) {
+                if (w > 28) {
                     ctx.globalAlpha = 1;
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '900 9px JetBrains Mono, monospace';
+                    ctx.fillStyle = reg.color;
+                    ctx.font = '600 10px Outfit, system-ui, sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    
-                    // Shadow for readability
-                    ctx.shadowBlur = 4;
-                    ctx.shadowColor = 'rgba(0,0,0,0.8)';
-                    ctx.fillText(reg.name, reg.x1 + w/2, stripY + stripH/2);
-                    ctx.shadowBlur = 0;
+                    ctx.fillText(reg.name, reg.x1 + w / 2, stripY + stripH / 2 + 1);
                 }
             });
 
             ctx.restore();
         }
 
-    }, [samples, view, ch1, ch2, cursorMode, cursorA, cursorB, showDiff, showEye, sToX, vToY]);
+    }, [samples, view, ch1, ch2, cursorMode, cursorA, cursorB, showDiff, showEye, sToX, vToY, dynamicCanvasH]);
 
     useEffect(() => { draw(); }, [draw]);
 
@@ -316,68 +315,68 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
         <div ref={containerRef} className="flex flex-col gap-4 w-full h-full relative">
             {/* Header / Info Bar */}
             <div className="flex items-center justify-between px-4 py-2 glass-panel !rounded-none border-white/5 mx-2 mt-2 bg-white/[0.01]">
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-5">
                     <div className="flex items-center gap-2">
-                        <div className="w-[2px] h-3 bg-[#00f3ff] shadow-[0_0_4px_#00f3ff]" />
-                        <span className="text-[10px] font-mono font-black text-white/30 uppercase tracking-widest">CH1: <span className="text-white/80">{ch1.vdiv}V/div</span></span>
+                        <div className="w-2 h-2 rounded-full bg-[#00f3ff]" />
+                        <span className="text-[11px] font-outfit text-white/50">CH1</span>
+                        <span className="text-[11px] font-mono tabular-nums text-white/80">{ch1.vdiv} V/div</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-[2px] h-3 bg-[#bd00ff] shadow-[0_0_4px_#bd00ff]" />
-                        <span className="text-[10px] font-mono font-black text-white/30 uppercase tracking-widest">CH2: <span className="text-white/80">{ch2.vdiv}V/div</span></span>
+                        <div className="w-2 h-2 rounded-full bg-[#bd00ff]" />
+                        <span className="text-[11px] font-outfit text-white/50">CH2</span>
+                        <span className="text-[11px] font-mono tabular-nums text-white/80">{ch2.vdiv} V/div</span>
                     </div>
-                    <div className="flex items-center gap-2 border-l border-white/5 pl-6">
-                        <Clock size={12} className="text-[#00ff9f]/60" />
-                        <span className="text-[10px] font-mono font-black text-white/30 uppercase tracking-widest">Time: <span className="text-white/80">{tdiv}µs/div</span></span>
+                    <div className="flex items-center gap-2 border-l border-white/10 pl-5">
+                        <Clock size={12} className="text-white/40" />
+                        <span className="text-[11px] font-outfit text-white/50">Time</span>
+                        <span className="text-[11px] font-mono tabular-nums text-white/80">{tdiv} µs/div</span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-1">
-                    <button onClick={onResetView} className={cn(
-                        "flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 text-white/40 hover:text-[#00f3ff] hover:bg-white/[0.08] text-[9px] font-mono font-black uppercase tracking-widest transition-all !rounded-none"
-                    )}>
+                    <button onClick={onResetView} className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 text-white/60 hover:text-[#00f3ff] hover:bg-white/[0.08] text-[11px] font-outfit font-medium transition-colors">
                         <Maximize2 size={11} />
-                        Auto-Scale
+                        Auto-scale
                     </button>
-                    <div className="w-px h-4 bg-white/5 mx-2" />
-                    <button onClick={onExportPNG} className="flex items-center gap-2 px-3 py-1.5 bg-[#00f3ff]/5 border border-[#00f3ff]/20 text-[#00f3ff]/80 hover:bg-[#00f3ff]/15 text-[9px] font-mono font-black uppercase tracking-widest transition-all !rounded-none">
+                    <button onClick={onExportPNG} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#00f3ff]/5 border border-[#00f3ff]/20 text-[#00f3ff]/90 hover:bg-[#00f3ff]/15 text-[11px] font-outfit font-medium transition-colors ml-2">
                         <Download size={11} />
-                        Export .IMG
+                        Export PNG
                     </button>
                 </div>
             </div>
 
             {/* Canvas Container */}
-            <div className="relative flex-1 min-h-[500px] glass-panel !rounded-none overflow-y-auto no-scrollbar group mx-2 bg-black border-white/10">
+            <div className="relative flex-1 glass-panel !rounded-none overflow-y-auto custom-scrollbar mx-2 bg-[#0a0a0f] border-white/10 flex items-start justify-center">
                 <canvas 
                     ref={canvasRef}
                     width={CANVAS_W}
-                    height={CANVAS_H}
+                    height={dynamicCanvasH}
                     onWheel={handleWheel}
                     onPointerDown={handlePointerDown}
                     className="w-full cursor-crosshair opacity-90 group-hover:opacity-100 transition-opacity"
                 />
                 
                 {/* Floating Modes */}
-                <div className="absolute top-4 right-4 flex flex-col gap-1.5">
-                    <button className="flex items-center gap-2 px-3 py-1.5 bg-black/60 border border-white/10 text-white/30 hover:text-[#00f3ff] hover:bg-white/[0.05] backdrop-blur-md text-[8px] font-mono font-black tracking-[0.2em] transition-all !rounded-none">
+                <div className="absolute top-3 right-3 flex flex-col gap-1">
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/70 border border-white/10 text-white/50 hover:text-[#00f3ff] hover:bg-white/[0.05] backdrop-blur-md text-[10px] font-outfit font-medium transition-colors">
                         <LayoutGrid size={11} />
-                        VECTOR MAP
+                        Vector map
                     </button>
-                    <button className="flex items-center gap-2 px-3 py-1.5 bg-black/60 border border-white/10 text-white/30 hover:text-[#00ff9f] hover:bg-white/[0.05] backdrop-blur-md text-[8px] font-mono font-black tracking-[0.2em] transition-all !rounded-none">
+                    <button className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/70 border border-white/10 text-white/50 hover:text-[#00ff9f] hover:bg-white/[0.05] backdrop-blur-md text-[10px] font-outfit font-medium transition-colors">
                         <Settings2 size={11} />
-                        AUTO CALIB
+                        Auto-calibrate
                     </button>
                 </div>
 
                 {/* Status Overlay */}
-                <div className="absolute bottom-4 left-4 flex items-center gap-6 text-[8px] font-mono font-black uppercase tracking-[0.2em] text-white/20">
-                    <div className="flex items-center gap-2">
-                        <div className="w-1 h-1 bg-white/20 animate-pulse" />
-                        <span>Buffer: Stable</span>
+                <div className="absolute bottom-3 left-3 flex items-center gap-4 text-[10px] font-outfit text-white/40">
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-1 h-1 rounded-full bg-white/40 animate-pulse" />
+                        <span>Buffer stable</span>
                     </div>
-                    <div className="flex items-center gap-2 text-[#00ff9f]/40">
-                        <div className="w-1 h-1 bg-[#00ff9f]" />
-                        <span>ISO PHY PASS</span>
+                    <div className="flex items-center gap-1.5 text-[#00ff9f]/70">
+                        <div className="w-1 h-1 rounded-full bg-[#00ff9f]" />
+                        <span>ISO 11898 PHY pass</span>
                     </div>
                 </div>
             </div>

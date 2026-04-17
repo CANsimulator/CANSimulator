@@ -5,6 +5,7 @@ description: 'How to configure CAN bit timing — baud rate prescaler, time segm
 
 import { BitTimingCalc } from '@/components/BitTimingCalc'
 import { BitAnatomy } from '@/components/BitAnatomy'
+import { BitTimingPresets } from '@/components/BitTimingPresets'
 import { ArticleSchema } from '@/components/ArticleSchema'
 
 <ArticleSchema
@@ -102,14 +103,7 @@ For a 16 Tq bit with SJW = 1, this gives **0.3125%** — easily within the toler
 
 ## Common bit-timing presets
 
-| Bit rate | f_osc | BRP | TSEG1 | TSEG2 | TQ/bit | Sample Pt |
-|---|---|---|---|---|---|---|
-| 125 kbit/s | 16 MHz | 8 | 13 | 2 | 16 | 87.5% |
-| 250 kbit/s | 16 MHz | 4 | 13 | 2 | 16 | 87.5% |
-| 500 kbit/s | 16 MHz | 2 | 13 | 2 | 16 | 87.5% |
-| 500 kbit/s | 8 MHz | 1 | 13 | 2 | 16 | 87.5% |
-| 1 Mbit/s | 16 MHz | 1 | 13 | 2 | 16 | 87.5% |
-| 1 Mbit/s | 8 MHz | 1 | 5 | 2 | 8 | 75.0% |
+<BitTimingPresets />
 
 ## Common pitfalls
 

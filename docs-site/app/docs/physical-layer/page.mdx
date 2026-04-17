@@ -5,6 +5,8 @@ description: 'CAN bus physical layer: CANH and CANL differential signaling, domi
 
 import { ArticleSchema } from '@/components/ArticleSchema'
 import { BusTopology } from '@/components/BusTopology'
+import { BusLengthChart } from '@/components/BusLengthChart'
+import { VoltageLevels } from '@/components/VoltageLevels'
 
 <ArticleSchema
   title="CAN Physical Layer"
@@ -21,10 +23,7 @@ CAN uses a **two-wire differential pair**: **CANH** (CAN High) and **CANL** (CAN
 
 ### Voltage levels (high-speed CAN)
 
-| Bus state | CANH | CANL | V_diff (CANH − CANL) | Logic level |
-|---|---|---|---|---|
-| **Recessive** | ≈ 2.5 V | ≈ 2.5 V | ≈ 0 V | Logic **1** |
-| **Dominant** | ≈ 3.5 V | ≈ 1.5 V | ≈ 2.0 V | Logic **0** |
+<VoltageLevels />
 
 A few things to note:
 
@@ -107,13 +106,7 @@ At 1 Mbit/s, each bit is only 1 μs. The round-trip propagation budget is tight,
 
 ### Bit rate vs maximum bus length
 
-| Bit rate | Nominal bit time | Max recommended length |
-|---|---|---|
-| 1 Mbit/s | 1 μs | ~40 m |
-| 500 kbit/s | 2 μs | ~100 m |
-| 250 kbit/s | 4 μs | ~250 m |
-| 125 kbit/s | 8 μs | ~500 m |
-| 50 kbit/s | 20 μs | ~1000 m |
+<BusLengthChart />
 
 These are conservative ISO-guideline values. Real-world ranges depend on cable quality, stub lengths, and transceiver loop delay.
 

@@ -1,9 +1,7 @@
 import React from 'react';
-import { 
-    Activity, 
-    BarChart3, 
-    Eye, 
-    Info 
+import {
+    Activity,
+    BarChart3
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../../../utils/cn';
@@ -22,205 +20,156 @@ interface ScopeMetricsProps {
 }
 
 export const ScopeMetrics: React.FC<ScopeMetricsProps> = ({ metrics }) => {
-
-    // Helper to format with high precision for the "Cyber" look
-    const formatHighPrecision = (val: number, decimals: number = 8) => {
-        return val.toFixed(decimals);
-    };
-    
     return (
-        <div className="flex flex-col gap-4 h-full overflow-y-auto no-scrollbar pb-4 pl-1">
+        <div className="flex flex-col gap-4 pb-4 pl-1">
             {/* Health Monitor */}
-            <section className="glass-panel p-4 flex flex-col gap-3 !rounded-none border-white/5 bg-white/[0.01]">
+            <section className="flex-shrink-0 glass-panel p-4 flex flex-col gap-3 !rounded-none border-white/5 bg-white/[0.01]">
                 <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-[10px] font-outfit font-black uppercase tracking-[0.25em] text-[#00f3ff] flex items-center gap-2">
-                        <span className="w-1 h-3 bg-[#00f3ff]"></span>
+                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
                         Hardware Health
                     </h3>
-                    <div className="px-2 py-0.5 text-[8px] font-mono font-black uppercase tracking-widest bg-[#00f3ff]/10 text-[#00f3ff] border border-[#00f3ff]/20">
+                    <div className="px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-wider bg-[#00ff9f]/10 text-[#00ff9f]/90 border border-[#00ff9f]/20">
                         Live
                     </div>
                 </div>
-                
-                <div className="space-y-1">
+
+                <div className="space-y-px bg-white/[0.03]">
                     {[
-                        { label: 'CANH Level', ok: metrics.isoCANH },
-                        { label: 'CANL Level', ok: metrics.isoCANL },
-                        { label: 'Differential', ok: metrics.isoDiff }
+                        { label: 'CANH Level', ok: metrics.isoCANH, detail: `${metrics.ch1Max.toFixed(2)}V` },
+                        { label: 'CANL Level', ok: metrics.isoCANL, detail: `${metrics.ch2Min.toFixed(2)}V` },
+                        { label: 'Differential', ok: metrics.isoDiff, detail: `${metrics.vdiff.toFixed(2)}V` }
                     ].map((item) => (
-                        <div key={item.label} className="flex items-center justify-between p-2 bg-white/[0.02] border border-white/5 !rounded-none">
-                            <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-white/30">
+                        <div key={item.label} className="flex items-center justify-between px-3 py-2 bg-[#020617]">
+                            <span className="text-[11px] font-outfit text-white/60">
                                 {item.label}
                             </span>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3">
+                                <span className="text-[10px] font-mono text-white/40 tabular-nums">
+                                    {item.detail}
+                                </span>
                                 <span className={cn(
-                                    "text-[9px] font-mono font-black uppercase tracking-widest",
+                                    "text-[10px] font-mono font-semibold uppercase tracking-wider tabular-nums",
                                     item.ok ? "text-[#00ff9f]" : "text-[#ff4444]"
                                 )}>
                                     {item.ok ? 'PASS' : 'FAIL'}
                                 </span>
-                                <div className={cn(
-                                    "w-[2px] h-3 shadow-[0_0_4px_currentColor]",
-                                    item.ok ? "bg-[#00ff9f] text-[#00ff9f]" : "bg-[#ff4444] text-[#ff4444]"
-                                )} />
                             </div>
                         </div>
                     ))}
                 </div>
-                
-                <div className="mt-2 p-3 bg-white/[0.03] border-l-2 border-[#00f3ff]">
+
+                <div className="mt-1 px-3 py-2.5 bg-white/[0.02] border-l border-[#00f3ff]/60">
                     <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                            <Activity size={10} className="text-[#00f3ff] animate-pulse" />
-                            <span className="text-[8px] font-mono font-black uppercase tracking-widest text-white/30">Bus Load Status</span>
-                        </div>
+                        <span className="text-[10px] font-outfit uppercase tracking-wider text-white/40">Bus Load</span>
+                        <Activity size={10} className="text-[#00f3ff]/60" />
                     </div>
-                    <div className="flex flex-col gap-2">
-                        <span className="text-sm font-mono font-black text-white leading-none tracking-tight break-all">
-                            {formatHighPrecision(metrics.busLoad, 12)}%
+                    <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-2xl font-mono font-light text-white tabular-nums leading-none">
+                            {metrics.busLoad.toFixed(1)}
                         </span>
-                        <div className="w-full h-1 bg-white/5 overflow-hidden">
-                            <motion.div 
-                                animate={{ width: `${metrics.busLoad}%` }}
-                                className={cn(
-                                    "h-full transition-colors duration-500",
-                                    metrics.busLoad > 80 ? "bg-[#ff4444]" : metrics.busLoad > 50 ? "bg-[#ffd000]" : "bg-[#00ff9f]"
-                                )}
-                            />
-                        </div>
+                        <span className="text-sm font-outfit text-white/40">%</span>
+                    </div>
+                    <div className="w-full h-[3px] bg-white/5 overflow-hidden">
+                        <motion.div
+                            animate={{ width: `${metrics.busLoad}%` }}
+                            className={cn(
+                                "h-full transition-colors duration-500",
+                                metrics.busLoad > 80 ? "bg-[#ff4444]" : metrics.busLoad > 50 ? "bg-[#ffd000]" : "bg-[#00ff9f]"
+                            )}
+                        />
                     </div>
                 </div>
             </section>
 
             {/* Signal Metrics */}
-            <section className="glass-panel p-4 flex flex-col gap-4 !rounded-none border-white/5 bg-white/[0.01]">
+            <section className="flex-shrink-0 glass-panel p-4 flex flex-col gap-4 !rounded-none border-white/5 bg-white/[0.01]">
                 <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-[10px] font-outfit font-black uppercase tracking-[0.25em] text-[#00f3ff] flex items-center gap-2">
-                        <span className="w-1 h-3 bg-[#00f3ff]"></span>
+                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
                         Signal Metrics
                     </h3>
-                    <BarChart3 size={12} className="text-[#00f3ff]/40" />
+                    <BarChart3 size={12} className="text-white/30" />
                 </div>
 
-                <div className="flex flex-col gap-5">
-                    <div className="space-y-2">
-                        <label className="text-[8px] font-mono font-black uppercase tracking-[0.3em] text-white/20 block border-b border-white/5 pb-1">Amplitude State</label>
-                        <div className="grid grid-cols-2 gap-1.5">
-                            <MetricBox label="CH1 Vpp" value={`${metrics.ch1Vpp.toFixed(2)}`} subtitle="V" color="#00f3ff" />
-                            <MetricBox label="CH2 Vpp" value={`${metrics.ch2Vpp.toFixed(2)}`} subtitle="V" color="#bf00ff" />
-                            <MetricBox label="Diff Vavg" value={`${metrics.vdiff.toFixed(2)}`} subtitle="V" color="#00ff9f" />
-                            <MetricBox label="Bit Rate" value={`${metrics.bitRate}`} subtitle="K" color="#71717a" />
+                <div className="flex flex-col gap-4">
+                    <div>
+                        <label className="text-[10px] font-outfit uppercase tracking-wider text-white/40 block mb-2">Amplitude</label>
+                        <div className="grid grid-cols-2 gap-px bg-white/5">
+                            <MetricBox label="CH1 Vpp" value={metrics.ch1Vpp.toFixed(2)} unit="V" accent="#00f3ff" />
+                            <MetricBox label="CH2 Vpp" value={metrics.ch2Vpp.toFixed(2)} unit="V" accent="#bf00ff" />
+                            <MetricBox label="V Diff" value={metrics.vdiff.toFixed(2)} unit="V" accent="#00ff9f" />
+                            <MetricBox label="Bit Rate" value={metrics.bitRate.toString()} unit="kb/s" />
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-[8px] font-mono font-black uppercase tracking-[0.3em] text-white/20 block border-b border-white/5 pb-1">Timing analysis</label>
-                        <div className="flex flex-col gap-1.5">
-                            <div className="grid grid-cols-2 gap-1.5">
-                                <MetricBox label="Rise Time" value={metrics.riseTime.toFixed(4)} subtitle="MS" color="#e2e8f0" isSmall />
-                                <MetricBox label="Fall Time" value={metrics.fallTime.toFixed(4)} subtitle="MS" color="#e2e8f0" isSmall />
-                            </div>
-                            <div className="grid grid-cols-2 gap-1.5">
-                                <MetricBox label="Symmetry" value={`${metrics.symmetry}`} subtitle="%" color="#00ff9f" />
-                                <MetricBox label="Jitter" value="1.42" subtitle="NS" color="#ffd000" />
-                            </div>
+                    <div>
+                        <label className="text-[10px] font-outfit uppercase tracking-wider text-white/40 block mb-2">Timing</label>
+                        <div className="grid grid-cols-2 gap-px bg-white/5">
+                            <MetricBox label="Rise" value={metrics.riseTime.toFixed(1)} unit="ns" />
+                            <MetricBox label="Fall" value={metrics.fallTime.toFixed(1)} unit="ns" />
+                            <MetricBox label="Symmetry" value={metrics.symmetry.toString()} unit="%" accent="#00ff9f" />
+                            <MetricBox label="Jitter" value="1.4" unit="ns" accent="#ffd000" />
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Integrity Map */}
-            <section className="glass-panel !rounded-none border-white/5 p-4 flex flex-col gap-4 bg-white/[0.01]">
+            {/* Eye Quality */}
+            <section className="flex-shrink-0 glass-panel !rounded-none border-white/5 p-4 flex flex-col gap-3 bg-white/[0.01]">
                 <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-[10px] font-outfit font-black uppercase tracking-[0.25em] text-[#00f3ff] flex items-center gap-2">
-                        <span className="w-1 h-3 bg-[#00f3ff]"></span>
-                        Integrity Map
+                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
+                        Eye Quality
                     </h3>
-                    <Eye size={12} className="text-[#00ff9f]/40" />
+                    <span className={cn(
+                        "text-[10px] font-mono uppercase tracking-wider",
+                        metrics.eyeWidth > 70 ? "text-[#00ff9f]/90" : metrics.eyeWidth > 50 ? "text-[#ffd000]/90" : "text-[#ff4444]/90"
+                    )}>
+                        {metrics.eyeWidth > 70 ? 'Stable' : metrics.eyeWidth > 50 ? 'Warn' : 'Fail'}
+                    </span>
                 </div>
 
-                {/* High Density Signal Integrity Map */}
-                <div className="h-24 w-full bg-black/60 border border-white/10 relative overflow-hidden group">
-                    <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '10px 10px' }} />
-                    <svg viewBox="0 0 100 40" className="w-full h-full preserve-3d">
-                        {/* Eye Mask */}
-                        <path d="M 15,20 Q 50,2 85,20 Q 50,38 15,20" fill="none" stroke="#00f3ff10" strokeWidth="0.5" />
-                        
-                        {/* Persistence Traces */}
-                        {[0, 1, 2, 3, 4].map((i) => (
-                            <motion.path 
-                                key={i}
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: 1 }}
-                                d={`M 5,${18+i*0.5} C 25,${18+i} 40,${4+i} 50,${4+i} S 75,${18+i} 95,${18+i} M 5,${22-i*0.5} C 25,${22-i} 40,${36-i} 50,${36-i} S 75,${22-i} 95,${22-i}`}
-                                stroke="#00f3ff"
-                                strokeWidth="0.2"
-                                fill="none"
-                                opacity={0.1 + (i * 0.15)}
-                                transition={{ repeat: Infinity, duration: 2, ease: "linear", delay: i * 0.2 }}
-                            />
-                        ))}
-                    </svg>
-                    <div className="absolute top-1 right-2 flex items-center gap-1.5">
-                        <span className="text-[7px] font-mono font-black text-[#00ff9f] uppercase tracking-widest">Map Stable</span>
-                        <div className="w-1.5 h-1.5 bg-[#00ff9f] animate-pulse" />
-                    </div>
+                <div className="grid grid-cols-2 gap-4 pt-1">
+                    <EyeMetric label="Eye Width" value={metrics.eyeWidth} />
+                    <EyeMetric label="Eye Height" value={metrics.eyeHeight} />
                 </div>
 
-                <div className="flex flex-col gap-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1.5">
-                            <div className="flex justify-between items-baseline">
-                                <span className="text-[8px] font-mono font-bold uppercase tracking-widest text-white/20">Eye Width</span>
-                                <span className="text-xs font-mono font-black text-white">{metrics.eyeWidth}%</span>
-                            </div>
-                            <div className="h-1 w-full bg-white/5 overflow-hidden !rounded-none">
-                                <motion.div 
-                                    animate={{ width: `${metrics.eyeWidth}%` }}
-                                    className="h-full bg-[#00ff9f] shadow-[0_0_4px_#00ff9f]"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <div className="flex justify-between items-baseline">
-                                <span className="text-[8px] font-mono font-bold uppercase tracking-widest text-white/20">Eye Height</span>
-                                <span className="text-xs font-mono font-black text-white">{metrics.eyeHeight}%</span>
-                            </div>
-                            <div className="h-1 w-full bg-white/5 overflow-hidden !rounded-none">
-                                <motion.div 
-                                    animate={{ width: `${metrics.eyeHeight}%` }}
-                                    className="h-full bg-[#00ff9f] shadow-[0_0_4px_#00ff9f]"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="p-3 bg-white/[0.02] border border-white/5 flex items-center gap-3 !rounded-none">
-                        <div className="flex-1">
-                            <p className="text-[9px] font-mono font-bold text-white/40 leading-relaxed uppercase tracking-tighter">
-                                Vector Status: <span className={metrics.eyeWidth > 70 ? 'text-[#00ff9f]' : 'text-[#ff4444]'}>{metrics.eyeWidth > 70 ? 'STABLE' : 'WARN'}</span>
-                                <br />
-                                Trace fidelity within <span className="text-white/80">99.8th percentile</span>
-                            </p>
-                        </div>
-                        <Info size={14} className="text-[#00f3ff]/20 shrink-0" />
-                    </div>
-                </div>
+                <p className="text-[11px] font-outfit text-white/50 leading-snug pt-1">
+                    Trace fidelity within expected envelope. See eye diagram panel for persistence view.
+                </p>
             </section>
         </div>
     );
 };
 
-const MetricBox: React.FC<{ label: string; value: string; subtitle?: string; color: string; isSmall?: boolean }> = ({ label, value, subtitle, color, isSmall }) => (
-    <div className="p-2 bg-white/[0.02] border border-white/5 transition-all hover:bg-white/[0.05] group overflow-hidden !rounded-none">
-        <p className="text-[8px] font-mono font-bold text-white/20 uppercase tracking-[0.1em] mb-1 group-hover:text-white/40">{label}</p>
+const MetricBox: React.FC<{ label: string; value: string; unit: string; accent?: string }> = ({ label, value, unit, accent }) => (
+    <div className="px-3 py-2.5 bg-[#020617] flex flex-col">
+        <span className="text-[10px] font-outfit text-white/40 mb-1">{label}</span>
         <div className="flex items-baseline gap-1">
-            <span className={cn(
-                "font-mono font-black break-all",
-                isSmall ? "text-[10px] leading-tight" : "text-sm",
-                color === "#71717a" ? "text-white/30" : ""
-            )} style={{ color: color !== "#71717a" ? color : undefined }}>{value}</span>
-            {subtitle && <span className="text-[8px] font-mono font-bold text-white/20 uppercase tracking-tighter">{subtitle}</span>}
+            <span
+                className="text-base font-mono font-light tabular-nums leading-none"
+                style={{ color: accent ?? '#e2e8f0' }}
+            >
+                {value}
+            </span>
+            <span className="text-[10px] font-mono text-white/30">{unit}</span>
         </div>
     </div>
 );
+
+const EyeMetric: React.FC<{ label: string; value: number }> = ({ label, value }) => {
+    const color = value > 70 ? '#00ff9f' : value > 50 ? '#ffd000' : '#ff4444';
+    return (
+        <div className="flex flex-col gap-1.5">
+            <div className="flex justify-between items-baseline">
+                <span className="text-[10px] font-outfit text-white/50">{label}</span>
+                <span className="text-sm font-mono font-light tabular-nums" style={{ color }}>{value}%</span>
+            </div>
+            <div className="h-[3px] w-full bg-white/5 overflow-hidden">
+                <motion.div
+                    animate={{ width: `${value}%` }}
+                    className="h-full"
+                    style={{ backgroundColor: color }}
+                />
+            </div>
+        </div>
+    );
+};

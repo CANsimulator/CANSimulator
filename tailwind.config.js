@@ -23,7 +23,7 @@ export default {
             colors: {
                 cyber: {
                     blue: '#00f3ff',     // Electric Cyan
-                    purple: '#bd00ff',   // Neon Purple
+                    purple: '#bf00ff',   // Neon Purple (Consolidated)
                     pink: '#ff0099',     // Cyber Pink
                     green: '#00ff9f',    // Neon Green
                     yellow: '#ffea00',   // Cyber Yellow
@@ -166,7 +166,7 @@ export default {
             boxShadow: {
                 'neon': '0 0 5px theme("colors.cyber.blue"), 0 0 20px theme("colors.cyber.blue")',
                 'neon-pink': '0 0 5px theme("colors.cyber.pink"), 0 0 20px theme("colors.cyber.pink")',
-                'neon-purple': '0 0 5px theme("colors.cyber.purple"), 0 0 20px theme("colors.cyber.purple")',
+                'neon-purple': '0 0 5px #bf00ff, 0 0 20px #bf00ff40',
                 'neon-green': '0 0 5px theme("colors.cyber.green"), 0 0 20px theme("colors.cyber.green")',
                 'neon-cyan': '0 0 5px #00f3ff, 0 0 20px #00f3ff40',
                 '3xl': '0 35px 60px -15px rgba(0, 0, 0, 0.5)',

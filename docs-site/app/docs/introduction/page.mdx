@@ -5,6 +5,7 @@ description: 'What the CAN bus protocol is, why Bosch invented it, where it runs
 
 import { ArticleSchema } from '@/components/ArticleSchema'
 import { ProtocolStack } from '@/components/ProtocolStack'
+import { CanFdComparison } from '@/components/CanFdComparison'
 
 <ArticleSchema
   title="Introduction to CAN"
@@ -61,15 +62,9 @@ CAN itself only defines the **physical layer** and **data link layer**. Higher-l
 
 Two main flavors of CAN exist in the field today:
 
-| Feature | Classical CAN (ISO 11898-1:2015) | CAN FD |
-|---|---|---|
-| Max payload per frame | 8 bytes | 64 bytes |
-| Max arbitration bit rate | 1 Mbit/s | 1 Mbit/s (same) |
-| Max data-phase bit rate | 1 Mbit/s | Up to 8 Mbit/s typical |
-| CRC field | 15-bit | 17-bit (≤16 data bytes) / 21-bit (>16) |
-| Bit rate switch | No | Yes (arbitration → data phase) |
+<CanFdComparison />
 
-CAN FD ("Flexible Data-rate") keeps classical CAN's arbitration mechanism but switches to a faster bit rate once the winning node owns the bus, and allows larger payloads. Mixed buses are **not** automatically compatible — every node must understand FD frames, or you need a gateway.
+CAN FD ("Flexible Data-rate") keeps classical CAN's arbitration mechanism but switches to a faster bit rate once the winning node owns the bus, and allows larger payloads.
 
 This reference focuses on **classical CAN** for the Fundamentals section; FD-specific behavior is called out in dedicated pages once we reach them.
 

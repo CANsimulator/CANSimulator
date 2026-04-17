@@ -28,30 +28,30 @@ interface ProtocolDecoderProps {
 export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = ({ frames, onRowClick }) => {
     return (
         <div className="glass-panel !rounded-none flex flex-col h-[280px] overflow-hidden border-t-0 bg-[#020617]">
-            <div className="flex items-center justify-between p-4 bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center justify-between px-4 py-3 bg-white/[0.02] border-b border-white/5">
                 <div className="flex items-center gap-3">
                     <Database size={14} className="text-[#00f3ff]" />
-                    <h3 className="text-[10px] font-outfit font-black uppercase tracking-[0.2em] text-[#00f3ff]">CAN Protocol Decoder</h3>
-                    <span className="text-[10px] font-mono font-bold text-white/30 uppercase tracking-widest px-2 py-0.5 border border-white/5">ISO 11898-1</span>
+                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">CAN Protocol Decoder</h3>
+                    <span className="text-[10px] font-mono text-white/50 px-1.5 py-0.5 border border-white/10">ISO 11898-1</span>
                 </div>
-                <div className="flex items-center gap-4 text-[9px] font-mono font-black text-white/40 uppercase tracking-widest">
-                    <span className="flex items-center gap-1.5"><Clock size={10} /> {frames.length} pkts/s</span>
-                    <span className="flex items-center gap-1.5 text-[#00ff9f] shadow-glow-sm"><ShieldCheck size={10} /> 100% Valid</span>
+                <div className="flex items-center gap-4 text-[11px] font-outfit text-white/50">
+                    <span className="flex items-center gap-1.5"><Clock size={11} /> {frames.length} pkts/s</span>
+                    <span className="flex items-center gap-1.5 text-[#00ff9f]/90"><ShieldCheck size={11} /> 100% valid</span>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto no-scrollbar">
+            <div className="flex-1 overflow-y-auto">
                 <table className="w-full text-left border-collapse">
                     <thead className="sticky top-0 bg-[#0a0a0f]/95 backdrop-blur-md z-10 border-b border-white/10">
-                        <tr className="text-[9px] font-mono font-black uppercase tracking-widest text-white/30">
-                            <th className="px-4 py-3"><Hash size={10} /></th>
-                            <th className="px-4 py-3">Timestamp</th>
-                            <th className="px-4 py-3">Format</th>
-                            <th className="px-4 py-3">CAN ID</th>
-                            <th className="px-4 py-3">DLC</th>
-                            <th className="px-4 py-3">Data Stream / Payload</th>
-                            <th className="px-4 py-3">CRC</th>
-                            <th className="px-4 py-3">Status</th>
+                        <tr className="text-[10px] font-outfit uppercase tracking-wider text-white/40">
+                            <th className="px-4 py-2.5 font-medium"><Hash size={10} /></th>
+                            <th className="px-4 py-2.5 font-medium">Timestamp</th>
+                            <th className="px-4 py-2.5 font-medium">Format</th>
+                            <th className="px-4 py-2.5 font-medium">CAN ID</th>
+                            <th className="px-4 py-2.5 font-medium">DLC</th>
+                            <th className="px-4 py-2.5 font-medium">Payload</th>
+                            <th className="px-4 py-2.5 font-medium">CRC</th>
+                            <th className="px-4 py-2.5 font-medium">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -98,17 +98,17 @@ export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = ({ frames, onRowC
                                     <td className="px-4 py-2.5">
                                         <div className="flex items-center gap-2">
                                             {frame.status === 'ok' ? (
-                                                <div className="flex items-center gap-1.5 text-[#00ff9f]/80 text-[10px] font-mono font-black uppercase tracking-widest">
-                                                    <div className="h-3 w-[2px] bg-[#00ff9f] shadow-[0_0_4px_#00ff9f]" />
+                                                <div className="flex items-center gap-1.5 text-[#00ff9f]/90 text-[11px] font-mono uppercase tracking-wider">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-[#00ff9f]" />
                                                     ACK
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center gap-1.5 text-[#ff4444]/80 text-[10px] font-mono font-black uppercase tracking-widest">
-                                                    <div className="h-3 w-[2px] bg-[#ff4444] shadow-[0_0_4px_#ff4444]" />
+                                                <div className="flex items-center gap-1.5 text-[#ff4444]/90 text-[11px] font-mono uppercase tracking-wider">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-[#ff4444]" />
                                                     ERR
                                                 </div>
                                             )}
-                                            <ChevronRight size={10} className="text-white/10 group-hover:text-white/40 translate-x-1 transition-all" />
+                                            <ChevronRight size={10} className="text-white/10 group-hover:text-white/40 transition-colors" />
                                         </div>
                                     </td>
                                 </motion.tr>
@@ -117,9 +117,17 @@ export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = ({ frames, onRowC
                     </tbody>
                 </table>
                 {frames.length === 0 && (
-                    <div className="flex flex-col items-center justify-center p-20 gap-3 opacity-20">
-                        <FileCheck size={40} className="text-white/40" />
-                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-white/60">Capture Data Pending...</p>
+                    <div className="flex flex-col items-center justify-center py-16 gap-4">
+                        <div className="relative">
+                            <FileCheck size={36} className="text-white/20" strokeWidth={1.25} />
+                            <div className="absolute inset-0 rounded-full animate-ping bg-[#00f3ff]/5" />
+                        </div>
+                        <div className="text-center max-w-sm">
+                            <p className="text-sm font-outfit font-semibold text-white/70 mb-1">Waiting for CAN traffic</p>
+                            <p className="text-[12px] font-outfit text-white/40 leading-relaxed">
+                                Press <span className="text-[#00ff9f]/90 font-mono">Run</span> to begin acquisition. Decoded frames will populate here in real time once bus activity is detected.
+                            </p>
+                        </div>
                     </div>
                 )}
             </div>

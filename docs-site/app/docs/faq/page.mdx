@@ -4,6 +4,7 @@ description: 'Frequently asked questions about the CAN bus protocol: data rates,
 ---
 
 import { FAQSchema } from '@/components/FAQSchema'
+import { CanFdComparison } from '@/components/CanFdComparison'
 
 <FAQSchema />
 
@@ -27,13 +28,7 @@ See [Physical Layer — Bit rate vs bus length](/docs/physical-layer#bit-rate-vs
 
 ### What is the difference between CAN and CAN FD?
 
-| Feature | Classical CAN | CAN FD |
-|---|---|---|
-| Max payload | 8 bytes | 64 bytes |
-| Data-phase bit rate | Up to 1 Mbit/s | Up to 8 Mbit/s |
-| Arbitration bit rate | Up to 1 Mbit/s | Up to 1 Mbit/s (same) |
-| CRC | 15-bit | 17-bit or 21-bit |
-| Bit rate switching | No | Yes |
+<CanFdComparison />
 
 CAN FD keeps the same arbitration mechanism but switches to a faster bit rate during the data phase. All nodes on the bus must support FD — a single classical-only node will flag errors on FD frames.
 
