@@ -88,6 +88,13 @@ export const VoltageScope: React.FC = () => {
 
     const handleReset = useCallback(() => {
         waveformRef.current?.reset();
+        setState(getInitialState());
+        setMeas(getInitialMeas());
+        setFftMode(false);
+        setCursorsOn(true);
+        setPersistence(false);
+        setLayout('knobs');
+        setSignal('can');
     }, []);
 
     const handleAutoscale = useCallback(() => {
@@ -168,7 +175,14 @@ export const VoltageScope: React.FC = () => {
                 </div>
                 <div className="osc-top-actions">
                     <button className="osc-iconbtn" title="Capture"><Camera /></button>
-                    <button className="osc-iconbtn" title="Reset view" onClick={handleReset}><ResetIcon /></button>
+                    <button
+                        className="osc-reset-btn"
+                        title="Reset entire oscilloscope to default state"
+                        onClick={handleReset}
+                    >
+                        <ResetIcon />
+                        <span>RESET</span>
+                    </button>
                     <button className="osc-iconbtn" title="Export CSV" onClick={handleExportCSV}><Download /></button>
                     <button className="osc-iconbtn" title="Settings" onClick={() => setShowSettings(v => !v)}><GearIcon /></button>
                 </div>
