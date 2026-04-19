@@ -114,7 +114,7 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
     const lastUpdRef = useRef(0);
     const zoomRef = useRef(1.0);
     const panRef = useRef(0);
-    const dragRef = useRef<{ startX: number; startY: number; startPan: number; startOffset: number; vpd: number } | null>(null);
+    const dragRef = useRef<{ startX: number; startY: number; startPan: number; startOffsetH: number; startOffsetL: number; startOffsetD: number; vpd: number } | null>(null);
     const rowHRef = useRef(0);
     const stateRef = useRef(state);
 
@@ -403,7 +403,9 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
                 startX: e.clientX,
                 startY: e.clientY,
                 startPan: panRef.current,
-                startOffset: state.channels.d.off,
+                startOffsetH: state.channels.h.off,
+                startOffsetL: state.channels.l.off,
+                startOffsetD: state.channels.d.off,
                 vpd: state.channels.d.vpd,
             };
             canvas.style.cursor = 'grabbing';
@@ -418,12 +420,12 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
 
             if (rowHRef.current > 0) {
                 const offsetChange = -(dy / rowHRef.current) * dragRef.current.vpd;
-                const newOffset = dragRef.current.startOffset + offsetChange;
                 onStateChange?.({
                     ...stateRef.current,
                     channels: {
-                        ...stateRef.current.channels,
-                        d: { ...stateRef.current.channels.d, off: newOffset },
+                        h: { ...stateRef.current.channels.h, off: dragRef.current.startOffsetH + offsetChange },
+                        l: { ...stateRef.current.channels.l, off: dragRef.current.startOffsetL + offsetChange },
+                        d: { ...stateRef.current.channels.d, off: dragRef.current.startOffsetD + offsetChange },
                     },
                 });
             }
