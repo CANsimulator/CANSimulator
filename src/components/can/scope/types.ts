@@ -7,6 +7,7 @@ export interface OscChannel {
 export interface OscState {
     running: boolean;
     timebase: number;
+    axisOffsetY: number;
     channels: {
         h: OscChannel;
         l: OscChannel;

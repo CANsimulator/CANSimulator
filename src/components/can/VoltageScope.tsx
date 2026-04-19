@@ -59,6 +59,7 @@ const FRAME_ZONES = [
 const getInitialState = (): OscState => ({
     running: true,
     timebase: 200,
+    axisOffsetY: 0,
     channels: {
         h: { on: true, vpd: 1, off: 0 },
         l: { on: true, vpd: 1, off: 0 },

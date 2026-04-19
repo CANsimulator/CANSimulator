@@ -115,8 +115,19 @@ export const WaveformViewer = forwardRef<
     const lastUpdRef = useRef(0);
     const zoomRef = useRef(1.0);
     const panRef = useRef(0);
-    const dragRef = useRef<{ startX: number; startY: number; startPan: number; startOffsetH: number; startOffsetL: number; startOffsetD: number; vpd: number } | null>(null);
+    const dragRef = useRef<{
+        startX: number;
+        startY: number;
+        startPan: number;
+        startOffsetH: number;
+        startOffsetL: number;
+        startOffsetD: number;
+        startAxisOffsetY: number;
+        vpd: number;
+        dragMode: 'axis' | 'graph';
+    } | null>(null);
     const rowHRef = useRef(0);
+    const canvasRectRef = useRef<{ left: number; width: number }>({ left: 0, width: 0 });
     const stateRef = useRef(state);
 
     const doRender = useCallback((ts: number) => {
@@ -128,6 +139,8 @@ export const WaveformViewer = forwardRef<
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const w = parent.clientWidth;
         const h = parent.clientHeight;
+        const canvasRect = canvas.getBoundingClientRect();
+        canvasRectRef.current = { left: canvasRect.left, width: w };
 
         if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
             canvas.width = w * dpr; canvas.height = h * dpr;
@@ -189,14 +202,14 @@ export const WaveformViewer = forwardRef<
         const zoom = zoomRef.current;
         const effectiveTb = state.timebase / zoom;
 
-        // Axis labels
+        // Axis labels (with Y-axis panning)
         ctx.fillStyle = inkFaint;
         ctx.font = `10px 'JetBrains Mono', monospace`;
         ctx.textAlign = 'left';
         const vpd = state.channels.h.vpd;
         for (let i = 0; i <= rows; i++) {
             const y = i * rowH;
-            const v = ((rows / 2 - i) * vpd).toFixed(1);
+            const v = ((rows / 2 - i) * vpd + state.axisOffsetY).toFixed(1);
             ctx.fillText(`${v}V`, 4, Math.max(10, Math.min(wh - 2, y + 3)));
         }
         ctx.textAlign = 'center';
@@ -385,6 +398,7 @@ export const WaveformViewer = forwardRef<
             if (onStateChange) {
                 onStateChange({
                     ...stateRef.current,
+                    axisOffsetY: 0,
                     channels: {
                         h: { ...stateRef.current.channels.h, off: 0 },
                         l: { ...stateRef.current.channels.l, off: 0 },
@@ -417,6 +431,10 @@ export const WaveformViewer = forwardRef<
         };
 
         const onMouseDown = (e: MouseEvent) => {
+            const relativeX = e.clientX - canvasRectRef.current.left;
+            const isAxisArea = relativeX < 60;
+            const dragMode = isAxisArea ? 'axis' : 'graph';
+
             dragRef.current = {
                 startX: e.clientX,
                 startY: e.clientY,
@@ -424,9 +442,11 @@ export const WaveformViewer = forwardRef<
                 startOffsetH: state.channels.h.off,
                 startOffsetL: state.channels.l.off,
                 startOffsetD: state.channels.d.off,
+                startAxisOffsetY: state.axisOffsetY,
                 vpd: state.channels.d.vpd,
+                dragMode,
             };
-            canvas.style.cursor = 'grabbing';
+            canvas.style.cursor = dragMode === 'axis' ? 'ns-resize' : 'grabbing';
         };
 
         const onMouseMove = (e: MouseEvent) => {
@@ -437,15 +457,26 @@ export const WaveformViewer = forwardRef<
             panRef.current = dragRef.current.startPan - (dx / canvas.clientWidth) / zoomRef.current;
 
             if (rowHRef.current > 0) {
-                const offsetChange = -(dy / rowHRef.current) * dragRef.current.vpd;
-                onStateChange?.({
-                    ...stateRef.current,
-                    channels: {
-                        h: { ...stateRef.current.channels.h, off: dragRef.current.startOffsetH + offsetChange },
-                        l: { ...stateRef.current.channels.l, off: dragRef.current.startOffsetL + offsetChange },
-                        d: { ...stateRef.current.channels.d, off: dragRef.current.startOffsetD + offsetChange },
-                    },
-                });
+                if (dragRef.current.dragMode === 'axis') {
+                    const axisOffsetChange = (dy / rowHRef.current) * dragRef.current.vpd;
+                    const newAxisOffsetY = dragRef.current.startAxisOffsetY + axisOffsetChange;
+
+                    onStateChange?.({
+                        ...stateRef.current,
+                        axisOffsetY: newAxisOffsetY,
+                    });
+                } else {
+                    const offsetChange = -(dy / rowHRef.current) * dragRef.current.vpd;
+                    onStateChange?.({
+                        ...stateRef.current,
+                        axisOffsetY: dragRef.current.startAxisOffsetY,
+                        channels: {
+                            h: { ...stateRef.current.channels.h, off: dragRef.current.startOffsetH + offsetChange },
+                            l: { ...stateRef.current.channels.l, off: dragRef.current.startOffsetL + offsetChange },
+                            d: { ...stateRef.current.channels.d, off: dragRef.current.startOffsetD + offsetChange },
+                        },
+                    });
+                }
             }
         };
 
