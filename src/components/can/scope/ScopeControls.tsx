@@ -1,294 +1,357 @@
 import React from 'react';
-import { 
-    Zap, 
-    Clock,
-    Target,
-    Settings2,
-    Play,
-    Pause,
-    SkipForward,
-    RefreshCw
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import { cn } from '../../../utils/cn';
+import { KnobControl, RockerSwitch } from './KnobControl';
+import type { OscState } from './types';
 
-interface ChannelCfg { 
-    enabled: boolean; 
-    vdiv: number; 
-    offset: number; 
-    coupling: 'AC' | 'DC';
-    bwLimit: boolean;
+type SetState = React.Dispatch<React.SetStateAction<OscState>>;
+
+interface RailProps {
+    state: OscState;
+    setState: SetState;
+    onAutoscale: () => void;
 }
 
-interface ScopeControlsProps {
-    ch1: ChannelCfg;
-    ch2: ChannelCfg;
-    tdiv: number;
-    runMode: 'run' | 'stop' | 'single';
-    triggerMode: 'auto' | 'SOF' | 'error' | 'ID';
-    triggerLevel: number;
-    activeCh: 'ch1' | 'ch2';
-    onUpdateCh: (ch: 'ch1' | 'ch2', vals: Partial<ChannelCfg>) => void;
-    onUpdateTDiv: (tdiv: number) => void;
-    onUpdateRunMode: (mode: 'run' | 'stop' | 'single') => void;
-    onUpdateTrigger: (mode: 'auto' | 'SOF' | 'error' | 'ID', level: number) => void;
-    onReset: () => void;
-}
+const VPD_OPTS = [0.1, 0.2, 0.5, 1, 2, 5];
+const TB_OPTS = [20, 50, 100, 200, 500, 1000];
+const fmtTb = (v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)} ms` : `${v} µs`;
 
-const VDIV_OPTIONS = [0.2, 0.5, 1, 2, 5];
-const TDIV_OPTIONS = [5, 10, 20, 50, 100, 200, 500];
+// ── SVG icon helpers ────────────────────────────────────────────────────────
+const Play = () => (
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="16" height="16">
+        <polygon points="6 4 20 12 6 20 6 4" />
+    </svg>
+);
+const Stop = () => (
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="16" height="16">
+        <rect x="5" y="5" width="14" height="14" rx="1" />
+    </svg>
+);
+const Single = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+        <path d="M5 12h9" /><path d="M14 6l6 6-6 6" />
+    </svg>
+);
+const Target = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+        <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" /><path d="M12 1v3M12 20v3M1 12h3M20 12h3" />
+    </svg>
+);
 
-export const ScopeControls: React.FC<ScopeControlsProps> = ({
-    ch1,
-    ch2,
-    tdiv,
-    runMode,
-    triggerMode,
-    triggerLevel,
-    activeCh,
-    onUpdateCh,
-    onUpdateTDiv,
-    onUpdateRunMode,
-    onUpdateTrigger,
-    onReset
-}) => {
+// ── Button-based left rail ──────────────────────────────────────────────────
+export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) => {
+    const { running, channels, trig, timebase } = state;
+
     return (
-        <div className="flex flex-col gap-4 pb-4 pr-1">
-            {/* Acquire Section */}
-            <section className="flex-shrink-0 glass-panel !rounded-none p-4 flex flex-col gap-3 border-white/5 bg-white/[0.01]">
-                <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
-                        Acquisition
-                    </h3>
-                    <motion.div
-                        animate={{ opacity: runMode === 'run' ? [0.3, 1, 0.3] : 0.3 }}
-                        transition={{ repeat: Infinity, duration: 1.5 }}
-                        className="flex items-center gap-1.5"
-                    >
-                        <div className={cn("w-1.5 h-1.5 rounded-full", runMode === 'run' ? "bg-[#00ff9f]" : "bg-white/30")} />
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-white/40">
-                            {runMode === 'run' ? 'Live' : runMode === 'stop' ? 'Paused' : 'Armed'}
-                        </span>
-                    </motion.div>
+        <div className="osc-leftrail">
+            {/* Acquisition */}
+            <div className="osc-panel">
+                <div className="osc-panel-h">
+                    <span className="osc-t">Acquisition</span>
+                    <span className={`osc-pill live ${running ? 'ok' : 'dim'}`}>
+                        <span className="osc-dot" />
+                        {running ? 'Live' : 'Held'}
+                    </span>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                    <button 
-                        onClick={() => onUpdateRunMode('run')}
-                        className={cn(
-                            "flex items-center justify-center gap-2 py-2 border transition-all font-mono text-[10px] font-black uppercase tracking-widest !rounded-none",
-                            runMode === 'run' 
-                                ? "bg-[#00ff9f]/20 border-[#00ff9f] text-[#00ff9f] shadow-[0_0_8px_rgba(0,255,159,0.2)]" 
-                                : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:border-white/20"
-                        )}
-                    >
-                        <Play size={10} fill={runMode === 'run' ? "currentColor" : "none"} />
-                        Run
-                    </button>
-                    <button 
-                        onClick={() => onUpdateRunMode('stop')}
-                        className={cn(
-                            "flex items-center justify-center gap-2 py-2 border transition-all font-mono text-[10px] font-black uppercase tracking-widest !rounded-none",
-                            runMode === 'stop' 
-                                ? "bg-[#ff4444]/20 border-[#ff4444] text-[#ff4444] shadow-[0_0_8px_rgba(255,68,68,0.2)]" 
-                                : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:border-white/20"
-                        )}
-                    >
-                        <Pause size={10} fill={runMode === 'stop' ? "currentColor" : "none"} />
-                        Stop
-                    </button>
-                </div>
-                <button 
-                    onClick={() => onUpdateRunMode('single')}
-                    className={cn(
-                        "w-full flex items-center justify-center gap-2 py-2 border transition-all font-mono text-[10px] font-black uppercase tracking-widest !rounded-none",
-                        runMode === 'single' 
-                            ? "bg-[#bf00ff]/20 border-[#bf00ff] text-[#bf00ff] shadow-[0_0_8px_rgba(191,0,255,0.2)]" 
-                            : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:border-white/20"
-                    )}
-                >
-                    <SkipForward size={10} />
-                    Single Capture
-                </button>
-            </section>
-
-            {/* Channel Settings */}
-            <section className="flex-shrink-0 glass-panel p-4 flex flex-col gap-4 !rounded-none border-white/5 bg-white/[0.01]">
-                <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
-                        Channels
-                    </h3>
-                    <Settings2 size={12} className="text-white/30" />
-                </div>
-                
-                {[
-                    { id: 'ch1' as const, cfg: ch1, color: '#00f3ff', label: 'CH1 (CANH)' },
-                    { id: 'ch2' as const, cfg: ch2, color: '#bf00ff', label: 'CH2 (CANL)' }
-                ].map((channel) => (
-                    <div key={channel.id} className={cn(
-                        "p-3 border transition-all !rounded-none",
-                        activeCh === channel.id ? "bg-white/[0.04] border-white/10" : "bg-transparent border-transparent opacity-60"
-                    )}>
-                        <div className="flex items-center justify-between mb-3">
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <input 
-                                    type="checkbox" 
-                                    className="hidden" 
-                                    checked={channel.cfg.enabled}
-                                    onChange={(e) => onUpdateCh(channel.id, { enabled: e.target.checked })}
-                                />
-                                <div className={cn(
-                                    "w-4 h-4 border flex items-center justify-center transition-all !rounded-none",
-                                    channel.cfg.enabled ? "bg-current border-transparent shadow-[0_0_8px_currentColor]" : "bg-transparent border-white/20"
-                                )} style={{ color: channel.color }}>
-                                    {channel.cfg.enabled && <Zap size={10} className="text-[#020617]" />}
-                                </div>
-                                <span className={cn(
-                                    "text-[10px] font-mono font-black uppercase tracking-widest transition-colors",
-                                    channel.cfg.enabled ? "text-white" : "text-white/20"
-                                )}>
-                                    {channel.label}
-                                </span>
-                            </label>
-                        </div>
-
-                        <div className="flex flex-col gap-3 ml-7">
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between items-baseline">
-                                    <span className="text-[11px] font-outfit text-white/50">Vertical scale</span>
-                                    <span className="text-[11px] font-mono tabular-nums" style={{ color: channel.color }}>{channel.cfg.vdiv} V/div</span>
-                                </div>
-                                <div className="flex gap-1">
-                                    {VDIV_OPTIONS.map(v => (
-                                        <button
-                                            key={v}
-                                            onClick={() => onUpdateCh(channel.id, { vdiv: v })}
-                                            className={cn(
-                                                "flex-1 h-5 border text-[9px] font-mono font-black transition-all !rounded-none",
-                                                channel.cfg.vdiv === v 
-                                                    ? "bg-current border-transparent text-[#020617]" 
-                                                    : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
-                                            )}
-                                            style={channel.cfg.vdiv === v ? { backgroundColor: channel.color } : {}}
-                                        >
-                                            {v < 1 ? `.${(v * 10).toFixed(0)}` : v}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between items-baseline">
-                                    <span className="text-[11px] font-outfit text-white/50">Offset</span>
-                                    <span className="text-[11px] font-mono tabular-nums text-white/70">{(channel.cfg.offset >= 0 ? '+' : '') + channel.cfg.offset.toFixed(2)} V</span>
-                                </div>
-                                <input 
-                                    type="range"
-                                    min="-4"
-                                    max="4"
-                                    step="0.1"
-                                    value={channel.cfg.offset}
-                                    onChange={(e) => onUpdateCh(channel.id, { offset: parseFloat(e.target.value) })}
-                                    className="w-full h-1 bg-white/[0.05] appearance-none cursor-pointer accent-[#e2e8f0] border-0"
-                                />
-                            </div>
-                        </div>
+                <div className="osc-panel-b">
+                    <div className="osc-btn-row">
+                        <button
+                            className={`osc-bigbtn ${running ? 'primary' : ''}`}
+                            onClick={() => setState(s => ({ ...s, running: true }))}
+                        >
+                            <Play /><span>Run</span>
+                        </button>
+                        <button
+                            className={`osc-bigbtn ${!running ? 'primary danger' : 'danger'}`}
+                            onClick={() => setState(s => ({ ...s, running: false }))}
+                        >
+                            <Stop /><span>Stop</span>
+                        </button>
                     </div>
-                ))}
-            </section>
-
-            {/* Time & Trigger */}
-            <section className="flex-shrink-0 glass-panel p-4 flex flex-col gap-4 !rounded-none border-white/5 bg-white/[0.01]">
-                <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-xs font-outfit font-semibold tracking-wide text-white/90">
-                        Time &amp; Trigger
-                    </h3>
-                    <Clock size={12} className="text-white/30" />
-                </div>
-
-                <div className="space-y-4 px-1">
-                    <div className="space-y-1.5">
-                        <div className="flex justify-between items-baseline">
-                            <span className="text-[11px] font-outfit text-white/50">Horizontal scale</span>
-                            <span className="text-[11px] font-mono tabular-nums text-[#00f3ff]">{tdiv} µs/div</span>
-                        </div>
-                        <div className="grid grid-cols-4 gap-1">
-                            {TDIV_OPTIONS.map(t => (
-                                <button
-                                    key={t}
-                                    onClick={() => onUpdateTDiv(t)}
-                                    className={cn(
-                                        "h-5 border text-[9px] font-mono font-black transition-all !rounded-none",
-                                        tdiv === t 
-                                            ? "bg-[#00f3ff] border-transparent text-[#020617] shadow-[0_0_8px_rgba(0,243,255,0.2)]" 
-                                            : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
-                                    )}
-                                >
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
+                    <button className="osc-bigbtn" onClick={() => setState(s => ({ ...s, running: false }))}>
+                        <Single /><span>Single</span><span className="osc-k">S</span>
+                    </button>
+                    <div className="osc-btn-row">
+                        <button className="osc-bigbtn" onClick={onAutoscale}><Target /><span>Auto</span></button>
+                        <button className="osc-bigbtn"><span>Cal</span></button>
                     </div>
+                </div>
+            </div>
 
-                    <div className="border-t border-white/5 pt-4 space-y-4">
-                        <div className="space-y-1.5">
-                            <div className="flex justify-between items-baseline">
-                                <span className="text-[11px] font-outfit text-white/50">Trigger source</span>
-                                <span className="text-[11px] font-mono uppercase tabular-nums text-[#00ff9f]">{triggerMode}</span>
-                            </div>
-                            <div className="grid grid-cols-2 gap-1">
-                                {(['auto', 'SOF', 'error', 'ID'] as const).map(mode => (
-                                    <button
-                                        key={mode}
-                                        onClick={() => onUpdateTrigger(mode, triggerLevel)}
-                                        className={cn(
-                                            "h-5 border text-[9px] font-mono font-black transition-all uppercase !rounded-none",
-                                            triggerMode === mode 
-                                                ? "bg-[#00ff9f] border-transparent text-[#020617] shadow-[0_0_8px_rgba(0,255,159,0.2)]" 
-                                                : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
-                                        )}
-                                    >
-                                        {mode}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <div className="flex justify-between items-baseline">
-                                <span className="text-[11px] font-outfit text-white/50">Level threshold</span>
-                                <span className="text-[11px] font-mono tabular-nums text-white/70">{triggerLevel.toFixed(2)} V</span>
-                            </div>
-                            <input 
-                                type="range"
-                                min="0"
-                                max="5"
-                                step="0.1"
-                                value={triggerLevel}
-                                onChange={(e) => onUpdateTrigger(triggerMode, parseFloat(e.target.value))}
-                                className="w-full h-1 bg-white/[0.05] appearance-none cursor-pointer accent-[#00ff9f] border-0"
-                            />
-                        </div>
-
-                        <div className="pt-2">
-                            <button 
-                                onClick={onReset}
-                                className="w-full h-9 flex items-center justify-center gap-2 bg-transparent border border-white/10 text-white/40 hover:text-[#00f3ff] hover:bg-white/5 transition-all font-mono text-[9px] font-black uppercase tracking-[0.2em] !rounded-none"
+            {/* Channel Map */}
+            <div className="osc-panel">
+                <div className="osc-panel-h">
+                    <span className="osc-t">Channel Map</span>
+                    <span className="osc-pill dim">2 + MATH</span>
+                </div>
+                <div className="osc-panel-b">
+                    {(['h', 'l', 'd'] as const).map(k => {
+                        const cfg = channels[k];
+                        const chcVar = k === 'h' ? 'var(--ch1)' : k === 'l' ? 'var(--ch2)' : 'var(--chd)';
+                        const nameLbl = k === 'h' ? 'CH1' : k === 'l' ? 'CH2' : 'MATH';
+                        const subLbl = k === 'h' ? '· CAN_H' : k === 'l' ? '· CAN_L' : '· DIFF (H−L)';
+                        return (
+                            <div key={k}
+                                className="osc-ch-card"
+                                data-on={String(cfg.on)}
+                                style={{ '--chc': chcVar } as React.CSSProperties}
                             >
-                                <Target size={12} />
-                                Zero-Point Calibrate
-                            </button>
-                        </div>
+                                <div className="osc-ch-head">
+                                    <div className="osc-sw" />
+                                    <div className="osc-name">{nameLbl}</div>
+                                    <div className="osc-label">{subLbl}</div>
+                                    <div className="osc-ch-on"
+                                        onClick={() => setState(s => ({
+                                            ...s,
+                                            channels: { ...s.channels, [k]: { ...s.channels[k], on: !s.channels[k].on } }
+                                        }))}
+                                    />
+                                </div>
+                                <div className="osc-ch-body">
+                                    <div className="osc-kv">
+                                        <span className="osc-k">V / div</span>
+                                        <span className="osc-v">{cfg.vpd} V</span>
+                                    </div>
+                                    <div className="osc-stepper">
+                                        {VPD_OPTS.map(v => (
+                                            <button
+                                                key={v}
+                                                className={cfg.vpd === v ? 'active' : ''}
+                                                onClick={() => setState(s => ({
+                                                    ...s,
+                                                    channels: { ...s.channels, [k]: { ...s.channels[k], vpd: v } }
+                                                }))}
+                                            >{v < 1 ? v.toFixed(1) : v}</button>
+                                        ))}
+                                    </div>
+                                    <div className="osc-kv">
+                                        <span className="osc-k">Position</span>
+                                        <span className="osc-v">{cfg.off >= 0 ? '+' : ''}{cfg.off.toFixed(2)} V</span>
+                                    </div>
+                                    <input
+                                        className="osc-slider"
+                                        type="range" min="-2" max="2" step="0.05"
+                                        value={cfg.off}
+                                        style={{ '--chc': chcVar } as React.CSSProperties}
+                                        onChange={e => setState(s => ({
+                                            ...s,
+                                            channels: { ...s.channels, [k]: { ...s.channels[k], off: parseFloat(e.target.value) } }
+                                        }))}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Time + Trigger */}
+            <div className="osc-panel">
+                <div className="osc-panel-h">
+                    <span className="osc-t">Time · Trigger</span>
+                    <span className="osc-pill ok"><span className="osc-dot" />Armed</span>
+                </div>
+                <div className="osc-panel-b">
+                    <div className="osc-kv">
+                        <span className="osc-k">Time / div</span>
+                        <span className="osc-v">{fmtTb(timebase)}</span>
+                    </div>
+                    <div className="osc-stepper">
+                        {TB_OPTS.map(v => (
+                            <button
+                                key={v}
+                                className={timebase === v ? 'active' : ''}
+                                onClick={() => setState(s => ({ ...s, timebase: v }))}
+                            >{v < 1000 ? v : `${v / 1000}m`}</button>
+                        ))}
+                    </div>
+                    <div className="osc-kv">
+                        <span className="osc-k">Trigger Source</span>
+                        <span className="osc-v">{trig.source}</span>
+                    </div>
+                    <div className="osc-trig-type">
+                        {(['CH1', 'CH2', 'DIFF'] as const).map(s => (
+                            <button key={s}
+                                className={`osc-chip ${trig.source === s ? 'active' : ''}`}
+                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, source: s } }))}
+                            >{s}</button>
+                        ))}
+                    </div>
+                    <div className="osc-kv">
+                        <span className="osc-k">Mode</span>
+                        <span className="osc-v">{trig.mode}</span>
+                    </div>
+                    <div className="osc-trig-type">
+                        {(['Edge', 'Pulse', 'Level'] as const).map(m => (
+                            <button key={m}
+                                className={`osc-chip ${trig.mode === m ? 'active' : ''}`}
+                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, mode: m } }))}
+                            >{m}</button>
+                        ))}
+                    </div>
+                    <div className="osc-kv">
+                        <span className="osc-k">Level</span>
+                        <span className="osc-v">{trig.level.toFixed(2)} V</span>
+                    </div>
+                    <input
+                        className="osc-slider"
+                        type="range" min="0" max="5" step="0.05"
+                        value={trig.level}
+                        onChange={e => setState(st => ({ ...st, trig: { ...st.trig, level: parseFloat(e.target.value) } }))}
+                    />
+                    <div className="osc-trig-type">
+                        {(['Auto', 'Normal', 'Single'] as const).map(m => (
+                            <button key={m}
+                                className={`osc-chip ${trig.sweep === m ? 'active' : ''}`}
+                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, sweep: m } }))}
+                            >{m}</button>
+                        ))}
                     </div>
                 </div>
-            </section>
+            </div>
+        </div>
+    );
+};
 
-            <button 
-                onClick={onReset}
-                className="flex-shrink-0 w-full flex items-center justify-center gap-2 py-3 border border-white/10 bg-white/5 text-white/40 hover:text-[#ff4444] hover:bg-[#ff4444]/5 transition-all font-mono text-[10px] font-black uppercase tracking-widest mt-auto !rounded-none"
-            >
-                <RefreshCw size={12} />
-                Master Reset
-            </button>
+// ── Knob-based left rail ────────────────────────────────────────────────────
+export const KnobRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) => {
+    const { running, channels, trig, timebase } = state;
+
+    const CH_CFG = [
+        { k: 'h' as const, lbl: 'CH1 CAN_H', color: 'var(--ch1)' },
+        { k: 'l' as const, lbl: 'CH2 CAN_L', color: 'var(--ch2)' },
+        { k: 'd' as const, lbl: 'MATH DIFF',  color: 'var(--chd)' },
+    ];
+
+    return (
+        <div className="osc-leftrail">
+            {/* Acquisition */}
+            <div className="osc-panel">
+                <div className="osc-panel-h">
+                    <span className="osc-t">Acquisition</span>
+                    <span className={`osc-pill live ${running ? 'ok' : 'dim'}`}>
+                        <span className="osc-dot" />{running ? 'Live' : 'Held'}
+                    </span>
+                </div>
+                <div className="osc-panel-b">
+                    <div className="osc-btn-row">
+                        <button
+                            className={`osc-bigbtn ${running ? 'primary' : ''}`}
+                            onClick={() => setState(s => ({ ...s, running: true }))}
+                        ><Play /><span>Run</span></button>
+                        <button
+                            className={`osc-bigbtn ${!running ? 'primary danger' : 'danger'}`}
+                            onClick={() => setState(s => ({ ...s, running: false }))}
+                        ><Stop /><span>Stop</span></button>
+                    </div>
+                    <button className="osc-bigbtn" onClick={() => setState(s => ({ ...s, running: false }))}>
+                        <Single /><span>Single</span><span className="osc-k">S</span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Channel knobs */}
+            <div className="osc-panel">
+                <div className="osc-panel-h">
+                    <span className="osc-t">Channel Controls</span>
+                    <span className="osc-pill dim">Drag / Scroll</span>
+                </div>
+                <div className="osc-panel-b">
+                    {CH_CFG.map(ch => (
+                        <div key={ch.k} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            <RockerSwitch
+                                on={channels[ch.k].on}
+                                color={ch.color}
+                                label={ch.lbl}
+                                onChange={v => setState(s => ({
+                                    ...s,
+                                    channels: { ...s.channels, [ch.k]: { ...s.channels[ch.k], on: v } }
+                                }))}
+                            />
+                            <div className="osc-knob-grid">
+                                <KnobControl
+                                    value={channels[ch.k].vpd}
+                                    options={VPD_OPTS}
+                                    label="V / DIV"
+                                    valueLabel={`${channels[ch.k].vpd} V`}
+                                    color={ch.color}
+                                    onChange={v => setState(s => ({
+                                        ...s,
+                                        channels: { ...s.channels, [ch.k]: { ...s.channels[ch.k], vpd: v } }
+                                    }))}
+                                />
+                                <KnobControl
+                                    value={channels[ch.k].off}
+                                    min={-2} max={2} step={0.05}
+                                    label="POSITION"
+                                    valueLabel={`${channels[ch.k].off >= 0 ? '+' : ''}${channels[ch.k].off.toFixed(2)} V`}
+                                    color={ch.color}
+                                    onChange={v => setState(s => ({
+                                        ...s,
+                                        channels: { ...s.channels, [ch.k]: { ...s.channels[ch.k], off: v } }
+                                    }))}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Horizontal + Trigger knobs */}
+            <div className="osc-panel">
+                <div className="osc-panel-h">
+                    <span className="osc-t">Horizontal · Trigger</span>
+                    <span className="osc-pill ok"><span className="osc-dot" />Armed</span>
+                </div>
+                <div className="osc-panel-b">
+                    <div className="osc-knob-grid">
+                        <KnobControl
+                            value={timebase} options={TB_OPTS}
+                            label="TIME / DIV"
+                            valueLabel={fmtTb(timebase)}
+                            color="var(--accent)"
+                            onChange={v => setState(s => ({ ...s, timebase: v }))}
+                        />
+                        <KnobControl
+                            value={trig.level} min={0} max={5} step={0.05}
+                            label="TRIG LEVEL"
+                            valueLabel={`${trig.level.toFixed(2)} V`}
+                            color="var(--accent)"
+                            onChange={v => setState(s => ({ ...s, trig: { ...s.trig, level: v } }))}
+                        />
+                    </div>
+                    <div className="osc-kv">
+                        <span className="osc-k">Source</span>
+                        <span className="osc-v">{trig.source}</span>
+                    </div>
+                    <div className="osc-trig-type">
+                        {(['CH1', 'CH2', 'DIFF'] as const).map(s => (
+                            <button key={s}
+                                className={`osc-chip ${trig.source === s ? 'active' : ''}`}
+                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, source: s } }))}
+                            >{s}</button>
+                        ))}
+                    </div>
+                    <div className="osc-trig-type">
+                        {(['Edge', 'Pulse', 'Level'] as const).map(m => (
+                            <button key={m}
+                                className={`osc-chip ${trig.mode === m ? 'active' : ''}`}
+                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, mode: m } }))}
+                            >{m}</button>
+                        ))}
+                    </div>
+                    <div className="osc-trig-type">
+                        {(['Auto', 'Normal', 'Single'] as const).map(m => (
+                            <button key={m}
+                                className={`osc-chip ${trig.sweep === m ? 'active' : ''}`}
+                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, sweep: m } }))}
+                            >{m}</button>
+                        ))}
+                    </div>
+                    <div className="osc-btn-row" style={{ marginTop: 4 }}>
+                        <button className="osc-bigbtn" onClick={onAutoscale}><Target /><span>Auto</span></button>
+                        <button className="osc-bigbtn"><span>Cal</span></button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

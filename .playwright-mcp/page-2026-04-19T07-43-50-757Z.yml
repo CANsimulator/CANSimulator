@@ -1,0 +1,157 @@
+- generic [ref=e2]:
+  - generic "Notifications"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e7]:
+        - link "CAN Simulator CANSim ISO 11898-1" [ref=e8] [cursor=pointer]:
+          - /url: /CANSimulator
+          - img "CAN Simulator" [ref=e11]
+          - generic [ref=e12]:
+            - generic [ref=e13]: CANSim
+            - generic [ref=e14]: ISO 11898-1
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - textbox "SEARCH PROTOCOL..." [ref=e19]
+          - generic [ref=e20]: ⌘K
+        - generic [ref=e21]:
+          - link "Home" [ref=e22] [cursor=pointer]:
+            - /url: /CANSimulator
+            - img [ref=e23]
+            - text: Home
+          - link "Simulator" [ref=e25] [cursor=pointer]:
+            - /url: /CANSimulator/simulator
+            - img [ref=e26]
+            - text: Simulator
+          - link "Inspector" [ref=e28] [cursor=pointer]:
+            - /url: /CANSimulator/inspector
+            - img [ref=e29]
+            - text: Inspector
+          - link "Pricing" [ref=e31] [cursor=pointer]:
+            - /url: /CANSimulator/pricing
+            - img [ref=e32]
+            - text: Pricing
+          - link "Contact" [ref=e34] [cursor=pointer]:
+            - /url: /CANSimulator/contact
+            - img [ref=e35]
+            - text: Contact
+        - generic [ref=e37]:
+          - button "Toggle Theme" [ref=e38] [cursor=pointer]:
+            - img [ref=e39]
+          - link "Auth" [ref=e41] [cursor=pointer]:
+            - /url: /CANSimulator/auth
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - img [ref=e46]
+        - generic [ref=e49]:
+          - paragraph [ref=e50]: Baud Rate
+          - paragraph [ref=e51]: 500 Kbps
+      - generic [ref=e52]:
+        - img [ref=e54]
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: CAN FD Mode
+          - paragraph [ref=e61]: "Enabled (Data: 500 Kbps)"
+      - generic [ref=e62]:
+        - img [ref=e64]
+        - generic [ref=e66]:
+          - paragraph [ref=e67]: Bus Status
+          - paragraph [ref=e68]: Online
+    - main [ref=e70]:
+      - navigation [ref=e72]:
+        - link "Home" [ref=e73] [cursor=pointer]:
+          - /url: /CANSimulator
+          - img [ref=e75]
+          - generic [ref=e78]: Home
+        - img [ref=e79]
+        - generic [ref=e81]: Physical
+      - status "Loading" [ref=e83]:
+        - img [ref=e84]
+        - generic [ref=e87]: Loading...
+    - contentinfo [ref=e88]:
+      - generic [ref=e89]:
+        - generic [ref=e90]:
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - link "CAN Simulator CANSIM INSTRUMENT_NODE" [ref=e93] [cursor=pointer]:
+                - /url: /CANSimulator
+                - img "CAN Simulator" [ref=e97]
+                - generic [ref=e98]:
+                  - generic [ref=e99]: CANSIM
+                  - generic [ref=e100]: INSTRUMENT_NODE
+              - paragraph [ref=e101]: Professional tools for automotive communication engineering and UDS protocol validation.
+            - generic [ref=e102]:
+              - link "GitHub" [ref=e103] [cursor=pointer]:
+                - /url: https://github.com/suduli
+                - img [ref=e104]
+              - link "LinkedIn" [ref=e107] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/suduli/
+                - img [ref=e108]
+              - link "Resume" [ref=e112] [cursor=pointer]:
+                - /url: https://suduli.github.io/Suduli_Resume/
+                - img [ref=e113]
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - heading "ECOSYSTEM" [level=3] [ref=e118]: ECOSYSTEM
+              - list [ref=e120]:
+                - link "UDS Simulator" [ref=e121] [cursor=pointer]:
+                  - /url: https://udssimulator.com
+                  - generic [ref=e122]: UDS Simulator
+                - link "Network Map" [ref=e124] [cursor=pointer]:
+                  - /url: /CANSimulator/contact
+                  - generic [ref=e125]: Network Map
+                - link "Fault Analysis" [ref=e127] [cursor=pointer]:
+                  - /url: /CANSimulator/errors
+                  - generic [ref=e128]: Fault Analysis
+                - link "Performance" [ref=e130] [cursor=pointer]:
+                  - /url: /CANSimulator/simulator
+                  - generic [ref=e131]: Performance
+            - generic [ref=e133]:
+              - heading "SIMULATOR" [level=3] [ref=e134]: SIMULATOR
+              - list [ref=e136]:
+                - link "ECU Simulation" [ref=e137] [cursor=pointer]:
+                  - /url: /CANSimulator/simulator
+                  - generic [ref=e138]: ECU Simulation
+                - link "Bit-Level Ctrl" [ref=e140] [cursor=pointer]:
+                  - /url: /CANSimulator/inspector
+                  - generic [ref=e141]: Bit-Level Ctrl
+                - link "Signal Matrix" [ref=e143] [cursor=pointer]:
+                  - /url: /CANSimulator/signals
+                  - generic [ref=e144]: Signal Matrix
+                - link "Pricing" [ref=e146] [cursor=pointer]:
+                  - /url: /CANSimulator/pricing
+                  - generic [ref=e147]: Pricing
+            - generic [ref=e149]:
+              - heading "PROTOCOL" [level=3] [ref=e150]: PROTOCOL
+              - list [ref=e152]:
+                - link "ISO 11898-1" [ref=e153] [cursor=pointer]:
+                  - /url: /CANSimulator/physical
+                  - generic [ref=e154]: ISO 11898-1
+                - link "Arbitration" [ref=e156] [cursor=pointer]:
+                  - /url: /CANSimulator/arbitration
+                  - generic [ref=e157]: Arbitration
+                - link "ISO 15765-2" [ref=e159] [cursor=pointer]:
+                  - /url: /CANSimulator/generations
+                  - generic [ref=e160]: ISO 15765-2
+                - link "ISO 14229-1" [ref=e162] [cursor=pointer]:
+                  - /url: /CANSimulator/about
+                  - generic [ref=e163]: ISO 14229-1
+            - generic [ref=e165]:
+              - heading "SUPPORT" [level=3] [ref=e166]: SUPPORT
+              - list [ref=e168]:
+                - link "About Us" [ref=e169] [cursor=pointer]:
+                  - /url: /CANSimulator/about
+                  - generic [ref=e170]: About Us
+                - link "Contact" [ref=e172] [cursor=pointer]:
+                  - /url: /CANSimulator/contact
+                  - generic [ref=e173]: Contact
+                - link "Privacy" [ref=e175] [cursor=pointer]:
+                  - /url: /CANSimulator/privacy-policy
+                  - generic [ref=e176]: Privacy
+                - link "Terms" [ref=e178] [cursor=pointer]:
+                  - /url: /CANSimulator/terms
+                  - generic [ref=e179]: Terms
+        - generic [ref=e181]:
+          - generic [ref=e182]: © 2026 SUDULI RESEARCH. ALL RIGHTS RESERVED.
+          - generic [ref=e183]:
+            - generic [ref=e184]: R19.1
+            - generic [ref=e185]: TS5.9
+            - generic [ref=e186]: VITE7

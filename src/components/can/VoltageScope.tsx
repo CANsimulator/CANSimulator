@@ -216,6 +216,7 @@ export const VoltageScope: React.FC = () => {
                             persistence={persistence}
                             traceGlow={true}
                             onMeas={setMeas}
+                            onStateChange={setState}
                         />
                         <div className="osc-scope-badge">
                             <span className="osc-dot" />

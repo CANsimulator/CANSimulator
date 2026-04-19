@@ -1,0 +1,134 @@
+- generic [ref=e2]:
+  - generic "Notifications"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e7]:
+        - link "CAN Simulator CANSim ISO 11898-1" [ref=e8] [cursor=pointer]:
+          - /url: /CANSimulator
+          - img "CAN Simulator" [ref=e11]
+          - generic [ref=e12]:
+            - generic [ref=e13]: CANSim
+            - generic [ref=e14]: ISO 11898-1
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - textbox "SEARCH PROTOCOL..." [ref=e19]
+          - generic [ref=e20]: ⌘K
+        - generic [ref=e21]:
+          - link "Home" [ref=e22] [cursor=pointer]:
+            - /url: /CANSimulator
+            - img [ref=e23]
+            - text: Home
+          - link "Simulator" [ref=e25] [cursor=pointer]:
+            - /url: /CANSimulator/simulator
+            - img [ref=e26]
+            - text: Simulator
+          - link "Inspector" [ref=e28] [cursor=pointer]:
+            - /url: /CANSimulator/inspector
+            - img [ref=e29]
+            - text: Inspector
+          - link "Pricing" [ref=e31] [cursor=pointer]:
+            - /url: /CANSimulator/pricing
+            - img [ref=e32]
+            - text: Pricing
+          - link "Contact" [ref=e34] [cursor=pointer]:
+            - /url: /CANSimulator/contact
+            - img [ref=e35]
+            - text: Contact
+        - generic [ref=e37]:
+          - button "Toggle Theme" [ref=e38] [cursor=pointer]:
+            - img [ref=e39]
+          - link "Auth" [ref=e41] [cursor=pointer]:
+            - /url: /CANSimulator/auth
+    - main [ref=e42]:
+      - status "Loading" [ref=e44]:
+        - img [ref=e45]
+        - generic [ref=e48]: Loading...
+    - contentinfo [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - link "CAN Simulator CANSIM INSTRUMENT_NODE" [ref=e54] [cursor=pointer]:
+                - /url: /CANSimulator
+                - img "CAN Simulator" [ref=e58]
+                - generic [ref=e59]:
+                  - generic [ref=e60]: CANSIM
+                  - generic [ref=e61]: INSTRUMENT_NODE
+              - paragraph [ref=e62]: Professional tools for automotive communication engineering and UDS protocol validation.
+            - generic [ref=e63]:
+              - link "GitHub" [ref=e64] [cursor=pointer]:
+                - /url: https://github.com/suduli
+                - img [ref=e65]
+              - link "LinkedIn" [ref=e68] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/suduli/
+                - img [ref=e69]
+              - link "Resume" [ref=e73] [cursor=pointer]:
+                - /url: https://suduli.github.io/Suduli_Resume/
+                - img [ref=e74]
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - heading "ECOSYSTEM" [level=3] [ref=e79]: ECOSYSTEM
+              - list [ref=e81]:
+                - link "UDS Simulator" [ref=e82] [cursor=pointer]:
+                  - /url: https://udssimulator.com
+                  - generic [ref=e83]: UDS Simulator
+                - link "Network Map" [ref=e85] [cursor=pointer]:
+                  - /url: /CANSimulator/contact
+                  - generic [ref=e86]: Network Map
+                - link "Fault Analysis" [ref=e88] [cursor=pointer]:
+                  - /url: /CANSimulator/errors
+                  - generic [ref=e89]: Fault Analysis
+                - link "Performance" [ref=e91] [cursor=pointer]:
+                  - /url: /CANSimulator/simulator
+                  - generic [ref=e92]: Performance
+            - generic [ref=e94]:
+              - heading "SIMULATOR" [level=3] [ref=e95]: SIMULATOR
+              - list [ref=e97]:
+                - link "ECU Simulation" [ref=e98] [cursor=pointer]:
+                  - /url: /CANSimulator/simulator
+                  - generic [ref=e99]: ECU Simulation
+                - link "Bit-Level Ctrl" [ref=e101] [cursor=pointer]:
+                  - /url: /CANSimulator/inspector
+                  - generic [ref=e102]: Bit-Level Ctrl
+                - link "Signal Matrix" [ref=e104] [cursor=pointer]:
+                  - /url: /CANSimulator/signals
+                  - generic [ref=e105]: Signal Matrix
+                - link "Pricing" [ref=e107] [cursor=pointer]:
+                  - /url: /CANSimulator/pricing
+                  - generic [ref=e108]: Pricing
+            - generic [ref=e110]:
+              - heading "PROTOCOL" [level=3] [ref=e111]: PROTOCOL
+              - list [ref=e113]:
+                - link "ISO 11898-1" [ref=e114] [cursor=pointer]:
+                  - /url: /CANSimulator/physical
+                  - generic [ref=e115]: ISO 11898-1
+                - link "Arbitration" [ref=e117] [cursor=pointer]:
+                  - /url: /CANSimulator/arbitration
+                  - generic [ref=e118]: Arbitration
+                - link "ISO 15765-2" [ref=e120] [cursor=pointer]:
+                  - /url: /CANSimulator/generations
+                  - generic [ref=e121]: ISO 15765-2
+                - link "ISO 14229-1" [ref=e123] [cursor=pointer]:
+                  - /url: /CANSimulator/about
+                  - generic [ref=e124]: ISO 14229-1
+            - generic [ref=e126]:
+              - heading "SUPPORT" [level=3] [ref=e127]: SUPPORT
+              - list [ref=e129]:
+                - link "About Us" [ref=e130] [cursor=pointer]:
+                  - /url: /CANSimulator/about
+                  - generic [ref=e131]: About Us
+                - link "Contact" [ref=e133] [cursor=pointer]:
+                  - /url: /CANSimulator/contact
+                  - generic [ref=e134]: Contact
+                - link "Privacy" [ref=e136] [cursor=pointer]:
+                  - /url: /CANSimulator/privacy-policy
+                  - generic [ref=e137]: Privacy
+                - link "Terms" [ref=e139] [cursor=pointer]:
+                  - /url: /CANSimulator/terms
+                  - generic [ref=e140]: Terms
+        - generic [ref=e142]:
+          - generic [ref=e143]: © 2026 SUDULI RESEARCH. ALL RIGHTS RESERVED.
+          - generic [ref=e144]:
+            - generic [ref=e145]: R19.1
+            - generic [ref=e146]: TS5.9
+            - generic [ref=e147]: VITE7

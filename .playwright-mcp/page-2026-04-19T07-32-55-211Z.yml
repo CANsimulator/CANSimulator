@@ -1,0 +1,5 @@
+- generic [active] [ref=e1]:
+  - text: The server is configured with a public base URL of /CANSimulator/ - did you mean to visit
+  - link "/CANSimulator/CANsimulator/simulator" [ref=e2] [cursor=pointer]:
+    - /url: /CANSimulator/CANsimulator/simulator
+  - text: instead?

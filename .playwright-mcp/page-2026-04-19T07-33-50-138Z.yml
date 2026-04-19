@@ -1,0 +1,417 @@
+- generic [ref=e2]:
+  - generic "Notifications"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e7]:
+        - link "CAN Simulator CANSim ISO 11898-1" [ref=e8] [cursor=pointer]:
+          - /url: /CANSimulator
+          - img "CAN Simulator" [ref=e11]
+          - generic [ref=e12]:
+            - generic [ref=e13]: CANSim
+            - generic [ref=e14]: ISO 11898-1
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - textbox "SEARCH PROTOCOL..." [ref=e19]
+          - generic [ref=e20]: ⌘K
+        - generic [ref=e21]:
+          - link "Home" [ref=e22] [cursor=pointer]:
+            - /url: /CANSimulator
+            - img [ref=e23]
+            - text: Home
+          - link "Simulator" [active] [ref=e25] [cursor=pointer]:
+            - /url: /CANSimulator/simulator
+            - img [ref=e26]
+            - text: Simulator
+          - link "Inspector" [ref=e28] [cursor=pointer]:
+            - /url: /CANSimulator/inspector
+            - img [ref=e29]
+            - text: Inspector
+          - link "Pricing" [ref=e31] [cursor=pointer]:
+            - /url: /CANSimulator/pricing
+            - img [ref=e32]
+            - text: Pricing
+          - link "Contact" [ref=e34] [cursor=pointer]:
+            - /url: /CANSimulator/contact
+            - img [ref=e35]
+            - text: Contact
+        - generic [ref=e37]:
+          - button "Toggle Theme" [ref=e38] [cursor=pointer]:
+            - img [ref=e39]
+          - link "Auth" [ref=e41] [cursor=pointer]:
+            - /url: /CANSimulator/auth
+    - generic [ref=e402]:
+      - generic [ref=e403]:
+        - img [ref=e405]
+        - generic [ref=e408]:
+          - paragraph [ref=e409]: Baud Rate
+          - paragraph [ref=e410]: 500 Kbps
+      - generic [ref=e411]:
+        - img [ref=e413]
+        - generic [ref=e418]:
+          - paragraph [ref=e419]: CAN FD Mode
+          - paragraph [ref=e420]: "Enabled (Data: 500 Kbps)"
+      - generic [ref=e421]:
+        - img [ref=e423]
+        - generic [ref=e425]:
+          - paragraph [ref=e426]: Bus Status
+          - paragraph [ref=e427]: Online
+    - main [ref=e42]:
+      - navigation [ref=e430]:
+        - link "Home" [ref=e431] [cursor=pointer]:
+          - /url: /CANSimulator
+          - img [ref=e433]
+          - generic [ref=e436]: Home
+        - img [ref=e437]
+        - generic [ref=e439]: Simulator
+      - generic [ref=e440]:
+        - generic [ref=e441]:
+          - generic [ref=e442]:
+            - generic [ref=e443]:
+              - generic [ref=e444]:
+                - heading "Frame Builder" [level=3] [ref=e445]
+                - generic [ref=e446]:
+                  - button "CLASSIC" [ref=e447] [cursor=pointer]
+                  - button "CAN FD" [ref=e448] [cursor=pointer]
+              - generic [ref=e450]:
+                - text: Message ID (Hex)
+                - textbox "Message ID (Hex)" [ref=e451]:
+                  - /placeholder: 7DF
+                  - text: 7DF
+              - generic [ref=e452]:
+                - text: Payload (Hex Bytes)
+                - textbox "Payload (Hex Bytes)" [ref=e453]:
+                  - /placeholder: 01 02 03...
+                  - text: 02 01 0D 00 00 00 00 00
+                - generic [ref=e454]:
+                  - generic [ref=e455]: "LEN: 8 BYTES"
+                  - generic [ref=e456]: "DLC: 8"
+              - button "SEND CLASSIC FRAME" [ref=e458] [cursor=pointer]:
+                - generic [ref=e461]: SEND CLASSIC FRAME
+            - generic [ref=e462]:
+              - heading "Connected Nodes (Simulated)" [level=4] [ref=e463]
+              - generic [ref=e464]:
+                - generic [ref=e465]:
+                  - generic [ref=e466]:
+                    - generic [ref=e467]: Engine ECU (ECM)
+                    - generic [ref=e468]: 0x7E0 / 0x7E8
+                  - generic [ref=e469]: Online
+                - generic [ref=e470]:
+                  - generic [ref=e471]:
+                    - generic [ref=e472]: Brake ECU (ABS)
+                    - generic [ref=e473]: 0x7E1 / 0x7E9
+                  - generic [ref=e474]: Online
+                - generic [ref=e475]:
+                  - generic [ref=e476]:
+                    - generic [ref=e477]: Diagnostic Tester
+                    - generic [ref=e478]: 0x7DF / Functional
+                  - generic [ref=e479]: Host
+          - generic [ref=e480]:
+            - generic [ref=e481]:
+              - generic [ref=e482]:
+                - heading "Live CAN Trace" [level=3] [ref=e483]: Live CAN Trace
+                - generic [ref=e485]:
+                  - button "Copy Shareable Link" [ref=e486] [cursor=pointer]:
+                    - img [ref=e487]
+                  - button "Export JSON" [ref=e493] [cursor=pointer]:
+                    - img [ref=e494]
+                  - button "Export CSV" [ref=e499] [cursor=pointer]:
+                    - img [ref=e500]
+                  - button "Clear" [ref=e504] [cursor=pointer]
+              - table [ref=e506]:
+                - rowgroup [ref=e507]:
+                  - row "Time ID Type DLC Data" [ref=e508]:
+                    - columnheader "Time" [ref=e509]
+                    - columnheader "ID" [ref=e510]
+                    - columnheader "Type" [ref=e511]
+                    - columnheader "DLC" [ref=e512]
+                    - columnheader "Data" [ref=e513]
+                - rowgroup [ref=e514]:
+                  - row "28.759 0x1A0 STANDARD 8 00 00 0A BC 00 00 00 00" [ref=e515]:
+                    - cell "28.759" [ref=e516]
+                    - cell "0x1A0" [ref=e517]
+                    - cell "STANDARD" [ref=e518]
+                    - cell "8" [ref=e519]
+                    - cell "00 00 0A BC 00 00 00 00" [ref=e520]:
+                      - generic [ref=e521]:
+                        - generic [ref=e522]: "00"
+                        - generic [ref=e523]: "00"
+                        - generic [ref=e524]: 0A
+                        - generic [ref=e525]: BC
+                        - generic [ref=e526]: "00"
+                        - generic [ref=e527]: "00"
+                        - generic [ref=e528]: "00"
+                        - generic [ref=e529]: "00"
+                  - row "29.746 0x1A0 STANDARD 8 00 00 0A BC 00 00 00 00" [ref=e530]:
+                    - cell "29.746" [ref=e531]
+                    - cell "0x1A0" [ref=e532]
+                    - cell "STANDARD" [ref=e533]
+                    - cell "8" [ref=e534]
+                    - cell "00 00 0A BC 00 00 00 00" [ref=e535]:
+                      - generic [ref=e536]:
+                        - generic [ref=e537]: "00"
+                        - generic [ref=e538]: "00"
+                        - generic [ref=e539]: 0A
+                        - generic [ref=e540]: BC
+                        - generic [ref=e541]: "00"
+                        - generic [ref=e542]: "00"
+                        - generic [ref=e543]: "00"
+                        - generic [ref=e544]: "00"
+                  - row "29.756 0x2B0 STANDARD 4 00 50 00 00" [ref=e545]:
+                    - cell "29.756" [ref=e546]
+                    - cell "0x2B0" [ref=e547]
+                    - cell "STANDARD" [ref=e548]
+                    - cell "4" [ref=e549]
+                    - cell "00 50 00 00" [ref=e550]:
+                      - generic [ref=e551]:
+                        - generic [ref=e552]: "00"
+                        - generic [ref=e553]: "50"
+                        - generic [ref=e554]: "00"
+                        - generic [ref=e555]: "00"
+            - generic [ref=e556]:
+              - heading "Diagnostics & Timings" [level=2] [ref=e559]
+              - generic [ref=e560]:
+                - generic [ref=e561]:
+                  - generic [ref=e562]:
+                    - img [ref=e563]
+                    - heading "UDS Diagnostic Console" [level=3] [ref=e565]
+                  - generic [ref=e566]:
+                    - button "Clear Terminal" [ref=e567] [cursor=pointer]:
+                      - img [ref=e568]
+                    - generic [ref=e571]: UDS-ISO-14229
+                - generic [ref=e573]:
+                  - img [ref=e574]
+                  - paragraph [ref=e576]: Awaiting Connection...
+                - generic [ref=e577]:
+                  - generic [ref=e578]:
+                    - 'button "Session: Extended" [ref=e579] [cursor=pointer]'
+                    - button "Tester Present" [ref=e580] [cursor=pointer]
+                    - button "Read VIN" [ref=e581] [cursor=pointer]
+                    - button "ECU Reset" [ref=e582] [cursor=pointer]
+                  - generic [ref=e583]:
+                    - generic [ref=e584]:
+                      - generic [ref=e585]: ">"
+                      - textbox "Enter Hex Bytes (e.g. 10 01)" [ref=e586]: 10 03
+                    - button "Execute" [ref=e587] [cursor=pointer]:
+                      - img [ref=e588]
+                      - text: Execute
+            - link "Arbitration Arena See CAN bus arbitration in action bit-by-bit" [ref=e592] [cursor=pointer]:
+              - /url: /CANSimulator/arbitration
+              - generic [ref=e593]:
+                - img [ref=e595]
+                - generic [ref=e604]:
+                  - heading "Arbitration Arena" [level=4] [ref=e605]
+                  - paragraph [ref=e606]: See CAN bus arbitration in action bit-by-bit
+              - img [ref=e608]
+        - generic [ref=e611]:
+          - generic [ref=e612]:
+            - generic [ref=e613]:
+              - generic [ref=e616]: PPS-3005 Cyber-Unit
+              - generic [ref=e618]: "Firmware Ver. 4.8.2 // SRC: PSU_CONTROLLER"
+            - generic [ref=e619]:
+              - generic [ref=e620]:
+                - button "12V" [ref=e621] [cursor=pointer]
+                - button "24V" [ref=e622] [cursor=pointer]
+              - button "Disable output" [pressed] [ref=e623] [cursor=pointer]: Output ON
+              - img [ref=e624] [cursor=pointer]
+          - generic [ref=e627]:
+            - generic [ref=e628]:
+              - generic [ref=e629]:
+                - paragraph [ref=e630]: OUTPUT VOLTAGE
+                - generic [ref=e631]:
+                  - generic [ref=e632]: "11.98"
+                  - generic [ref=e633]: V
+                  - generic [ref=e634]:
+                    - generic [ref=e635]: ↓11.98
+                    - generic [ref=e636]: ↑12.40
+                    - button "Reset telemetry tracking" [ref=e637] [cursor=pointer]: RST
+                - paragraph [ref=e638]: 12.0 V SET
+              - generic [ref=e639]:
+                - paragraph [ref=e640]: CURRENT CONSUMPTION
+                - generic [ref=e641]:
+                  - generic [ref=e642]: "0.506"
+                  - generic [ref=e643]: A
+                  - generic [ref=e644]:
+                    - generic [ref=e645]: ↓0.49
+                    - generic [ref=e646]: ↑0.51
+                    - button "Reset telemetry tracking" [ref=e647] [cursor=pointer]: RST
+                - paragraph [ref=e648]: 5.0 A LIM
+              - generic [ref=e649]:
+                - paragraph [ref=e650]: Hardware Fault Integrity
+                - generic [ref=e651]:
+                  - generic [ref=e652]:
+                    - generic [ref=e654]: Open Circ
+                    - img [ref=e656]
+                  - generic [ref=e658]:
+                    - generic [ref=e660]: Short GND
+                    - img [ref=e662]
+                  - generic [ref=e664]:
+                    - generic [ref=e666]: Rev Pol
+                    - img [ref=e668]
+              - generic [ref=e670]:
+                - generic [ref=e671]:
+                  - paragraph [ref=e672]: Total Power
+                  - paragraph [ref=e673]: 6.1W
+                - generic [ref=e674]:
+                  - paragraph [ref=e675]: Thermals
+                  - generic [ref=e676]:
+                    - img [ref=e677]
+                    - paragraph [ref=e679]: 42.5°C
+            - generic [ref=e681]:
+              - generic [ref=e682]:
+                - generic [ref=e683]:
+                  - img [ref=e684]
+                  - generic [ref=e686]: V-OUT Realtime Trace
+                - generic [ref=e687]:
+                  - button "EVENTS" [ref=e688] [cursor=pointer]:
+                    - img [ref=e689]
+                    - text: EVENTS
+                    - img [ref=e693]
+                  - generic [ref=e695]:
+                    - generic [ref=e696]: STABILITY
+                    - generic [ref=e697]: 99.2%
+                  - generic [ref=e698]:
+                    - generic [ref=e699]: RIPPLE
+                    - generic [ref=e700]: 422.4mV
+              - generic [ref=e701]:
+                - generic [ref=e703]:
+                  - generic [ref=e704]: CV
+                  - generic [ref=e705]: CC
+                  - generic [ref=e706]: OVP
+                  - generic [ref=e707]: RPS
+                - paragraph [ref=e708]
+              - generic [ref=e709]:
+                - button "3.3V" [ref=e710] [cursor=pointer]
+                - button "5.0V" [ref=e711] [cursor=pointer]
+                - button "12.0V" [ref=e712] [cursor=pointer]
+            - generic [ref=e713]:
+              - generic [ref=e714]:
+                - generic [ref=e715]:
+                  - generic [ref=e716]:
+                    - generic [ref=e717]: Target V
+                    - generic [ref=e718]: 12.00V
+                  - slider [ref=e719] [cursor=pointer]: "12"
+                - generic [ref=e720]:
+                  - generic [ref=e721]:
+                    - generic [ref=e722]: O.C.P. Limit
+                    - generic [ref=e723]: 5.00A
+                  - slider [ref=e724] [cursor=pointer]: "5"
+                - generic [ref=e725]:
+                  - generic [ref=e726]:
+                    - generic [ref=e727]: Simulated Load
+                    - generic [ref=e728]: 0.50A
+                  - slider [ref=e729] [cursor=pointer]: "0.5"
+              - generic [ref=e730]:
+                - generic [ref=e733]: CV
+                - generic [ref=e736]: CC
+                - generic [ref=e739]: OVP
+              - generic [ref=e740]:
+                - heading "Terminal Simulation" [level=3] [ref=e741]
+                - generic [ref=e743]:
+                  - generic [ref=e744]:
+                    - paragraph [ref=e745]: Ignition (KL15)
+                    - paragraph [ref=e746]: "ON"
+                  - generic [ref=e747]:
+                    - button "OFF" [ref=e748] [cursor=pointer]
+                    - button "ACC" [ref=e749] [cursor=pointer]
+                    - button "ON" [ref=e750] [cursor=pointer]
+                - button "Simulate Engine Crank" [ref=e752] [cursor=pointer]:
+                  - img [ref=e753]
+                  - text: Simulate Engine Crank
+              - generic [ref=e755]:
+                - heading "Fault Matrix" [level=3] [ref=e757]
+                - generic [ref=e758]:
+                  - button "Short GND" [ref=e759] [cursor=pointer]
+                  - button "Open Ckt" [ref=e760] [cursor=pointer]
+                - paragraph [ref=e761]: Hold to inject · Release to clear
+              - button "Reset factory defaults" [ref=e762] [cursor=pointer]:
+                - img [ref=e763]
+                - text: Reset factory defaults
+    - contentinfo [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - link "CAN Simulator CANSIM INSTRUMENT_NODE" [ref=e54] [cursor=pointer]:
+                - /url: /CANSimulator
+                - img "CAN Simulator" [ref=e58]
+                - generic [ref=e59]:
+                  - generic [ref=e60]: CANSIM
+                  - generic [ref=e61]: INSTRUMENT_NODE
+              - paragraph [ref=e62]: Professional tools for automotive communication engineering and UDS protocol validation.
+            - generic [ref=e63]:
+              - link "GitHub" [ref=e64] [cursor=pointer]:
+                - /url: https://github.com/suduli
+                - img [ref=e65]
+              - link "LinkedIn" [ref=e68] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/suduli/
+                - img [ref=e69]
+              - link "Resume" [ref=e73] [cursor=pointer]:
+                - /url: https://suduli.github.io/Suduli_Resume/
+                - img [ref=e74]
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - heading "ECOSYSTEM" [level=3] [ref=e79]: ECOSYSTEM
+              - list [ref=e81]:
+                - link "UDS Simulator" [ref=e82] [cursor=pointer]:
+                  - /url: https://udssimulator.com
+                  - generic [ref=e83]: UDS Simulator
+                - link "Network Map" [ref=e85] [cursor=pointer]:
+                  - /url: /CANSimulator/contact
+                  - generic [ref=e86]: Network Map
+                - link "Fault Analysis" [ref=e88] [cursor=pointer]:
+                  - /url: /CANSimulator/errors
+                  - generic [ref=e89]: Fault Analysis
+                - link "Performance" [ref=e91] [cursor=pointer]:
+                  - /url: /CANSimulator/simulator
+                  - generic [ref=e92]: Performance
+            - generic [ref=e94]:
+              - heading "SIMULATOR" [level=3] [ref=e95]: SIMULATOR
+              - list [ref=e97]:
+                - link "ECU Simulation" [ref=e98] [cursor=pointer]:
+                  - /url: /CANSimulator/simulator
+                  - generic [ref=e99]: ECU Simulation
+                - link "Bit-Level Ctrl" [ref=e101] [cursor=pointer]:
+                  - /url: /CANSimulator/inspector
+                  - generic [ref=e102]: Bit-Level Ctrl
+                - link "Signal Matrix" [ref=e104] [cursor=pointer]:
+                  - /url: /CANSimulator/signals
+                  - generic [ref=e105]: Signal Matrix
+                - link "Pricing" [ref=e107] [cursor=pointer]:
+                  - /url: /CANSimulator/pricing
+                  - generic [ref=e108]: Pricing
+            - generic [ref=e110]:
+              - heading "PROTOCOL" [level=3] [ref=e111]: PROTOCOL
+              - list [ref=e113]:
+                - link "ISO 11898-1" [ref=e114] [cursor=pointer]:
+                  - /url: /CANSimulator/physical
+                  - generic [ref=e115]: ISO 11898-1
+                - link "Arbitration" [ref=e117] [cursor=pointer]:
+                  - /url: /CANSimulator/arbitration
+                  - generic [ref=e118]: Arbitration
+                - link "ISO 15765-2" [ref=e120] [cursor=pointer]:
+                  - /url: /CANSimulator/generations
+                  - generic [ref=e121]: ISO 15765-2
+                - link "ISO 14229-1" [ref=e123] [cursor=pointer]:
+                  - /url: /CANSimulator/about
+                  - generic [ref=e124]: ISO 14229-1
+            - generic [ref=e126]:
+              - heading "SUPPORT" [level=3] [ref=e127]: SUPPORT
+              - list [ref=e129]:
+                - link "About Us" [ref=e130] [cursor=pointer]:
+                  - /url: /CANSimulator/about
+                  - generic [ref=e131]: About Us
+                - link "Contact" [ref=e133] [cursor=pointer]:
+                  - /url: /CANSimulator/contact
+                  - generic [ref=e134]: Contact
+                - link "Privacy" [ref=e136] [cursor=pointer]:
+                  - /url: /CANSimulator/privacy-policy
+                  - generic [ref=e137]: Privacy
+                - link "Terms" [ref=e139] [cursor=pointer]:
+                  - /url: /CANSimulator/terms
+                  - generic [ref=e140]: Terms
+        - generic [ref=e142]:
+          - generic [ref=e143]: © 2026 SUDULI RESEARCH. ALL RIGHTS RESERVED.
+          - generic [ref=e144]:
+            - generic [ref=e145]: R19.1
+            - generic [ref=e146]: TS5.9
+            - generic [ref=e147]: VITE7

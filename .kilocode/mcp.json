@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "vexp": {
+      "command": "C:\\Users\\sudul\\AppData\\Local\\Programs\\Antigravity\\Antigravity.exe",
+      "args": [
+        "c:\\Users\\sudul\\.antigravity\\extensions\\vexp.vexp-vscode-2.0.12-win32-x64\\dist\\mcp-server.cjs"
+      ],
+      "env": {
+        "VEXP_WORKSPACE": "e:\\projects\\UDS_Simulator\\CAN-Simulator"
+      }
+    }
+  }
+}

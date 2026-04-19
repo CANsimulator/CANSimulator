@@ -103,6 +103,35 @@ html {
   .shadow-glow-purple {
     text-shadow: 0 0 10px rgba(189, 0, 255, 0.5), 0 0 20px rgba(189, 0, 255, 0.3);
   }
+
+  /* Scope Instrument: flat, solid, no glassmorphism — like a real lab instrument */
+  .scope-instrument {
+    background-color: #0b0d12;
+    background-image: none;
+  }
+
+  .scope-instrument .glass-panel {
+    background-color: #11141b !important;
+    backdrop-filter: none !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+    box-shadow: none !important;
+  }
+
+  .scope-instrument .glass-card {
+    background-color: rgba(255, 255, 255, 0.015) !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Scope-scoped scrollbar uses amber instead of neon cyan */
+  .scope-instrument ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 176, 0, 0.18) !important;
+  }
+  .scope-instrument ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 176, 0, 0.4) !important;
+  }
+  .scope-instrument {
+    scrollbar-color: rgba(255, 176, 0, 0.2) transparent;
+  }
 }
 
 /* Animations */
