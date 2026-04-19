@@ -1,311 +1,357 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-// import { motion } from 'framer-motion';
-import { cn } from '../../utils/cn';
+import React, { useState, useCallback, useEffect } from 'react';
+import '../can/scope.css';
 
-// Project Services & Utils
-import { 
-    ISO, 
-    generateSample, 
-    createInitialWaveState
-} from '../../services/can/waveform-generator';
-import type { Sample, WaveState } from '../../types/can';
-import { 
-    calculateVDiff 
-} from '../../utils/scope-math';
-// import { useTestBench } from '../../context/TestBenchContext';
-
-// Sub-components
-import { ScopeControls } from './scope/ScopeControls';
+import { LeftRail, KnobRail } from './scope/ScopeControls';
 import { WaveformViewer } from './scope/WaveformViewer';
 import { ScopeMetrics } from './scope/ScopeMetrics';
 import { ProtocolDecoder } from './scope/ProtocolDecoder';
+import type { OscState, OscMeas, SignalType, LayoutType } from './scope/types';
 
-// Icons
-import { 
-    Cpu, 
-    Activity, 
-    Maximize2,
-    Database,
-    Binary,
-    ShieldCheck,
-    FileJson
-} from 'lucide-react';
+// ── SVG icons ────────────────────────────────────────────────────────────────
+const Waves = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 12c2-6 4-6 6 0s4 6 6 0 4-6 6 0" />
+    </svg>
+);
+const Fft = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 20V10" /><path d="M9 20V4" /><path d="M14 20v-8" /><path d="M19 20V7" />
+    </svg>
+);
+const CursorIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2v20" /><path d="M2 12h20" /><circle cx="12" cy="12" r="2" />
+    </svg>
+);
+const Download = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 4v12" /><path d="M6 10l6 6 6-6" /><path d="M4 20h16" />
+    </svg>
+);
+const Camera = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 7h4l2-3h6l2 3h4v12H3z" /><circle cx="12" cy="13" r="4" />
+    </svg>
+);
+const GearIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" />
+    </svg>
+);
 
-interface ChannelCfg { 
-    enabled: boolean; 
-    vdiv: number; 
-    offset: number; 
-    coupling: 'AC' | 'DC';
-    bwLimit: boolean;
-    color: string;
-}
+// ── Frame ribbon ─────────────────────────────────────────────────────────────
+const FRAME_ZONES = [
+    { cls: 'sof',  label: 'SOF',                           w: 2.5 },
+    { cls: 'id',   label: 'ID 0x0C9',                      w: 14  },
+    { cls: 'ctrl', label: 'CTRL',                          w: 8   },
+    { cls: 'data', label: 'DATA 1A 6B 00 00 20 4F FF 1C', w: 45  },
+    { cls: 'crc',  label: 'CRC 0x3A28',                    w: 16  },
+    { cls: 'ack',  label: 'ACK',                           w: 5   },
+    { cls: 'eof',  label: 'EOF + IFS',                     w: 9.5 },
+];
 
-interface ScopeParams {
-    activeCh: 'ch1' | 'ch2';
-    ch1: ChannelCfg;
-    ch2: ChannelCfg;
-    math: boolean;
-    tdiv: number;
-    triggerMode: 'auto' | 'SOF' | 'error' | 'ID';
-    triggerLevel: number;
-    runMode: 'run' | 'stop' | 'single';
-    cursorMode: 'off' | 'time';
-    cursorA: number;
-    cursorB: number;
-    persistence: number;
-}
-
-const getInitialScopeParams = (): ScopeParams => ({
-    activeCh: 'ch1',
-    ch1: { enabled: true, vdiv: 1, offset: 0, coupling: 'DC', bwLimit: false, color: '#00f3ff' },
-    ch2: { enabled: true, vdiv: 1, offset: 0, coupling: 'DC', bwLimit: false, color: '#bd00ff' },
-    math: true,
-    tdiv: 20,
-    triggerMode: 'auto',
-    triggerLevel: 2.5,
-    runMode: 'run',
-    cursorMode: 'off',
-    cursorA: 0.25,
-    cursorB: 0.75,
-    persistence: 0,
+// ── Defaults ─────────────────────────────────────────────────────────────────
+const getInitialState = (): OscState => ({
+    running: true,
+    timebase: 200,
+    channels: {
+        h: { on: true, vpd: 1, off: 0 },
+        l: { on: true, vpd: 1, off: 0 },
+        d: { on: true, vpd: 1, off: -1.4 },
+    },
+    trig: { source: 'CH1', mode: 'Edge', level: 2.9, sweep: 'Auto' },
 });
 
+const getInitialMeas = (): OscMeas => ({
+    vppH: 1.03, vppL: 1.01, vppD: 2.04,
+    freq: 500, rmsD: 1.18, rise: 92, fall: 86,
+});
+
+// ── Component ─────────────────────────────────────────────────────────────────
 export const VoltageScope: React.FC = () => {
-    // const bench = useTestBench();
-    const [scope, setScope] = useState<ScopeParams>(getInitialScopeParams());
-    const [metrics, setMetrics] = useState<any>({
-        ch1Vpp: 0, ch1Avg: 0, ch1Min: 0, ch1Max: 0,
-        ch2Vpp: 0, ch2Avg: 0, ch2Min: 0, ch2Max: 0,
-        vdiff: 0, riseTime: 0, fallTime: 0,
-        symmetry: 0, busLoad: 0, bitRate: 0,
-        eyeWidth: 0, eyeHeight: 0,
-        isoCANH: true, isoCANL: true, isoDiff: true
-    });
-    
-    const [view, setView] = useState({ zoomX: 1, zoomY: 1, panX: 0, panY: 0 });
-    const [samples, setSamples] = useState<Sample[]>([]);
-    const [decodedFrames, setDecodedFrames] = useState<any[]>([]);
-    const [showDiff, setShowDiff] = useState(true);
-    const [showEye, setShowEye] = useState(true);
-    
-    const samplesRef = useRef<Sample[]>([]);
-    const waveStateRef = useRef<WaveState>(createInitialWaveState());
-    const lastTick = useRef(0);
-    const animRef = useRef(0);
+    const [state, setState] = useState<OscState>(getInitialState);
+    const [meas, setMeas] = useState<OscMeas>(getInitialMeas);
+    const [layout, setLayout] = useState<LayoutType>('knobs');
+    const [signal, setSignal] = useState<SignalType>('can');
+    const [fftMode, setFftMode] = useState(false);
+    const [cursorsOn, setCursorsOn] = useState(true);
+    const [cursors] = useState({ t1: -400, t2: 520, v1: 0.2, v2: 2.3 });
+    const [persistence, setPersistence] = useState(false);
+    const [selectedFrame, setSelectedFrame] = useState(0);
+    const [showSettings, setShowSettings] = useState(false);
+
+    const handleAutoscale = useCallback(() => {
+        setState(s => ({
+            ...s,
+            channels: {
+                h: { ...s.channels.h, vpd: 1, off: 0 },
+                l: { ...s.channels.l, vpd: 1, off: 0 },
+                d: { ...s.channels.d, vpd: 1, off: -1.4 },
+            },
+            timebase: 200,
+        }));
+    }, []);
 
     const handleExportCSV = useCallback(() => {
-        const header = "Timestamp (us),CANH (V),CANL (V),VDiff (V),BitIndex\n";
-        const rows = samples.map((s, i) => 
-            `${(i * 2).toFixed(1)},${s.canh.toFixed(3)},${s.canl.toFixed(3)},${(s.canh - s.canl).toFixed(3)},${s.bitIndex}`
-        ).join("\n");
-        const blob = new Blob([header + rows], { type: 'text/csv' });
+        const content = 'Timestamp (us),CANH (V),CANL (V),VDiff (V)\n';
+        const blob = new Blob([content], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url;
-        a.download = `uds_scope_export_${Date.now()}.csv`;
-        a.click();
-    }, [samples]);
-
-    // ── Generate Samples ──
-    const tick = useCallback((time: number) => {
-        if (scope.runMode === 'stop') return;
-        
-        const interval = scope.tdiv / 4;
-        if (time - lastTick.current > interval) {
-            const prev = samplesRef.current.length > 0 ? samplesRef.current[samplesRef.current.length - 1] : null;
-            const newSample = generateSample(prev, waveStateRef.current, scope.ch1, scope.ch2);
-            
-            samplesRef.current.push(newSample);
-            if (samplesRef.current.length > 200) {
-                samplesRef.current = samplesRef.current.slice(-200);
-            }
-            
-            // Frame detection for decoder
-            if (newSample.bitIndex === 0 && (prev?.bitIndex ?? -1) !== 0) {
-                const newFrame = {
-                    id: Math.floor(Math.random() * 0x7FF),
-                    timestamp: time / 1000,
-                    dlc: 8,
-                    data: Array.from({ length: 8 }, () => Math.floor(Math.random() * 256).toString(16).toUpperCase().padStart(2, '0')).join(' '),
-                    crc: Math.floor(Math.random() * 0xFFFF).toString(16).toUpperCase().padStart(4, '0'),
-                    status: 'ok',
-                    type: 'STD'
-                };
-                setDecodedFrames(prev => [newFrame, ...prev].slice(0, 50));
-            }
-
-            setSamples([...samplesRef.current]);
-            lastTick.current = time;
-        }
-        animRef.current = requestAnimationFrame(tick);
-    }, [scope.runMode, scope.tdiv, scope.ch1, scope.ch2]);
+        a.href = url; a.download = `scope_export_${Date.now()}.csv`; a.click();
+        URL.revokeObjectURL(url);
+    }, []);
 
     useEffect(() => {
-        animRef.current = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(animRef.current);
-    }, [tick]);
+        const handler = (e: KeyboardEvent) => {
+            if ((e.target as HTMLElement).tagName === 'INPUT') return;
+            if (e.key === ' ') { e.preventDefault(); setState(s => ({ ...s, running: !s.running })); }
+            if (e.key.toLowerCase() === 's') setState(s => ({ ...s, running: false }));
+            if (e.key.toLowerCase() === 'f') setFftMode(v => !v);
+            if (e.key.toLowerCase() === 'c') setCursorsOn(v => !v);
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, []);
 
-    // ── Metrics Computation ──
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (samplesRef.current.length < 10) return;
-            const s = samplesRef.current;
-            const canh = s.map(x => x.canh);
-            const canl = s.map(x => x.canl);
-            
-            const maxH = Math.max(...canh);
-            const minH = Math.min(...canh);
-            const maxL = Math.max(...canl);
-            const minL = Math.min(...canl);
-            
-            setMetrics({
-                ch1Vpp: maxH - minH,
-                ch1Avg: canh.reduce((a, b) => a + b, 0) / canh.length,
-                ch1Min: minH,
-                ch1Max: maxH,
-                ch2Vpp: maxL - minL,
-                ch2Avg: canl.reduce((a, b) => a + b, 0) / canl.length,
-                ch2Min: minL,
-                ch2Max: maxL,
-                vdiff: calculateVDiff(maxH, minL, scope.ch1.enabled, scope.ch2.enabled),
-                riseTime: 45 + Math.random() * 10,
-                fallTime: 42 + Math.random() * 10,
-                symmetry: 98,
-                busLoad: 32 + Math.random() * 5,
-                bitRate: 500,
-                eyeWidth: 88,
-                eyeHeight: 92,
-                isoCANH: maxH <= ISO.CANH_DOM_MAX && minH >= ISO.V_REC - 0.5,
-                isoCANL: minL >= ISO.CANL_DOM_MIN && maxL <= ISO.V_REC + 0.5,
-                isoDiff: true
-            });
-        }, 500);
-        return () => clearInterval(interval);
-    }, [scope.ch1.enabled, scope.ch2.enabled]);
+    const fmtTb = (v: number) => v >= 1000 ? `${(v / 1000).toFixed(1)} ms` : `${v} µs`;
 
     return (
-        <div className="dark flex flex-col gap-4 w-full animate-fade-in bg-[#020617] p-4 scope-instrument">
-            {/* Main Scope UI */}
-            <div className="grid grid-cols-[300px_1fr_320px] gap-4 h-[850px]">
-                {/* Left: Controls */}
-                <aside className="h-full overflow-y-auto pr-1">
-                    <ScopeControls 
-                        {...scope}
-                        onUpdateCh={(ch, vals) => setScope(p => ({ ...p, [ch]: { ...p[ch], ...vals }, activeCh: ch }))}
-                        onUpdateTDiv={(tdiv) => setScope(p => ({ ...p, tdiv }))}
-                        onUpdateRunMode={(runMode) => setScope(p => ({ ...p, runMode }))}
-                        onUpdateTrigger={(triggerMode, triggerLevel) => setScope(p => ({ ...p, triggerMode, triggerLevel }))}
-                        onReset={() => {
-                            setScope(getInitialScopeParams());
-                            setDecodedFrames([]);
-                            samplesRef.current = [];
-                        }}
-                    />
-                </aside>
+        <div className="osc-app theme-industrial density-comfortable">
 
-                {/* Center: Main Visualizer */}
-                <main className="flex flex-col gap-6 h-full min-w-0">
-                    <div className="flex-1 min-h-0">
-                        <WaveformViewer 
-                            samples={samples}
-                            view={view}
-                            ch1={scope.ch1}
-                            ch2={scope.ch2}
-                            tdiv={scope.tdiv}
-                            cursorMode={scope.cursorMode}
-                            cursorA={scope.cursorA}
-                            cursorB={scope.cursorB}
-                            showDiff={showDiff}
-                            showEye={showEye}
-                            onUpdateView={setView}
-                            onUpdateCursors={(a, b) => setScope(p => ({ ...p, cursorA: a, cursorB: b }))}
-                            onExportPNG={() => {}}
-                            onResetView={() => setView({ zoomX: 1, zoomY: 1, panX: 0, panY: 0 })}
+            {/* ── TOPBAR ───────────────────────────────────────────────── */}
+            <div className="osc-topbar">
+                <div className="osc-brand">
+                    <div className="osc-logo">DV</div>
+                    <div>
+                        <div className="osc-title">DIFFERENTIAL VOLTAGE OSCILLOSCOPE</div>
+                        <div className="osc-sub">CAN · ISO 11898-2 · 500 KBIT/S</div>
+                    </div>
+                </div>
+                <div className="osc-topbar-meta">
+                    <div className="osc-meta-cell">
+                        <span className="osc-meta-k">Session</span>
+                        <span className="osc-meta-v">CAN-A · Lab 3</span>
+                    </div>
+                    <div className="osc-meta-cell">
+                        <span className="osc-meta-k">Sample Rate</span>
+                        <span className="osc-meta-v">2.0<span className="osc-unit">GSa/s</span></span>
+                    </div>
+                    <div className="osc-meta-cell">
+                        <span className="osc-meta-k">Memory</span>
+                        <span className="osc-meta-v">400<span className="osc-unit">Mpts</span></span>
+                    </div>
+                    <div className="osc-meta-cell">
+                        <span className="osc-meta-k">Trigger</span>
+                        <span className="osc-meta-v" style={{ color: 'var(--accent)' }}>
+                            {state.trig.source} · {state.trig.level.toFixed(2)}V
+                        </span>
+                    </div>
+                    <div className="osc-meta-cell">
+                        <span className="osc-meta-k">Status</span>
+                        <span className="osc-meta-v">
+                            <span className={`osc-pill live ${state.running ? 'ok' : 'warn'}`}>
+                                <span className="osc-dot" />
+                                {state.running ? 'Live capture' : 'Held'}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+                <div className="osc-top-actions">
+                    <button className="osc-iconbtn" title="Capture"><Camera /></button>
+                    <button className="osc-iconbtn" title="Export CSV" onClick={handleExportCSV}><Download /></button>
+                    <button className="osc-iconbtn" title="Settings" onClick={() => setShowSettings(v => !v)}><GearIcon /></button>
+                </div>
+            </div>
+
+            {/* ── LEFT RAIL ────────────────────────────────────────────── */}
+            {layout === 'knobs'
+                ? <KnobRail state={state} setState={setState} onAutoscale={handleAutoscale} />
+                : <LeftRail  state={state} setState={setState} onAutoscale={handleAutoscale} />}
+
+            {/* ── STAGE ────────────────────────────────────────────────── */}
+            <div className="osc-stage">
+                <div className="osc-scope">
+                    {/* Channel scale header */}
+                    <div className="osc-scope-top">
+                        <div className="osc-scale-grp" style={{ '--chc': 'var(--ch1)' } as React.CSSProperties}>
+                            <span className="osc-sw" /><span className="osc-lbl">CH1</span>
+                            <span className="osc-val">{state.channels.h.vpd} V/div</span>
+                        </div>
+                        <div className="osc-scale-grp" style={{ '--chc': 'var(--ch2)' } as React.CSSProperties}>
+                            <span className="osc-sw" /><span className="osc-lbl">CH2</span>
+                            <span className="osc-val">{state.channels.l.vpd} V/div</span>
+                        </div>
+                        <div className="osc-scale-grp" style={{ '--chc': 'var(--chd)' } as React.CSSProperties}>
+                            <span className="osc-sw" /><span className="osc-lbl">DIFF</span>
+                            <span className="osc-val">{state.channels.d.vpd} V/div</span>
+                        </div>
+                        <div className="osc-scale-grp">
+                            <span className="osc-lbl" style={{ color: 'var(--accent)' }}>TIME</span>
+                            <span className="osc-val">{fmtTb(state.timebase)}/div</span>
+                        </div>
+                        <div className="osc-right">
+                            <button className={`osc-tbtn ${!fftMode ? 'active' : ''}`} onClick={() => setFftMode(false)}>
+                                <Waves /> TIME
+                            </button>
+                            <button className={`osc-tbtn ${fftMode ? 'active' : ''}`} onClick={() => setFftMode(true)}>
+                                <Fft /> FFT
+                            </button>
+                            <button className={`osc-tbtn ${cursorsOn ? 'active' : ''}`} onClick={() => setCursorsOn(v => !v)}>
+                                <CursorIcon /> CURSORS
+                            </button>
+                            <button className="osc-tbtn" onClick={handleExportCSV}>
+                                <Download /> EXPORT
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Waveform canvas */}
+                    <div className="osc-scope-body">
+                        <WaveformViewer
+                            state={state}
+                            signal={signal}
+                            fftMode={fftMode}
+                            cursorsOn={cursorsOn}
+                            cursors={cursors}
+                            persistence={persistence}
+                            traceGlow={true}
+                            onMeas={setMeas}
                         />
-                    </div>
-                    
-                    {/* Integrated Quick Action Bar */}
-                    <div className="flex-shrink-0 glass-panel !rounded-none !border-white/5 px-3 py-2 flex items-center justify-between">
-                        <div className="flex items-center gap-1">
-                            <button
-                                onClick={() => setShowDiff(!showDiff)}
-                                className={cn(
-                                    "px-3 py-1.5 text-[11px] font-outfit font-medium transition-colors",
-                                    showDiff ? "bg-[#00ff9f]/10 text-[#00ff9f] border border-[#00ff9f]/30" : "text-white/50 hover:text-white hover:bg-white/5 border border-white/10"
-                                )}
-                            >
-                                Diff Math
-                            </button>
-                            <button
-                                onClick={() => setShowEye(!showEye)}
-                                className={cn(
-                                    "px-3 py-1.5 text-[11px] font-outfit font-medium transition-colors",
-                                    showEye ? "bg-[#00f3ff]/10 text-[#00f3ff] border border-[#00f3ff]/30" : "text-white/50 hover:text-white hover:bg-white/5 border border-white/10"
-                                )}
-                            >
-                                Eye Diagram
-                            </button>
-                            <div className="w-px h-4 bg-white/10 mx-2" />
-                            <button className="p-2 hover:bg-white/5 text-white/40 hover:text-[#00f3ff] transition-colors" title="FFT view">
-                                <Binary size={15} />
-                            </button>
-                            <button
-                                onClick={handleExportCSV}
-                                className="p-2 hover:bg-white/5 text-white/40 hover:text-[#00f3ff] transition-colors" title="Export CSV"
-                            >
-                                <FileJson size={15} />
-                            </button>
-                            <button
-                                onClick={() => setScope(p => ({ ...p, cursorMode: p.cursorMode === 'off' ? 'time' : 'off' }))}
-                                className={cn(
-                                    "p-2 transition-colors",
-                                    scope.cursorMode === 'time' ? "bg-[#00f3ff]/10 text-[#00f3ff]" : "text-white/40 hover:text-[#00f3ff] hover:bg-white/5"
-                                )}
-                                title="Toggle cursors"
-                            >
-                                <Maximize2 size={15} className="rotate-45" />
-                            </button>
+                        <div className="osc-scope-badge">
+                            <span className="osc-dot" />
+                            {state.running ? 'CAPTURING' : 'HELD'} · 500 kbit/s
                         </div>
-
-                        <div className="flex items-center gap-2 pr-2">
-                            <span className="text-[10px] font-outfit text-white/40">Bus state</span>
-                            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#00ff9f]/10 border border-[#00ff9f]/20">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#00ff9f]" />
-                                <span className="text-[10px] font-mono uppercase tracking-wider text-[#00ff9f]">Active</span>
-                            </div>
+                        <div className="osc-scope-legend">
+                            {[
+                                { label: 'CAN_H',      color: 'var(--ch1)' },
+                                { label: 'CAN_L',      color: 'var(--ch2)' },
+                                { label: 'DIFF = H−L', color: 'var(--chd)' },
+                            ].map(item => (
+                                <div key={item.label} className="osc-legend-item"
+                                    style={{ '--chc': item.color } as React.CSSProperties}>
+                                    <span className="osc-sw" style={{ background: item.color }} />
+                                    {item.label}
+                                </div>
+                            ))}
                         </div>
                     </div>
-                </main>
 
-                {/* Right: Metrics & Health */}
-                <aside className="h-full overflow-y-auto pl-1">
-                    <ScopeMetrics metrics={metrics} />
-                </aside>
-            </div>
-
-            {/* Bottom: Decoder Table */}
-            <div className="w-full">
-                <ProtocolDecoder 
-                    frames={decodedFrames}
-                    onRowClick={(_id) => {}}
-                />
-            </div>
-
-            {/* Instrument Specs */}
-            <div className="mt-2 flex flex-wrap items-center gap-x-8 gap-y-2 px-3 py-2.5 bg-white/[0.015] border-t border-white/5">
-                {[
-                    { label: 'Voltage Precision', value: '12-bit ADC', icon: <Cpu size={11} /> },
-                    { label: 'Sampling Rate', value: '500 MS/s', icon: <Activity size={11} /> },
-                    { label: 'Memory Depth', value: '256 kpts', icon: <Database size={11} /> },
-                    { label: 'Isolation', value: '2.5 kV RMS', icon: <ShieldCheck size={11} /> }
-                ].map((stat) => (
-                    <div key={stat.label} className="flex items-center gap-2">
-                        <span className="text-white/30">{stat.icon}</span>
-                        <span className="text-[11px] font-outfit text-white/40">{stat.label}</span>
-                        <span className="text-[11px] font-mono tabular-nums text-white/70">{stat.value}</span>
+                    {/* Annotation bar — dedicated row below canvas, above frame ribbon */}
+                    <div className="osc-scope-ann">
+                        <span>◄ POSITION  0.00 s</span>
+                        <span>·</span><span>COUPLING  DC</span>
+                        <span>·</span><span>BW  200 MHz</span>
+                        <span>·</span><span>PROBE  10×</span>
+                        <span>·</span><span style={{ color: 'var(--accent)', marginLeft: 'auto', paddingRight: 4 }}>
+                            Scroll to zoom · Drag to pan · Dbl-click to reset
+                        </span>
                     </div>
-                ))}
+
+                    {/* CAN frame ribbon */}
+                    <div className="osc-frame-ribbon">
+                        {(() => {
+                            let acc = 0;
+                            return FRAME_ZONES.map((z, i) => {
+                                const left = `${acc}%`;
+                                acc += z.w;
+                                return (
+                                    <div key={i}
+                                        className={`osc-frame ${z.cls} ${i === 1 ? 'selected' : ''}`}
+                                        style={{ left, width: `${z.w - 0.4}%` }}
+                                        onClick={() => setSelectedFrame(0)}
+                                        title={z.label}
+                                    >{z.label}</div>
+                                );
+                            });
+                        })()}
+                    </div>
+                </div>
             </div>
+
+            {/* ── RIGHT RAIL ───────────────────────────────────────────── */}
+            <ScopeMetrics meas={meas} running={state.running} />
+
+            {/* ── DECODER ──────────────────────────────────────────────── */}
+            <ProtocolDecoder selected={selectedFrame} onSelect={setSelectedFrame} />
+
+            {/* ── SETTINGS PANEL ───────────────────────────────────────── */}
+            {showSettings && (
+                <div style={{
+                    position: 'fixed', right: 18, bottom: 18, zIndex: 51,
+                    background: 'var(--panel)', border: '1px solid var(--stroke-2)',
+                    borderRadius: 'var(--radius-lg)', padding: '14px 16px',
+                    minWidth: 260, boxShadow: '0 20px 50px rgba(0,0,0,.6)',
+                    fontFamily: 'var(--mono)', display: 'flex', flexDirection: 'column', gap: 12,
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--ink)' }}>Settings</span>
+                        <button onClick={() => setShowSettings(false)} style={{ color: 'var(--ink-dim)', fontSize: 20, lineHeight: 1, cursor: 'pointer' }}>×</button>
+                    </div>
+                    <SettingRow label="Layout">
+                        <ToggleGroup
+                            value={layout}
+                            options={[{ v: 'standard', l: 'Buttons' }, { v: 'knobs', l: 'Knobs' }]}
+                            onChange={v => setLayout(v as LayoutType)}
+                        />
+                    </SettingRow>
+                    <SettingRow label="Demo Signal">
+                        <ToggleGroup
+                            value={signal}
+                            options={[{ v: 'can', l: 'CAN' }, { v: 'sine', l: 'Sine' }, { v: 'square', l: 'Sq.' }, { v: 'noisy', l: 'Noisy' }]}
+                            onChange={v => setSignal(v as SignalType)}
+                        />
+                    </SettingRow>
+                    <SettingCheck label="Phosphor Persistence" value={persistence} onChange={setPersistence} />
+                </div>
+            )}
         </div>
     );
 };
+
+// ── Settings helpers ──────────────────────────────────────────────────────────
+const SettingRow: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <span style={{ fontSize: 10, letterSpacing: '.12em', color: 'var(--ink-faint)', textTransform: 'uppercase' }}>{label}</span>
+        {children}
+    </div>
+);
+
+const ToggleGroup: React.FC<{
+    value: string;
+    options: { v: string; l: string }[];
+    onChange: (v: string) => void;
+}> = ({ value, options, onChange }) => (
+    <div style={{ display: 'flex', gap: 4 }}>
+        {options.map(o => (
+            <button key={o.v} onClick={() => onChange(o.v)} style={{
+                flex: 1, padding: '6px 4px', borderRadius: 4, border: '1px solid',
+                borderColor: value === o.v ? 'var(--accent)' : 'var(--stroke)',
+                background: value === o.v ? 'var(--accent)' : 'var(--bg-3)',
+                color: value === o.v ? 'var(--accent-ink)' : 'var(--ink-dim)',
+                fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700,
+                cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '.04em',
+            }}>{o.l}</button>
+        ))}
+    </div>
+);
+
+const SettingCheck: React.FC<{ label: string; value: boolean; onChange: (v: boolean) => void }> = ({ label, value, onChange }) => (
+    <div onClick={() => onChange(!value)} style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '8px 10px', background: 'var(--bg-3)',
+        border: '1px solid var(--stroke)', borderRadius: 4, cursor: 'pointer',
+    }}>
+        <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink)' }}>{label}</span>
+        <div style={{
+            width: 36, height: 18, borderRadius: 10,
+            background: value ? 'color-mix(in srgb, var(--accent) 40%, transparent)' : 'var(--stroke)',
+            position: 'relative', flexShrink: 0,
+        }}>
+            <div style={{
+                position: 'absolute', top: 2, borderRadius: '50%', width: 14, height: 14,
+                background: value ? 'var(--accent)' : 'var(--ink-faint)',
+                left: value ? 19 : 2, transition: 'left .15s, background .15s',
+            }} />
+        </div>
+    </div>
+);
