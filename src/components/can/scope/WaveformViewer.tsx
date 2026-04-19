@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import type { OscState, OscMeas, SignalType } from './types';
 
 // ── Signal generators ───────────────────────────────────────────────────────
@@ -103,9 +103,10 @@ interface WaveformViewerProps {
     onStateChange?: (newState: OscState) => void;
 }
 
-export const WaveformViewer: React.FC<WaveformViewerProps> = ({
-    state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, onStateChange,
-}) => {
+export const WaveformViewer = forwardRef<
+    { reset: () => void },
+    WaveformViewerProps
+>(({ state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, onStateChange }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef(0);
     const scrollRef = useRef(0);
@@ -377,6 +378,23 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
     useEffect(() => { renderRef.current = doRender; }, [doRender]);
     useEffect(() => { stateRef.current = state; }, [state]);
 
+    useImperativeHandle(ref, () => ({
+        reset: () => {
+            zoomRef.current = 1.0;
+            panRef.current = 0;
+            if (onStateChange) {
+                onStateChange({
+                    ...stateRef.current,
+                    channels: {
+                        h: { ...stateRef.current.channels.h, off: 0 },
+                        l: { ...stateRef.current.channels.l, off: 0 },
+                        d: { ...stateRef.current.channels.d, off: -1.4 },
+                    },
+                });
+            }
+        },
+    }), [onStateChange]);
+
     useEffect(() => {
         if (persistence) {
             const c = document.createElement('canvas');
@@ -436,24 +454,17 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
             canvas.style.cursor = 'crosshair';
         };
 
-        const onDblClick = () => {
-            zoomRef.current = 1.0;
-            panRef.current = 0;
-        };
-
         canvas.style.cursor = 'crosshair';
         canvas.addEventListener('wheel', onWheel, { passive: false });
         canvas.addEventListener('mousedown', onMouseDown);
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
-        canvas.addEventListener('dblclick', onDblClick);
 
         return () => {
             canvas.removeEventListener('wheel', onWheel);
             canvas.removeEventListener('mousedown', onMouseDown);
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
-            canvas.removeEventListener('dblclick', onDblClick);
         };
     }, []);
 
@@ -467,4 +478,4 @@ export const WaveformViewer: React.FC<WaveformViewerProps> = ({
     }, []);
 
     return <canvas ref={canvasRef} />;
-};
+});

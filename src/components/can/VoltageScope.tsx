@@ -38,6 +38,11 @@ const GearIcon = () => (
         <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" />
     </svg>
 );
+const ResetIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M3 21v-5h5" />
+    </svg>
+);
 
 // ── Frame ribbon ─────────────────────────────────────────────────────────────
 const FRAME_ZONES = [
@@ -69,6 +74,7 @@ const getInitialMeas = (): OscMeas => ({
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export const VoltageScope: React.FC = () => {
+    const waveformRef = React.useRef<{ reset: () => void }>(null);
     const [state, setState] = useState<OscState>(getInitialState);
     const [meas, setMeas] = useState<OscMeas>(getInitialMeas);
     const [layout, setLayout] = useState<LayoutType>('knobs');
@@ -79,6 +85,10 @@ export const VoltageScope: React.FC = () => {
     const [persistence, setPersistence] = useState(false);
     const [selectedFrame, setSelectedFrame] = useState(0);
     const [showSettings, setShowSettings] = useState(false);
+
+    const handleReset = useCallback(() => {
+        waveformRef.current?.reset();
+    }, []);
 
     const handleAutoscale = useCallback(() => {
         setState(s => ({
@@ -158,6 +168,7 @@ export const VoltageScope: React.FC = () => {
                 </div>
                 <div className="osc-top-actions">
                     <button className="osc-iconbtn" title="Capture"><Camera /></button>
+                    <button className="osc-iconbtn" title="Reset view" onClick={handleReset}><ResetIcon /></button>
                     <button className="osc-iconbtn" title="Export CSV" onClick={handleExportCSV}><Download /></button>
                     <button className="osc-iconbtn" title="Settings" onClick={() => setShowSettings(v => !v)}><GearIcon /></button>
                 </div>
@@ -208,6 +219,7 @@ export const VoltageScope: React.FC = () => {
                     {/* Waveform canvas */}
                     <div className="osc-scope-body">
                         <WaveformViewer
+                            ref={waveformRef}
                             state={state}
                             signal={signal}
                             fftMode={fftMode}
@@ -244,7 +256,7 @@ export const VoltageScope: React.FC = () => {
                         <span>·</span><span>BW  200 MHz</span>
                         <span>·</span><span>PROBE  10×</span>
                         <span>·</span><span style={{ color: 'var(--accent)', marginLeft: 'auto', paddingRight: 4 }}>
-                            Scroll to zoom · Drag to pan · Dbl-click to reset
+                            Scroll to zoom · Drag to pan · Use reset button to reset view
                         </span>
                     </div>
 
