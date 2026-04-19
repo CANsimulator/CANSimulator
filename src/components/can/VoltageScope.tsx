@@ -86,6 +86,7 @@ export const VoltageScope: React.FC = () => {
     const [persistence, setPersistence] = useState(false);
     const [selectedFrame, setSelectedFrame] = useState(0);
     const [showSettings, setShowSettings] = useState(false);
+    const [panPositionUs, setPanPositionUs] = useState(0);
 
     const handleReset = useCallback(() => {
         waveformRef.current?.reset();
@@ -244,6 +245,7 @@ export const VoltageScope: React.FC = () => {
                             traceGlow={true}
                             onMeas={setMeas}
                             onStateChange={setState}
+                            onPanChange={setPanPositionUs}
                         />
                         <div className="osc-scope-badge">
                             <span className="osc-dot" />
@@ -266,7 +268,7 @@ export const VoltageScope: React.FC = () => {
 
                     {/* Annotation bar — dedicated row below canvas, above frame ribbon */}
                     <div className="osc-scope-ann">
-                        <span>◄ POSITION  0.00 s</span>
+                        <span>◄ POSITION  {panPositionUs === 0 ? '0.00 µs' : `${panPositionUs > 0 ? '+' : ''}${panPositionUs.toFixed(1)} µs`}</span>
                         <span>·</span><span>COUPLING  DC</span>
                         <span>·</span><span>BW  200 MHz</span>
                         <span>·</span><span>PROBE  10×</span>

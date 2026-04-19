@@ -101,12 +101,13 @@ interface WaveformViewerProps {
     traceGlow: boolean;
     onMeas: (m: OscMeas) => void;
     onStateChange?: (newState: OscState) => void;
+    onPanChange?: (panUs: number) => void;
 }
 
 export const WaveformViewer = forwardRef<
     { reset: () => void },
     WaveformViewerProps
->(({ state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, onStateChange }, ref) => {
+>(({ state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, onStateChange, onPanChange }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef(0);
     const scrollRef = useRef(0);
@@ -129,6 +130,7 @@ export const WaveformViewer = forwardRef<
     const rowHRef = useRef(0);
     const canvasRectRef = useRef<{ left: number; width: number }>({ left: 0, width: 0 });
     const stateRef = useRef(state);
+    const onPanChangeRef = useRef(onPanChange);
 
     const doRender = useCallback((ts: number) => {
         const canvas = canvasRef.current;
@@ -212,10 +214,12 @@ export const WaveformViewer = forwardRef<
             const v = ((rows / 2 - i) * vpd + state.axisOffsetY).toFixed(1);
             ctx.fillText(`${v}V`, 4, Math.max(10, Math.min(wh - 2, y + 3)));
         }
+        const totalUs = effectiveTb * cols;
+        const panOffsetUs = panRef.current * totalUs;
         ctx.textAlign = 'center';
         for (let i = 0; i <= cols; i++) {
             const x = i * colW;
-            const t = ((i - cols / 2) * effectiveTb).toFixed(0);
+            const t = ((i - cols / 2) * effectiveTb + panOffsetUs).toFixed(0);
             ctx.fillText(`${t}µs`, x, wh + 14);
         }
 
@@ -390,11 +394,13 @@ export const WaveformViewer = forwardRef<
 
     useEffect(() => { renderRef.current = doRender; }, [doRender]);
     useEffect(() => { stateRef.current = state; }, [state]);
+    useEffect(() => { onPanChangeRef.current = onPanChange; }, [onPanChange]);
 
     useImperativeHandle(ref, () => ({
         reset: () => {
             zoomRef.current = 1.0;
             panRef.current = 0;
+            onPanChangeRef.current?.(0);
             if (onStateChange) {
                 onStateChange({
                     ...stateRef.current,
@@ -455,6 +461,10 @@ export const WaveformViewer = forwardRef<
             const dy = e.clientY - dragRef.current.startY;
 
             panRef.current = dragRef.current.startPan - (dx / canvas.clientWidth) / zoomRef.current;
+
+            const { timebase } = stateRef.current;
+            const panUs = panRef.current * timebase * 10;
+            onPanChangeRef.current?.(panUs);
 
             if (rowHRef.current > 0) {
                 if (dragRef.current.dragMode === 'axis') {
