@@ -91,6 +91,9 @@ const GENERATORS: Record<SignalType, (N: number, scroll: number) => WaveArrays> 
 
 // ── Component ───────────────────────────────────────────────────────────────
 
+type ChannelSet = 'all' | 'lines' | 'diff';
+export type ScopeSync = { zoom: number; pan: number; scroll: number };
+
 interface WaveformViewerProps {
     state: OscState;
     signal: SignalType;
@@ -102,20 +105,22 @@ interface WaveformViewerProps {
     onMeas: (m: OscMeas) => void;
     onStateChange?: (newState: OscState) => void;
     onPanChange?: (panUs: number) => void;
+    channelSet?: ChannelSet;
+    syncRef?: React.MutableRefObject<ScopeSync>;
+    reportMeas?: boolean;
 }
 
 export const WaveformViewer = forwardRef<
     { reset: () => void },
     WaveformViewerProps
->(({ state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, onStateChange, onPanChange }, ref) => {
+>(({ state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, onStateChange, onPanChange, channelSet = 'all', syncRef, reportMeas = true }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef(0);
-    const scrollRef = useRef(0);
+    const internalSyncRef = useRef<ScopeSync>({ zoom: 1, pan: 0, scroll: 0 });
+    const sync = syncRef ?? internalSyncRef;
     const persistRef = useRef<HTMLCanvasElement | null>(null);
     const renderRef = useRef<(ts: number) => void>(() => { });
     const lastUpdRef = useRef(0);
-    const zoomRef = useRef(1.0);
-    const panRef = useRef(0);
     const dragRef = useRef<{
         startX: number;
         startY: number;
@@ -201,21 +206,27 @@ export const WaveformViewer = forwardRef<
         ctx.fillStyle = bg + 'dd';
         ctx.fillRect(0, wh + 1, w, PAD_B - 1);
 
-        const zoom = zoomRef.current;
+        const zoom = sync.current.zoom;
         const effectiveTb = state.timebase / zoom;
 
-        // Axis labels (with Y-axis panning)
+        // Per-pane axis reference: lines center on 2.5V, diff centers on 1.0V
+        const isDiff = channelSet === 'diff';
+        const centerV = isDiff ? 1.0 : 2.5;
+        const axisVpd = isDiff ? state.channels.d.vpd : state.channels.h.vpd;
+        const axisOffset = isDiff ? state.channels.d.off : state.axisOffsetY;
+
+        // Axis labels
         ctx.fillStyle = inkFaint;
         ctx.font = `10px 'JetBrains Mono', monospace`;
         ctx.textAlign = 'left';
-        const vpd = state.channels.h.vpd;
         for (let i = 0; i <= rows; i++) {
             const y = i * rowH;
-            const v = ((rows / 2 - i) * vpd + state.axisOffsetY).toFixed(1);
+            const raw = (rows / 2 - i) * axisVpd + axisOffset;
+            const v = (channelSet === 'all' ? raw : raw + centerV).toFixed(2);
             ctx.fillText(`${v}V`, 4, Math.max(10, Math.min(wh - 2, y + 3)));
         }
         const totalUs = effectiveTb * cols;
-        const panOffsetUs = panRef.current * totalUs;
+        const panOffsetUs = sync.current.pan * totalUs;
         ctx.textAlign = 'center';
         for (let i = 0; i <= cols; i++) {
             const x = i * colW;
@@ -223,10 +234,12 @@ export const WaveformViewer = forwardRef<
             ctx.fillText(`${t}µs`, x, wh + 14);
         }
 
-        // Generate signals
-        scrollRef.current = state.running ? (scrollRef.current + 0.004 / zoom) : scrollRef.current;
+        // Generate signals — only advance shared scroll once per frame (on the primary pane)
+        if (!isDiff) {
+            sync.current.scroll = state.running ? (sync.current.scroll + 0.004 / zoom) : sync.current.scroll;
+        }
         const N = Math.ceil(w / zoom);
-        const { H, L, D } = GENERATORS[signal](N, scrollRef.current + panRef.current);
+        const { H, L, D } = GENERATORS[signal](N, sync.current.scroll + sync.current.pan);
 
         // Measurement accumulation
         let minD = +Infinity, maxD = -Infinity, sumSq = 0;
@@ -241,19 +254,19 @@ export const WaveformViewer = forwardRef<
             if (i > 0 && ((D[i - 1] < 1 && D[i] >= 1) || (D[i - 1] >= 1 && D[i] < 1))) crossings++;
         }
 
-        const vToY = (v: number, vpdScale: number, offset: number) => {
+        const vToY = (v: number, vpdScale: number, offset: number, refV: number = 2.5) => {
             const center = wh / 2 - (offset / vpdScale) * rowH;
-            return center - ((v - 2.5) / vpdScale) * rowH;
+            return center - ((v - refV) / vpdScale) * rowH;
         };
 
-        const drawTrace = (arr: Float32Array, color: string, vpdScale: number, offset: number) => {
+        const drawTrace = (arr: Float32Array, color: string, vpdScale: number, offset: number, refV: number = 2.5) => {
             if (traceGlow) { ctx.shadowColor = color; ctx.shadowBlur = 8; }
             else { ctx.shadowBlur = 0; }
             ctx.strokeStyle = color; ctx.lineWidth = 1.8;
             ctx.beginPath();
             for (let i = 0; i < N; i++) {
                 const x = i * zoom;
-                const y = vToY(arr[i], vpdScale, offset);
+                const y = vToY(arr[i], vpdScale, offset, refV);
                 if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             }
             ctx.stroke();
@@ -268,7 +281,7 @@ export const WaveformViewer = forwardRef<
                     pctx.beginPath();
                     for (let i = 0; i < N; i++) {
                         const x = i * zoom;
-                        const y = vToY(arr[i], vpdScale, offset);
+                        const y = vToY(arr[i], vpdScale, offset, refV);
                         if (i === 0) pctx.moveTo(x, y); else pctx.lineTo(x, y);
                     }
                     pctx.stroke();
@@ -282,7 +295,13 @@ export const WaveformViewer = forwardRef<
         ctx.rect(0, 0, w, wh);
         ctx.clip();
 
-        if (fftMode) {
+        const showFft = fftMode && channelSet !== 'lines';
+        const showH = !fftMode && channelSet !== 'diff' && state.channels.h.on;
+        const showL = !fftMode && channelSet !== 'diff' && state.channels.l.on;
+        const showD = !fftMode && channelSet !== 'lines' && state.channels.d.on;
+        const diffRefV = channelSet === 'diff' ? 1.0 : 2.5;
+
+        if (showFft) {
             const bars = 64;
             const barW = w / bars;
             for (let i = 0; i < bars; i++) {
@@ -297,7 +316,7 @@ export const WaveformViewer = forwardRef<
                 ctx.fillStyle = chdc;
                 ctx.fillRect(i * barW + 1, wh - barH, barW - 2, 2);
             }
-        } else {
+        } else if (!fftMode) {
             if (persistence && persistRef.current) {
                 const pctx = persistRef.current.getContext('2d');
                 if (pctx) {
@@ -309,13 +328,13 @@ export const WaveformViewer = forwardRef<
                 }
                 ctx.drawImage(persistRef.current, 0, 0, persistRef.current.width / dpr, persistRef.current.height / dpr);
             }
-            if (state.channels.h.on) drawTrace(H, ch1c, state.channels.h.vpd, state.channels.h.off);
-            if (state.channels.l.on) drawTrace(L, ch2c, state.channels.l.vpd, state.channels.l.off);
-            if (state.channels.d.on) drawTrace(D, chdc, state.channels.d.vpd, state.channels.d.off);
+            if (showH) drawTrace(H, ch1c, state.channels.h.vpd, state.channels.h.off, 2.5);
+            if (showL) drawTrace(L, ch2c, state.channels.l.vpd, state.channels.l.off, 2.5);
+            if (showD) drawTrace(D, chdc, state.channels.d.vpd, state.channels.d.off, diffRefV);
         }
 
-        // Trigger line (clipped to waveform area)
-        if (!fftMode) {
+        // Trigger line (only in lines/all — trigger is referenced to line voltages)
+        if (!fftMode && channelSet !== 'diff') {
             const ty = Math.max(1, Math.min(wh - 1, vToY(state.trig.level, state.channels.h.vpd, state.channels.h.off)));
             ctx.strokeStyle = accent; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.2;
             ctx.beginPath(); ctx.moveTo(0, ty); ctx.lineTo(w, ty); ctx.stroke();
@@ -330,8 +349,8 @@ export const WaveformViewer = forwardRef<
 
         ctx.restore(); // end waveform clip
 
-        // Zoom indicator
-        if (zoom !== 1.0) {
+        // Zoom indicator (only on primary pane to avoid duplication)
+        if (zoom !== 1.0 && !isDiff) {
             ctx.save();
             const label = zoom >= 1 ? `${zoom.toFixed(1)}×` : `${zoom.toFixed(2)}×`;
             ctx.font = `bold 11px 'JetBrains Mono', monospace`;
@@ -346,7 +365,7 @@ export const WaveformViewer = forwardRef<
             ctx.restore();
         }
 
-        // Cursors
+        // Cursors — voltage cursors use the pane's own channel scale
         if (cursorsOn && !fftMode) {
             ctx.save();
             ctx.strokeStyle = accent + 'CC'; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
@@ -356,27 +375,32 @@ export const WaveformViewer = forwardRef<
             ctx.beginPath();
             ctx.moveTo(x1, 0); ctx.lineTo(x1, h);
             ctx.moveTo(x2, 0); ctx.lineTo(x2, h);
-            const y1 = vToY(cursors.v1, state.channels.d.vpd, state.channels.d.off);
-            const y2 = vToY(cursors.v2, state.channels.d.vpd, state.channels.d.off);
+            const cursorVpd = isDiff ? state.channels.d.vpd : state.channels.h.vpd;
+            const cursorOff = isDiff ? state.channels.d.off : state.channels.h.off;
+            const y1 = vToY(cursors.v1, cursorVpd, cursorOff, diffRefV);
+            const y2 = vToY(cursors.v2, cursorVpd, cursorOff, diffRefV);
             ctx.moveTo(0, y1); ctx.lineTo(w, y1);
             ctx.moveTo(0, y2); ctx.lineTo(w, y2);
             ctx.stroke(); ctx.setLineDash([]);
-            const dt = Math.abs(cursors.t2 - cursors.t1);
-            const dv = Math.abs(cursors.v2 - cursors.v1);
-            ctx.fillStyle = 'rgba(0,0,0,0.75)';
-            ctx.fillRect(w / 2 - 68, 10, 136, 34);
-            ctx.strokeStyle = accent; ctx.lineWidth = 1;
-            ctx.strokeRect(w / 2 - 68, 10, 136, 34);
-            ctx.fillStyle = accent;
-            ctx.font = `bold 11px 'JetBrains Mono', monospace`;
-            ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(`Δt  ${dt.toFixed(1)} µs`, w / 2, 14);
-            ctx.fillText(`Δv  ${dv.toFixed(2)} V`, w / 2, 28);
+            // Only draw the Δ readout once (primary pane)
+            if (!isDiff) {
+                const dt = Math.abs(cursors.t2 - cursors.t1);
+                const dv = Math.abs(cursors.v2 - cursors.v1);
+                ctx.fillStyle = 'rgba(0,0,0,0.75)';
+                ctx.fillRect(w / 2 - 68, 10, 136, 34);
+                ctx.strokeStyle = accent; ctx.lineWidth = 1;
+                ctx.strokeRect(w / 2 - 68, 10, 136, 34);
+                ctx.fillStyle = accent;
+                ctx.font = `bold 11px 'JetBrains Mono', monospace`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+                ctx.fillText(`Δt  ${dt.toFixed(1)} µs`, w / 2, 14);
+                ctx.fillText(`Δv  ${dv.toFixed(2)} V`, w / 2, 28);
+            }
             ctx.restore();
         }
 
-        // Throttled measurement update
-        if (ts - lastUpdRef.current > 200) {
+        // Throttled measurement update (only from the pane that owns measurement)
+        if (reportMeas && ts - lastUpdRef.current > 200) {
             lastUpdRef.current = ts;
             const totalT = state.timebase * cols;
             const freq = (crossings / 2) / (totalT / 1e6);
@@ -390,7 +414,7 @@ export const WaveformViewer = forwardRef<
                 fall: 86 + Math.random() * 8,
             });
         }
-    }, [state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas]);
+    }, [state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, channelSet, reportMeas, sync]);
 
     useEffect(() => { renderRef.current = doRender; }, [doRender]);
     useEffect(() => { stateRef.current = state; }, [state]);
@@ -398,8 +422,8 @@ export const WaveformViewer = forwardRef<
 
     useImperativeHandle(ref, () => ({
         reset: () => {
-            zoomRef.current = 1.0;
-            panRef.current = 0;
+            sync.current.zoom = 1.0;
+            sync.current.pan = 0;
             onPanChangeRef.current?.(0);
             if (onStateChange) {
                 onStateChange({
@@ -408,12 +432,12 @@ export const WaveformViewer = forwardRef<
                     channels: {
                         h: { ...stateRef.current.channels.h, off: 0 },
                         l: { ...stateRef.current.channels.l, off: 0 },
-                        d: { ...stateRef.current.channels.d, off: -1.4 },
+                        d: { ...stateRef.current.channels.d, off: 0 },
                     },
                 });
             }
         },
-    }), [onStateChange]);
+    }), [onStateChange, sync]);
 
     useEffect(() => {
         if (persistence) {
@@ -430,84 +454,166 @@ export const WaveformViewer = forwardRef<
         const canvas = canvasRef.current;
         if (!canvas) return;
 
+        const AXIS_HIT_W = 60; // px from canvas left counted as Y-axis gutter
+        const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+        const relX = (clientX: number) => clientX - canvasRectRef.current.left;
+
+        const scaleVpd = (factor: number) => {
+            const s = stateRef.current;
+            if (channelSet === 'diff') {
+                const v = clamp(s.channels.d.vpd / factor, 0.1, 10);
+                onStateChange?.({
+                    ...s,
+                    channels: { ...s.channels, d: { ...s.channels.d, vpd: v } },
+                });
+            } else if (channelSet === 'lines') {
+                const v = clamp(s.channels.h.vpd / factor, 0.1, 10);
+                onStateChange?.({
+                    ...s,
+                    channels: {
+                        ...s.channels,
+                        h: { ...s.channels.h, vpd: v },
+                        l: { ...s.channels.l, vpd: v },
+                    },
+                });
+            } else {
+                const v = clamp(s.channels.h.vpd / factor, 0.1, 10);
+                onStateChange?.({
+                    ...s,
+                    channels: {
+                        h: { ...s.channels.h, vpd: v },
+                        l: { ...s.channels.l, vpd: v },
+                        d: { ...s.channels.d, vpd: v },
+                    },
+                });
+            }
+        };
+
         const onWheel = (e: WheelEvent) => {
             e.preventDefault();
             const factor = e.deltaY < 0 ? 1.25 : 1 / 1.25;
-            zoomRef.current = Math.max(0.25, Math.min(16, zoomRef.current * factor));
+            if (relX(e.clientX) < AXIS_HIT_W) {
+                // Wheel over Y-axis gutter expands/compresses V/div for this pane
+                scaleVpd(factor);
+            } else {
+                sync.current.zoom = clamp(sync.current.zoom * factor, 0.25, 16);
+            }
         };
 
-        const onMouseDown = (e: MouseEvent) => {
-            const relativeX = e.clientX - canvasRectRef.current.left;
-            const isAxisArea = relativeX < 60;
+        const onPointerDown = (e: PointerEvent) => {
+            // Ignore secondary buttons / non-primary touches
+            if (e.button !== undefined && e.button !== 0) return;
+            e.preventDefault();
+            try { canvas.setPointerCapture(e.pointerId); } catch { /* Safari quirks */ }
+
+            const isAxisArea = relX(e.clientX) < AXIS_HIT_W;
             const dragMode = isAxisArea ? 'axis' : 'graph';
+            const s = stateRef.current;
+            const dragVpd = channelSet === 'diff' ? s.channels.d.vpd : s.channels.h.vpd;
 
             dragRef.current = {
                 startX: e.clientX,
                 startY: e.clientY,
-                startPan: panRef.current,
-                startOffsetH: state.channels.h.off,
-                startOffsetL: state.channels.l.off,
-                startOffsetD: state.channels.d.off,
-                startAxisOffsetY: state.axisOffsetY,
-                vpd: state.channels.d.vpd,
+                startPan: sync.current.pan,
+                startOffsetH: s.channels.h.off,
+                startOffsetL: s.channels.l.off,
+                startOffsetD: s.channels.d.off,
+                startAxisOffsetY: s.axisOffsetY,
+                vpd: dragVpd,
                 dragMode,
             };
             canvas.style.cursor = dragMode === 'axis' ? 'ns-resize' : 'grabbing';
         };
 
-        const onMouseMove = (e: MouseEvent) => {
-            if (!dragRef.current) return;
+        const onPointerMove = (e: PointerEvent) => {
+            if (!dragRef.current) {
+                // Hover feedback so users discover the axis hit zone
+                canvas.style.cursor = relX(e.clientX) < AXIS_HIT_W ? 'ns-resize' : 'crosshair';
+                return;
+            }
             const dx = e.clientX - dragRef.current.startX;
             const dy = e.clientY - dragRef.current.startY;
 
-            panRef.current = dragRef.current.startPan - (dx / canvas.clientWidth) / zoomRef.current;
-
-            const { timebase } = stateRef.current;
-            const panUs = panRef.current * timebase * 10;
-            onPanChangeRef.current?.(panUs);
+            // X-pan is only applied in graph mode — axis mode must not leak into time axis
+            if (dragRef.current.dragMode === 'graph') {
+                sync.current.pan = dragRef.current.startPan - (dx / canvas.clientWidth) / sync.current.zoom;
+                const { timebase } = stateRef.current;
+                const panUs = sync.current.pan * timebase * 10;
+                onPanChangeRef.current?.(panUs);
+            }
 
             if (rowHRef.current > 0) {
                 if (dragRef.current.dragMode === 'axis') {
                     const axisOffsetChange = (dy / rowHRef.current) * dragRef.current.vpd;
-                    const newAxisOffsetY = dragRef.current.startAxisOffsetY + axisOffsetChange;
-
-                    onStateChange?.({
-                        ...stateRef.current,
-                        axisOffsetY: newAxisOffsetY,
-                    });
+                    if (channelSet === 'diff') {
+                        onStateChange?.({
+                            ...stateRef.current,
+                            channels: {
+                                ...stateRef.current.channels,
+                                d: { ...stateRef.current.channels.d, off: dragRef.current.startOffsetD + axisOffsetChange },
+                            },
+                        });
+                    } else {
+                        onStateChange?.({
+                            ...stateRef.current,
+                            axisOffsetY: dragRef.current.startAxisOffsetY + axisOffsetChange,
+                        });
+                    }
                 } else {
                     const offsetChange = -(dy / rowHRef.current) * dragRef.current.vpd;
-                    onStateChange?.({
-                        ...stateRef.current,
-                        axisOffsetY: dragRef.current.startAxisOffsetY,
-                        channels: {
-                            h: { ...stateRef.current.channels.h, off: dragRef.current.startOffsetH + offsetChange },
-                            l: { ...stateRef.current.channels.l, off: dragRef.current.startOffsetL + offsetChange },
-                            d: { ...stateRef.current.channels.d, off: dragRef.current.startOffsetD + offsetChange },
-                        },
-                    });
+                    if (channelSet === 'diff') {
+                        onStateChange?.({
+                            ...stateRef.current,
+                            channels: {
+                                ...stateRef.current.channels,
+                                d: { ...stateRef.current.channels.d, off: dragRef.current.startOffsetD + offsetChange },
+                            },
+                        });
+                    } else if (channelSet === 'lines') {
+                        onStateChange?.({
+                            ...stateRef.current,
+                            channels: {
+                                ...stateRef.current.channels,
+                                h: { ...stateRef.current.channels.h, off: dragRef.current.startOffsetH + offsetChange },
+                                l: { ...stateRef.current.channels.l, off: dragRef.current.startOffsetL + offsetChange },
+                            },
+                        });
+                    } else {
+                        onStateChange?.({
+                            ...stateRef.current,
+                            axisOffsetY: dragRef.current.startAxisOffsetY,
+                            channels: {
+                                h: { ...stateRef.current.channels.h, off: dragRef.current.startOffsetH + offsetChange },
+                                l: { ...stateRef.current.channels.l, off: dragRef.current.startOffsetL + offsetChange },
+                                d: { ...stateRef.current.channels.d, off: dragRef.current.startOffsetD + offsetChange },
+                            },
+                        });
+                    }
                 }
             }
         };
 
-        const onMouseUp = () => {
+        const onPointerUp = (e: PointerEvent) => {
             dragRef.current = null;
-            canvas.style.cursor = 'crosshair';
+            try { canvas.releasePointerCapture(e.pointerId); } catch { /* noop */ }
+            canvas.style.cursor = relX(e.clientX) < AXIS_HIT_W ? 'ns-resize' : 'crosshair';
         };
 
         canvas.style.cursor = 'crosshair';
         canvas.addEventListener('wheel', onWheel, { passive: false });
-        canvas.addEventListener('mousedown', onMouseDown);
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
+        canvas.addEventListener('pointerdown', onPointerDown);
+        canvas.addEventListener('pointermove', onPointerMove);
+        canvas.addEventListener('pointerup', onPointerUp);
+        canvas.addEventListener('pointercancel', onPointerUp);
 
         return () => {
             canvas.removeEventListener('wheel', onWheel);
-            canvas.removeEventListener('mousedown', onMouseDown);
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
+            canvas.removeEventListener('pointerdown', onPointerDown);
+            canvas.removeEventListener('pointermove', onPointerMove);
+            canvas.removeEventListener('pointerup', onPointerUp);
+            canvas.removeEventListener('pointercancel', onPointerUp);
         };
-    }, []);
+    }, [channelSet, onStateChange, sync]);
 
     useEffect(() => {
         const loop = (ts: number) => {

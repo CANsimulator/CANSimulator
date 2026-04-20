@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { DemoFrame } from './types';
+import { ReferencePlots } from '../ReferencePlots';
 
 const DEMO_FRAMES: DemoFrame[] = [
     { id: '0x0C9', fmt: 'STD', dlc: 8, data: [0x1A, 0x6B, 0x00, 0x00, 0x20, 0x4F, 0xFF, 0x1C], ts: 120,  status: 'ok',   name: 'Engine RPM' },
@@ -16,7 +17,7 @@ const DEMO_FRAMES: DemoFrame[] = [
 const hex = (v: number) => v.toString(16).toUpperCase().padStart(2, '0');
 const bin = (v: number, bits: number) => v.toString(2).padStart(bits, '0');
 
-type TabKey = 'Frames' | 'Errors' | 'Statistics' | 'Search';
+type TabKey = 'Frames' | 'Errors' | 'Statistics' | 'Search' | 'Reference';
 
 function makeFields(f: DemoFrame) {
     const crc = Math.abs(f.data.reduce((a, b) => a ^ b, 0xA5)) & 0x7FFF;
@@ -213,7 +214,7 @@ export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = ({ selected, onSe
                 {/* Header */}
                 <div className="osc-dec-head">
                     <span className="osc-t">CAN Protocol Decoder</span>
-                    {(['Frames', 'Errors', 'Statistics', 'Search'] as TabKey[]).map(t => (
+                    {(['Frames', 'Errors', 'Statistics', 'Search', 'Reference'] as TabKey[]).map(t => (
                         <span key={t} className={`osc-dec-tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>{t}</span>
                     ))}
                     <div className="osc-r">
@@ -294,7 +295,12 @@ export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = ({ selected, onSe
                     </div>
                 )}
 
-                {/* ── SEARCH tab ───────────────────────────────────────────── */}
+                {/* ── REFERENCE tab ────────────────────────────────────────── */}
+                {tab === 'Reference' && (
+                    <div className="osc-dec-body full no-scroll" style={{ overflowY: 'auto' }}>
+                        <ReferencePlots standalone={false} />
+                    </div>
+                )}
                 {tab === 'Search' && (
                     <div className="osc-dec-body full">
                         <div className="osc-search-wrap">

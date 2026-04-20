@@ -2,10 +2,11 @@ import React, { useState, useCallback, useEffect } from 'react';
 import '../can/scope.css';
 
 import { LeftRail, KnobRail } from './scope/ScopeControls';
-import { WaveformViewer } from './scope/WaveformViewer';
+import { WaveformViewer, type ScopeSync } from './scope/WaveformViewer';
 import { ScopeMetrics } from './scope/ScopeMetrics';
 import { ProtocolDecoder } from './scope/ProtocolDecoder';
 import type { OscState, OscMeas, SignalType, LayoutType } from './scope/types';
+import { ReferencePlots } from './ReferencePlots';
 
 // ── SVG icons ────────────────────────────────────────────────────────────────
 const Waves = () => (
@@ -43,6 +44,17 @@ const ResetIcon = () => (
         <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M3 21v-5h5" />
     </svg>
 );
+const ReferenceIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+);
+const XIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+);
 
 // ── Frame ribbon ─────────────────────────────────────────────────────────────
 const FRAME_ZONES = [
@@ -63,7 +75,7 @@ const getInitialState = (): OscState => ({
     channels: {
         h: { on: true, vpd: 1, off: 0 },
         l: { on: true, vpd: 1, off: 0 },
-        d: { on: true, vpd: 1, off: -1.4 },
+        d: { on: true, vpd: 1, off: 0 },
     },
     trig: { source: 'CH1', mode: 'Edge', level: 2.9, sweep: 'Auto' },
 });
@@ -75,7 +87,9 @@ const getInitialMeas = (): OscMeas => ({
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export const VoltageScope: React.FC = () => {
-    const waveformRef = React.useRef<{ reset: () => void }>(null);
+    const linesViewerRef = React.useRef<{ reset: () => void }>(null);
+    const diffViewerRef = React.useRef<{ reset: () => void }>(null);
+    const scopeSyncRef = React.useRef<ScopeSync>({ zoom: 1, pan: 0, scroll: 0 });
     const [state, setState] = useState<OscState>(getInitialState);
     const [meas, setMeas] = useState<OscMeas>(getInitialMeas);
     const [layout, setLayout] = useState<LayoutType>('knobs');
@@ -86,10 +100,14 @@ export const VoltageScope: React.FC = () => {
     const [persistence, setPersistence] = useState(false);
     const [selectedFrame, setSelectedFrame] = useState(0);
     const [showSettings, setShowSettings] = useState(false);
+    const [showReference, setShowReference] = useState(false);
     const [panPositionUs, setPanPositionUs] = useState(0);
 
     const handleReset = useCallback(() => {
-        waveformRef.current?.reset();
+        linesViewerRef.current?.reset();
+        diffViewerRef.current?.reset();
+        scopeSyncRef.current.zoom = 1;
+        scopeSyncRef.current.pan = 0;
         setState(getInitialState());
         setMeas(getInitialMeas());
         setFftMode(false);
@@ -105,7 +123,7 @@ export const VoltageScope: React.FC = () => {
             channels: {
                 h: { ...s.channels.h, vpd: 1, off: 0 },
                 l: { ...s.channels.l, vpd: 1, off: 0 },
-                d: { ...s.channels.d, vpd: 1, off: -1.4 },
+                d: { ...s.channels.d, vpd: 1, off: 0 },
             },
             timebase: 200,
         }));
@@ -127,6 +145,10 @@ export const VoltageScope: React.FC = () => {
             if (e.key.toLowerCase() === 's') setState(s => ({ ...s, running: false }));
             if (e.key.toLowerCase() === 'f') setFftMode(v => !v);
             if (e.key.toLowerCase() === 'c') setCursorsOn(v => !v);
+            if (e.key === 'Escape') {
+                setShowReference(false);
+                setShowSettings(false);
+            }
         };
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
@@ -186,9 +208,38 @@ export const VoltageScope: React.FC = () => {
                         <span>RESET</span>
                     </button>
                     <button className="osc-iconbtn" title="Export CSV" onClick={handleExportCSV}><Download /></button>
+                    <button
+                        className="osc-reset-btn"
+                        style={{ background: 'var(--accent)', color: 'var(--accent-ink)', marginLeft: '12px' }}
+                        onClick={() => setShowReference(true)}
+                    >
+                        <ReferenceIcon />
+                        <span>REFERENCE</span>
+                    </button>
                     <button className="osc-iconbtn" title="Settings" onClick={() => setShowSettings(v => !v)}><GearIcon /></button>
                 </div>
             </div>
+
+            {/* ── REFERENCE OVERLAY ─────────────────────────────────────── */}
+            {showReference && (
+                <div className="osc-overlay-modal" style={{ zIndex: 1000 }}>
+                    <div className="osc-overlay-head">
+                        <div className="osc-brand">
+                            <div className="osc-logo" style={{ background: 'var(--accent)' }}>REF</div>
+                            <div>
+                                <div className="osc-title">Signal Technical Reference</div>
+                                <div className="osc-sub">ISO 11898-2 · High Fidelity Analysis</div>
+                            </div>
+                        </div>
+                        <button className="osc-close-btn" onClick={() => setShowReference(false)}>
+                            <XIcon /> <span>CLOSE</span>
+                        </button>
+                    </div>
+                    <div className="osc-overlay-body" style={{ background: '#0b0f10', overflowY: 'auto' }}>
+                        <ReferencePlots standalone={false} />
+                    </div>
+                </div>
+            )}
 
             {/* ── LEFT RAIL ────────────────────────────────────────────── */}
             {layout === 'knobs'
@@ -232,37 +283,62 @@ export const VoltageScope: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Waveform canvas */}
-                    <div className="osc-scope-body">
-                        <WaveformViewer
-                            ref={waveformRef}
-                            state={state}
-                            signal={signal}
-                            fftMode={fftMode}
-                            cursorsOn={cursorsOn}
-                            cursors={cursors}
-                            persistence={persistence}
-                            traceGlow={true}
-                            onMeas={setMeas}
-                            onStateChange={setState}
-                            onPanChange={setPanPositionUs}
-                        />
-                        <div className="osc-scope-badge">
-                            <span className="osc-dot" />
-                            {state.running ? 'CAPTURING' : 'HELD'} · 500 kbit/s
+                    {/* Waveform canvases — split into two panes: lines (CAN_H/CAN_L) and diff (V_diff) */}
+                    <div className="osc-scope-body osc-scope-split">
+                        <div className="osc-scope-pane osc-scope-pane-lines">
+                            <WaveformViewer
+                                ref={linesViewerRef}
+                                state={state}
+                                signal={signal}
+                                fftMode={fftMode}
+                                cursorsOn={cursorsOn}
+                                cursors={cursors}
+                                persistence={persistence}
+                                traceGlow={true}
+                                onMeas={setMeas}
+                                onStateChange={setState}
+                                onPanChange={setPanPositionUs}
+                                channelSet="lines"
+                                syncRef={scopeSyncRef}
+                                reportMeas={true}
+                            />
+                            <div className="osc-scope-badge">
+                                <span className="osc-dot" />
+                                {state.running ? 'CAPTURING' : 'HELD'} · 500 kbit/s
+                            </div>
+                            <div className="osc-scope-pane-label">
+                                <span className="osc-pane-title">LINES</span>
+                                <span className="osc-legend-item" style={{ '--chc': 'var(--ch1)' } as React.CSSProperties}>
+                                    <span className="osc-sw" style={{ background: 'var(--ch1)' }} /> CAN_H
+                                </span>
+                                <span className="osc-legend-item" style={{ '--chc': 'var(--ch2)' } as React.CSSProperties}>
+                                    <span className="osc-sw" style={{ background: 'var(--ch2)' }} /> CAN_L
+                                </span>
+                            </div>
                         </div>
-                        <div className="osc-scope-legend">
-                            {[
-                                { label: 'CAN_H',      color: 'var(--ch1)' },
-                                { label: 'CAN_L',      color: 'var(--ch2)' },
-                                { label: 'DIFF = H−L', color: 'var(--chd)' },
-                            ].map(item => (
-                                <div key={item.label} className="osc-legend-item"
-                                    style={{ '--chc': item.color } as React.CSSProperties}>
-                                    <span className="osc-sw" style={{ background: item.color }} />
-                                    {item.label}
-                                </div>
-                            ))}
+                        <div className="osc-scope-pane osc-scope-pane-diff">
+                            <WaveformViewer
+                                ref={diffViewerRef}
+                                state={state}
+                                signal={signal}
+                                fftMode={fftMode}
+                                cursorsOn={cursorsOn}
+                                cursors={cursors}
+                                persistence={persistence}
+                                traceGlow={true}
+                                onMeas={setMeas}
+                                onStateChange={setState}
+                                onPanChange={setPanPositionUs}
+                                channelSet="diff"
+                                syncRef={scopeSyncRef}
+                                reportMeas={false}
+                            />
+                            <div className="osc-scope-pane-label">
+                                <span className="osc-pane-title">DIFF</span>
+                                <span className="osc-legend-item" style={{ '--chc': 'var(--chd)' } as React.CSSProperties}>
+                                    <span className="osc-sw" style={{ background: 'var(--chd)' }} /> V_diff = H − L
+                                </span>
+                            </div>
                         </div>
                     </div>
 
