@@ -1,0 +1,178 @@
+{
+  "nodes": [
+    {
+      "id": "concept_can_scope",
+      "label": "CAN-Scope Dashboard",
+      "file_type": "image",
+      "source_file": "artifacts/after_fix_oscillo.png",
+      "source_location": null
+    },
+    {
+      "id": "concept_network_topology",
+      "label": "CAN Bus Network Topology",
+      "file_type": "image",
+      "source_file": "artifacts/hex_validation_before.png",
+      "source_location": null
+    },
+    {
+      "id": "concept_responsive_ui",
+      "label": "Responsive Interface Design",
+      "file_type": "image",
+      "source_file": "output/scope-mobile-390.png",
+      "source_location": null
+    },
+    {
+      "id": "concept_brand_identity",
+      "label": "Project Branding Assets",
+      "file_type": "image",
+      "source_file": "public/branding/can-simulator-logo-a-lockup.svg",
+      "source_location": null
+    },
+    {
+      "id": "concept_diagnostic_analytics",
+      "label": "Immersive Diagnostic Analytics",
+      "file_type": "image",
+      "source_file": "stitch_assets/10.jpg",
+      "source_location": null
+    },
+    {
+      "id": "after_fix_oscillo",
+      "label": "Post-Fix Oscilloscope View",
+      "file_type": "image",
+      "source_file": "artifacts/after_fix_oscillo.png",
+      "source_location": null
+    },
+    {
+      "id": "before_fix_oscillo",
+      "label": "Pre-Fix Oscilloscope View",
+      "file_type": "image",
+      "source_file": "artifacts/before_fix_oscillo.png",
+      "source_location": null
+    },
+    {
+      "id": "final_redesign_stitch",
+      "label": "Final Redesign Mockup",
+      "file_type": "image",
+      "source_file": "artifacts/final_redesign_stitch.png",
+      "source_location": null
+    },
+    {
+      "id": "hex_validation_before",
+      "label": "CAN Node ID Validation",
+      "file_type": "image",
+      "source_file": "artifacts/hex_validation_before.png",
+      "source_location": null
+    },
+    {
+      "id": "scope_mobile_390",
+      "label": "Mobile Viewport (390px)",
+      "file_type": "image",
+      "source_file": "output/scope-mobile-390.png",
+      "source_location": null
+    },
+    {
+      "id": "scope_tablet_768",
+      "label": "Tablet Viewport (768px)",
+      "file_type": "image",
+      "source_file": "output/scope-tablet-768.png",
+      "source_location": null
+    },
+    {
+      "id": "scope_desktop_1440",
+      "label": "Desktop Viewport (1440px)",
+      "file_type": "image",
+      "source_file": "output/scope-1440-full.png",
+      "source_location": null
+    },
+    {
+      "id": "diagnostic_lab_full",
+      "label": "Holographic Waveform Lab",
+      "file_type": "image",
+      "source_file": "stitch_assets/10.jpg",
+      "source_location": null
+    },
+    {
+      "id": "eye_map_analysis",
+      "label": "Signal Integrity Eye Map",
+      "file_type": "image",
+      "source_file": "stitch_assets/1.jpg",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "after_fix_oscillo",
+      "target": "concept_can_scope",
+      "relation": "illustrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "artifacts/after_fix_oscillo.png",
+      "source_location": null
+    },
+    {
+      "source": "before_fix_oscillo",
+      "target": "concept_can_scope",
+      "relation": "illustrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "artifacts/before_fix_oscillo.png",
+      "source_location": null
+    },
+    {
+      "source": "hex_validation_before",
+      "target": "concept_network_topology",
+      "relation": "illustrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.98,
+      "source_file": "artifacts/hex_validation_before.png",
+      "source_location": null
+    },
+    {
+      "source": "scope_mobile_390",
+      "target": "concept_responsive_ui",
+      "relation": "illustrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "output/scope-mobile-390.png",
+      "source_location": null
+    },
+    {
+      "source": "diagnostic_lab_full",
+      "target": "concept_diagnostic_analytics",
+      "relation": "illustrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.97,
+      "source_file": "stitch_assets/10.jpg",
+      "source_location": null
+    },
+    {
+      "source": "eye_map_analysis",
+      "target": "concept_diagnostic_analytics",
+      "relation": "illustrates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.92,
+      "source_file": "stitch_assets/1.jpg",
+      "source_location": null
+    },
+    {
+      "source": "concept_can_scope",
+      "target": "concept_diagnostic_analytics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "source": "concept_network_topology",
+      "target": "concept_can_scope",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": null,
+      "source_location": null
+    }
+  ],
+  "input_tokens": 15600,
+  "output_tokens": 750
+}

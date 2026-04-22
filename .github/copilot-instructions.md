@@ -1,3 +1,15 @@
+## graphify
+
+- **graphify** (`~/.vs-code-copilot/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
+
+When the user types `/graphify`, activate the graphify skill immediately for knowledge graph generation and querying.
+
+### graphify Rules
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+
+---
+
 ## vexp context tools <!-- vexp v2.0.12 -->
 
 **MANDATORY: use `run_pipeline` — do NOT grep, glob, or read files manually.**

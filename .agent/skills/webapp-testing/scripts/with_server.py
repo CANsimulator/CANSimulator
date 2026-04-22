@@ -3,9 +3,14 @@
 Start one or more servers, wait for them to be ready, run a command, then clean up.
 
 Usage:
-  # Single server
-  python scripts/with_server.py --server "npm run dev" --port 5173 -- python automation.py
-  python scripts/with_server.py --server "npm start" --port 3000 -- python test.py
+  # Single server with defaults
+  python scripts/with_server.py --server "npm run dev" -- python automation.py
+  
+  # Single server with custom port
+  python scripts/with_server.py --server "npm run dev" --port 5173 -- python test.py
+  
+  # Use environment variables (DEV_SERVER_PORT from .env)
+  DEV_SERVER_PORT=5173 python scripts/with_server.py --server "npm run dev" -- python test.py
 
   # Multiple servers
   python scripts/with_server.py \
@@ -18,7 +23,16 @@ import subprocess
 import socket
 import time
 import sys
+import os
 import argparse
+
+
+def get_default_port(index: int = 0) -> int:
+    """Get default port from environment or use convention."""
+    if index == 0:
+        return int(os.getenv('DEV_SERVER_PORT', 5173))
+    else:
+        return int(os.getenv('BACKEND_PORT', 3000))
 
 
 def is_server_ready(port, timeout=30):

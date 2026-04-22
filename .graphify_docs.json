@@ -1,0 +1,43 @@
+{
+  "nodes": [
+    { "id": "AGENTS_MD", "label": "AGENTS.md", "file_type": "document", "source_file": "AGENTS.md", "source_location": null },
+    { "id": "CLAUDE_MD", "label": "CLAUDE.md", "file_type": "document", "source_file": "CLAUDE.md", "source_location": null },
+    { "id": "ENV_SETUP_MD", "label": "ENV_SETUP.md", "file_type": "document", "source_file": "ENV_SETUP.md", "source_location": null },
+    { "id": "GRAPHIFY_SETUP_MD", "label": "GRAPHIFY_SETUP.md", "file_type": "document", "source_file": "GRAPHIFY_SETUP.md", "source_location": null },
+    { "id": "INDEX_HTML", "label": "index.html", "file_type": "document", "source_file": "index.html", "source_location": null },
+    { "id": "README_MD", "label": "README.md", "file_type": "document", "source_file": "README.md", "source_location": null },
+    { "id": "REQUIREMENTS_DEV_TXT", "label": "requirements-dev.txt", "file_type": "document", "source_file": "requirements-dev.txt", "source_location": null },
+    { "id": "OSCILLOSCOPE_ARCH_MD", "label": "docs/oscilloscope-architecture.md", "file_type": "document", "source_file": "docs/oscilloscope-architecture.md", "source_location": null },
+    { "id": "DOCS_SITE_README", "label": "docs-site/README.md", "file_type": "document", "source_file": "docs-site/README.md", "source_location": null },
+    { "id": "DOCS_SITE_PAGE_MDX", "label": "docs-site/app/page.mdx", "file_type": "document", "source_file": "docs-site/app/page.mdx", "source_location": null },
+    { "id": "KNOWLEDGE_BASE_MD", "label": "learning/can_knowledge_base.md", "file_type": "document", "source_file": "learning/can_knowledge_base.md", "source_location": null },
+    { "id": "CAN_SCOPE_CONCEPT_HTML", "label": "output/playwright/can-scope-concept.html", "file_type": "document", "source_file": "output/playwright/can-scope-concept.html", "source_location": null },
+    { "id": "STITCH_ASSET_2_HTML", "label": "stitch_assets/2.html", "file_type": "document", "source_file": "stitch_assets/2.html", "source_location": null },
+    { "id": "ISO_11898", "label": "ISO 11898 (CAN Standard)", "file_type": "document", "source_file": "docs-site/app/docs/introduction/page.mdx", "source_location": null },
+    { "id": "UDS_PROTO", "label": "Unified Diagnostic Services (ISO 14229)", "file_type": "document", "source_file": "docs-site/app/docs/higher-layers/page.mdx", "source_location": null },
+    { "id": "ISO_TP", "label": "ISO-TP (ISO 15765-2)", "file_type": "document", "source_file": "docs-site/app/docs/higher-layers/page.mdx", "source_location": null },
+    { "id": "CAN_SCOPE", "label": "CAN-SCOPE (Physical Layer Scope)", "file_type": "document", "source_file": "docs/oscilloscope-architecture.md", "source_location": null },
+    { "id": "VOLTSCOPE_PRO", "label": "VoltScope Pro", "file_type": "document", "source_file": "stitch_assets/2.html", "source_location": null },
+    { "id": "BOSCH_ENTITY", "label": "Robert Bosch GmbH", "file_type": "document", "source_file": "learning/can_knowledge_base.md", "source_location": null },
+    { "id": "VITE_TOOL", "label": "Vite", "file_type": "document", "source_file": "README.md", "source_location": null },
+    { "id": "REACT_FRAMEWORK", "label": "React", "file_type": "document", "source_file": "README.md", "source_location": null },
+    { "id": "GRAPHIFY_TOOL", "label": "graphify", "file_type": "document", "source_file": "AGENTS.md", "source_location": null }
+  ],
+  "edges": [
+    { "source": "INDEX_HTML", "target": "ISO_11898", "relation": "cites", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "index.html", "source_location": null },
+    { "source": "INDEX_HTML", "target": "VITE_TOOL", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "index.html", "source_location": null },
+    { "source": "README_MD", "target": "REACT_FRAMEWORK", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "README.md", "source_location": null },
+    { "source": "README_MD", "target": "VITE_TOOL", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "README.md", "source_location": null },
+    { "source": "OSCILLOSCOPE_ARCH_MD", "target": "CAN_SCOPE", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "docs/oscilloscope-architecture.md", "source_location": null },
+    { "source": "CAN_SCOPE_CONCEPT_HTML", "target": "CAN_SCOPE", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "output/playwright/can-scope-concept.html", "source_location": null },
+    { "source": "STITCH_ASSET_2_HTML", "target": "VOLTSCOPE_PRO", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "stitch_assets/2.html", "source_location": null },
+    { "source": "ISO_TP", "target": "UDS_PROTO", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "docs-site/app/docs/higher-layers/page.mdx", "source_location": null },
+    { "source": "KNOWLEDGE_BASE_MD", "target": "BOSCH_ENTITY", "relation": "cites", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "learning/can_knowledge_base.md", "source_location": null },
+    { "source": "GRAPHIFY_SETUP_MD", "target": "GRAPHIFY_TOOL", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "GRAPHIFY_SETUP.md", "source_location": null },
+    { "source": "ENV_SETUP_MD", "target": "VITE_TOOL", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "ENV_SETUP.md", "source_location": null },
+    { "source": "AGENTS_MD", "target": "GRAPHIFY_TOOL", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1, "source_file": "AGENTS.md", "source_location": null },
+    { "source": "STITCH_ASSET_2_HTML", "target": "CAN_SCOPE", "relation": "conceptually_related_to", "confidence": "INFERRED", "confidence_score": 0.8, "source_file": "stitch_assets/2.html", "source_location": null }
+  ],
+  "input_tokens": 12450,
+  "output_tokens": 850
+}

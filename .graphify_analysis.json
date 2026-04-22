@@ -1,0 +1,1231 @@
+{
+  "communities": {
+    "0": [
+      "bit_timing_decoderegisters",
+      "bit_timing_encoderegisters",
+      "bit_timing_findoptimaltiming",
+      "bittimingcalc_clamp",
+      "bittimingconfig_applypreset",
+      "bittimingconfig_handleautocalculate",
+      "bittimingconfig_handlebrpblur",
+      "bittimingconfig_handlebrpkeydown",
+      "bittimingconfig_handlechange",
+      "bittimingconfig_handlecopyregister",
+      "bittimingconfig_handleeditchange",
+      "bittimingconfig_handlehexedit",
+      "bittimingconfig_handlereset",
+      "bittimingconfig_isvalidhex",
+      "bittimingconfig_min",
+      "bittimingconfig_submitedit",
+      "bittimingconfig_tobin",
+      "bittimingconfig_tohex",
+      "comparison_clamp",
+      "comparison_compatibilitybonus",
+      "comparison_estimatebusload",
+      "comparison_estimateframecount",
+      "comparison_getgenerationrecommendation",
+      "comparison_profilebonus",
+      "docs_site_components_bittimingcalc_tsx",
+      "neonslider_getloadcolor",
+      "neonslider_handlekeydown",
+      "neonslider_handlepointerdown",
+      "neonslider_handlepointermove",
+      "neonslider_handlepointerup",
+      "scope_math_calculatevdiff",
+      "scope_math_canvasxtonorm",
+      "scope_math_clamp",
+      "scope_math_normtocanvasx",
+      "src_components_can_bittimingconfig_tsx",
+      "src_features_generations_components_neonslider_tsx",
+      "src_features_generations_utils_comparison_ts",
+      "src_services_can_bit_timing_ts",
+      "src_utils_scope_math_ts"
+    ],
+    "1": [
+      "analytics_analytics",
+      "analytics_analytics_clearanalytics",
+      "analytics_analytics_constructor",
+      "analytics_analytics_createnewsession",
+      "analytics_analytics_generatesessionid",
+      "analytics_analytics_getanalyticssummary",
+      "analytics_analytics_getevents",
+      "analytics_analytics_hasconsent",
+      "analytics_analytics_initsession",
+      "analytics_analytics_scheduleflush",
+      "analytics_analytics_trackconversion",
+      "analytics_analytics_trackctaclick",
+      "analytics_analytics_trackevent",
+      "analytics_analytics_trackpageview",
+      "analytics_analytics_trackscrolldepth",
+      "analytics_analytics_tracktimeonpage",
+      "analytics_getanalyticssummary",
+      "analytics_trackconversion",
+      "analytics_trackctaclick",
+      "analytics_trackevent",
+      "analytics_trackpageview",
+      "analytics_trackscrolldepth",
+      "analytics_tracktimeonpage",
+      "landingpage_handlectaclick",
+      "src_pages_landingpage_tsx",
+      "src_utils_analytics_ts"
+    ],
+    "2": [
+      "can_simulator_cansimulator",
+      "can_simulator_cansimulator_applybitstuffing",
+      "can_simulator_cansimulator_capturefreezeframe",
+      "can_simulator_cansimulator_cleartrace",
+      "can_simulator_cansimulator_computecrc15",
+      "can_simulator_cansimulator_computecrc17",
+      "can_simulator_cansimulator_computecrc21",
+      "can_simulator_cansimulator_extractsignal",
+      "can_simulator_cansimulator_geterrorlog",
+      "can_simulator_cansimulator_geterrorstate",
+      "can_simulator_cansimulator_gettrace",
+      "can_simulator_cansimulator_injecterror",
+      "can_simulator_cansimulator_interpolatesignal",
+      "can_simulator_cansimulator_jumptostate",
+      "can_simulator_cansimulator_reseterrors",
+      "can_simulator_cansimulator_setbusstate",
+      "can_simulator_cansimulator_simulatearbitration",
+      "can_simulator_cansimulator_subscribe",
+      "can_simulator_cansimulator_updatestate",
+      "errorpage_canceldemo",
+      "errorpage_handlereset",
+      "errorpage_rundemosequence",
+      "src_pages_errorpage_tsx",
+      "src_services_can_can_simulator_ts"
+    ],
+    "3": [
+      "config_backend_url",
+      "config_dev_server_url",
+      "config_get_env_bool",
+      "config_get_env_int",
+      "config_get_env_str",
+      "config_py",
+      "config_rationale_1",
+      "config_rationale_103",
+      "config_rationale_18",
+      "config_rationale_23",
+      "config_rationale_31",
+      "config_rationale_38",
+      "config_rationale_89",
+      "config_rationale_96",
+      "config_settings",
+      "config_settings_get_playwright_url",
+      "config_settings_post_init",
+      "config_settings_repr"
+    ],
+    "4": [
+      "can_dlctolength",
+      "can_fd_handler_canfdhandler",
+      "can_fd_handler_canfdhandler_lengthtodlc",
+      "can_fd_handler_canfdhandler_sendfd",
+      "can_lengthtodlc",
+      "can_simulator_cansimulator_broadcast",
+      "src_components_can_udsconsole_tsx",
+      "src_services_can_can_fd_handler_ts",
+      "src_services_can_uds_server_ts",
+      "src_types_can_ts",
+      "uds_server_udsserver",
+      "uds_server_udsserver_constructor",
+      "uds_server_udsserver_handlemessage",
+      "uds_server_udsserver_padtodlc",
+      "uds_server_udsserver_sendnrc",
+      "uds_server_udsserver_sendpositive",
+      "udsconsole_clearlogs",
+      "udsconsole_sendrequest"
+    ],
+    "5": [
+      "bustopology_addnode",
+      "bustopology_downloadfile",
+      "bustopology_exportcsv",
+      "bustopology_exportjson",
+      "bustopology_findfreeposition",
+      "bustopology_handlecancel",
+      "bustopology_handlekeydown",
+      "bustopology_handlesave",
+      "bustopology_handlesubmit",
+      "bustopology_random_data",
+      "bustopology_removenode",
+      "bustopology_settermleft",
+      "bustopology_settermright",
+      "bustopology_togglenode",
+      "bustopology_updatebyte",
+      "bustopology_updatenodebaud",
+      "src_components_can_bustopology_tsx"
+    ],
+    "6": [
+      "src_components_can_voltagescope_tsx",
+      "voltagescope_camera",
+      "voltagescope_cursoricon",
+      "voltagescope_download",
+      "voltagescope_fft",
+      "voltagescope_fmttb",
+      "voltagescope_gearicon",
+      "voltagescope_getinitialmeas",
+      "voltagescope_getinitialstate",
+      "voltagescope_handler",
+      "voltagescope_referenceicon",
+      "voltagescope_reseticon",
+      "voltagescope_waves",
+      "voltagescope_xicon"
+    ],
+    "7": [
+      "authpage_handlesubmit",
+      "authservice_ensuresupabase",
+      "authservice_geterrormessage",
+      "authservice_onauthstatechanged",
+      "authservice_refreshuser",
+      "authservice_signin",
+      "authservice_signinwithgoogle",
+      "authservice_signout",
+      "authservice_signup",
+      "src_pages_authpage_tsx",
+      "src_services_authservice_ts"
+    ],
+    "8": [
+      "can_error_catalog_computesimplecrc15",
+      "can_error_catalog_generateackerrordemo",
+      "can_error_catalog_generatebiterrordemo",
+      "can_error_catalog_generatecorrectframe",
+      "can_error_catalog_generatecrcerrordemo",
+      "can_error_catalog_generateerrordemo",
+      "can_error_catalog_generateformerrordemo",
+      "can_error_catalog_generatestufferrordemo",
+      "can_error_catalog_geterrortypeinfo",
+      "can_error_catalog_getframefields",
+      "src_services_can_can_error_catalog_ts"
+    ],
+    "9": [
+      "arbitrationpage_advancestep",
+      "arbitrationpage_getbits",
+      "arbitrationpage_getidvalidation",
+      "arbitrationpage_handleidchange",
+      "arbitrationpage_handlereset",
+      "arbitrationpage_hextobinarydisplay",
+      "arbitrationpage_isvalidid",
+      "arbitrationpage_runround",
+      "arbitrationpage_startarena",
+      "src_pages_arbitrationpage_tsx"
+    ],
+    "10": [
+      "can_simulator_cansimulator_subscribetoerrorlog",
+      "dtc_manager_dtcmanager",
+      "dtc_manager_dtcmanager_cleardtcs",
+      "dtc_manager_dtcmanager_constructor",
+      "dtc_manager_dtcmanager_getdtcs",
+      "dtc_manager_dtcmanager_notify",
+      "dtc_manager_dtcmanager_processerrorlog",
+      "dtc_manager_dtcmanager_subscribe",
+      "dtc_manager_dtcmanager_updatedtc",
+      "src_services_can_dtc_manager_ts"
+    ],
+    "11": [
+      "scopecontrols_fmttb",
+      "scopecontrols_play",
+      "scopecontrols_single",
+      "scopecontrols_stop",
+      "scopecontrols_target",
+      "src_components_can_scope_scopecontrols_tsx",
+      "src_services_usageservice_ts",
+      "usageservice_getremainingquota",
+      "usageservice_trackusage"
+    ],
+    "12": [
+      "can_handler_canhandlerregistry",
+      "can_handler_canhandlerregistry_gethandlers",
+      "can_handler_canhandlerregistry_register",
+      "can_handler_canhandlerregistry_route",
+      "can_handler_canhandlerregistry_unregister",
+      "mocknodes_initvirtualnetwork",
+      "src_services_can_can_handler_ts",
+      "src_services_can_mocknodes_ts"
+    ],
+    "13": [
+      "after_fix_oscillo",
+      "before_fix_oscillo",
+      "concept_can_scope",
+      "concept_diagnostic_analytics",
+      "concept_network_topology",
+      "diagnostic_lab_full",
+      "eye_map_analysis",
+      "hex_validation_before"
+    ],
+    "14": [
+      "querystate_applygenerationquerypatch",
+      "querystate_buildgenerationquery",
+      "querystate_ensuredifferent",
+      "querystate_parsegeneration",
+      "querystate_parsegenerationquery",
+      "querystate_parsescenario",
+      "src_features_generations_utils_querystate_ts"
+    ],
+    "15": [
+      "src_types_testbench_ts",
+      "testbench_computebaudrate",
+      "testbench_computesamplepointpct",
+      "testbench_findbittimingpresetbybaudrate",
+      "testbench_findbittimingpresetbyid",
+      "testbench_findbittimingpresetfortiming",
+      "testbench_issamebittiming"
+    ],
+    "16": [
+      "errorboundary_errorboundary",
+      "errorboundary_errorboundary_componentdidcatch",
+      "errorboundary_errorboundary_constructor",
+      "errorboundary_errorboundary_getderivedstatefromerror",
+      "errorboundary_errorboundary_render",
+      "src_components_errorboundary_tsx"
+    ],
+    "17": [
+      "protocoldecoder_bin",
+      "protocoldecoder_handlechart",
+      "protocoldecoder_hex",
+      "protocoldecoder_makefields",
+      "protocoldecoder_upd",
+      "src_components_can_scope_protocoldecoder_tsx"
+    ],
+    "18": [
+      "src_components_can_scope_waveformviewer_tsx",
+      "waveformviewer_canbitpattern",
+      "waveformviewer_generatecan",
+      "waveformviewer_generatenoisy",
+      "waveformviewer_generatesine",
+      "waveformviewer_generatesquare"
+    ],
+    "19": [
+      "contactpage_handlesubmit",
+      "contactpage_validate",
+      "emailservice_sendcontactemail",
+      "emailservice_sendwelcomeemail",
+      "src_pages_contactpage_tsx",
+      "src_services_emailservice_ts"
+    ],
+    "20": [
+      "signalspage_addpoint",
+      "signalspage_isbithighlighted",
+      "signalspage_removepoint",
+      "signalspage_updatebyte",
+      "signalspage_updatepoint",
+      "src_pages_signalspage_tsx"
+    ],
+    "21": [
+      "react_sparklines_d_sparklines",
+      "react_sparklines_d_sparklinesbars",
+      "react_sparklines_d_sparklinesline",
+      "react_sparklines_d_sparklinesreferenceline",
+      "react_sparklines_d_sparklinesspots",
+      "src_types_react_sparklines_d_ts"
+    ],
+    "22": [
+      "cn_cn",
+      "header_handleclickoutside",
+      "header_handlelogout",
+      "header_navlinkclass",
+      "src_components_common_header_tsx",
+      "src_utils_cn_ts"
+    ],
+    "23": [
+      "ENV_SETUP_MD",
+      "INDEX_HTML",
+      "ISO_11898",
+      "REACT_FRAMEWORK",
+      "README_MD",
+      "VITE_TOOL"
+    ],
+    "24": [
+      "bustopology_bustopology",
+      "bustopology_ground",
+      "bustopology_nodex",
+      "bustopology_resistorpath",
+      "docs_site_components_bustopology_tsx"
+    ],
+    "25": [
+      "can_crc_applybitstuffing",
+      "can_crc_calculatecrc15",
+      "can_crc_calculatecrc17",
+      "can_crc_calculatecrc21",
+      "src_services_can_can_crc_ts"
+    ],
+    "26": [
+      "CAN_SCOPE",
+      "CAN_SCOPE_CONCEPT_HTML",
+      "OSCILLOSCOPE_ARCH_MD",
+      "STITCH_ASSET_2_HTML",
+      "VOLTSCOPE_PRO"
+    ],
+    "27": [
+      "arbitrationmini_arbitrationmini",
+      "arbitrationmini_computearbitration",
+      "arbitrationmini_tobinary11",
+      "docs_site_components_arbitrationmini_tsx"
+    ],
+    "28": [
+      "bitanatomy_bitanatomy",
+      "bitanatomy_tqtow",
+      "bitanatomy_tqtox",
+      "docs_site_components_bitanatomy_tsx"
+    ],
+    "29": [
+      "arbitrationvisualizer_handleidchange",
+      "arbitrationvisualizer_handlerun",
+      "arbitrationvisualizer_parseidtobits",
+      "src_components_can_arbitrationvisualizer_tsx"
+    ],
+    "30": [
+      "canbusmonitor_exporttocsv",
+      "canbusmonitor_exporttojson",
+      "canbusmonitor_generatesharelink",
+      "src_components_can_canbusmonitor_tsx"
+    ],
+    "31": [
+      "env_getenvboolean",
+      "env_getenvnumber",
+      "env_getenvstring",
+      "src_config_env_ts"
+    ],
+    "32": [
+      "notfoundpage_notfoundpage",
+      "src_context_themecontext_tsx",
+      "src_pages_notfoundpage_tsx",
+      "themecontext_usetheme"
+    ],
+    "33": [
+      "comparematrix_buildrows",
+      "comparematrix_cn",
+      "comparematrix_togglerow",
+      "src_features_generations_components_comparematrix_tsx"
+    ],
+    "34": [
+      "glossarydrawer_handleclose",
+      "glossarydrawer_handleopen",
+      "glossarydrawer_termlist",
+      "src_features_generations_components_glossarydrawer_tsx"
+    ],
+    "35": [
+      "src_hooks_usemediaquery_ts",
+      "src_hooks_usemomentaryaction_ts",
+      "usemediaquery_usemediaquery",
+      "usemomentaryaction_usemomentaryaction"
+    ],
+    "36": [
+      "inspectorpage_bitstohex",
+      "inspectorpage_bytetobits",
+      "inspectorpage_hextobits",
+      "src_pages_inspectorpage_tsx"
+    ],
+    "37": [
+      "src_services_can_trigger_logic_ts",
+      "trigger_logic_iserrorframe",
+      "trigger_logic_isidmatch",
+      "trigger_logic_issoftransition"
+    ],
+    "38": [
+      "src_services_can_waveform_generator_ts",
+      "waveform_generator_createinitialwavestate",
+      "waveform_generator_generatebitstream",
+      "waveform_generator_generatesample"
+    ],
+    "39": [
+      "docs_site_components_nrctable_tsx",
+      "nrctable_catdef",
+      "nrctable_nrctable"
+    ],
+    "40": [
+      "docs_site_components_udsservicetable_tsx",
+      "udsservicetable_catdef",
+      "udsservicetable_udsservicetable"
+    ],
+    "41": [
+      "animatedcounter_animatedcounter",
+      "src_components_animatedcounter_tsx",
+      "src_features_generations_components_animatedcounter_tsx"
+    ],
+    "42": [
+      "referenceplots_generatedata",
+      "referenceplots_referenceplots",
+      "src_components_can_referenceplots_tsx"
+    ],
+    "43": [
+      "src_components_can_troubleshootinghints_tsx",
+      "troubleshootinghints_gethints",
+      "troubleshootinghints_severityicon"
+    ],
+    "44": [
+      "knobcontrol_describearc",
+      "knobcontrol_polartocartesian",
+      "src_components_can_scope_knobcontrol_tsx"
+    ],
+    "45": [
+      "cookiecontext_cookieprovider",
+      "cookiecontext_usecookieconsent",
+      "src_context_cookiecontext_tsx"
+    ],
+    "46": [
+      "generationcomparedock_handlecopy",
+      "generationcomparedock_handleswap",
+      "src_features_generations_components_generationcomparedock_tsx"
+    ],
+    "47": [
+      "migrationchecklist_handlereset",
+      "migrationchecklist_toggleitem",
+      "src_features_generations_components_migrationchecklist_tsx"
+    ],
+    "48": [
+      "src_services_usernameservice_ts",
+      "usernameservice_isusernameavailable",
+      "usernameservice_reserveusername"
+    ],
+    "49": [
+      "can_handler_test_makehandler",
+      "can_handler_test_makemessage",
+      "tests_can_handler_test_ts"
+    ],
+    "50": [
+      "tests_trigger_logic_test_ts",
+      "trigger_logic_test_addbits",
+      "trigger_logic_test_createsample"
+    ],
+    "51": [
+      "tests_verify_panning_py",
+      "verify_panning_mocksettings",
+      "verify_panning_test_panning"
+    ],
+    "52": [
+      "AGENTS_MD",
+      "GRAPHIFY_SETUP_MD",
+      "GRAPHIFY_TOOL"
+    ],
+    "53": [
+      "vite_config_asynccssplugin",
+      "vite_config_ts"
+    ],
+    "54": [
+      "docs_site_mdx_components_tsx",
+      "mdx_components_usemdxcomponents"
+    ],
+    "55": [
+      "docs_site_app_layout_tsx",
+      "layout_rootlayout"
+    ],
+    "56": [
+      "docs_site_app_robots_ts",
+      "robots_robots"
+    ],
+    "57": [
+      "docs_site_app_sitemap_ts",
+      "sitemap_sitemap"
+    ],
+    "58": [
+      "articleschema_articleschema",
+      "docs_site_components_articleschema_tsx"
+    ],
+    "59": [
+      "bitstuffingdemo_stuffbits",
+      "docs_site_components_bitstuffingdemo_tsx"
+    ],
+    "60": [
+      "bittimingpresets_classifysp",
+      "docs_site_components_bittimingpresets_tsx"
+    ],
+    "61": [
+      "docs_site_components_errorframeanatomy_tsx",
+      "errorframeanatomy_errorframeanatomy"
+    ],
+    "62": [
+      "docs_site_components_faqschema_tsx",
+      "faqschema_faqschema"
+    ],
+    "63": [
+      "docs_site_components_faultconfinement_tsx",
+      "faultconfinement_getstate"
+    ],
+    "64": [
+      "docs_site_components_faultstatemachine_tsx",
+      "faultstatemachine_faultstatemachine"
+    ],
+    "65": [
+      "docs_site_components_isotpsequence_tsx",
+      "isotpsequence_toggleplay"
+    ],
+    "66": [
+      "docs_site_components_protocolstack_tsx",
+      "protocolstack_op"
+    ],
+    "67": [
+      "docs_site_components_voltagelevels_tsx",
+      "voltagelevels_voltagetoy"
+    ],
+    "68": [
+      "docs_site_lib_utils_ts",
+      "utils_cn"
+    ],
+    "69": [
+      "src_app_tsx",
+      "src_main_tsx"
+    ],
+    "70": [
+      "bitstreamvisualizer_getfield",
+      "src_components_can_bitstreamvisualizer_tsx"
+    ],
+    "71": [
+      "errorgauges_getthemecolor",
+      "src_components_can_errorgauges_tsx"
+    ],
+    "72": [
+      "errorinjectionpanel_handleclickoutside",
+      "src_components_can_errorinjectionpanel_tsx"
+    ],
+    "73": [
+      "errorlogpanel_formattime",
+      "src_components_can_errorlogpanel_tsx"
+    ],
+    "74": [
+      "footer_trackvisit",
+      "src_components_common_footer_tsx"
+    ],
+    "75": [
+      "marquee_marquee",
+      "src_components_magicui_marquee_tsx"
+    ],
+    "76": [
+      "meteors_meteors",
+      "src_components_magicui_meteors_tsx"
+    ],
+    "77": [
+      "particles_particles",
+      "src_components_magicui_particles_tsx"
+    ],
+    "78": [
+      "shineborder_cn",
+      "src_components_magicui_shineborder_tsx"
+    ],
+    "79": [
+      "powersupplydashboard_logevent",
+      "src_components_power_powersupplydashboard_tsx"
+    ],
+    "80": [
+      "container_container",
+      "src_components_ui_container_tsx"
+    ],
+    "81": [
+      "loadingspinner_loadingspinner",
+      "src_components_ui_loadingspinner_tsx"
+    ],
+    "82": [
+      "src_components_ui_tooltip_tsx",
+      "tooltip_cn"
+    ],
+    "83": [
+      "authcontext_useauth",
+      "src_context_authcontext_tsx"
+    ],
+    "84": [
+      "powercontext_usepower",
+      "src_context_powercontext_tsx"
+    ],
+    "85": [
+      "src_context_toastcontext_tsx",
+      "toastcontext_usetoast"
+    ],
+    "86": [
+      "busloadplayground_getbargradient",
+      "src_features_generations_components_busloadplayground_tsx"
+    ],
+    "87": [
+      "evolutiontimeline_handlekeydown",
+      "src_features_generations_components_evolutiontimeline_tsx"
+    ],
+    "88": [
+      "quickmetricsstrip_cn",
+      "src_features_generations_components_quickmetricsstrip_tsx"
+    ],
+    "89": [
+      "sectionreveal_sectionreveal",
+      "src_features_generations_components_sectionreveal_tsx"
+    ],
+    "90": [
+      "src_features_generations_hooks_usegenerationcomparestate_ts",
+      "usegenerationcomparestate_usegenerationcomparestate"
+    ],
+    "91": [
+      "src_hooks_useabtest_ts",
+      "useabtest_useabtest"
+    ],
+    "92": [
+      "src_hooks_useanalytics_ts",
+      "useanalytics_useanalytics"
+    ],
+    "93": [
+      "src_hooks_usefocustrap_ts",
+      "usefocustrap_usefocustrap"
+    ],
+    "94": [
+      "src_hooks_useismobile_ts",
+      "useismobile_useismobile"
+    ],
+    "95": [
+      "src_hooks_usescrolltotop_ts",
+      "usescrolltotop_usescrolltotop"
+    ],
+    "96": [
+      "legalpage_legalpage",
+      "src_pages_legalpage_tsx"
+    ],
+    "97": [
+      "simulatorpage_getnodestatus",
+      "src_pages_simulatorpage_tsx"
+    ],
+    "98": [
+      "razorpayservice_openrazorpaycheckout",
+      "src_services_razorpayservice_ts"
+    ],
+    "99": [
+      "cursor_dt_test_calculatedt",
+      "tests_cursor_dt_test_ts"
+    ],
+    "100": [
+      "ISO_TP",
+      "UDS_PROTO"
+    ],
+    "101": [
+      "BOSCH_ENTITY",
+      "KNOWLEDGE_BASE_MD"
+    ],
+    "102": [
+      "concept_responsive_ui",
+      "scope_mobile_390"
+    ],
+    "103": [
+      "config_rationale_48"
+    ],
+    "104": [
+      "config_rationale_65"
+    ],
+    "105": [
+      "eslint_config_js"
+    ],
+    "106": [
+      "postcss_config_js"
+    ],
+    "107": [
+      "tailwind_config_js"
+    ],
+    "108": [
+      "vitest_config_ts"
+    ],
+    "109": [
+      "docs_site_next_env_d_ts"
+    ],
+    "110": [
+      "docs_site_next_config_ts"
+    ],
+    "111": [
+      "docs_site_postcss_config_mjs"
+    ],
+    "112": [
+      "docs_site_components_buslengthchart_tsx"
+    ],
+    "113": [
+      "docs_site_components_canfdcomparison_tsx"
+    ],
+    "114": [
+      "docs_site_components_extendedframeanatomy_tsx"
+    ],
+    "115": [
+      "docs_site_components_frameanatomy_tsx"
+    ],
+    "116": [
+      "docs_site_components_isotpframetypes_tsx"
+    ],
+    "117": [
+      "docs_site_components_j1939canid_tsx"
+    ],
+    "118": [
+      "docs_site_components_obdpidreference_tsx"
+    ],
+    "119": [
+      "docs_site_lib_site_ts"
+    ],
+    "120": [
+      "scratch_install_graphify_py"
+    ],
+    "121": [
+      "src_components_toastcontainer_tsx"
+    ],
+    "122": [
+      "src_components_can_canframebuilder_tsx"
+    ],
+    "123": [
+      "src_components_can_dtclistpanel_tsx"
+    ],
+    "124": [
+      "src_components_can_errorstatemachine_tsx"
+    ],
+    "125": [
+      "src_components_can_errortypedeepdive_tsx"
+    ],
+    "126": [
+      "src_components_can_freezeframemodal_tsx"
+    ],
+    "127": [
+      "src_components_can_networkmap_tsx"
+    ],
+    "128": [
+      "src_components_can_scope_scopemetrics_tsx"
+    ],
+    "129": [
+      "src_components_can_scope_types_ts"
+    ],
+    "130": [
+      "src_components_common_simulatorstatusbar_tsx"
+    ],
+    "131": [
+      "src_components_magicui_shinybutton_tsx"
+    ],
+    "132": [
+      "src_components_physical_faultscenariopanel_tsx"
+    ],
+    "133": [
+      "src_components_signals_dbcexportmodal_tsx"
+    ],
+    "134": [
+      "src_components_ui_borderbeam_tsx"
+    ],
+    "135": [
+      "src_components_ui_breadcrumbs_tsx"
+    ],
+    "136": [
+      "src_components_ui_cyberbutton_tsx"
+    ],
+    "137": [
+      "src_components_ui_cyberstatcard_tsx"
+    ],
+    "138": [
+      "src_components_ui_index_ts"
+    ],
+    "139": [
+      "src_components_ui_lazymount_tsx"
+    ],
+    "140": [
+      "src_components_ui_pricingteaser_tsx"
+    ],
+    "141": [
+      "src_config_pricing_ts"
+    ],
+    "142": [
+      "src_config_supabase_ts"
+    ],
+    "143": [
+      "src_context_testbenchcontext_tsx"
+    ],
+    "144": [
+      "src_features_generations_data_ts"
+    ],
+    "145": [
+      "src_features_generations_types_ts"
+    ],
+    "146": [
+      "src_features_generations_components_index_ts"
+    ],
+    "147": [
+      "src_features_generations_components_usecaserecommender_tsx"
+    ],
+    "148": [
+      "src_pages_aboutpage_tsx"
+    ],
+    "149": [
+      "src_pages_generationspage_tsx"
+    ],
+    "150": [
+      "src_pages_physicalpage_tsx"
+    ],
+    "151": [
+      "src_pages_pricingpage_tsx"
+    ],
+    "152": [
+      "src_services_can_metrics_worker_ts"
+    ],
+    "153": [
+      "src_services_can_validation_ts"
+    ],
+    "154": [
+      "src_types_auth_ts"
+    ],
+    "155": [
+      "src_types_payment_ts"
+    ],
+    "156": [
+      "src_types_power_ts"
+    ],
+    "157": [
+      "tests_can_bit_timing_test_ts"
+    ],
+    "158": [
+      "tests_can_core_test_ts"
+    ],
+    "159": [
+      "tests_can_error_catalog_test_ts"
+    ],
+    "160": [
+      "tests_can_simulator_test_ts"
+    ],
+    "161": [
+      "tests_can_validation_test_ts"
+    ],
+    "162": [
+      "tests_generations_utils_test_ts"
+    ],
+    "163": [
+      "tests_scope_math_test_ts"
+    ],
+    "164": [
+      "tests_waveform_generator_test_ts"
+    ],
+    "165": [
+      "CLAUDE_MD"
+    ],
+    "166": [
+      "REQUIREMENTS_DEV_TXT"
+    ],
+    "167": [
+      "DOCS_SITE_README"
+    ],
+    "168": [
+      "DOCS_SITE_PAGE_MDX"
+    ],
+    "169": [
+      "concept_brand_identity"
+    ],
+    "170": [
+      "final_redesign_stitch"
+    ],
+    "171": [
+      "scope_tablet_768"
+    ],
+    "172": [
+      "scope_desktop_1440"
+    ]
+  },
+  "cohesion": {
+    "0": 0.07,
+    "1": 0.13,
+    "2": 0.11,
+    "3": 0.11,
+    "4": 0.15,
+    "5": 0.15,
+    "6": 0.14,
+    "7": 0.27,
+    "8": 0.38,
+    "9": 0.2,
+    "10": 0.33,
+    "11": 0.25,
+    "12": 0.25,
+    "13": 0.25,
+    "14": 0.52,
+    "15": 0.29,
+    "16": 0.33,
+    "17": 0.4,
+    "18": 0.47,
+    "19": 0.4,
+    "20": 0.33,
+    "21": 0.33,
+    "22": 0.33,
+    "23": 0.33,
+    "24": 0.4,
+    "25": 0.4,
+    "26": 0.4,
+    "27": 0.67,
+    "28": 0.83,
+    "29": 0.5,
+    "30": 0.5,
+    "31": 0.5,
+    "32": 0.5,
+    "33": 0.5,
+    "34": 0.5,
+    "35": 0.5,
+    "36": 0.5,
+    "37": 0.5,
+    "38": 0.83,
+    "39": 0.67,
+    "40": 0.67,
+    "41": 0.67,
+    "42": 0.67,
+    "43": 0.67,
+    "44": 1.0,
+    "45": 0.67,
+    "46": 0.67,
+    "47": 0.67,
+    "48": 0.67,
+    "49": 0.67,
+    "50": 0.67,
+    "51": 0.67,
+    "52": 0.67,
+    "53": 1.0,
+    "54": 1.0,
+    "55": 1.0,
+    "56": 1.0,
+    "57": 1.0,
+    "58": 1.0,
+    "59": 1.0,
+    "60": 1.0,
+    "61": 1.0,
+    "62": 1.0,
+    "63": 1.0,
+    "64": 1.0,
+    "65": 1.0,
+    "66": 1.0,
+    "67": 1.0,
+    "68": 1.0,
+    "69": 1.0,
+    "70": 1.0,
+    "71": 1.0,
+    "72": 1.0,
+    "73": 1.0,
+    "74": 1.0,
+    "75": 1.0,
+    "76": 1.0,
+    "77": 1.0,
+    "78": 1.0,
+    "79": 1.0,
+    "80": 1.0,
+    "81": 1.0,
+    "82": 1.0,
+    "83": 1.0,
+    "84": 1.0,
+    "85": 1.0,
+    "86": 1.0,
+    "87": 1.0,
+    "88": 1.0,
+    "89": 1.0,
+    "90": 1.0,
+    "91": 1.0,
+    "92": 1.0,
+    "93": 1.0,
+    "94": 1.0,
+    "95": 1.0,
+    "96": 1.0,
+    "97": 1.0,
+    "98": 1.0,
+    "99": 1.0,
+    "100": 1.0,
+    "101": 1.0,
+    "102": 1.0,
+    "103": 1.0,
+    "104": 1.0,
+    "105": 1.0,
+    "106": 1.0,
+    "107": 1.0,
+    "108": 1.0,
+    "109": 1.0,
+    "110": 1.0,
+    "111": 1.0,
+    "112": 1.0,
+    "113": 1.0,
+    "114": 1.0,
+    "115": 1.0,
+    "116": 1.0,
+    "117": 1.0,
+    "118": 1.0,
+    "119": 1.0,
+    "120": 1.0,
+    "121": 1.0,
+    "122": 1.0,
+    "123": 1.0,
+    "124": 1.0,
+    "125": 1.0,
+    "126": 1.0,
+    "127": 1.0,
+    "128": 1.0,
+    "129": 1.0,
+    "130": 1.0,
+    "131": 1.0,
+    "132": 1.0,
+    "133": 1.0,
+    "134": 1.0,
+    "135": 1.0,
+    "136": 1.0,
+    "137": 1.0,
+    "138": 1.0,
+    "139": 1.0,
+    "140": 1.0,
+    "141": 1.0,
+    "142": 1.0,
+    "143": 1.0,
+    "144": 1.0,
+    "145": 1.0,
+    "146": 1.0,
+    "147": 1.0,
+    "148": 1.0,
+    "149": 1.0,
+    "150": 1.0,
+    "151": 1.0,
+    "152": 1.0,
+    "153": 1.0,
+    "154": 1.0,
+    "155": 1.0,
+    "156": 1.0,
+    "157": 1.0,
+    "158": 1.0,
+    "159": 1.0,
+    "160": 1.0,
+    "161": 1.0,
+    "162": 1.0,
+    "163": 1.0,
+    "164": 1.0,
+    "165": 1.0,
+    "166": 1.0,
+    "167": 1.0,
+    "168": 1.0,
+    "169": 1.0,
+    "170": 1.0,
+    "171": 1.0,
+    "172": 1.0
+  },
+  "gods": [
+    {
+      "id": "can_simulator_cansimulator",
+      "label": "CANSimulator",
+      "degree": 21
+    },
+    {
+      "id": "analytics_analytics",
+      "label": "Analytics",
+      "degree": 16
+    },
+    {
+      "id": "bittimingconfig_min",
+      "label": "min()",
+      "degree": 9
+    },
+    {
+      "id": "dtc_manager_dtcmanager",
+      "label": "DTCManager",
+      "degree": 8
+    },
+    {
+      "id": "can_error_catalog_generatecorrectframe",
+      "label": "generateCorrectFrame()",
+      "degree": 7
+    },
+    {
+      "id": "can_error_catalog_generateerrordemo",
+      "label": "generateErrorDemo()",
+      "degree": 6
+    },
+    {
+      "id": "uds_server_udsserver",
+      "label": "UDSServer",
+      "degree": 6
+    },
+    {
+      "id": "analytics_trackevent",
+      "label": "trackEvent()",
+      "degree": 6
+    },
+    {
+      "id": "config_settings",
+      "label": "Settings",
+      "degree": 5
+    },
+    {
+      "id": "errorboundary_errorboundary",
+      "label": "ErrorBoundary",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "clamp()",
+      "target": "min()",
+      "source_files": [
+        "docs-site\\components\\BitTimingCalc.tsx",
+        "src\\components\\can\\BitTimingConfig.tsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `clamp()` unexpectedly reaches hub `min()`"
+    },
+    {
+      "source": "findFreePosition()",
+      "target": "min()",
+      "source_files": [
+        "src\\components\\can\\BusTopology.tsx",
+        "src\\components\\can\\BitTimingConfig.tsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "handleKeyDown()",
+      "target": "min()",
+      "source_files": [
+        "src\\features\\generations\\components\\NeonSlider.tsx",
+        "src\\components\\can\\BitTimingConfig.tsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `handleKeyDown()` unexpectedly reaches hub `min()`"
+    },
+    {
+      "source": "clamp()",
+      "target": "min()",
+      "source_files": [
+        "src\\utils\\scope-math.ts",
+        "src\\components\\can\\BitTimingConfig.tsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; peripheral node `clamp()` unexpectedly reaches hub `min()`"
+    },
+    {
+      "source": "handleAutoCalculate()",
+      "target": "findOptimalTiming()",
+      "source_files": [
+        "src\\components\\can\\BitTimingConfig.tsx",
+        "src\\services\\can\\bit-timing.ts"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `min()` connect `Community 0` to `Community 5`?",
+      "why": "High betweenness centrality (0.007) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `CANSimulator` connect `Community 2` to `Community 10`, `Community 4`?",
+      "why": "High betweenness centrality (0.006) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `findFreePosition()` connect `Community 5` to `Community 0`?",
+      "why": "High betweenness centrality (0.004) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 5 inferred relationships involving `min()` (e.g. with `clamp()` and `findFreePosition()`) actually correct?",
+      "why": "`min()` has 5 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Environment configuration for CAN Simulator Python scripts. Handles loading and`, `Get string environment variable with optional default.`, `Get integer environment variable with optional default.` to the rest of the system?",
+      "why": "38 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.13 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

@@ -1,20 +1,45 @@
 import sys
+import os
 import time
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 
+# Add parent directory to path to import config
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+try:
+    from config import settings
+except ImportError:
+    # Fallback defaults if config.py doesn't exist yet
+    class MockSettings:
+        DEV_SERVER_HOST = os.getenv('DEV_SERVER_HOST', 'localhost')
+        DEV_SERVER_PORT = int(os.getenv('DEV_SERVER_PORT', 5173))
+        DEV_SERVER_URL = f'http://{DEV_SERVER_HOST}:{DEV_SERVER_PORT}'
+        SIMULATOR_HEADLESS = os.getenv('SIMULATOR_HEADLESS', 'True').lower() == 'true'
+    settings = MockSettings()
+
+
 def test_panning():
+    headless = settings.SIMULATOR_HEADLESS
+    dev_url = f"{settings.DEV_SERVER_URL}/CANSimulator/physical"
+    
+    print(f"[TEST] Panning test starting...")
+    print(f"[CONFIG] Dev server: {settings.DEV_SERVER_URL}")
+    print(f"[CONFIG] Target URL: {dev_url}")
+    print(f"[CONFIG] Headless mode: {headless}")
+    
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=headless)
         context = browser.new_context(viewport={'width': 1280, 'height': 800})
         page = context.new_page()
         
         # Navigate to the physical layer page
-        print("Navigating to http://localhost:5173/CANSimulator/physical...")
+        print(f"[BROWSER] Navigating to {dev_url}...")
         try:
-            page.goto('http://localhost:5173/CANSimulator/physical', timeout=30000)
+            page.goto(dev_url, timeout=30000)
             page.wait_for_load_state('networkidle')
         except Exception as e:
-            print(f"Error navigating: {e}")
+            print(f"[ERROR] Navigation failed: {e}")
             browser.close()
             sys.exit(1)
         
