@@ -8,7 +8,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceArea,
   ReferenceLine,
   Area,
   ComposedChart
@@ -27,7 +26,6 @@ interface DataPoint {
 // --- Signal Generation Logic ---
 const generateData = (): DataPoint[] => {
   const bits = [0, 1, 0, 1, 1, 0, 0, 1]; // SOF, ID, etc.
-  const bitRate = 500000; // 500 kbit/s
   const samplesPerBit = 20;
   const bitDuration = 2; // 2 µs
   const data: DataPoint[] = [];
