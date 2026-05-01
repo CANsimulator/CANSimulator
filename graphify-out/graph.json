@@ -98,90 +98,90 @@
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L1",
-      "id": "config_rationale_1",
       "community": 3,
-      "norm_label": "environment configuration for can simulator python scripts. handles loading and"
+      "norm_label": "environment configuration for can simulator python scripts. handles loading and",
+      "id": "config_rationale_1"
     },
     {
       "label": "Get string environment variable with optional default.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L18",
-      "id": "config_rationale_18",
       "community": 3,
-      "norm_label": "get string environment variable with optional default."
+      "norm_label": "get string environment variable with optional default.",
+      "id": "config_rationale_18"
     },
     {
       "label": "Get integer environment variable with optional default.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L23",
-      "id": "config_rationale_23",
       "community": 3,
-      "norm_label": "get integer environment variable with optional default."
+      "norm_label": "get integer environment variable with optional default.",
+      "id": "config_rationale_23"
     },
     {
       "label": "Get boolean environment variable with optional default.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L31",
-      "id": "config_rationale_31",
       "community": 3,
-      "norm_label": "get boolean environment variable with optional default."
+      "norm_label": "get boolean environment variable with optional default.",
+      "id": "config_rationale_31"
     },
     {
       "label": "Application settings loaded from environment variables.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L38",
-      "id": "config_rationale_38",
       "community": 3,
-      "norm_label": "application settings loaded from environment variables."
+      "norm_label": "application settings loaded from environment variables.",
+      "id": "config_rationale_38"
     },
     {
       "label": "Construct full dev server URL.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L48",
-      "id": "config_rationale_48",
-      "community": 103,
-      "norm_label": "construct full dev server url."
+      "community": 106,
+      "norm_label": "construct full dev server url.",
+      "id": "config_rationale_48"
     },
     {
       "label": "Construct full backend URL.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L65",
-      "id": "config_rationale_65",
-      "community": 104,
-      "norm_label": "construct full backend url."
+      "community": 107,
+      "norm_label": "construct full backend url.",
+      "id": "config_rationale_65"
     },
     {
       "label": "Create necessary directories.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L89",
-      "id": "config_rationale_89",
       "community": 3,
-      "norm_label": "create necessary directories."
+      "norm_label": "create necessary directories.",
+      "id": "config_rationale_89"
     },
     {
       "label": "Construct Playwright navigation URL.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L96",
-      "id": "config_rationale_96",
       "community": 3,
-      "norm_label": "construct playwright navigation url."
+      "norm_label": "construct playwright navigation url.",
+      "id": "config_rationale_96"
     },
     {
       "label": "Pretty print settings.",
       "file_type": "rationale",
       "source_file": "config.py",
       "source_location": "L103",
-      "id": "config_rationale_103",
       "community": 3,
-      "norm_label": "pretty print settings."
+      "norm_label": "pretty print settings.",
+      "id": "config_rationale_103"
     },
     {
       "label": "eslint.config.js",
@@ -189,7 +189,7 @@
       "source_file": "eslint.config.js",
       "source_location": "L1",
       "id": "eslint_config_js",
-      "community": 105,
+      "community": 108,
       "norm_label": "eslint.config.js"
     },
     {
@@ -198,7 +198,7 @@
       "source_file": "postcss.config.js",
       "source_location": "L1",
       "id": "postcss_config_js",
-      "community": 106,
+      "community": 109,
       "norm_label": "postcss.config.js"
     },
     {
@@ -207,7 +207,7 @@
       "source_file": "tailwind.config.js",
       "source_location": "L1",
       "id": "tailwind_config_js",
-      "community": 107,
+      "community": 110,
       "norm_label": "tailwind.config.js"
     },
     {
@@ -216,7 +216,7 @@
       "source_file": "vite.config.ts",
       "source_location": "L1",
       "id": "vite_config_ts",
-      "community": 53,
+      "community": 56,
       "norm_label": "vite.config.ts"
     },
     {
@@ -225,7 +225,7 @@
       "source_file": "vite.config.ts",
       "source_location": "L9",
       "id": "vite_config_asynccssplugin",
-      "community": 53,
+      "community": 56,
       "norm_label": "asynccssplugin()"
     },
     {
@@ -234,7 +234,7 @@
       "source_file": "vitest.config.ts",
       "source_location": "L1",
       "id": "vitest_config_ts",
-      "community": 108,
+      "community": 111,
       "norm_label": "vitest.config.ts"
     },
     {
@@ -243,7 +243,7 @@
       "source_file": "docs-site\\mdx-components.tsx",
       "source_location": "L1",
       "id": "docs_site_mdx_components_tsx",
-      "community": 54,
+      "community": 57,
       "norm_label": "mdx-components.tsx"
     },
     {
@@ -252,7 +252,7 @@
       "source_file": "docs-site\\mdx-components.tsx",
       "source_location": "L6",
       "id": "mdx_components_usemdxcomponents",
-      "community": 54,
+      "community": 57,
       "norm_label": "usemdxcomponents()"
     },
     {
@@ -261,7 +261,7 @@
       "source_file": "docs-site\\next-env.d.ts",
       "source_location": "L1",
       "id": "docs_site_next_env_d_ts",
-      "community": 109,
+      "community": 112,
       "norm_label": "next-env.d.ts"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "docs-site\\next.config.ts",
       "source_location": "L1",
       "id": "docs_site_next_config_ts",
-      "community": 110,
+      "community": 113,
       "norm_label": "next.config.ts"
     },
     {
@@ -279,7 +279,7 @@
       "source_file": "docs-site\\postcss.config.mjs",
       "source_location": "L1",
       "id": "docs_site_postcss_config_mjs",
-      "community": 111,
+      "community": 114,
       "norm_label": "postcss.config.mjs"
     },
     {
@@ -288,7 +288,7 @@
       "source_file": "docs-site\\app\\layout.tsx",
       "source_location": "L1",
       "id": "docs_site_app_layout_tsx",
-      "community": 55,
+      "community": 58,
       "norm_label": "layout.tsx"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "docs-site\\app\\layout.tsx",
       "source_location": "L100",
       "id": "layout_rootlayout",
-      "community": 55,
+      "community": 58,
       "norm_label": "rootlayout()"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "docs-site\\app\\robots.ts",
       "source_location": "L1",
       "id": "docs_site_app_robots_ts",
-      "community": 56,
+      "community": 59,
       "norm_label": "robots.ts"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "docs-site\\app\\robots.ts",
       "source_location": "L6",
       "id": "robots_robots",
-      "community": 56,
+      "community": 59,
       "norm_label": "robots()"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "docs-site\\app\\sitemap.ts",
       "source_location": "L1",
       "id": "docs_site_app_sitemap_ts",
-      "community": 57,
+      "community": 60,
       "norm_label": "sitemap.ts"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "docs-site\\app\\sitemap.ts",
       "source_location": "L19",
       "id": "sitemap_sitemap",
-      "community": 57,
+      "community": 60,
       "norm_label": "sitemap()"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "docs-site\\components\\ArbitrationMini.tsx",
       "source_location": "L1",
       "id": "docs_site_components_arbitrationmini_tsx",
-      "community": 27,
+      "community": 30,
       "norm_label": "arbitrationmini.tsx"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "docs-site\\components\\ArbitrationMini.tsx",
       "source_location": "L17",
       "id": "arbitrationmini_tobinary11",
-      "community": 27,
+      "community": 30,
       "norm_label": "tobinary11()"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "docs-site\\components\\ArbitrationMini.tsx",
       "source_location": "L29",
       "id": "arbitrationmini_computearbitration",
-      "community": 27,
+      "community": 30,
       "norm_label": "computearbitration()"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "docs-site\\components\\ArbitrationMini.tsx",
       "source_location": "L83",
       "id": "arbitrationmini_arbitrationmini",
-      "community": 27,
+      "community": 30,
       "norm_label": "arbitrationmini()"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "docs-site\\components\\ArticleSchema.tsx",
       "source_location": "L1",
       "id": "docs_site_components_articleschema_tsx",
-      "community": 58,
+      "community": 61,
       "norm_label": "articleschema.tsx"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "docs-site\\components\\ArticleSchema.tsx",
       "source_location": "L12",
       "id": "articleschema_articleschema",
-      "community": 58,
+      "community": 61,
       "norm_label": "articleschema()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "docs-site\\components\\BitAnatomy.tsx",
       "source_location": "L1",
       "id": "docs_site_components_bitanatomy_tsx",
-      "community": 28,
+      "community": 31,
       "norm_label": "bitanatomy.tsx"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "docs-site\\components\\BitAnatomy.tsx",
       "source_location": "L67",
       "id": "bitanatomy_tqtox",
-      "community": 28,
+      "community": 31,
       "norm_label": "tqtox()"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "docs-site\\components\\BitAnatomy.tsx",
       "source_location": "L74",
       "id": "bitanatomy_tqtow",
-      "community": 28,
+      "community": 31,
       "norm_label": "tqtow()"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "docs-site\\components\\BitAnatomy.tsx",
       "source_location": "L81",
       "id": "bitanatomy_bitanatomy",
-      "community": 28,
+      "community": 31,
       "norm_label": "bitanatomy()"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "docs-site\\components\\BitStuffingDemo.tsx",
       "source_location": "L1",
       "id": "docs_site_components_bitstuffingdemo_tsx",
-      "community": 59,
+      "community": 62,
       "norm_label": "bitstuffingdemo.tsx"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "docs-site\\components\\BitStuffingDemo.tsx",
       "source_location": "L12",
       "id": "bitstuffingdemo_stuffbits",
-      "community": 59,
+      "community": 62,
       "norm_label": "stuffbits()"
     },
     {
@@ -468,7 +468,7 @@
       "source_file": "docs-site\\components\\BitTimingPresets.tsx",
       "source_location": "L1",
       "id": "docs_site_components_bittimingpresets_tsx",
-      "community": 60,
+      "community": 63,
       "norm_label": "bittimingpresets.tsx"
     },
     {
@@ -477,7 +477,7 @@
       "source_file": "docs-site\\components\\BitTimingPresets.tsx",
       "source_location": "L26",
       "id": "bittimingpresets_classifysp",
-      "community": 60,
+      "community": 63,
       "norm_label": "classifysp()"
     },
     {
@@ -486,7 +486,7 @@
       "source_file": "docs-site\\components\\BusLengthChart.tsx",
       "source_location": "L1",
       "id": "docs_site_components_buslengthchart_tsx",
-      "community": 112,
+      "community": 115,
       "norm_label": "buslengthchart.tsx"
     },
     {
@@ -495,7 +495,7 @@
       "source_file": "docs-site\\components\\BusTopology.tsx",
       "source_location": "L1",
       "id": "docs_site_components_bustopology_tsx",
-      "community": 24,
+      "community": 26,
       "norm_label": "bustopology.tsx"
     },
     {
@@ -504,7 +504,7 @@
       "source_file": "docs-site\\components\\BusTopology.tsx",
       "source_location": "L112",
       "id": "bustopology_nodex",
-      "community": 24,
+      "community": 26,
       "norm_label": "nodex()"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "docs-site\\components\\BusTopology.tsx",
       "source_location": "L117",
       "id": "bustopology_resistorpath",
-      "community": 24,
+      "community": 26,
       "norm_label": "resistorpath()"
     },
     {
@@ -522,7 +522,7 @@
       "source_file": "docs-site\\components\\BusTopology.tsx",
       "source_location": "L142",
       "id": "bustopology_ground",
-      "community": 24,
+      "community": 26,
       "norm_label": "ground()"
     },
     {
@@ -531,7 +531,7 @@
       "source_file": "docs-site\\components\\BusTopology.tsx",
       "source_location": "L153",
       "id": "bustopology_bustopology",
-      "community": 24,
+      "community": 26,
       "norm_label": "bustopology()"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "docs-site\\components\\CanFdComparison.tsx",
       "source_location": "L1",
       "id": "docs_site_components_canfdcomparison_tsx",
-      "community": 113,
+      "community": 116,
       "norm_label": "canfdcomparison.tsx"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "docs-site\\components\\ErrorFrameAnatomy.tsx",
       "source_location": "L1",
       "id": "docs_site_components_errorframeanatomy_tsx",
-      "community": 61,
+      "community": 64,
       "norm_label": "errorframeanatomy.tsx"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "docs-site\\components\\ErrorFrameAnatomy.tsx",
       "source_location": "L43",
       "id": "errorframeanatomy_errorframeanatomy",
-      "community": 61,
+      "community": 64,
       "norm_label": "errorframeanatomy()"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "docs-site\\components\\ExtendedFrameAnatomy.tsx",
       "source_location": "L1",
       "id": "docs_site_components_extendedframeanatomy_tsx",
-      "community": 114,
+      "community": 117,
       "norm_label": "extendedframeanatomy.tsx"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "docs-site\\components\\FAQSchema.tsx",
       "source_location": "L1",
       "id": "docs_site_components_faqschema_tsx",
-      "community": 62,
+      "community": 65,
       "norm_label": "faqschema.tsx"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "docs-site\\components\\FAQSchema.tsx",
       "source_location": "L61",
       "id": "faqschema_faqschema",
-      "community": 62,
+      "community": 65,
       "norm_label": "faqschema()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "docs-site\\components\\FaultConfinement.tsx",
       "source_location": "L1",
       "id": "docs_site_components_faultconfinement_tsx",
-      "community": 63,
+      "community": 66,
       "norm_label": "faultconfinement.tsx"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "docs-site\\components\\FaultConfinement.tsx",
       "source_location": "L14",
       "id": "faultconfinement_getstate",
-      "community": 63,
+      "community": 66,
       "norm_label": "getstate()"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "docs-site\\components\\FaultStateMachine.tsx",
       "source_location": "L1",
       "id": "docs_site_components_faultstatemachine_tsx",
-      "community": 64,
+      "community": 67,
       "norm_label": "faultstatemachine.tsx"
     },
     {
@@ -621,7 +621,7 @@
       "source_file": "docs-site\\components\\FaultStateMachine.tsx",
       "source_location": "L65",
       "id": "faultstatemachine_faultstatemachine",
-      "community": 64,
+      "community": 67,
       "norm_label": "faultstatemachine()"
     },
     {
@@ -630,7 +630,7 @@
       "source_file": "docs-site\\components\\FrameAnatomy.tsx",
       "source_location": "L1",
       "id": "docs_site_components_frameanatomy_tsx",
-      "community": 115,
+      "community": 118,
       "norm_label": "frameanatomy.tsx"
     },
     {
@@ -639,7 +639,7 @@
       "source_file": "docs-site\\components\\IsoTpFrameTypes.tsx",
       "source_location": "L1",
       "id": "docs_site_components_isotpframetypes_tsx",
-      "community": 116,
+      "community": 119,
       "norm_label": "isotpframetypes.tsx"
     },
     {
@@ -648,7 +648,7 @@
       "source_file": "docs-site\\components\\IsoTpSequence.tsx",
       "source_location": "L1",
       "id": "docs_site_components_isotpsequence_tsx",
-      "community": 65,
+      "community": 68,
       "norm_label": "isotpsequence.tsx"
     },
     {
@@ -657,7 +657,7 @@
       "source_file": "docs-site\\components\\IsoTpSequence.tsx",
       "source_location": "L101",
       "id": "isotpsequence_toggleplay",
-      "community": 65,
+      "community": 68,
       "norm_label": "toggleplay()"
     },
     {
@@ -666,7 +666,7 @@
       "source_file": "docs-site\\components\\J1939CanId.tsx",
       "source_location": "L1",
       "id": "docs_site_components_j1939canid_tsx",
-      "community": 117,
+      "community": 120,
       "norm_label": "j1939canid.tsx"
     },
     {
@@ -675,7 +675,7 @@
       "source_file": "docs-site\\components\\NrcTable.tsx",
       "source_location": "L1",
       "id": "docs_site_components_nrctable_tsx",
-      "community": 39,
+      "community": 42,
       "norm_label": "nrctable.tsx"
     },
     {
@@ -684,7 +684,7 @@
       "source_file": "docs-site\\components\\NrcTable.tsx",
       "source_location": "L76",
       "id": "nrctable_catdef",
-      "community": 39,
+      "community": 42,
       "norm_label": "catdef()"
     },
     {
@@ -693,7 +693,7 @@
       "source_file": "docs-site\\components\\NrcTable.tsx",
       "source_location": "L80",
       "id": "nrctable_nrctable",
-      "community": 39,
+      "community": 42,
       "norm_label": "nrctable()"
     },
     {
@@ -702,7 +702,7 @@
       "source_file": "docs-site\\components\\ObdPidReference.tsx",
       "source_location": "L1",
       "id": "docs_site_components_obdpidreference_tsx",
-      "community": 118,
+      "community": 121,
       "norm_label": "obdpidreference.tsx"
     },
     {
@@ -711,7 +711,7 @@
       "source_file": "docs-site\\components\\ProtocolStack.tsx",
       "source_location": "L1",
       "id": "docs_site_components_protocolstack_tsx",
-      "community": 66,
+      "community": 69,
       "norm_label": "protocolstack.tsx"
     },
     {
@@ -720,7 +720,7 @@
       "source_file": "docs-site\\components\\ProtocolStack.tsx",
       "source_location": "L63",
       "id": "protocolstack_op",
-      "community": 66,
+      "community": 69,
       "norm_label": "op()"
     },
     {
@@ -729,7 +729,7 @@
       "source_file": "docs-site\\components\\UdsServiceTable.tsx",
       "source_location": "L1",
       "id": "docs_site_components_udsservicetable_tsx",
-      "community": 40,
+      "community": 43,
       "norm_label": "udsservicetable.tsx"
     },
     {
@@ -738,7 +738,7 @@
       "source_file": "docs-site\\components\\UdsServiceTable.tsx",
       "source_location": "L67",
       "id": "udsservicetable_catdef",
-      "community": 40,
+      "community": 43,
       "norm_label": "catdef()"
     },
     {
@@ -747,7 +747,7 @@
       "source_file": "docs-site\\components\\UdsServiceTable.tsx",
       "source_location": "L71",
       "id": "udsservicetable_udsservicetable",
-      "community": 40,
+      "community": 43,
       "norm_label": "udsservicetable()"
     },
     {
@@ -756,7 +756,7 @@
       "source_file": "docs-site\\components\\VoltageLevels.tsx",
       "source_location": "L1",
       "id": "docs_site_components_voltagelevels_tsx",
-      "community": 67,
+      "community": 70,
       "norm_label": "voltagelevels.tsx"
     },
     {
@@ -765,7 +765,7 @@
       "source_file": "docs-site\\components\\VoltageLevels.tsx",
       "source_location": "L23",
       "id": "voltagelevels_voltagetoy",
-      "community": 67,
+      "community": 70,
       "norm_label": "voltagetoy()"
     },
     {
@@ -774,7 +774,7 @@
       "source_file": "docs-site\\lib\\site.ts",
       "source_location": "L1",
       "id": "docs_site_lib_site_ts",
-      "community": 119,
+      "community": 122,
       "norm_label": "site.ts"
     },
     {
@@ -783,7 +783,7 @@
       "source_file": "docs-site\\lib\\utils.ts",
       "source_location": "L1",
       "id": "docs_site_lib_utils_ts",
-      "community": 68,
+      "community": 71,
       "norm_label": "utils.ts"
     },
     {
@@ -792,7 +792,7 @@
       "source_file": "docs-site\\lib\\utils.ts",
       "source_location": "L4",
       "id": "utils_cn",
-      "community": 68,
+      "community": 71,
       "norm_label": "cn()"
     },
     {
@@ -801,7 +801,7 @@
       "source_file": "scratch\\install_graphify.py",
       "source_location": "L1",
       "id": "scratch_install_graphify_py",
-      "community": 120,
+      "community": 123,
       "norm_label": "install_graphify.py"
     },
     {
@@ -810,7 +810,7 @@
       "source_file": "src\\App.tsx",
       "source_location": "L1",
       "id": "src_app_tsx",
-      "community": 69,
+      "community": 72,
       "norm_label": "app.tsx"
     },
     {
@@ -819,7 +819,7 @@
       "source_file": "src\\main.tsx",
       "source_location": "L1",
       "id": "src_main_tsx",
-      "community": 69,
+      "community": 72,
       "norm_label": "main.tsx"
     },
     {
@@ -828,16 +828,16 @@
       "source_file": "src\\components\\AnimatedCounter.tsx",
       "source_location": "L1",
       "id": "src_components_animatedcounter_tsx",
-      "community": 41,
+      "community": 44,
       "norm_label": "animatedcounter.tsx"
     },
     {
       "label": "AnimatedCounter()",
       "file_type": "code",
-      "source_file": "src\\components\\AnimatedCounter.tsx",
-      "source_location": "L15",
+      "source_file": "src\\features\\generations\\components\\AnimatedCounter.tsx",
+      "source_location": "L24",
       "id": "animatedcounter_animatedcounter",
-      "community": 41,
+      "community": 44,
       "norm_label": "animatedcounter()"
     },
     {
@@ -846,7 +846,7 @@
       "source_file": "src\\components\\ErrorBoundary.tsx",
       "source_location": "L1",
       "id": "src_components_errorboundary_tsx",
-      "community": 16,
+      "community": 17,
       "norm_label": "errorboundary.tsx"
     },
     {
@@ -855,7 +855,7 @@
       "source_file": "src\\components\\ErrorBoundary.tsx",
       "source_location": "L15",
       "id": "errorboundary_errorboundary",
-      "community": 16,
+      "community": 17,
       "norm_label": "errorboundary"
     },
     {
@@ -864,7 +864,7 @@
       "source_file": "src\\components\\ErrorBoundary.tsx",
       "source_location": "L16",
       "id": "errorboundary_errorboundary_constructor",
-      "community": 16,
+      "community": 17,
       "norm_label": ".constructor()"
     },
     {
@@ -873,7 +873,7 @@
       "source_file": "src\\components\\ErrorBoundary.tsx",
       "source_location": "L21",
       "id": "errorboundary_errorboundary_getderivedstatefromerror",
-      "community": 16,
+      "community": 17,
       "norm_label": ".getderivedstatefromerror()"
     },
     {
@@ -882,7 +882,7 @@
       "source_file": "src\\components\\ErrorBoundary.tsx",
       "source_location": "L25",
       "id": "errorboundary_errorboundary_componentdidcatch",
-      "community": 16,
+      "community": 17,
       "norm_label": ".componentdidcatch()"
     },
     {
@@ -891,7 +891,7 @@
       "source_file": "src\\components\\ErrorBoundary.tsx",
       "source_location": "L42",
       "id": "errorboundary_errorboundary_render",
-      "community": 16,
+      "community": 17,
       "norm_label": ".render()"
     },
     {
@@ -900,43 +900,43 @@
       "source_file": "src\\components\\ToastContainer.tsx",
       "source_location": "L1",
       "id": "src_components_toastcontainer_tsx",
-      "community": 121,
+      "community": 124,
       "norm_label": "toastcontainer.tsx"
     },
     {
       "label": "ArbitrationVisualizer.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ArbitrationVisualizer.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ArbitrationVisualizer.tsx",
       "source_location": "L1",
-      "id": "src_components_can_arbitrationvisualizer_tsx",
-      "community": 29,
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_arbitrationvisualizer_tsx",
+      "community": 32,
       "norm_label": "arbitrationvisualizer.tsx"
     },
     {
       "label": "parseIdToBits()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ArbitrationVisualizer.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ArbitrationVisualizer.tsx",
       "source_location": "L12",
       "id": "arbitrationvisualizer_parseidtobits",
-      "community": 29,
+      "community": 32,
       "norm_label": "parseidtobits()"
     },
     {
       "label": "handleRun()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ArbitrationVisualizer.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ArbitrationVisualizer.tsx",
       "source_location": "L20",
       "id": "arbitrationvisualizer_handlerun",
-      "community": 29,
+      "community": 32,
       "norm_label": "handlerun()"
     },
     {
       "label": "handleIdChange()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ArbitrationVisualizer.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ArbitrationVisualizer.tsx",
       "source_location": "L42",
       "id": "arbitrationvisualizer_handleidchange",
-      "community": 29,
+      "community": 32,
       "norm_label": "handleidchange()"
     },
     {
@@ -945,7 +945,7 @@
       "source_file": "src\\components\\can\\BitStreamVisualizer.tsx",
       "source_location": "L1",
       "id": "src_components_can_bitstreamvisualizer_tsx",
-      "community": 70,
+      "community": 73,
       "norm_label": "bitstreamvisualizer.tsx"
     },
     {
@@ -954,7 +954,7 @@
       "source_file": "src\\components\\can\\BitStreamVisualizer.tsx",
       "source_location": "L38",
       "id": "bitstreamvisualizer_getfield",
-      "community": 70,
+      "community": 73,
       "norm_label": "getfield()"
     },
     {
@@ -1251,7 +1251,7 @@
       "source_file": "src\\components\\can\\CANBusMonitor.tsx",
       "source_location": "L1",
       "id": "src_components_can_canbusmonitor_tsx",
-      "community": 30,
+      "community": 33,
       "norm_label": "canbusmonitor.tsx"
     },
     {
@@ -1260,7 +1260,7 @@
       "source_file": "src\\components\\can\\CANBusMonitor.tsx",
       "source_location": "L43",
       "id": "canbusmonitor_exporttocsv",
-      "community": 30,
+      "community": 33,
       "norm_label": "exporttocsv()"
     },
     {
@@ -1269,7 +1269,7 @@
       "source_file": "src\\components\\can\\CANBusMonitor.tsx",
       "source_location": "L56",
       "id": "canbusmonitor_exporttojson",
-      "community": 30,
+      "community": 33,
       "norm_label": "exporttojson()"
     },
     {
@@ -1278,7 +1278,7 @@
       "source_file": "src\\components\\can\\CANBusMonitor.tsx",
       "source_location": "L69",
       "id": "canbusmonitor_generatesharelink",
-      "community": 30,
+      "community": 33,
       "norm_label": "generatesharelink()"
     },
     {
@@ -1287,7 +1287,7 @@
       "source_file": "src\\components\\can\\CANFrameBuilder.tsx",
       "source_location": "L1",
       "id": "src_components_can_canframebuilder_tsx",
-      "community": 122,
+      "community": 125,
       "norm_label": "canframebuilder.tsx"
     },
     {
@@ -1296,7 +1296,7 @@
       "source_file": "src\\components\\can\\DTCListPanel.tsx",
       "source_location": "L1",
       "id": "src_components_can_dtclistpanel_tsx",
-      "community": 123,
+      "community": 126,
       "norm_label": "dtclistpanel.tsx"
     },
     {
@@ -1305,7 +1305,7 @@
       "source_file": "src\\components\\can\\ErrorGauges.tsx",
       "source_location": "L1",
       "id": "src_components_can_errorgauges_tsx",
-      "community": 71,
+      "community": 74,
       "norm_label": "errorgauges.tsx"
     },
     {
@@ -1314,7 +1314,7 @@
       "source_file": "src\\components\\can\\ErrorGauges.tsx",
       "source_location": "L21",
       "id": "errorgauges_getthemecolor",
-      "community": 71,
+      "community": 74,
       "norm_label": "getthemecolor()"
     },
     {
@@ -1323,7 +1323,7 @@
       "source_file": "src\\components\\can\\ErrorInjectionPanel.tsx",
       "source_location": "L1",
       "id": "src_components_can_errorinjectionpanel_tsx",
-      "community": 72,
+      "community": 75,
       "norm_label": "errorinjectionpanel.tsx"
     },
     {
@@ -1332,25 +1332,25 @@
       "source_file": "src\\components\\can\\ErrorInjectionPanel.tsx",
       "source_location": "L116",
       "id": "errorinjectionpanel_handleclickoutside",
-      "community": 72,
+      "community": 75,
       "norm_label": "handleclickoutside()"
     },
     {
       "label": "ErrorLogPanel.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ErrorLogPanel.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ErrorLogPanel.tsx",
       "source_location": "L1",
-      "id": "src_components_can_errorlogpanel_tsx",
-      "community": 73,
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_errorlogpanel_tsx",
+      "community": 76,
       "norm_label": "errorlogpanel.tsx"
     },
     {
       "label": "formatTime()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ErrorLogPanel.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ErrorLogPanel.tsx",
       "source_location": "L48",
       "id": "errorlogpanel_formattime",
-      "community": 73,
+      "community": 76,
       "norm_label": "formattime()"
     },
     {
@@ -1359,7 +1359,7 @@
       "source_file": "src\\components\\can\\ErrorStateMachine.tsx",
       "source_location": "L1",
       "id": "src_components_can_errorstatemachine_tsx",
-      "community": 124,
+      "community": 127,
       "norm_label": "errorstatemachine.tsx"
     },
     {
@@ -1368,7 +1368,7 @@
       "source_file": "src\\components\\can\\ErrorTypeDeepDive.tsx",
       "source_location": "L1",
       "id": "src_components_can_errortypedeepdive_tsx",
-      "community": 125,
+      "community": 128,
       "norm_label": "errortypedeepdive.tsx"
     },
     {
@@ -1377,7 +1377,7 @@
       "source_file": "src\\components\\can\\FreezeFrameModal.tsx",
       "source_location": "L1",
       "id": "src_components_can_freezeframemodal_tsx",
-      "community": 126,
+      "community": 129,
       "norm_label": "freezeframemodal.tsx"
     },
     {
@@ -1386,34 +1386,34 @@
       "source_file": "src\\components\\can\\NetworkMap.tsx",
       "source_location": "L1",
       "id": "src_components_can_networkmap_tsx",
-      "community": 127,
+      "community": 130,
       "norm_label": "networkmap.tsx"
     },
     {
       "label": "ReferencePlots.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ReferencePlots.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ReferencePlots.tsx",
       "source_location": "L1",
-      "id": "src_components_can_referenceplots_tsx",
-      "community": 42,
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_referenceplots_tsx",
+      "community": 45,
       "norm_label": "referenceplots.tsx"
     },
     {
       "label": "generateData()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ReferencePlots.tsx",
-      "source_location": "L28",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ReferencePlots.tsx",
+      "source_location": "L27",
       "id": "referenceplots_generatedata",
-      "community": 42,
+      "community": 45,
       "norm_label": "generatedata()"
     },
     {
       "label": "ReferencePlots()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\ReferencePlots.tsx",
-      "source_location": "L76",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ReferencePlots.tsx",
+      "source_location": "L74",
       "id": "referenceplots_referenceplots",
-      "community": 42,
+      "community": 45,
       "norm_label": "referenceplots()"
     },
     {
@@ -1422,7 +1422,7 @@
       "source_file": "src\\components\\can\\TroubleshootingHints.tsx",
       "source_location": "L1",
       "id": "src_components_can_troubleshootinghints_tsx",
-      "community": 43,
+      "community": 46,
       "norm_label": "troubleshootinghints.tsx"
     },
     {
@@ -1431,7 +1431,7 @@
       "source_file": "src\\components\\can\\TroubleshootingHints.tsx",
       "source_location": "L19",
       "id": "troubleshootinghints_gethints",
-      "community": 43,
+      "community": 46,
       "norm_label": "gethints()"
     },
     {
@@ -1440,7 +1440,7 @@
       "source_file": "src\\components\\can\\TroubleshootingHints.tsx",
       "source_location": "L116",
       "id": "troubleshootinghints_severityicon",
-      "community": 43,
+      "community": 46,
       "norm_label": "severityicon()"
     },
     {
@@ -1473,17 +1473,17 @@
     {
       "label": "VoltageScope.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
       "source_location": "L1",
-      "id": "src_components_can_voltagescope_tsx",
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "community": 6,
       "norm_label": "voltagescope.tsx"
     },
     {
       "label": "Waves()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L12",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L14",
       "id": "voltagescope_waves",
       "community": 6,
       "norm_label": "waves()"
@@ -1491,8 +1491,8 @@
     {
       "label": "Fft()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L17",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L19",
       "id": "voltagescope_fft",
       "community": 6,
       "norm_label": "fft()"
@@ -1500,8 +1500,8 @@
     {
       "label": "CursorIcon()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L22",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L24",
       "id": "voltagescope_cursoricon",
       "community": 6,
       "norm_label": "cursoricon()"
@@ -1509,8 +1509,8 @@
     {
       "label": "Download()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L27",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L29",
       "id": "voltagescope_download",
       "community": 6,
       "norm_label": "download()"
@@ -1518,8 +1518,8 @@
     {
       "label": "Camera()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L32",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L34",
       "id": "voltagescope_camera",
       "community": 6,
       "norm_label": "camera()"
@@ -1527,8 +1527,8 @@
     {
       "label": "GearIcon()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L37",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L39",
       "id": "voltagescope_gearicon",
       "community": 6,
       "norm_label": "gearicon()"
@@ -1536,8 +1536,8 @@
     {
       "label": "ResetIcon()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L42",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L44",
       "id": "voltagescope_reseticon",
       "community": 6,
       "norm_label": "reseticon()"
@@ -1545,8 +1545,8 @@
     {
       "label": "ReferenceIcon()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L47",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L49",
       "id": "voltagescope_referenceicon",
       "community": 6,
       "norm_label": "referenceicon()"
@@ -1554,8 +1554,8 @@
     {
       "label": "XIcon()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L53",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L55",
       "id": "voltagescope_xicon",
       "community": 6,
       "norm_label": "xicon()"
@@ -1563,8 +1563,8 @@
     {
       "label": "getInitialState()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L71",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L64",
       "id": "voltagescope_getinitialstate",
       "community": 6,
       "norm_label": "getinitialstate()"
@@ -1572,8 +1572,8 @@
     {
       "label": "getInitialMeas()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L83",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L87",
       "id": "voltagescope_getinitialmeas",
       "community": 6,
       "norm_label": "getinitialmeas()"
@@ -1581,8 +1581,8 @@
     {
       "label": "handler()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L142",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L159",
       "id": "voltagescope_handler",
       "community": 6,
       "norm_label": "handler()"
@@ -1590,107 +1590,215 @@
     {
       "label": "fmtTb()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L157",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L174",
       "id": "voltagescope_fmttb",
       "community": 6,
       "norm_label": "fmttb()"
     },
     {
+      "label": "CanTriggerMenu.tsx",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\CanTriggerMenu.tsx",
+      "source_location": "L1",
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_cantriggermenu_tsx",
+      "community": 34,
+      "norm_label": "cantriggermenu.tsx"
+    },
+    {
+      "label": "XIcon()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\CanTriggerMenu.tsx",
+      "source_location": "L14",
+      "id": "cantriggermenu_xicon",
+      "community": 34,
+      "norm_label": "xicon()"
+    },
+    {
+      "label": "TargetIcon()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\CanTriggerMenu.tsx",
+      "source_location": "L20",
+      "id": "cantriggermenu_targeticon",
+      "community": 34,
+      "norm_label": "targeticon()"
+    },
+    {
+      "label": "updateCfg()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\CanTriggerMenu.tsx",
+      "source_location": "L30",
+      "id": "cantriggermenu_updatecfg",
+      "community": 34,
+      "norm_label": "updatecfg()"
+    },
+    {
       "label": "KnobControl.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\KnobControl.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\KnobControl.tsx",
       "source_location": "L1",
-      "id": "src_components_can_scope_knobcontrol_tsx",
-      "community": 44,
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_knobcontrol_tsx",
+      "community": 47,
       "norm_label": "knobcontrol.tsx"
     },
     {
       "label": "polarToCartesian()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\KnobControl.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\KnobControl.tsx",
       "source_location": "L3",
       "id": "knobcontrol_polartocartesian",
-      "community": 44,
+      "community": 47,
       "norm_label": "polartocartesian()"
     },
     {
       "label": "describeArc()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\KnobControl.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\KnobControl.tsx",
       "source_location": "L8",
       "id": "knobcontrol_describearc",
-      "community": 44,
+      "community": 47,
       "norm_label": "describearc()"
+    },
+    {
+      "label": "LogicRibbon.tsx",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\LogicRibbon.tsx",
+      "source_location": "L1",
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_logicribbon_tsx",
+      "community": 0,
+      "norm_label": "logicribbon.tsx"
+    },
+    {
+      "label": "resolveColor()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\LogicRibbon.tsx",
+      "source_location": "L35",
+      "id": "logicribbon_resolvecolor",
+      "community": 0,
+      "norm_label": "resolvecolor()"
+    },
+    {
+      "label": "render()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\LogicRibbon.tsx",
+      "source_location": "L142",
+      "id": "logicribbon_render",
+      "community": 0,
+      "norm_label": "render()"
     },
     {
       "label": "ProtocolDecoder.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
       "source_location": "L1",
-      "id": "src_components_can_scope_protocoldecoder_tsx",
-      "community": 17,
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
+      "community": 27,
       "norm_label": "protocoldecoder.tsx"
     },
     {
       "label": "hex()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L17",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_location": "L7",
       "id": "protocoldecoder_hex",
-      "community": 17,
+      "community": 27,
       "norm_label": "hex()"
     },
     {
       "label": "bin()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L18",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_location": "L8",
       "id": "protocoldecoder_bin",
-      "community": 17,
+      "community": 27,
       "norm_label": "bin()"
-    },
-    {
-      "label": "makeFields()",
-      "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L22",
-      "id": "protocoldecoder_makefields",
-      "community": 17,
-      "norm_label": "makefields()"
     },
     {
       "label": "upd()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L434",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_location": "L573",
       "id": "protocoldecoder_upd",
-      "community": 17,
+      "community": 27,
       "norm_label": "upd()"
     },
     {
       "label": "handleChart()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L673",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_location": "L812",
       "id": "protocoldecoder_handlechart",
-      "community": 17,
+      "community": 27,
       "norm_label": "handlechart()"
+    },
+    {
+      "label": "protocolUtils.ts",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L1",
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "community": 18,
+      "norm_label": "protocolutils.ts"
+    },
+    {
+      "label": "getCanBitPattern()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L49",
+      "id": "protocolutils_getcanbitpattern",
+      "community": 18,
+      "norm_label": "getcanbitpattern()"
+    },
+    {
+      "label": "getLogicalBits()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L112",
+      "id": "protocolutils_getlogicalbits",
+      "community": 18,
+      "norm_label": "getlogicalbits()"
+    },
+    {
+      "label": "buildBitFieldMap()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L141",
+      "id": "protocolutils_buildbitfieldmap",
+      "community": 18,
+      "norm_label": "buildbitfieldmap()"
+    },
+    {
+      "label": "detectBitStuffing()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L179",
+      "id": "protocolutils_detectbitstuffing",
+      "community": 18,
+      "norm_label": "detectbitstuffing()"
+    },
+    {
+      "label": "getSegmentBoundaries()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L222",
+      "id": "protocolutils_getsegmentboundaries",
+      "community": 18,
+      "norm_label": "getsegmentboundaries()"
     },
     {
       "label": "ScopeControls.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
       "source_location": "L1",
-      "id": "src_components_can_scope_scopecontrols_tsx",
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "community": 11,
       "norm_label": "scopecontrols.tsx"
     },
     {
       "label": "fmtTb()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L15",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L16",
       "id": "scopecontrols_fmttb",
       "community": 11,
       "norm_label": "fmttb()"
@@ -1698,8 +1806,8 @@
     {
       "label": "Play()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L18",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L19",
       "id": "scopecontrols_play",
       "community": 11,
       "norm_label": "play()"
@@ -1707,8 +1815,8 @@
     {
       "label": "Stop()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L23",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L24",
       "id": "scopecontrols_stop",
       "community": 11,
       "norm_label": "stop()"
@@ -1716,8 +1824,8 @@
     {
       "label": "Single()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L28",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L29",
       "id": "scopecontrols_single",
       "community": 11,
       "norm_label": "single()"
@@ -1725,8 +1833,8 @@
     {
       "label": "Target()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L33",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L34",
       "id": "scopecontrols_target",
       "community": 11,
       "norm_label": "target()"
@@ -1734,73 +1842,82 @@
     {
       "label": "ScopeMetrics.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\ScopeMetrics.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeMetrics.tsx",
       "source_location": "L1",
-      "id": "src_components_can_scope_scopemetrics_tsx",
-      "community": 128,
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopemetrics_tsx",
+      "community": 0,
       "norm_label": "scopemetrics.tsx"
+    },
+    {
+      "label": "clampPercent()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeMetrics.tsx",
+      "source_location": "L52",
+      "id": "scopemetrics_clamppercent",
+      "community": 0,
+      "norm_label": "clamppercent()"
     },
     {
       "label": "types.ts",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\types.ts",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\types.ts",
       "source_location": "L1",
-      "id": "src_components_can_scope_types_ts",
-      "community": 129,
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_types_ts",
+      "community": 131,
       "norm_label": "types.ts"
     },
     {
       "label": "WaveformViewer.tsx",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
       "source_location": "L1",
-      "id": "src_components_can_scope_waveformviewer_tsx",
-      "community": 18,
+      "id": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
+      "community": 19,
       "norm_label": "waveformviewer.tsx"
     },
     {
       "label": "canBitPattern()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L6",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L9",
       "id": "waveformviewer_canbitpattern",
-      "community": 18,
+      "community": 19,
       "norm_label": "canbitpattern()"
     },
     {
       "label": "generateCAN()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L32",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L23",
       "id": "waveformviewer_generatecan",
-      "community": 18,
+      "community": 19,
       "norm_label": "generatecan()"
     },
     {
       "label": "generateSine()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L49",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L40",
       "id": "waveformviewer_generatesine",
-      "community": 18,
+      "community": 19,
       "norm_label": "generatesine()"
     },
     {
       "label": "generateSquare()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L62",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L53",
       "id": "waveformviewer_generatesquare",
-      "community": 18,
+      "community": 19,
       "norm_label": "generatesquare()"
     },
     {
       "label": "generateNoisy()",
       "file_type": "code",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L76",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L67",
       "id": "waveformviewer_generatenoisy",
-      "community": 18,
+      "community": 19,
       "norm_label": "generatenoisy()"
     },
     {
@@ -1809,7 +1926,7 @@
       "source_file": "src\\components\\common\\Footer.tsx",
       "source_location": "L1",
       "id": "src_components_common_footer_tsx",
-      "community": 74,
+      "community": 77,
       "norm_label": "footer.tsx"
     },
     {
@@ -1818,7 +1935,7 @@
       "source_file": "src\\components\\common\\Footer.tsx",
       "source_location": "L38",
       "id": "footer_trackvisit",
-      "community": 74,
+      "community": 77,
       "norm_label": "trackvisit()"
     },
     {
@@ -1827,7 +1944,7 @@
       "source_file": "src\\components\\common\\Header.tsx",
       "source_location": "L1",
       "id": "src_components_common_header_tsx",
-      "community": 22,
+      "community": 24,
       "norm_label": "header.tsx"
     },
     {
@@ -1836,7 +1953,7 @@
       "source_file": "src\\components\\common\\Header.tsx",
       "source_location": "L41",
       "id": "header_handleclickoutside",
-      "community": 22,
+      "community": 24,
       "norm_label": "handleclickoutside()"
     },
     {
@@ -1845,7 +1962,7 @@
       "source_file": "src\\components\\common\\Header.tsx",
       "source_location": "L55",
       "id": "header_handlelogout",
-      "community": 22,
+      "community": 24,
       "norm_label": "handlelogout()"
     },
     {
@@ -1854,7 +1971,7 @@
       "source_file": "src\\components\\common\\Header.tsx",
       "source_location": "L68",
       "id": "header_navlinkclass",
-      "community": 22,
+      "community": 24,
       "norm_label": "navlinkclass()"
     },
     {
@@ -1863,7 +1980,7 @@
       "source_file": "src\\components\\common\\SimulatorStatusBar.tsx",
       "source_location": "L1",
       "id": "src_components_common_simulatorstatusbar_tsx",
-      "community": 130,
+      "community": 132,
       "norm_label": "simulatorstatusbar.tsx"
     },
     {
@@ -1872,7 +1989,7 @@
       "source_file": "src\\components\\magicui\\Marquee.tsx",
       "source_location": "L1",
       "id": "src_components_magicui_marquee_tsx",
-      "community": 75,
+      "community": 78,
       "norm_label": "marquee.tsx"
     },
     {
@@ -1881,7 +1998,7 @@
       "source_file": "src\\components\\magicui\\Marquee.tsx",
       "source_location": "L13",
       "id": "marquee_marquee",
-      "community": 75,
+      "community": 78,
       "norm_label": "marquee()"
     },
     {
@@ -1890,7 +2007,7 @@
       "source_file": "src\\components\\magicui\\Meteors.tsx",
       "source_location": "L1",
       "id": "src_components_magicui_meteors_tsx",
-      "community": 76,
+      "community": 79,
       "norm_label": "meteors.tsx"
     },
     {
@@ -1899,7 +2016,7 @@
       "source_file": "src\\components\\magicui\\Meteors.tsx",
       "source_location": "L10",
       "id": "meteors_meteors",
-      "community": 76,
+      "community": 79,
       "norm_label": "meteors()"
     },
     {
@@ -1908,7 +2025,7 @@
       "source_file": "src\\components\\magicui\\Particles.tsx",
       "source_location": "L1",
       "id": "src_components_magicui_particles_tsx",
-      "community": 77,
+      "community": 80,
       "norm_label": "particles.tsx"
     },
     {
@@ -1917,7 +2034,7 @@
       "source_file": "src\\components\\magicui\\Particles.tsx",
       "source_location": "L13",
       "id": "particles_particles",
-      "community": 77,
+      "community": 80,
       "norm_label": "particles()"
     },
     {
@@ -1926,7 +2043,7 @@
       "source_file": "src\\components\\magicui\\ShineBorder.tsx",
       "source_location": "L1",
       "id": "src_components_magicui_shineborder_tsx",
-      "community": 78,
+      "community": 81,
       "norm_label": "shineborder.tsx"
     },
     {
@@ -1935,7 +2052,7 @@
       "source_file": "src\\components\\magicui\\ShineBorder.tsx",
       "source_location": "L33",
       "id": "shineborder_cn",
-      "community": 78,
+      "community": 81,
       "norm_label": "cn()"
     },
     {
@@ -1944,7 +2061,7 @@
       "source_file": "src\\components\\magicui\\ShinyButton.tsx",
       "source_location": "L1",
       "id": "src_components_magicui_shinybutton_tsx",
-      "community": 131,
+      "community": 133,
       "norm_label": "shinybutton.tsx"
     },
     {
@@ -1953,7 +2070,7 @@
       "source_file": "src\\components\\physical\\FaultScenarioPanel.tsx",
       "source_location": "L1",
       "id": "src_components_physical_faultscenariopanel_tsx",
-      "community": 132,
+      "community": 134,
       "norm_label": "faultscenariopanel.tsx"
     },
     {
@@ -1962,7 +2079,7 @@
       "source_file": "src\\components\\power\\PowerSupplyDashboard.tsx",
       "source_location": "L1",
       "id": "src_components_power_powersupplydashboard_tsx",
-      "community": 79,
+      "community": 82,
       "norm_label": "powersupplydashboard.tsx"
     },
     {
@@ -1971,7 +2088,7 @@
       "source_file": "src\\components\\power\\PowerSupplyDashboard.tsx",
       "source_location": "L94",
       "id": "powersupplydashboard_logevent",
-      "community": 79,
+      "community": 82,
       "norm_label": "logevent()"
     },
     {
@@ -1980,7 +2097,7 @@
       "source_file": "src\\components\\signals\\DBCExportModal.tsx",
       "source_location": "L1",
       "id": "src_components_signals_dbcexportmodal_tsx",
-      "community": 133,
+      "community": 135,
       "norm_label": "dbcexportmodal.tsx"
     },
     {
@@ -1989,7 +2106,7 @@
       "source_file": "src\\components\\ui\\BorderBeam.tsx",
       "source_location": "L1",
       "id": "src_components_ui_borderbeam_tsx",
-      "community": 134,
+      "community": 136,
       "norm_label": "borderbeam.tsx"
     },
     {
@@ -1998,7 +2115,7 @@
       "source_file": "src\\components\\ui\\Breadcrumbs.tsx",
       "source_location": "L1",
       "id": "src_components_ui_breadcrumbs_tsx",
-      "community": 135,
+      "community": 137,
       "norm_label": "breadcrumbs.tsx"
     },
     {
@@ -2007,7 +2124,7 @@
       "source_file": "src\\components\\ui\\Container.tsx",
       "source_location": "L1",
       "id": "src_components_ui_container_tsx",
-      "community": 80,
+      "community": 83,
       "norm_label": "container.tsx"
     },
     {
@@ -2016,7 +2133,7 @@
       "source_file": "src\\components\\ui\\Container.tsx",
       "source_location": "L10",
       "id": "container_container",
-      "community": 80,
+      "community": 83,
       "norm_label": "container()"
     },
     {
@@ -2025,7 +2142,7 @@
       "source_file": "src\\components\\ui\\CyberButton.tsx",
       "source_location": "L1",
       "id": "src_components_ui_cyberbutton_tsx",
-      "community": 136,
+      "community": 138,
       "norm_label": "cyberbutton.tsx"
     },
     {
@@ -2034,7 +2151,7 @@
       "source_file": "src\\components\\ui\\CyberStatCard.tsx",
       "source_location": "L1",
       "id": "src_components_ui_cyberstatcard_tsx",
-      "community": 137,
+      "community": 139,
       "norm_label": "cyberstatcard.tsx"
     },
     {
@@ -2043,7 +2160,7 @@
       "source_file": "src\\components\\ui\\index.ts",
       "source_location": "L1",
       "id": "src_components_ui_index_ts",
-      "community": 138,
+      "community": 140,
       "norm_label": "index.ts"
     },
     {
@@ -2052,7 +2169,7 @@
       "source_file": "src\\components\\ui\\LazyMount.tsx",
       "source_location": "L1",
       "id": "src_components_ui_lazymount_tsx",
-      "community": 139,
+      "community": 141,
       "norm_label": "lazymount.tsx"
     },
     {
@@ -2061,7 +2178,7 @@
       "source_file": "src\\components\\ui\\LoadingSpinner.tsx",
       "source_location": "L1",
       "id": "src_components_ui_loadingspinner_tsx",
-      "community": 81,
+      "community": 84,
       "norm_label": "loadingspinner.tsx"
     },
     {
@@ -2070,7 +2187,7 @@
       "source_file": "src\\components\\ui\\LoadingSpinner.tsx",
       "source_location": "L21",
       "id": "loadingspinner_loadingspinner",
-      "community": 81,
+      "community": 84,
       "norm_label": "loadingspinner()"
     },
     {
@@ -2079,7 +2196,7 @@
       "source_file": "src\\components\\ui\\PricingTeaser.tsx",
       "source_location": "L1",
       "id": "src_components_ui_pricingteaser_tsx",
-      "community": 140,
+      "community": 142,
       "norm_label": "pricingteaser.tsx"
     },
     {
@@ -2088,7 +2205,7 @@
       "source_file": "src\\components\\ui\\Tooltip.tsx",
       "source_location": "L1",
       "id": "src_components_ui_tooltip_tsx",
-      "community": 82,
+      "community": 85,
       "norm_label": "tooltip.tsx"
     },
     {
@@ -2097,7 +2214,7 @@
       "source_file": "src\\components\\ui\\Tooltip.tsx",
       "source_location": "L31",
       "id": "tooltip_cn",
-      "community": 82,
+      "community": 85,
       "norm_label": "cn()"
     },
     {
@@ -2106,7 +2223,7 @@
       "source_file": "src\\config\\env.ts",
       "source_location": "L1",
       "id": "src_config_env_ts",
-      "community": 31,
+      "community": 35,
       "norm_label": "env.ts"
     },
     {
@@ -2115,7 +2232,7 @@
       "source_file": "src\\config\\env.ts",
       "source_location": "L36",
       "id": "env_getenvnumber",
-      "community": 31,
+      "community": 35,
       "norm_label": "getenvnumber()"
     },
     {
@@ -2124,7 +2241,7 @@
       "source_file": "src\\config\\env.ts",
       "source_location": "L41",
       "id": "env_getenvboolean",
-      "community": 31,
+      "community": 35,
       "norm_label": "getenvboolean()"
     },
     {
@@ -2133,7 +2250,7 @@
       "source_file": "src\\config\\env.ts",
       "source_location": "L47",
       "id": "env_getenvstring",
-      "community": 31,
+      "community": 35,
       "norm_label": "getenvstring()"
     },
     {
@@ -2142,7 +2259,7 @@
       "source_file": "src\\config\\pricing.ts",
       "source_location": "L1",
       "id": "src_config_pricing_ts",
-      "community": 141,
+      "community": 143,
       "norm_label": "pricing.ts"
     },
     {
@@ -2151,7 +2268,7 @@
       "source_file": "src\\config\\supabase.ts",
       "source_location": "L1",
       "id": "src_config_supabase_ts",
-      "community": 142,
+      "community": 144,
       "norm_label": "supabase.ts"
     },
     {
@@ -2160,7 +2277,7 @@
       "source_file": "src\\context\\AuthContext.tsx",
       "source_location": "L1",
       "id": "src_context_authcontext_tsx",
-      "community": 83,
+      "community": 86,
       "norm_label": "authcontext.tsx"
     },
     {
@@ -2169,7 +2286,7 @@
       "source_file": "src\\context\\AuthContext.tsx",
       "source_location": "L110",
       "id": "authcontext_useauth",
-      "community": 83,
+      "community": 86,
       "norm_label": "useauth()"
     },
     {
@@ -2178,7 +2295,7 @@
       "source_file": "src\\context\\CookieContext.tsx",
       "source_location": "L1",
       "id": "src_context_cookiecontext_tsx",
-      "community": 45,
+      "community": 48,
       "norm_label": "cookiecontext.tsx"
     },
     {
@@ -2187,7 +2304,7 @@
       "source_file": "src\\context\\CookieContext.tsx",
       "source_location": "L35",
       "id": "cookiecontext_cookieprovider",
-      "community": 45,
+      "community": 48,
       "norm_label": "cookieprovider()"
     },
     {
@@ -2196,7 +2313,7 @@
       "source_file": "src\\context\\CookieContext.tsx",
       "source_location": "L110",
       "id": "cookiecontext_usecookieconsent",
-      "community": 45,
+      "community": 48,
       "norm_label": "usecookieconsent()"
     },
     {
@@ -2205,7 +2322,7 @@
       "source_file": "src\\context\\PowerContext.tsx",
       "source_location": "L1",
       "id": "src_context_powercontext_tsx",
-      "community": 84,
+      "community": 87,
       "norm_label": "powercontext.tsx"
     },
     {
@@ -2214,7 +2331,7 @@
       "source_file": "src\\context\\PowerContext.tsx",
       "source_location": "L280",
       "id": "powercontext_usepower",
-      "community": 84,
+      "community": 87,
       "norm_label": "usepower()"
     },
     {
@@ -2223,7 +2340,7 @@
       "source_file": "src\\context\\TestBenchContext.tsx",
       "source_location": "L1",
       "id": "src_context_testbenchcontext_tsx",
-      "community": 143,
+      "community": 145,
       "norm_label": "testbenchcontext.tsx"
     },
     {
@@ -2232,7 +2349,7 @@
       "source_file": "src\\context\\ThemeContext.tsx",
       "source_location": "L1",
       "id": "src_context_themecontext_tsx",
-      "community": 32,
+      "community": 36,
       "norm_label": "themecontext.tsx"
     },
     {
@@ -2241,7 +2358,7 @@
       "source_file": "src\\context\\ThemeContext.tsx",
       "source_location": "L55",
       "id": "themecontext_usetheme",
-      "community": 32,
+      "community": 36,
       "norm_label": "usetheme()"
     },
     {
@@ -2250,7 +2367,7 @@
       "source_file": "src\\context\\ToastContext.tsx",
       "source_location": "L1",
       "id": "src_context_toastcontext_tsx",
-      "community": 85,
+      "community": 88,
       "norm_label": "toastcontext.tsx"
     },
     {
@@ -2259,7 +2376,7 @@
       "source_file": "src\\context\\ToastContext.tsx",
       "source_location": "L55",
       "id": "toastcontext_usetoast",
-      "community": 85,
+      "community": 88,
       "norm_label": "usetoast()"
     },
     {
@@ -2268,7 +2385,7 @@
       "source_file": "src\\features\\generations\\data.ts",
       "source_location": "L1",
       "id": "src_features_generations_data_ts",
-      "community": 144,
+      "community": 146,
       "norm_label": "data.ts"
     },
     {
@@ -2277,7 +2394,7 @@
       "source_file": "src\\features\\generations\\types.ts",
       "source_location": "L1",
       "id": "src_features_generations_types_ts",
-      "community": 145,
+      "community": 147,
       "norm_label": "types.ts"
     },
     {
@@ -2286,7 +2403,7 @@
       "source_file": "src\\features\\generations\\components\\AnimatedCounter.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_animatedcounter_tsx",
-      "community": 41,
+      "community": 44,
       "norm_label": "animatedcounter.tsx"
     },
     {
@@ -2295,7 +2412,7 @@
       "source_file": "src\\features\\generations\\components\\BusLoadPlayground.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_busloadplayground_tsx",
-      "community": 86,
+      "community": 89,
       "norm_label": "busloadplayground.tsx"
     },
     {
@@ -2304,7 +2421,7 @@
       "source_file": "src\\features\\generations\\components\\BusLoadPlayground.tsx",
       "source_location": "L44",
       "id": "busloadplayground_getbargradient",
-      "community": 86,
+      "community": 89,
       "norm_label": "getbargradient()"
     },
     {
@@ -2313,7 +2430,7 @@
       "source_file": "src\\features\\generations\\components\\CompareMatrix.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_comparematrix_tsx",
-      "community": 33,
+      "community": 37,
       "norm_label": "comparematrix.tsx"
     },
     {
@@ -2322,7 +2439,7 @@
       "source_file": "src\\features\\generations\\components\\CompareMatrix.tsx",
       "source_location": "L25",
       "id": "comparematrix_buildrows",
-      "community": 33,
+      "community": 37,
       "norm_label": "buildrows()"
     },
     {
@@ -2331,7 +2448,7 @@
       "source_file": "src\\features\\generations\\components\\CompareMatrix.tsx",
       "source_location": "L117",
       "id": "comparematrix_togglerow",
-      "community": 33,
+      "community": 37,
       "norm_label": "togglerow()"
     },
     {
@@ -2340,7 +2457,7 @@
       "source_file": "src\\features\\generations\\components\\CompareMatrix.tsx",
       "source_location": "L147",
       "id": "comparematrix_cn",
-      "community": 33,
+      "community": 37,
       "norm_label": "cn()"
     },
     {
@@ -2349,7 +2466,7 @@
       "source_file": "src\\features\\generations\\components\\EvolutionTimeline.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_evolutiontimeline_tsx",
-      "community": 87,
+      "community": 90,
       "norm_label": "evolutiontimeline.tsx"
     },
     {
@@ -2358,7 +2475,7 @@
       "source_file": "src\\features\\generations\\components\\EvolutionTimeline.tsx",
       "source_location": "L29",
       "id": "evolutiontimeline_handlekeydown",
-      "community": 87,
+      "community": 90,
       "norm_label": "handlekeydown()"
     },
     {
@@ -2367,7 +2484,7 @@
       "source_file": "src\\features\\generations\\components\\GenerationCompareDock.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_generationcomparedock_tsx",
-      "community": 46,
+      "community": 49,
       "norm_label": "generationcomparedock.tsx"
     },
     {
@@ -2376,7 +2493,7 @@
       "source_file": "src\\features\\generations\\components\\GenerationCompareDock.tsx",
       "source_location": "L44",
       "id": "generationcomparedock_handlecopy",
-      "community": 46,
+      "community": 49,
       "norm_label": "handlecopy()"
     },
     {
@@ -2385,7 +2502,7 @@
       "source_file": "src\\features\\generations\\components\\GenerationCompareDock.tsx",
       "source_location": "L56",
       "id": "generationcomparedock_handleswap",
-      "community": 46,
+      "community": 49,
       "norm_label": "handleswap()"
     },
     {
@@ -2394,7 +2511,7 @@
       "source_file": "src\\features\\generations\\components\\GlossaryDrawer.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_glossarydrawer_tsx",
-      "community": 34,
+      "community": 38,
       "norm_label": "glossarydrawer.tsx"
     },
     {
@@ -2403,7 +2520,7 @@
       "source_file": "src\\features\\generations\\components\\GlossaryDrawer.tsx",
       "source_location": "L46",
       "id": "glossarydrawer_termlist",
-      "community": 34,
+      "community": 38,
       "norm_label": "termlist()"
     },
     {
@@ -2412,7 +2529,7 @@
       "source_file": "src\\features\\generations\\components\\GlossaryDrawer.tsx",
       "source_location": "L111",
       "id": "glossarydrawer_handleclose",
-      "community": 34,
+      "community": 38,
       "norm_label": "handleclose()"
     },
     {
@@ -2421,7 +2538,7 @@
       "source_file": "src\\features\\generations\\components\\GlossaryDrawer.tsx",
       "source_location": "L114",
       "id": "glossarydrawer_handleopen",
-      "community": 34,
+      "community": 38,
       "norm_label": "handleopen()"
     },
     {
@@ -2430,7 +2547,7 @@
       "source_file": "src\\features\\generations\\components\\index.ts",
       "source_location": "L1",
       "id": "src_features_generations_components_index_ts",
-      "community": 146,
+      "community": 148,
       "norm_label": "index.ts"
     },
     {
@@ -2439,7 +2556,7 @@
       "source_file": "src\\features\\generations\\components\\MigrationChecklist.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_migrationchecklist_tsx",
-      "community": 47,
+      "community": 50,
       "norm_label": "migrationchecklist.tsx"
     },
     {
@@ -2448,7 +2565,7 @@
       "source_file": "src\\features\\generations\\components\\MigrationChecklist.tsx",
       "source_location": "L85",
       "id": "migrationchecklist_handlereset",
-      "community": 47,
+      "community": 50,
       "norm_label": "handlereset()"
     },
     {
@@ -2457,7 +2574,7 @@
       "source_file": "src\\features\\generations\\components\\MigrationChecklist.tsx",
       "source_location": "L95",
       "id": "migrationchecklist_toggleitem",
-      "community": 47,
+      "community": 50,
       "norm_label": "toggleitem()"
     },
     {
@@ -2520,7 +2637,7 @@
       "source_file": "src\\features\\generations\\components\\QuickMetricsStrip.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_quickmetricsstrip_tsx",
-      "community": 88,
+      "community": 91,
       "norm_label": "quickmetricsstrip.tsx"
     },
     {
@@ -2529,7 +2646,7 @@
       "source_file": "src\\features\\generations\\components\\QuickMetricsStrip.tsx",
       "source_location": "L168",
       "id": "quickmetricsstrip_cn",
-      "community": 88,
+      "community": 91,
       "norm_label": "cn()"
     },
     {
@@ -2538,7 +2655,7 @@
       "source_file": "src\\features\\generations\\components\\SectionReveal.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_sectionreveal_tsx",
-      "community": 89,
+      "community": 92,
       "norm_label": "sectionreveal.tsx"
     },
     {
@@ -2547,7 +2664,7 @@
       "source_file": "src\\features\\generations\\components\\SectionReveal.tsx",
       "source_location": "L18",
       "id": "sectionreveal_sectionreveal",
-      "community": 89,
+      "community": 92,
       "norm_label": "sectionreveal()"
     },
     {
@@ -2556,7 +2673,7 @@
       "source_file": "src\\features\\generations\\components\\UseCaseRecommender.tsx",
       "source_location": "L1",
       "id": "src_features_generations_components_usecaserecommender_tsx",
-      "community": 147,
+      "community": 149,
       "norm_label": "usecaserecommender.tsx"
     },
     {
@@ -2565,7 +2682,7 @@
       "source_file": "src\\features\\generations\\hooks\\useGenerationCompareState.ts",
       "source_location": "L1",
       "id": "src_features_generations_hooks_usegenerationcomparestate_ts",
-      "community": 90,
+      "community": 93,
       "norm_label": "usegenerationcomparestate.ts"
     },
     {
@@ -2574,7 +2691,7 @@
       "source_file": "src\\features\\generations\\hooks\\useGenerationCompareState.ts",
       "source_location": "L18",
       "id": "usegenerationcomparestate_usegenerationcomparestate",
-      "community": 90,
+      "community": 93,
       "norm_label": "usegenerationcomparestate()"
     },
     {
@@ -2583,7 +2700,7 @@
       "source_file": "src\\features\\generations\\utils\\comparison.ts",
       "source_location": "L1",
       "id": "src_features_generations_utils_comparison_ts",
-      "community": 0,
+      "community": 14,
       "norm_label": "comparison.ts"
     },
     {
@@ -2592,7 +2709,7 @@
       "source_file": "src\\features\\generations\\utils\\comparison.ts",
       "source_location": "L22",
       "id": "comparison_clamp",
-      "community": 0,
+      "community": 14,
       "norm_label": "clamp()"
     },
     {
@@ -2601,7 +2718,7 @@
       "source_file": "src\\features\\generations\\utils\\comparison.ts",
       "source_location": "L26",
       "id": "comparison_estimateframecount",
-      "community": 0,
+      "community": 14,
       "norm_label": "estimateframecount()"
     },
     {
@@ -2610,7 +2727,7 @@
       "source_file": "src\\features\\generations\\utils\\comparison.ts",
       "source_location": "L31",
       "id": "comparison_estimatebusload",
-      "community": 0,
+      "community": 14,
       "norm_label": "estimatebusload()"
     },
     {
@@ -2619,7 +2736,7 @@
       "source_file": "src\\features\\generations\\utils\\comparison.ts",
       "source_location": "L56",
       "id": "comparison_profilebonus",
-      "community": 0,
+      "community": 14,
       "norm_label": "profilebonus()"
     },
     {
@@ -2628,7 +2745,7 @@
       "source_file": "src\\features\\generations\\utils\\comparison.ts",
       "source_location": "L67",
       "id": "comparison_compatibilitybonus",
-      "community": 0,
+      "community": 14,
       "norm_label": "compatibilitybonus()"
     },
     {
@@ -2637,7 +2754,7 @@
       "source_file": "src\\features\\generations\\utils\\comparison.ts",
       "source_location": "L73",
       "id": "comparison_getgenerationrecommendation",
-      "community": 0,
+      "community": 14,
       "norm_label": "getgenerationrecommendation()"
     },
     {
@@ -2646,7 +2763,7 @@
       "source_file": "src\\features\\generations\\utils\\queryState.ts",
       "source_location": "L1",
       "id": "src_features_generations_utils_querystate_ts",
-      "community": 14,
+      "community": 15,
       "norm_label": "querystate.ts"
     },
     {
@@ -2655,7 +2772,7 @@
       "source_file": "src\\features\\generations\\utils\\queryState.ts",
       "source_location": "L8",
       "id": "querystate_parsegeneration",
-      "community": 14,
+      "community": 15,
       "norm_label": "parsegeneration()"
     },
     {
@@ -2664,7 +2781,7 @@
       "source_file": "src\\features\\generations\\utils\\queryState.ts",
       "source_location": "L14",
       "id": "querystate_parsescenario",
-      "community": 14,
+      "community": 15,
       "norm_label": "parsescenario()"
     },
     {
@@ -2673,7 +2790,7 @@
       "source_file": "src\\features\\generations\\utils\\queryState.ts",
       "source_location": "L20",
       "id": "querystate_ensuredifferent",
-      "community": 14,
+      "community": 15,
       "norm_label": "ensuredifferent()"
     },
     {
@@ -2682,7 +2799,7 @@
       "source_file": "src\\features\\generations\\utils\\queryState.ts",
       "source_location": "L26",
       "id": "querystate_parsegenerationquery",
-      "community": 14,
+      "community": 15,
       "norm_label": "parsegenerationquery()"
     },
     {
@@ -2691,7 +2808,7 @@
       "source_file": "src\\features\\generations\\utils\\queryState.ts",
       "source_location": "L40",
       "id": "querystate_buildgenerationquery",
-      "community": 14,
+      "community": 15,
       "norm_label": "buildgenerationquery()"
     },
     {
@@ -2700,7 +2817,7 @@
       "source_file": "src\\features\\generations\\utils\\queryState.ts",
       "source_location": "L51",
       "id": "querystate_applygenerationquerypatch",
-      "community": 14,
+      "community": 15,
       "norm_label": "applygenerationquerypatch()"
     },
     {
@@ -2709,7 +2826,7 @@
       "source_file": "src\\hooks\\useABTest.ts",
       "source_location": "L1",
       "id": "src_hooks_useabtest_ts",
-      "community": 91,
+      "community": 94,
       "norm_label": "useabtest.ts"
     },
     {
@@ -2718,7 +2835,7 @@
       "source_file": "src\\hooks\\useABTest.ts",
       "source_location": "L18",
       "id": "useabtest_useabtest",
-      "community": 91,
+      "community": 94,
       "norm_label": "useabtest()"
     },
     {
@@ -2727,7 +2844,7 @@
       "source_file": "src\\hooks\\useAnalytics.ts",
       "source_location": "L1",
       "id": "src_hooks_useanalytics_ts",
-      "community": 92,
+      "community": 95,
       "norm_label": "useanalytics.ts"
     },
     {
@@ -2736,7 +2853,7 @@
       "source_file": "src\\hooks\\useAnalytics.ts",
       "source_location": "L8",
       "id": "useanalytics_useanalytics",
-      "community": 92,
+      "community": 95,
       "norm_label": "useanalytics()"
     },
     {
@@ -2745,7 +2862,7 @@
       "source_file": "src\\hooks\\useFocusTrap.ts",
       "source_location": "L1",
       "id": "src_hooks_usefocustrap_ts",
-      "community": 93,
+      "community": 96,
       "norm_label": "usefocustrap.ts"
     },
     {
@@ -2754,7 +2871,7 @@
       "source_file": "src\\hooks\\useFocusTrap.ts",
       "source_location": "L11",
       "id": "usefocustrap_usefocustrap",
-      "community": 93,
+      "community": 96,
       "norm_label": "usefocustrap()"
     },
     {
@@ -2763,7 +2880,7 @@
       "source_file": "src\\hooks\\useIsMobile.ts",
       "source_location": "L1",
       "id": "src_hooks_useismobile_ts",
-      "community": 94,
+      "community": 97,
       "norm_label": "useismobile.ts"
     },
     {
@@ -2772,7 +2889,7 @@
       "source_file": "src\\hooks\\useIsMobile.ts",
       "source_location": "L8",
       "id": "useismobile_useismobile",
-      "community": 94,
+      "community": 97,
       "norm_label": "useismobile()"
     },
     {
@@ -2781,7 +2898,7 @@
       "source_file": "src\\hooks\\useMediaQuery.ts",
       "source_location": "L1",
       "id": "src_hooks_usemediaquery_ts",
-      "community": 35,
+      "community": 39,
       "norm_label": "usemediaquery.ts"
     },
     {
@@ -2790,7 +2907,7 @@
       "source_file": "src\\hooks\\useMediaQuery.ts",
       "source_location": "L8",
       "id": "usemediaquery_usemediaquery",
-      "community": 35,
+      "community": 39,
       "norm_label": "usemediaquery()"
     },
     {
@@ -2799,7 +2916,7 @@
       "source_file": "src\\hooks\\useMomentaryAction.ts",
       "source_location": "L1",
       "id": "src_hooks_usemomentaryaction_ts",
-      "community": 35,
+      "community": 39,
       "norm_label": "usemomentaryaction.ts"
     },
     {
@@ -2808,7 +2925,7 @@
       "source_file": "src\\hooks\\useMomentaryAction.ts",
       "source_location": "L10",
       "id": "usemomentaryaction_usemomentaryaction",
-      "community": 35,
+      "community": 39,
       "norm_label": "usemomentaryaction()"
     },
     {
@@ -2817,7 +2934,7 @@
       "source_file": "src\\hooks\\useScrollToTop.ts",
       "source_location": "L1",
       "id": "src_hooks_usescrolltotop_ts",
-      "community": 95,
+      "community": 98,
       "norm_label": "usescrolltotop.ts"
     },
     {
@@ -2826,7 +2943,7 @@
       "source_file": "src\\hooks\\useScrollToTop.ts",
       "source_location": "L9",
       "id": "usescrolltotop_usescrolltotop",
-      "community": 95,
+      "community": 98,
       "norm_label": "usescrolltotop()"
     },
     {
@@ -2835,7 +2952,7 @@
       "source_file": "src\\pages\\AboutPage.tsx",
       "source_location": "L1",
       "id": "src_pages_aboutpage_tsx",
-      "community": 148,
+      "community": 150,
       "norm_label": "aboutpage.tsx"
     },
     {
@@ -2952,7 +3069,7 @@
       "source_file": "src\\pages\\ContactPage.tsx",
       "source_location": "L1",
       "id": "src_pages_contactpage_tsx",
-      "community": 19,
+      "community": 21,
       "norm_label": "contactpage.tsx"
     },
     {
@@ -2961,7 +3078,7 @@
       "source_file": "src\\pages\\ContactPage.tsx",
       "source_location": "L29",
       "id": "contactpage_validate",
-      "community": 19,
+      "community": 21,
       "norm_label": "validate()"
     },
     {
@@ -2970,7 +3087,7 @@
       "source_file": "src\\pages\\ContactPage.tsx",
       "source_location": "L49",
       "id": "contactpage_handlesubmit",
-      "community": 19,
+      "community": 21,
       "norm_label": "handlesubmit()"
     },
     {
@@ -3015,7 +3132,7 @@
       "source_file": "src\\pages\\GenerationsPage.tsx",
       "source_location": "L1",
       "id": "src_pages_generationspage_tsx",
-      "community": 149,
+      "community": 151,
       "norm_label": "generationspage.tsx"
     },
     {
@@ -3024,7 +3141,7 @@
       "source_file": "src\\pages\\InspectorPage.tsx",
       "source_location": "L1",
       "id": "src_pages_inspectorpage_tsx",
-      "community": 36,
+      "community": 40,
       "norm_label": "inspectorpage.tsx"
     },
     {
@@ -3033,7 +3150,7 @@
       "source_file": "src\\pages\\InspectorPage.tsx",
       "source_location": "L45",
       "id": "inspectorpage_hextobits",
-      "community": 36,
+      "community": 40,
       "norm_label": "hextobits()"
     },
     {
@@ -3042,7 +3159,7 @@
       "source_file": "src\\pages\\InspectorPage.tsx",
       "source_location": "L54",
       "id": "inspectorpage_bitstohex",
-      "community": 36,
+      "community": 40,
       "norm_label": "bitstohex()"
     },
     {
@@ -3051,7 +3168,7 @@
       "source_file": "src\\pages\\InspectorPage.tsx",
       "source_location": "L62",
       "id": "inspectorpage_bytetobits",
-      "community": 36,
+      "community": 40,
       "norm_label": "bytetobits()"
     },
     {
@@ -3078,7 +3195,7 @@
       "source_file": "src\\pages\\LegalPage.tsx",
       "source_location": "L1",
       "id": "src_pages_legalpage_tsx",
-      "community": 96,
+      "community": 99,
       "norm_label": "legalpage.tsx"
     },
     {
@@ -3087,7 +3204,7 @@
       "source_file": "src\\pages\\LegalPage.tsx",
       "source_location": "L3",
       "id": "legalpage_legalpage",
-      "community": 96,
+      "community": 99,
       "norm_label": "legalpage()"
     },
     {
@@ -3096,7 +3213,7 @@
       "source_file": "src\\pages\\NotFoundPage.tsx",
       "source_location": "L1",
       "id": "src_pages_notfoundpage_tsx",
-      "community": 32,
+      "community": 36,
       "norm_label": "notfoundpage.tsx"
     },
     {
@@ -3105,16 +3222,16 @@
       "source_file": "src\\pages\\NotFoundPage.tsx",
       "source_location": "L7",
       "id": "notfoundpage_notfoundpage",
-      "community": 32,
+      "community": 36,
       "norm_label": "notfoundpage()"
     },
     {
       "label": "PhysicalPage.tsx",
       "file_type": "code",
-      "source_file": "src\\pages\\PhysicalPage.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\pages\\PhysicalPage.tsx",
       "source_location": "L1",
-      "id": "src_pages_physicalpage_tsx",
-      "community": 150,
+      "id": "e_projects_uds_simulator_can_simulator_src_pages_physicalpage_tsx",
+      "community": 152,
       "norm_label": "physicalpage.tsx"
     },
     {
@@ -3123,7 +3240,7 @@
       "source_file": "src\\pages\\PricingPage.tsx",
       "source_location": "L1",
       "id": "src_pages_pricingpage_tsx",
-      "community": 151,
+      "community": 153,
       "norm_label": "pricingpage.tsx"
     },
     {
@@ -3186,7 +3303,7 @@
       "source_file": "src\\pages\\SimulatorPage.tsx",
       "source_location": "L1",
       "id": "src_pages_simulatorpage_tsx",
-      "community": 97,
+      "community": 100,
       "norm_label": "simulatorpage.tsx"
     },
     {
@@ -3195,7 +3312,7 @@
       "source_file": "src\\pages\\SimulatorPage.tsx",
       "source_location": "L18",
       "id": "simulatorpage_getnodestatus",
-      "community": 97,
+      "community": 100,
       "norm_label": "getnodestatus()"
     },
     {
@@ -3285,7 +3402,7 @@
       "source_file": "src\\services\\emailService.ts",
       "source_location": "L1",
       "id": "src_services_emailservice_ts",
-      "community": 19,
+      "community": 21,
       "norm_label": "emailservice.ts"
     },
     {
@@ -3294,7 +3411,7 @@
       "source_file": "src\\services\\emailService.ts",
       "source_location": "L25",
       "id": "emailservice_sendwelcomeemail",
-      "community": 19,
+      "community": 21,
       "norm_label": "sendwelcomeemail()"
     },
     {
@@ -3303,7 +3420,7 @@
       "source_file": "src\\services\\emailService.ts",
       "source_location": "L33",
       "id": "emailservice_sendcontactemail",
-      "community": 19,
+      "community": 21,
       "norm_label": "sendcontactemail()"
     },
     {
@@ -3312,7 +3429,7 @@
       "source_file": "src\\services\\razorpayService.ts",
       "source_location": "L1",
       "id": "src_services_razorpayservice_ts",
-      "community": 98,
+      "community": 101,
       "norm_label": "razorpayservice.ts"
     },
     {
@@ -3321,7 +3438,7 @@
       "source_file": "src\\services\\razorpayService.ts",
       "source_location": "L48",
       "id": "razorpayservice_openrazorpaycheckout",
-      "community": 98,
+      "community": 101,
       "norm_label": "openrazorpaycheckout()"
     },
     {
@@ -3357,7 +3474,7 @@
       "source_file": "src\\services\\usernameService.ts",
       "source_location": "L1",
       "id": "src_services_usernameservice_ts",
-      "community": 48,
+      "community": 51,
       "norm_label": "usernameservice.ts"
     },
     {
@@ -3366,7 +3483,7 @@
       "source_file": "src\\services\\usernameService.ts",
       "source_location": "L7",
       "id": "usernameservice_isusernameavailable",
-      "community": 48,
+      "community": 51,
       "norm_label": "isusernameavailable()"
     },
     {
@@ -3375,7 +3492,7 @@
       "source_file": "src\\services\\usernameService.ts",
       "source_location": "L24",
       "id": "usernameservice_reserveusername",
-      "community": 48,
+      "community": 51,
       "norm_label": "reserveusername()"
     },
     {
@@ -3420,7 +3537,7 @@
       "source_file": "src\\services\\can\\can-crc.ts",
       "source_location": "L1",
       "id": "src_services_can_can_crc_ts",
-      "community": 25,
+      "community": 28,
       "norm_label": "can-crc.ts"
     },
     {
@@ -3429,7 +3546,7 @@
       "source_file": "src\\services\\can\\can-crc.ts",
       "source_location": "L9",
       "id": "can_crc_calculatecrc15",
-      "community": 25,
+      "community": 28,
       "norm_label": "calculatecrc15()"
     },
     {
@@ -3438,7 +3555,7 @@
       "source_file": "src\\services\\can\\can-crc.ts",
       "source_location": "L23",
       "id": "can_crc_calculatecrc17",
-      "community": 25,
+      "community": 28,
       "norm_label": "calculatecrc17()"
     },
     {
@@ -3447,7 +3564,7 @@
       "source_file": "src\\services\\can\\can-crc.ts",
       "source_location": "L37",
       "id": "can_crc_calculatecrc21",
-      "community": 25,
+      "community": 28,
       "norm_label": "calculatecrc21()"
     },
     {
@@ -3456,7 +3573,7 @@
       "source_file": "src\\services\\can\\can-crc.ts",
       "source_location": "L51",
       "id": "can_crc_applybitstuffing",
-      "community": 25,
+      "community": 28,
       "norm_label": "applybitstuffing()"
     },
     {
@@ -3933,7 +4050,7 @@
       "source_file": "src\\services\\can\\metrics.worker.ts",
       "source_location": "L1",
       "id": "src_services_can_metrics_worker_ts",
-      "community": 152,
+      "community": 154,
       "norm_label": "metrics.worker.ts"
     },
     {
@@ -3957,38 +4074,56 @@
     {
       "label": "trigger-logic.ts",
       "file_type": "code",
-      "source_file": "src\\services\\can\\trigger-logic.ts",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
       "source_location": "L1",
-      "id": "src_services_can_trigger_logic_ts",
-      "community": 37,
+      "id": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
+      "community": 22,
       "norm_label": "trigger-logic.ts"
     },
     {
       "label": "isSOFTransition()",
       "file_type": "code",
-      "source_file": "src\\services\\can\\trigger-logic.ts",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
       "source_location": "L11",
       "id": "trigger_logic_issoftransition",
-      "community": 37,
+      "community": 22,
       "norm_label": "issoftransition()"
     },
     {
       "label": "isErrorFrame()",
       "file_type": "code",
-      "source_file": "src\\services\\can\\trigger-logic.ts",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
       "source_location": "L20",
       "id": "trigger_logic_iserrorframe",
-      "community": 37,
+      "community": 22,
       "norm_label": "iserrorframe()"
     },
     {
       "label": "isIDMatch()",
       "file_type": "code",
-      "source_file": "src\\services\\can\\trigger-logic.ts",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
       "source_location": "L41",
       "id": "trigger_logic_isidmatch",
-      "community": 37,
+      "community": 22,
       "norm_label": "isidmatch()"
+    },
+    {
+      "label": "isPayloadMatch()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
+      "source_location": "L73",
+      "id": "trigger_logic_ispayloadmatch",
+      "community": 22,
+      "norm_label": "ispayloadmatch()"
+    },
+    {
+      "label": "evaluateCanTrigger()",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
+      "source_location": "L122",
+      "id": "trigger_logic_evaluatecantrigger",
+      "community": 22,
+      "norm_label": "evaluatecantrigger()"
     },
     {
       "label": "uds-server.ts",
@@ -4059,7 +4194,7 @@
       "source_file": "src\\services\\can\\validation.ts",
       "source_location": "L1",
       "id": "src_services_can_validation_ts",
-      "community": 153,
+      "community": 155,
       "norm_label": "validation.ts"
     },
     {
@@ -4068,7 +4203,7 @@
       "source_file": "src\\services\\can\\waveform-generator.ts",
       "source_location": "L1",
       "id": "src_services_can_waveform_generator_ts",
-      "community": 38,
+      "community": 41,
       "norm_label": "waveform-generator.ts"
     },
     {
@@ -4077,7 +4212,7 @@
       "source_file": "src\\services\\can\\waveform-generator.ts",
       "source_location": "L25",
       "id": "waveform_generator_generatebitstream",
-      "community": 38,
+      "community": 41,
       "norm_label": "generatebitstream()"
     },
     {
@@ -4086,7 +4221,7 @@
       "source_file": "src\\services\\can\\waveform-generator.ts",
       "source_location": "L52",
       "id": "waveform_generator_generatesample",
-      "community": 38,
+      "community": 41,
       "norm_label": "generatesample()"
     },
     {
@@ -4095,7 +4230,7 @@
       "source_file": "src\\services\\can\\waveform-generator.ts",
       "source_location": "L121",
       "id": "waveform_generator_createinitialwavestate",
-      "community": 38,
+      "community": 41,
       "norm_label": "createinitialwavestate()"
     },
     {
@@ -4104,7 +4239,7 @@
       "source_file": "src\\types\\auth.ts",
       "source_location": "L1",
       "id": "src_types_auth_ts",
-      "community": 154,
+      "community": 156,
       "norm_label": "auth.ts"
     },
     {
@@ -4140,7 +4275,7 @@
       "source_file": "src\\types\\payment.ts",
       "source_location": "L1",
       "id": "src_types_payment_ts",
-      "community": 155,
+      "community": 157,
       "norm_label": "payment.ts"
     },
     {
@@ -4149,7 +4284,7 @@
       "source_file": "src\\types\\power.ts",
       "source_location": "L1",
       "id": "src_types_power_ts",
-      "community": 156,
+      "community": 158,
       "norm_label": "power.ts"
     },
     {
@@ -4158,7 +4293,7 @@
       "source_file": "src\\types\\react-sparklines.d.ts",
       "source_location": "L1",
       "id": "src_types_react_sparklines_d_ts",
-      "community": 21,
+      "community": 23,
       "norm_label": "react-sparklines.d.ts"
     },
     {
@@ -4167,7 +4302,7 @@
       "source_file": "src\\types\\react-sparklines.d.ts",
       "source_location": "L18",
       "id": "react_sparklines_d_sparklines",
-      "community": 21,
+      "community": 23,
       "norm_label": "sparklines"
     },
     {
@@ -4176,7 +4311,7 @@
       "source_file": "src\\types\\react-sparklines.d.ts",
       "source_location": "L26",
       "id": "react_sparklines_d_sparklinesline",
-      "community": 21,
+      "community": 23,
       "norm_label": "sparklinesline"
     },
     {
@@ -4185,7 +4320,7 @@
       "source_file": "src\\types\\react-sparklines.d.ts",
       "source_location": "L37",
       "id": "react_sparklines_d_sparklinesbars",
-      "community": 21,
+      "community": 23,
       "norm_label": "sparklinesbars"
     },
     {
@@ -4194,7 +4329,7 @@
       "source_file": "src\\types\\react-sparklines.d.ts",
       "source_location": "L45",
       "id": "react_sparklines_d_sparklinesspots",
-      "community": 21,
+      "community": 23,
       "norm_label": "sparklinesspots"
     },
     {
@@ -4203,7 +4338,7 @@
       "source_file": "src\\types\\react-sparklines.d.ts",
       "source_location": "L53",
       "id": "react_sparklines_d_sparklinesreferenceline",
-      "community": 21,
+      "community": 23,
       "norm_label": "sparklinesreferenceline"
     },
     {
@@ -4212,7 +4347,7 @@
       "source_file": "src\\types\\testbench.ts",
       "source_location": "L1",
       "id": "src_types_testbench_ts",
-      "community": 15,
+      "community": 16,
       "norm_label": "testbench.ts"
     },
     {
@@ -4221,7 +4356,7 @@
       "source_file": "src\\types\\testbench.ts",
       "source_location": "L61",
       "id": "testbench_computebaudrate",
-      "community": 15,
+      "community": 16,
       "norm_label": "computebaudrate()"
     },
     {
@@ -4230,7 +4365,7 @@
       "source_file": "src\\types\\testbench.ts",
       "source_location": "L66",
       "id": "testbench_computesamplepointpct",
-      "community": 15,
+      "community": 16,
       "norm_label": "computesamplepointpct()"
     },
     {
@@ -4239,7 +4374,7 @@
       "source_file": "src\\types\\testbench.ts",
       "source_location": "L71",
       "id": "testbench_issamebittiming",
-      "community": 15,
+      "community": 16,
       "norm_label": "issamebittiming()"
     },
     {
@@ -4248,7 +4383,7 @@
       "source_file": "src\\types\\testbench.ts",
       "source_location": "L82",
       "id": "testbench_findbittimingpresetbyid",
-      "community": 15,
+      "community": 16,
       "norm_label": "findbittimingpresetbyid()"
     },
     {
@@ -4257,7 +4392,7 @@
       "source_file": "src\\types\\testbench.ts",
       "source_location": "L86",
       "id": "testbench_findbittimingpresetbybaudrate",
-      "community": 15,
+      "community": 16,
       "norm_label": "findbittimingpresetbybaudrate()"
     },
     {
@@ -4266,7 +4401,7 @@
       "source_file": "src\\types\\testbench.ts",
       "source_location": "L90",
       "id": "testbench_findbittimingpresetfortiming",
-      "community": 15,
+      "community": 16,
       "norm_label": "findbittimingpresetfortiming()"
     },
     {
@@ -4491,7 +4626,7 @@
       "source_file": "src\\utils\\cn.ts",
       "source_location": "L1",
       "id": "src_utils_cn_ts",
-      "community": 22,
+      "community": 24,
       "norm_label": "cn.ts"
     },
     {
@@ -4500,7 +4635,7 @@
       "source_file": "src\\utils\\cn.ts",
       "source_location": "L4",
       "id": "cn_cn",
-      "community": 22,
+      "community": 24,
       "norm_label": "cn()"
     },
     {
@@ -4554,7 +4689,7 @@
       "source_file": "tests\\can-bit-timing.test.ts",
       "source_location": "L1",
       "id": "tests_can_bit_timing_test_ts",
-      "community": 157,
+      "community": 159,
       "norm_label": "can-bit-timing.test.ts"
     },
     {
@@ -4563,7 +4698,7 @@
       "source_file": "tests\\can-core.test.ts",
       "source_location": "L1",
       "id": "tests_can_core_test_ts",
-      "community": 158,
+      "community": 160,
       "norm_label": "can-core.test.ts"
     },
     {
@@ -4572,7 +4707,7 @@
       "source_file": "tests\\can-error-catalog.test.ts",
       "source_location": "L1",
       "id": "tests_can_error_catalog_test_ts",
-      "community": 159,
+      "community": 161,
       "norm_label": "can-error-catalog.test.ts"
     },
     {
@@ -4581,7 +4716,7 @@
       "source_file": "tests\\can-handler.test.ts",
       "source_location": "L1",
       "id": "tests_can_handler_test_ts",
-      "community": 49,
+      "community": 52,
       "norm_label": "can-handler.test.ts"
     },
     {
@@ -4590,7 +4725,7 @@
       "source_file": "tests\\can-handler.test.ts",
       "source_location": "L12",
       "id": "can_handler_test_makemessage",
-      "community": 49,
+      "community": 52,
       "norm_label": "makemessage()"
     },
     {
@@ -4599,7 +4734,7 @@
       "source_file": "tests\\can-handler.test.ts",
       "source_location": "L22",
       "id": "can_handler_test_makehandler",
-      "community": 49,
+      "community": 52,
       "norm_label": "makehandler()"
     },
     {
@@ -4608,7 +4743,7 @@
       "source_file": "tests\\can-simulator.test.ts",
       "source_location": "L1",
       "id": "tests_can_simulator_test_ts",
-      "community": 160,
+      "community": 162,
       "norm_label": "can-simulator.test.ts"
     },
     {
@@ -4617,7 +4752,7 @@
       "source_file": "tests\\can-validation.test.ts",
       "source_location": "L1",
       "id": "tests_can_validation_test_ts",
-      "community": 161,
+      "community": 163,
       "norm_label": "can-validation.test.ts"
     },
     {
@@ -4626,7 +4761,7 @@
       "source_file": "tests\\cursor-dt.test.ts",
       "source_location": "L1",
       "id": "tests_cursor_dt_test_ts",
-      "community": 99,
+      "community": 102,
       "norm_label": "cursor-dt.test.ts"
     },
     {
@@ -4635,7 +4770,7 @@
       "source_file": "tests\\cursor-dt.test.ts",
       "source_location": "L6",
       "id": "cursor_dt_test_calculatedt",
-      "community": 99,
+      "community": 102,
       "norm_label": "calculatedt()"
     },
     {
@@ -4644,8 +4779,17 @@
       "source_file": "tests\\generations-utils.test.ts",
       "source_location": "L1",
       "id": "tests_generations_utils_test_ts",
-      "community": 162,
+      "community": 164,
       "norm_label": "generations-utils.test.ts"
+    },
+    {
+      "label": "protocolUtils.test.ts",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\tests\\protocolUtils.test.ts",
+      "source_location": "L1",
+      "id": "e_projects_uds_simulator_can_simulator_tests_protocolutils_test_ts",
+      "community": 165,
+      "norm_label": "protocolutils.test.ts"
     },
     {
       "label": "scope-math.test.ts",
@@ -4653,8 +4797,17 @@
       "source_file": "tests\\scope-math.test.ts",
       "source_location": "L1",
       "id": "tests_scope_math_test_ts",
-      "community": 163,
+      "community": 166,
       "norm_label": "scope-math.test.ts"
+    },
+    {
+      "label": "scope-remediation.spec.ts",
+      "file_type": "code",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\tests\\scope-remediation.spec.ts",
+      "source_location": "L1",
+      "id": "e_projects_uds_simulator_can_simulator_tests_scope_remediation_spec_ts",
+      "community": 167,
+      "norm_label": "scope-remediation.spec.ts"
     },
     {
       "label": "trigger-logic.test.ts",
@@ -4662,7 +4815,7 @@
       "source_file": "tests\\trigger-logic.test.ts",
       "source_location": "L1",
       "id": "tests_trigger_logic_test_ts",
-      "community": 50,
+      "community": 53,
       "norm_label": "trigger-logic.test.ts"
     },
     {
@@ -4671,7 +4824,7 @@
       "source_file": "tests\\trigger-logic.test.ts",
       "source_location": "L4",
       "id": "trigger_logic_test_createsample",
-      "community": 50,
+      "community": 53,
       "norm_label": "createsample()"
     },
     {
@@ -4680,7 +4833,7 @@
       "source_file": "tests\\trigger-logic.test.ts",
       "source_location": "L95",
       "id": "trigger_logic_test_addbits",
-      "community": 50,
+      "community": 53,
       "norm_label": "addbits()"
     },
     {
@@ -4689,7 +4842,7 @@
       "source_file": "tests\\verify_panning.py",
       "source_location": "L1",
       "id": "tests_verify_panning_py",
-      "community": 51,
+      "community": 54,
       "norm_label": "verify_panning.py"
     },
     {
@@ -4698,7 +4851,7 @@
       "source_file": "tests\\verify_panning.py",
       "source_location": "L14",
       "id": "verify_panning_mocksettings",
-      "community": 51,
+      "community": 54,
       "norm_label": "mocksettings"
     },
     {
@@ -4707,7 +4860,7 @@
       "source_file": "tests\\verify_panning.py",
       "source_location": "L22",
       "id": "verify_panning_test_panning",
-      "community": 51,
+      "community": 54,
       "norm_label": "test_panning()"
     },
     {
@@ -4716,7 +4869,7 @@
       "source_file": "tests\\waveform-generator.test.ts",
       "source_location": "L1",
       "id": "tests_waveform_generator_test_ts",
-      "community": 164,
+      "community": 168,
       "norm_label": "waveform-generator.test.ts"
     },
     {
@@ -4724,324 +4877,324 @@
       "file_type": "document",
       "source_file": "AGENTS.md",
       "source_location": null,
-      "id": "AGENTS_MD",
-      "community": 52,
-      "norm_label": "agents.md"
+      "community": 55,
+      "norm_label": "agents.md",
+      "id": "AGENTS_MD"
     },
     {
       "label": "CLAUDE.md",
       "file_type": "document",
       "source_file": "CLAUDE.md",
       "source_location": null,
-      "id": "CLAUDE_MD",
-      "community": 165,
-      "norm_label": "claude.md"
+      "community": 169,
+      "norm_label": "claude.md",
+      "id": "CLAUDE_MD"
     },
     {
       "label": "ENV_SETUP.md",
       "file_type": "document",
       "source_file": "ENV_SETUP.md",
       "source_location": null,
-      "id": "ENV_SETUP_MD",
-      "community": 23,
-      "norm_label": "env_setup.md"
+      "community": 25,
+      "norm_label": "env_setup.md",
+      "id": "ENV_SETUP_MD"
     },
     {
       "label": "GRAPHIFY_SETUP.md",
       "file_type": "document",
       "source_file": "GRAPHIFY_SETUP.md",
       "source_location": null,
-      "id": "GRAPHIFY_SETUP_MD",
-      "community": 52,
-      "norm_label": "graphify_setup.md"
+      "community": 55,
+      "norm_label": "graphify_setup.md",
+      "id": "GRAPHIFY_SETUP_MD"
     },
     {
       "label": "index.html",
       "file_type": "document",
       "source_file": "index.html",
       "source_location": null,
-      "id": "INDEX_HTML",
-      "community": 23,
-      "norm_label": "index.html"
+      "community": 25,
+      "norm_label": "index.html",
+      "id": "INDEX_HTML"
     },
     {
       "label": "README.md",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": null,
-      "id": "README_MD",
-      "community": 23,
-      "norm_label": "readme.md"
+      "community": 25,
+      "norm_label": "readme.md",
+      "id": "README_MD"
     },
     {
       "label": "requirements-dev.txt",
       "file_type": "document",
       "source_file": "requirements-dev.txt",
       "source_location": null,
-      "id": "REQUIREMENTS_DEV_TXT",
-      "community": 166,
-      "norm_label": "requirements-dev.txt"
+      "community": 170,
+      "norm_label": "requirements-dev.txt",
+      "id": "REQUIREMENTS_DEV_TXT"
     },
     {
       "label": "docs/oscilloscope-architecture.md",
       "file_type": "document",
       "source_file": "docs/oscilloscope-architecture.md",
       "source_location": null,
-      "id": "OSCILLOSCOPE_ARCH_MD",
-      "community": 26,
-      "norm_label": "docs/oscilloscope-architecture.md"
+      "community": 29,
+      "norm_label": "docs/oscilloscope-architecture.md",
+      "id": "OSCILLOSCOPE_ARCH_MD"
     },
     {
       "label": "docs-site/README.md",
       "file_type": "document",
       "source_file": "docs-site/README.md",
       "source_location": null,
-      "id": "DOCS_SITE_README",
-      "community": 167,
-      "norm_label": "docs-site/readme.md"
+      "community": 171,
+      "norm_label": "docs-site/readme.md",
+      "id": "DOCS_SITE_README"
     },
     {
       "label": "docs-site/app/page.mdx",
       "file_type": "document",
       "source_file": "docs-site/app/page.mdx",
       "source_location": null,
-      "id": "DOCS_SITE_PAGE_MDX",
-      "community": 168,
-      "norm_label": "docs-site/app/page.mdx"
+      "community": 172,
+      "norm_label": "docs-site/app/page.mdx",
+      "id": "DOCS_SITE_PAGE_MDX"
     },
     {
       "label": "learning/can_knowledge_base.md",
       "file_type": "document",
       "source_file": "learning/can_knowledge_base.md",
       "source_location": null,
-      "id": "KNOWLEDGE_BASE_MD",
-      "community": 101,
-      "norm_label": "learning/can_knowledge_base.md"
+      "community": 104,
+      "norm_label": "learning/can_knowledge_base.md",
+      "id": "KNOWLEDGE_BASE_MD"
     },
     {
       "label": "output/playwright/can-scope-concept.html",
       "file_type": "document",
       "source_file": "output/playwright/can-scope-concept.html",
       "source_location": null,
-      "id": "CAN_SCOPE_CONCEPT_HTML",
-      "community": 26,
-      "norm_label": "output/playwright/can-scope-concept.html"
+      "community": 29,
+      "norm_label": "output/playwright/can-scope-concept.html",
+      "id": "CAN_SCOPE_CONCEPT_HTML"
     },
     {
       "label": "stitch_assets/2.html",
       "file_type": "document",
       "source_file": "stitch_assets/2.html",
       "source_location": null,
-      "id": "STITCH_ASSET_2_HTML",
-      "community": 26,
-      "norm_label": "stitch_assets/2.html"
+      "community": 29,
+      "norm_label": "stitch_assets/2.html",
+      "id": "STITCH_ASSET_2_HTML"
     },
     {
       "label": "ISO 11898 (CAN Standard)",
       "file_type": "document",
       "source_file": "docs-site/app/docs/introduction/page.mdx",
       "source_location": null,
-      "id": "ISO_11898",
-      "community": 23,
-      "norm_label": "iso 11898 (can standard)"
+      "community": 25,
+      "norm_label": "iso 11898 (can standard)",
+      "id": "ISO_11898"
     },
     {
       "label": "Unified Diagnostic Services (ISO 14229)",
       "file_type": "document",
       "source_file": "docs-site/app/docs/higher-layers/page.mdx",
       "source_location": null,
-      "id": "UDS_PROTO",
-      "community": 100,
-      "norm_label": "unified diagnostic services (iso 14229)"
+      "community": 103,
+      "norm_label": "unified diagnostic services (iso 14229)",
+      "id": "UDS_PROTO"
     },
     {
       "label": "ISO-TP (ISO 15765-2)",
       "file_type": "document",
       "source_file": "docs-site/app/docs/higher-layers/page.mdx",
       "source_location": null,
-      "id": "ISO_TP",
-      "community": 100,
-      "norm_label": "iso-tp (iso 15765-2)"
+      "community": 103,
+      "norm_label": "iso-tp (iso 15765-2)",
+      "id": "ISO_TP"
     },
     {
       "label": "CAN-SCOPE (Physical Layer Scope)",
       "file_type": "document",
       "source_file": "docs/oscilloscope-architecture.md",
       "source_location": null,
-      "id": "CAN_SCOPE",
-      "community": 26,
-      "norm_label": "can-scope (physical layer scope)"
+      "community": 29,
+      "norm_label": "can-scope (physical layer scope)",
+      "id": "CAN_SCOPE"
     },
     {
       "label": "VoltScope Pro",
       "file_type": "document",
       "source_file": "stitch_assets/2.html",
       "source_location": null,
-      "id": "VOLTSCOPE_PRO",
-      "community": 26,
-      "norm_label": "voltscope pro"
+      "community": 29,
+      "norm_label": "voltscope pro",
+      "id": "VOLTSCOPE_PRO"
     },
     {
       "label": "Robert Bosch GmbH",
       "file_type": "document",
       "source_file": "learning/can_knowledge_base.md",
       "source_location": null,
-      "id": "BOSCH_ENTITY",
-      "community": 101,
-      "norm_label": "robert bosch gmbh"
+      "community": 104,
+      "norm_label": "robert bosch gmbh",
+      "id": "BOSCH_ENTITY"
     },
     {
       "label": "Vite",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": null,
-      "id": "VITE_TOOL",
-      "community": 23,
-      "norm_label": "vite"
+      "community": 25,
+      "norm_label": "vite",
+      "id": "VITE_TOOL"
     },
     {
       "label": "React",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": null,
-      "id": "REACT_FRAMEWORK",
-      "community": 23,
-      "norm_label": "react"
+      "community": 25,
+      "norm_label": "react",
+      "id": "REACT_FRAMEWORK"
     },
     {
       "label": "graphify",
       "file_type": "document",
       "source_file": "AGENTS.md",
       "source_location": null,
-      "id": "GRAPHIFY_TOOL",
-      "community": 52,
-      "norm_label": "graphify"
+      "community": 55,
+      "norm_label": "graphify",
+      "id": "GRAPHIFY_TOOL"
     },
     {
       "label": "CAN-Scope Dashboard",
       "file_type": "image",
       "source_file": "artifacts/after_fix_oscillo.png",
       "source_location": null,
-      "id": "concept_can_scope",
       "community": 13,
-      "norm_label": "can-scope dashboard"
+      "norm_label": "can-scope dashboard",
+      "id": "concept_can_scope"
     },
     {
       "label": "CAN Bus Network Topology",
       "file_type": "image",
       "source_file": "artifacts/hex_validation_before.png",
       "source_location": null,
-      "id": "concept_network_topology",
       "community": 13,
-      "norm_label": "can bus network topology"
+      "norm_label": "can bus network topology",
+      "id": "concept_network_topology"
     },
     {
       "label": "Responsive Interface Design",
       "file_type": "image",
       "source_file": "output/scope-mobile-390.png",
       "source_location": null,
-      "id": "concept_responsive_ui",
-      "community": 102,
-      "norm_label": "responsive interface design"
+      "community": 105,
+      "norm_label": "responsive interface design",
+      "id": "concept_responsive_ui"
     },
     {
       "label": "Project Branding Assets",
       "file_type": "image",
       "source_file": "public/branding/can-simulator-logo-a-lockup.svg",
       "source_location": null,
-      "id": "concept_brand_identity",
-      "community": 169,
-      "norm_label": "project branding assets"
+      "community": 173,
+      "norm_label": "project branding assets",
+      "id": "concept_brand_identity"
     },
     {
       "label": "Immersive Diagnostic Analytics",
       "file_type": "image",
       "source_file": "stitch_assets/10.jpg",
       "source_location": null,
-      "id": "concept_diagnostic_analytics",
       "community": 13,
-      "norm_label": "immersive diagnostic analytics"
+      "norm_label": "immersive diagnostic analytics",
+      "id": "concept_diagnostic_analytics"
     },
     {
       "label": "Post-Fix Oscilloscope View",
       "file_type": "image",
       "source_file": "artifacts/after_fix_oscillo.png",
       "source_location": null,
-      "id": "after_fix_oscillo",
       "community": 13,
-      "norm_label": "post-fix oscilloscope view"
+      "norm_label": "post-fix oscilloscope view",
+      "id": "after_fix_oscillo"
     },
     {
       "label": "Pre-Fix Oscilloscope View",
       "file_type": "image",
       "source_file": "artifacts/before_fix_oscillo.png",
       "source_location": null,
-      "id": "before_fix_oscillo",
       "community": 13,
-      "norm_label": "pre-fix oscilloscope view"
+      "norm_label": "pre-fix oscilloscope view",
+      "id": "before_fix_oscillo"
     },
     {
       "label": "Final Redesign Mockup",
       "file_type": "image",
       "source_file": "artifacts/final_redesign_stitch.png",
       "source_location": null,
-      "id": "final_redesign_stitch",
-      "community": 170,
-      "norm_label": "final redesign mockup"
+      "community": 174,
+      "norm_label": "final redesign mockup",
+      "id": "final_redesign_stitch"
     },
     {
       "label": "CAN Node ID Validation",
       "file_type": "image",
       "source_file": "artifacts/hex_validation_before.png",
       "source_location": null,
-      "id": "hex_validation_before",
       "community": 13,
-      "norm_label": "can node id validation"
+      "norm_label": "can node id validation",
+      "id": "hex_validation_before"
     },
     {
       "label": "Mobile Viewport (390px)",
       "file_type": "image",
       "source_file": "output/scope-mobile-390.png",
       "source_location": null,
-      "id": "scope_mobile_390",
-      "community": 102,
-      "norm_label": "mobile viewport (390px)"
+      "community": 105,
+      "norm_label": "mobile viewport (390px)",
+      "id": "scope_mobile_390"
     },
     {
       "label": "Tablet Viewport (768px)",
       "file_type": "image",
       "source_file": "output/scope-tablet-768.png",
       "source_location": null,
-      "id": "scope_tablet_768",
-      "community": 171,
-      "norm_label": "tablet viewport (768px)"
+      "community": 175,
+      "norm_label": "tablet viewport (768px)",
+      "id": "scope_tablet_768"
     },
     {
       "label": "Desktop Viewport (1440px)",
       "file_type": "image",
       "source_file": "output/scope-1440-full.png",
       "source_location": null,
-      "id": "scope_desktop_1440",
-      "community": 172,
-      "norm_label": "desktop viewport (1440px)"
+      "community": 176,
+      "norm_label": "desktop viewport (1440px)",
+      "id": "scope_desktop_1440"
     },
     {
       "label": "Holographic Waveform Lab",
       "file_type": "image",
       "source_file": "stitch_assets/10.jpg",
       "source_location": null,
-      "id": "diagnostic_lab_full",
       "community": 13,
-      "norm_label": "holographic waveform lab"
+      "norm_label": "holographic waveform lab",
+      "id": "diagnostic_lab_full"
     },
     {
       "label": "Signal Integrity Eye Map",
       "file_type": "image",
       "source_file": "stitch_assets/1.jpg",
       "source_location": null,
-      "id": "eye_map_analysis",
       "community": 13,
-      "norm_label": "signal integrity eye map"
+      "norm_label": "signal integrity eye map",
+      "id": "eye_map_analysis"
     }
   ],
   "links": [
@@ -5768,36 +5921,36 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\ArbitrationVisualizer.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ArbitrationVisualizer.tsx",
       "source_location": "L12",
       "weight": 1.0,
-      "_src": "src_components_can_arbitrationvisualizer_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_arbitrationvisualizer_tsx",
       "_tgt": "arbitrationvisualizer_parseidtobits",
-      "source": "src_components_can_arbitrationvisualizer_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_arbitrationvisualizer_tsx",
       "target": "arbitrationvisualizer_parseidtobits",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\ArbitrationVisualizer.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ArbitrationVisualizer.tsx",
       "source_location": "L20",
       "weight": 1.0,
-      "_src": "src_components_can_arbitrationvisualizer_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_arbitrationvisualizer_tsx",
       "_tgt": "arbitrationvisualizer_handlerun",
-      "source": "src_components_can_arbitrationvisualizer_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_arbitrationvisualizer_tsx",
       "target": "arbitrationvisualizer_handlerun",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\ArbitrationVisualizer.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ArbitrationVisualizer.tsx",
       "source_location": "L42",
       "weight": 1.0,
-      "_src": "src_components_can_arbitrationvisualizer_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_arbitrationvisualizer_tsx",
       "_tgt": "arbitrationvisualizer_handleidchange",
-      "source": "src_components_can_arbitrationvisualizer_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_arbitrationvisualizer_tsx",
       "target": "arbitrationvisualizer_handleidchange",
       "confidence_score": 1.0
     },
@@ -6096,10 +6249,34 @@
       "source_file": "src\\components\\can\\BusTopology.tsx",
       "source_location": "L2295",
       "weight": 1.0,
-      "_src": "bustopology_findfreeposition",
-      "_tgt": "bittimingconfig_min",
+      "_src": "bittimingconfig_min",
+      "_tgt": "bustopology_findfreeposition",
       "source": "bittimingconfig_min",
       "target": "bustopology_findfreeposition"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\LogicRibbon.tsx",
+      "source_location": "L369",
+      "weight": 1.0,
+      "_src": "bittimingconfig_min",
+      "_tgt": "logicribbon_render",
+      "source": "bittimingconfig_min",
+      "target": "logicribbon_render"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeMetrics.tsx",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_src": "bittimingconfig_min",
+      "_tgt": "scopemetrics_clamppercent",
+      "source": "bittimingconfig_min",
+      "target": "scopemetrics_clamppercent"
     },
     {
       "relation": "calls",
@@ -6108,8 +6285,8 @@
       "source_file": "src\\features\\generations\\components\\NeonSlider.tsx",
       "source_location": "L71",
       "weight": 1.0,
-      "_src": "neonslider_handlekeydown",
-      "_tgt": "bittimingconfig_min",
+      "_src": "bittimingconfig_min",
+      "_tgt": "neonslider_handlekeydown",
       "source": "bittimingconfig_min",
       "target": "neonslider_handlekeydown"
     },
@@ -6120,8 +6297,8 @@
       "source_file": "src\\features\\generations\\utils\\comparison.ts",
       "source_location": "L23",
       "weight": 1.0,
-      "_src": "comparison_clamp",
-      "_tgt": "bittimingconfig_min",
+      "_src": "bittimingconfig_min",
+      "_tgt": "comparison_clamp",
       "source": "bittimingconfig_min",
       "target": "comparison_clamp"
     },
@@ -6132,8 +6309,8 @@
       "source_file": "src\\utils\\scope-math.ts",
       "source_location": "L44",
       "weight": 1.0,
-      "_src": "scope_math_clamp",
-      "_tgt": "bittimingconfig_min",
+      "_src": "bittimingconfig_min",
+      "_tgt": "scope_math_clamp",
       "source": "bittimingconfig_min",
       "target": "scope_math_clamp"
     },
@@ -6476,36 +6653,36 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\ErrorLogPanel.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ErrorLogPanel.tsx",
       "source_location": "L48",
       "weight": 1.0,
-      "_src": "src_components_can_errorlogpanel_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_errorlogpanel_tsx",
       "_tgt": "errorlogpanel_formattime",
-      "source": "src_components_can_errorlogpanel_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_errorlogpanel_tsx",
       "target": "errorlogpanel_formattime",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\ReferencePlots.tsx",
-      "source_location": "L28",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ReferencePlots.tsx",
+      "source_location": "L27",
       "weight": 1.0,
-      "_src": "src_components_can_referenceplots_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_referenceplots_tsx",
       "_tgt": "referenceplots_generatedata",
-      "source": "src_components_can_referenceplots_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_referenceplots_tsx",
       "target": "referenceplots_generatedata",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\ReferencePlots.tsx",
-      "source_location": "L76",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\ReferencePlots.tsx",
+      "source_location": "L74",
       "weight": 1.0,
-      "_src": "src_components_can_referenceplots_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_referenceplots_tsx",
       "_tgt": "referenceplots_referenceplots",
-      "source": "src_components_can_referenceplots_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_referenceplots_tsx",
       "target": "referenceplots_referenceplots",
       "confidence_score": 1.0
     },
@@ -6572,187 +6749,223 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L12",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L14",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_waves",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_waves",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L17",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L19",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_fft",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_fft",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L22",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L24",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_cursoricon",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_cursoricon",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L27",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L29",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_download",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_download",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L32",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L34",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_camera",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_camera",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L37",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L39",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_gearicon",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_gearicon",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L42",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L44",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_reseticon",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_reseticon",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L47",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L49",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_referenceicon",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_referenceicon",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L53",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L55",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_xicon",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_xicon",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L71",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L64",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_getinitialstate",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_getinitialstate",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L83",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L87",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_getinitialmeas",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_getinitialmeas",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L142",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L159",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_handler",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_handler",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\VoltageScope.tsx",
-      "source_location": "L157",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\VoltageScope.tsx",
+      "source_location": "L174",
       "weight": 1.0,
-      "_src": "src_components_can_voltagescope_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "_tgt": "voltagescope_fmttb",
-      "source": "src_components_can_voltagescope_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_voltagescope_tsx",
       "target": "voltagescope_fmttb",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\KnobControl.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\CanTriggerMenu.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_cantriggermenu_tsx",
+      "_tgt": "cantriggermenu_xicon",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_cantriggermenu_tsx",
+      "target": "cantriggermenu_xicon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\CanTriggerMenu.tsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_cantriggermenu_tsx",
+      "_tgt": "cantriggermenu_targeticon",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_cantriggermenu_tsx",
+      "target": "cantriggermenu_targeticon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\CanTriggerMenu.tsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_cantriggermenu_tsx",
+      "_tgt": "cantriggermenu_updatecfg",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_cantriggermenu_tsx",
+      "target": "cantriggermenu_updatecfg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\KnobControl.tsx",
       "source_location": "L3",
       "weight": 1.0,
-      "_src": "src_components_can_scope_knobcontrol_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_knobcontrol_tsx",
       "_tgt": "knobcontrol_polartocartesian",
-      "source": "src_components_can_scope_knobcontrol_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_knobcontrol_tsx",
       "target": "knobcontrol_polartocartesian",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\KnobControl.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\KnobControl.tsx",
       "source_location": "L8",
       "weight": 1.0,
-      "_src": "src_components_can_scope_knobcontrol_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_knobcontrol_tsx",
       "_tgt": "knobcontrol_describearc",
-      "source": "src_components_can_scope_knobcontrol_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_knobcontrol_tsx",
       "target": "knobcontrol_describearc",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\KnobControl.tsx",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\KnobControl.tsx",
       "source_location": "L9",
       "weight": 1.0,
       "_src": "knobcontrol_describearc",
@@ -6764,132 +6977,192 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L17",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\LogicRibbon.tsx",
+      "source_location": "L35",
       "weight": 1.0,
-      "_src": "src_components_can_scope_protocoldecoder_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_logicribbon_tsx",
+      "_tgt": "logicribbon_resolvecolor",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_logicribbon_tsx",
+      "target": "logicribbon_resolvecolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\LogicRibbon.tsx",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_logicribbon_tsx",
+      "_tgt": "logicribbon_render",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_logicribbon_tsx",
+      "target": "logicribbon_render",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
       "_tgt": "protocoldecoder_hex",
-      "source": "src_components_can_scope_protocoldecoder_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
       "target": "protocoldecoder_hex",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L18",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_location": "L8",
       "weight": 1.0,
-      "_src": "src_components_can_scope_protocoldecoder_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
       "_tgt": "protocoldecoder_bin",
-      "source": "src_components_can_scope_protocoldecoder_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
       "target": "protocoldecoder_bin",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L22",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_location": "L573",
       "weight": 1.0,
-      "_src": "src_components_can_scope_protocoldecoder_tsx",
-      "_tgt": "protocoldecoder_makefields",
-      "source": "src_components_can_scope_protocoldecoder_tsx",
-      "target": "protocoldecoder_makefields",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L434",
-      "weight": 1.0,
-      "_src": "src_components_can_scope_protocoldecoder_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
       "_tgt": "protocoldecoder_upd",
-      "source": "src_components_can_scope_protocoldecoder_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
       "target": "protocoldecoder_upd",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L673",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ProtocolDecoder.tsx",
+      "source_location": "L812",
       "weight": 1.0,
-      "_src": "src_components_can_scope_protocoldecoder_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
       "_tgt": "protocoldecoder_handlechart",
-      "source": "src_components_can_scope_protocoldecoder_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocoldecoder_tsx",
       "target": "protocoldecoder_handlechart",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ProtocolDecoder.tsx",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_src": "protocoldecoder_makefields",
-      "_tgt": "protocoldecoder_bin",
-      "source": "protocoldecoder_bin",
-      "target": "protocoldecoder_makefields",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L15",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L49",
       "weight": 1.0,
-      "_src": "src_components_can_scope_scopecontrols_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "_tgt": "protocolutils_getcanbitpattern",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "target": "protocolutils_getcanbitpattern",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "_tgt": "protocolutils_getlogicalbits",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "target": "protocolutils_getlogicalbits",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L141",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "_tgt": "protocolutils_buildbitfieldmap",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "target": "protocolutils_buildbitfieldmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L179",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "_tgt": "protocolutils_detectbitstuffing",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "target": "protocolutils_detectbitstuffing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\protocolUtils.ts",
+      "source_location": "L222",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "_tgt": "protocolutils_getsegmentboundaries",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_protocolutils_ts",
+      "target": "protocolutils_getsegmentboundaries",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "_tgt": "scopecontrols_fmttb",
-      "source": "src_components_can_scope_scopecontrols_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "target": "scopecontrols_fmttb",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L18",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L19",
       "weight": 1.0,
-      "_src": "src_components_can_scope_scopecontrols_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "_tgt": "scopecontrols_play",
-      "source": "src_components_can_scope_scopecontrols_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "target": "scopecontrols_play",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L23",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L24",
       "weight": 1.0,
-      "_src": "src_components_can_scope_scopecontrols_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "_tgt": "scopecontrols_stop",
-      "source": "src_components_can_scope_scopecontrols_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "target": "scopecontrols_stop",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L28",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L29",
       "weight": 1.0,
-      "_src": "src_components_can_scope_scopecontrols_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "_tgt": "scopecontrols_single",
-      "source": "src_components_can_scope_scopecontrols_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "target": "scopecontrols_single",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\ScopeControls.tsx",
-      "source_location": "L33",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeControls.tsx",
+      "source_location": "L34",
       "weight": 1.0,
-      "_src": "src_components_can_scope_scopecontrols_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "_tgt": "scopecontrols_target",
-      "source": "src_components_can_scope_scopecontrols_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopecontrols_tsx",
       "target": "scopecontrols_target",
       "confidence_score": 1.0
     },
@@ -6900,8 +7173,8 @@
       "source_file": "src\\services\\usageService.ts",
       "source_location": "L24",
       "weight": 1.0,
-      "_src": "usageservice_trackusage",
-      "_tgt": "scopecontrols_single",
+      "_src": "scopecontrols_single",
+      "_tgt": "usageservice_trackusage",
       "source": "scopecontrols_single",
       "target": "usageservice_trackusage"
     },
@@ -6912,76 +7185,88 @@
       "source_file": "src\\services\\usageService.ts",
       "source_location": "L56",
       "weight": 1.0,
-      "_src": "usageservice_getremainingquota",
-      "_tgt": "scopecontrols_single",
+      "_src": "scopecontrols_single",
+      "_tgt": "usageservice_getremainingquota",
       "source": "scopecontrols_single",
       "target": "usageservice_getremainingquota"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L6",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\ScopeMetrics.tsx",
+      "source_location": "L52",
       "weight": 1.0,
-      "_src": "src_components_can_scope_waveformviewer_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopemetrics_tsx",
+      "_tgt": "scopemetrics_clamppercent",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_scopemetrics_tsx",
+      "target": "scopemetrics_clamppercent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "_tgt": "waveformviewer_canbitpattern",
-      "source": "src_components_can_scope_waveformviewer_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "target": "waveformviewer_canbitpattern",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L32",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L23",
       "weight": 1.0,
-      "_src": "src_components_can_scope_waveformviewer_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "_tgt": "waveformviewer_generatecan",
-      "source": "src_components_can_scope_waveformviewer_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "target": "waveformviewer_generatecan",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L49",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L40",
       "weight": 1.0,
-      "_src": "src_components_can_scope_waveformviewer_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "_tgt": "waveformviewer_generatesine",
-      "source": "src_components_can_scope_waveformviewer_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "target": "waveformviewer_generatesine",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L62",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L53",
       "weight": 1.0,
-      "_src": "src_components_can_scope_waveformviewer_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "_tgt": "waveformviewer_generatesquare",
-      "source": "src_components_can_scope_waveformviewer_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "target": "waveformviewer_generatesquare",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L76",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L67",
       "weight": 1.0,
-      "_src": "src_components_can_scope_waveformviewer_tsx",
+      "_src": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "_tgt": "waveformviewer_generatenoisy",
-      "source": "src_components_can_scope_waveformviewer_tsx",
+      "source": "e_projects_uds_simulator_can_simulator_src_components_can_scope_waveformviewer_tsx",
       "target": "waveformviewer_generatenoisy",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L38",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L29",
       "weight": 1.0,
       "_src": "waveformviewer_generatecan",
       "_tgt": "waveformviewer_canbitpattern",
@@ -6992,8 +7277,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\components\\can\\scope\\WaveformViewer.tsx",
-      "source_location": "L77",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\components\\can\\scope\\WaveformViewer.tsx",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "waveformviewer_generatenoisy",
       "_tgt": "waveformviewer_generatecan",
@@ -7260,8 +7545,8 @@
       "source_file": "src\\pages\\NotFoundPage.tsx",
       "source_location": "L8",
       "weight": 1.0,
-      "_src": "notfoundpage_notfoundpage",
-      "_tgt": "themecontext_usetheme",
+      "_src": "themecontext_usetheme",
+      "_tgt": "notfoundpage_notfoundpage",
       "source": "themecontext_usetheme",
       "target": "notfoundpage_notfoundpage"
     },
@@ -7812,8 +8097,8 @@
       "source_file": "src\\hooks\\useMomentaryAction.ts",
       "source_location": "L11",
       "weight": 1.0,
-      "_src": "usemomentaryaction_usemomentaryaction",
-      "_tgt": "usemediaquery_usemediaquery",
+      "_src": "usemediaquery_usemediaquery",
+      "_tgt": "usemomentaryaction_usemomentaryaction",
       "source": "usemediaquery_usemediaquery",
       "target": "usemomentaryaction_usemomentaryaction"
     },
@@ -8976,8 +9261,8 @@
       "source_file": "src\\services\\can\\mockNodes.ts",
       "source_location": "L49",
       "weight": 1.0,
-      "_src": "mocknodes_initvirtualnetwork",
-      "_tgt": "can_handler_canhandlerregistry_register",
+      "_src": "can_handler_canhandlerregistry_register",
+      "_tgt": "mocknodes_initvirtualnetwork",
       "source": "can_handler_canhandlerregistry_register",
       "target": "mocknodes_initvirtualnetwork"
     },
@@ -9264,8 +9549,8 @@
       "source_file": "src\\services\\can\\uds-server.ts",
       "source_location": "L131",
       "weight": 1.0,
-      "_src": "uds_server_udsserver_sendpositive",
-      "_tgt": "can_simulator_cansimulator_broadcast",
+      "_src": "can_simulator_cansimulator_broadcast",
+      "_tgt": "uds_server_udsserver_sendpositive",
       "source": "can_simulator_cansimulator_broadcast",
       "target": "uds_server_udsserver_sendpositive"
     },
@@ -9276,8 +9561,8 @@
       "source_file": "src\\services\\can\\uds-server.ts",
       "source_location": "L142",
       "weight": 1.0,
-      "_src": "uds_server_udsserver_sendnrc",
-      "_tgt": "can_simulator_cansimulator_broadcast",
+      "_src": "can_simulator_cansimulator_broadcast",
+      "_tgt": "uds_server_udsserver_sendnrc",
       "source": "can_simulator_cansimulator_broadcast",
       "target": "uds_server_udsserver_sendnrc"
     },
@@ -9348,8 +9633,8 @@
       "source_file": "src\\services\\can\\dtc-manager.ts",
       "source_location": "L18",
       "weight": 1.0,
-      "_src": "dtc_manager_dtcmanager_constructor",
-      "_tgt": "can_simulator_cansimulator_subscribetoerrorlog",
+      "_src": "can_simulator_cansimulator_subscribetoerrorlog",
+      "_tgt": "dtc_manager_dtcmanager_constructor",
       "source": "can_simulator_cansimulator_subscribetoerrorlog",
       "target": "dtc_manager_dtcmanager_constructor"
     },
@@ -9536,37 +9821,61 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\services\\can\\trigger-logic.ts",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
       "source_location": "L11",
       "weight": 1.0,
-      "_src": "src_services_can_trigger_logic_ts",
+      "_src": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
       "_tgt": "trigger_logic_issoftransition",
-      "source": "src_services_can_trigger_logic_ts",
+      "source": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
       "target": "trigger_logic_issoftransition",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\services\\can\\trigger-logic.ts",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
       "source_location": "L20",
       "weight": 1.0,
-      "_src": "src_services_can_trigger_logic_ts",
+      "_src": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
       "_tgt": "trigger_logic_iserrorframe",
-      "source": "src_services_can_trigger_logic_ts",
+      "source": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
       "target": "trigger_logic_iserrorframe",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\services\\can\\trigger-logic.ts",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
       "source_location": "L41",
       "weight": 1.0,
-      "_src": "src_services_can_trigger_logic_ts",
+      "_src": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
       "_tgt": "trigger_logic_isidmatch",
-      "source": "src_services_can_trigger_logic_ts",
+      "source": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
       "target": "trigger_logic_isidmatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
+      "_tgt": "trigger_logic_ispayloadmatch",
+      "source": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
+      "target": "trigger_logic_ispayloadmatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "E:\\projects\\UDS_Simulator\\CAN-Simulator\\src\\services\\can\\trigger-logic.ts",
+      "source_location": "L122",
+      "weight": 1.0,
+      "_src": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
+      "_tgt": "trigger_logic_evaluatecantrigger",
+      "source": "e_projects_uds_simulator_can_simulator_src_services_can_trigger_logic_ts",
+      "target": "trigger_logic_evaluatecantrigger",
       "confidence_score": 1.0
     },
     {
@@ -10643,8 +10952,8 @@
       "confidence_score": 1,
       "source_file": "docs-site/app/docs/higher-layers/page.mdx",
       "source_location": null,
-      "_src": "ISO_TP",
-      "_tgt": "UDS_PROTO",
+      "_src": "UDS_PROTO",
+      "_tgt": "ISO_TP",
       "source": "UDS_PROTO",
       "target": "ISO_TP"
     },
@@ -10654,8 +10963,8 @@
       "confidence_score": 0.95,
       "source_file": "artifacts/after_fix_oscillo.png",
       "source_location": null,
-      "_src": "after_fix_oscillo",
-      "_tgt": "concept_can_scope",
+      "_src": "concept_can_scope",
+      "_tgt": "after_fix_oscillo",
       "source": "concept_can_scope",
       "target": "after_fix_oscillo"
     },
@@ -10665,8 +10974,8 @@
       "confidence_score": 0.95,
       "source_file": "artifacts/before_fix_oscillo.png",
       "source_location": null,
-      "_src": "before_fix_oscillo",
-      "_tgt": "concept_can_scope",
+      "_src": "concept_can_scope",
+      "_tgt": "before_fix_oscillo",
       "source": "concept_can_scope",
       "target": "before_fix_oscillo"
     },
@@ -10687,8 +10996,8 @@
       "confidence_score": 0.8,
       "source_file": null,
       "source_location": null,
-      "_src": "concept_network_topology",
-      "_tgt": "concept_can_scope",
+      "_src": "concept_can_scope",
+      "_tgt": "concept_network_topology",
       "source": "concept_can_scope",
       "target": "concept_network_topology"
     },
@@ -10698,8 +11007,8 @@
       "confidence_score": 0.98,
       "source_file": "artifacts/hex_validation_before.png",
       "source_location": null,
-      "_src": "hex_validation_before",
-      "_tgt": "concept_network_topology",
+      "_src": "concept_network_topology",
+      "_tgt": "hex_validation_before",
       "source": "concept_network_topology",
       "target": "hex_validation_before"
     },
@@ -10709,8 +11018,8 @@
       "confidence_score": 0.9,
       "source_file": "output/scope-mobile-390.png",
       "source_location": null,
-      "_src": "scope_mobile_390",
-      "_tgt": "concept_responsive_ui",
+      "_src": "concept_responsive_ui",
+      "_tgt": "scope_mobile_390",
       "source": "concept_responsive_ui",
       "target": "scope_mobile_390"
     },
@@ -10720,8 +11029,8 @@
       "confidence_score": 0.97,
       "source_file": "stitch_assets/10.jpg",
       "source_location": null,
-      "_src": "diagnostic_lab_full",
-      "_tgt": "concept_diagnostic_analytics",
+      "_src": "concept_diagnostic_analytics",
+      "_tgt": "diagnostic_lab_full",
       "source": "concept_diagnostic_analytics",
       "target": "diagnostic_lab_full"
     },
@@ -10731,8 +11040,8 @@
       "confidence_score": 0.92,
       "source_file": "stitch_assets/1.jpg",
       "source_location": null,
-      "_src": "eye_map_analysis",
-      "_tgt": "concept_diagnostic_analytics",
+      "_src": "concept_diagnostic_analytics",
+      "_tgt": "eye_map_analysis",
       "source": "concept_diagnostic_analytics",
       "target": "eye_map_analysis"
     }

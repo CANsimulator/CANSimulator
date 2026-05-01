@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import '../can/scope.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { LeftRail, KnobRail } from './scope/ScopeControls';
 import { WaveformViewer, type ScopeSync } from './scope/WaveformViewer';
+import { LogicRibbon } from './scope/LogicRibbon';
 import { ScopeMetrics } from './scope/ScopeMetrics';
 import { ProtocolDecoder } from './scope/ProtocolDecoder';
 import type { OscState, OscMeas, SignalType, LayoutType } from './scope/types';
@@ -57,15 +59,6 @@ const XIcon = () => (
 );
 
 // ── Frame ribbon ─────────────────────────────────────────────────────────────
-const FRAME_ZONES = [
-    { cls: 'sof',  label: 'SOF',                           w: 2.5 },
-    { cls: 'id',   label: 'ID 0x0C9',                      w: 14  },
-    { cls: 'ctrl', label: 'CTRL',                          w: 8   },
-    { cls: 'data', label: 'DATA 1A 6B 00 00 20 4F FF 1C', w: 45  },
-    { cls: 'crc',  label: 'CRC 0x3A28',                    w: 16  },
-    { cls: 'ack',  label: 'ACK',                           w: 5   },
-    { cls: 'eof',  label: 'EOF + IFS',                     w: 9.5 },
-];
 
 // ── Defaults ─────────────────────────────────────────────────────────────────
 const getInitialState = (): OscState => ({
@@ -77,12 +70,24 @@ const getInitialState = (): OscState => ({
         l: { on: true, vpd: 1, off: 0 },
         d: { on: true, vpd: 1, off: 0 },
     },
-    trig: { source: 'CH1', mode: 'Edge', level: 2.9, sweep: 'Auto' },
+    trig: { 
+        source: 'CH1', 
+        mode: 'Edge', 
+        level: 2.9, 
+        sweep: 'Auto',
+        canTrigger: {
+            type: 'ID',
+            targetID: '0C9',
+            errorType: 'CRC',
+            payloadPattern: 'AA FF'
+        }
+    },
 });
 
 const getInitialMeas = (): OscMeas => ({
     vppH: 1.03, vppL: 1.01, vppD: 2.04,
     freq: 500, rmsD: 1.18, rise: 92, fall: 86,
+    cmDrift: 0.0,
 });
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -102,6 +107,18 @@ export const VoltageScope: React.FC = () => {
     const [showSettings, setShowSettings] = useState(false);
     const [showReference, setShowReference] = useState(false);
     const [panPositionUs, setPanPositionUs] = useState(0);
+    const [decoderFilter, setDecoderFilter] = useState<{ type: 'err' | 'warn'; timestamp: number; frameIdx?: number } | null>(null);
+    const [flash, setFlash] = useState(false);
+
+    const handleScreenshot = useCallback(() => {
+        setFlash(true);
+        setTimeout(() => setFlash(false), 300);
+        // Actual screenshot logic would go here
+    }, []);
+
+    const handleFilterRequest = useCallback((type: 'err' | 'warn', frameIdx?: number) => {
+        setDecoderFilter({ type, timestamp: Date.now(), frameIdx });
+    }, []);
 
     const handleReset = useCallback(() => {
         linesViewerRef.current?.reset();
@@ -156,86 +173,129 @@ export const VoltageScope: React.FC = () => {
 
     const fmtTb = (v: number) => v >= 1000 ? `${(v / 1000).toFixed(1)} ms` : `${v} µs`;
 
+    const springTransition = { type: 'spring', stiffness: 400, damping: 25 };
+
     return (
-        <div className="osc-app theme-industrial density-comfortable">
+        <main className="osc-app theme-industrial density-comfortable">
 
             {/* ── TOPBAR ───────────────────────────────────────────────── */}
-            <div className="osc-topbar">
-                <div className="osc-brand">
-                    <div className="osc-logo">DV</div>
+            <header className="osc-topbar" role="banner">
+                <div className="osc-brand" role="presentation">
+                    <motion.div 
+                        className="osc-logo" 
+                        aria-hidden="true"
+                        initial={{ rotateY: 90 }}
+                        animate={{ rotateY: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                    >DV</motion.div>
                     <div>
-                        <div className="osc-title">DIFFERENTIAL VOLTAGE OSCILLOSCOPE</div>
+                        <h1 className="osc-title">DIFFERENTIAL VOLTAGE OSCILLOSCOPE</h1>
                         <div className="osc-sub">CAN · ISO 11898-2 · 500 KBIT/S</div>
                     </div>
                 </div>
                 <div className="osc-topbar-meta">
-                    <div className="osc-meta-cell">
-                        <span className="osc-meta-k">Session</span>
-                        <span className="osc-meta-v">CAN-A · Lab 3</span>
-                    </div>
-                    <div className="osc-meta-cell">
-                        <span className="osc-meta-k">Sample Rate</span>
-                        <span className="osc-meta-v">2.0<span className="osc-unit">GSa/s</span></span>
-                    </div>
-                    <div className="osc-meta-cell">
-                        <span className="osc-meta-k">Memory</span>
-                        <span className="osc-meta-v">400<span className="osc-unit">Mpts</span></span>
-                    </div>
-                    <div className="osc-meta-cell">
-                        <span className="osc-meta-k">Trigger</span>
-                        <span className="osc-meta-v" style={{ color: 'var(--accent)' }}>
-                            {state.trig.source} · {state.trig.level.toFixed(2)}V
-                        </span>
-                    </div>
-                    <div className="osc-meta-cell">
-                        <span className="osc-meta-k">Status</span>
-                        <span className="osc-meta-v">
-                            <span className={`osc-pill live ${state.running ? 'ok' : 'warn'}`}>
-                                <span className="osc-dot" />
-                                {state.running ? 'Live capture' : 'Held'}
-                            </span>
-                        </span>
-                    </div>
+                    <motion.div 
+                        className="osc-meta-cell"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        <span className="osc-meta-k">Specs</span>
+                        <span className="osc-meta-v">2.0 GSa/s · 400 Mpts</span>
+                    </motion.div>
+                    <motion.div 
+                        className="osc-meta-cell"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                    >
+                        <span className="osc-meta-k">Lab</span>
+                        <span className="osc-meta-v">CAN-A · Session 3</span>
+                    </motion.div>
                 </div>
                 <div className="osc-top-actions">
-                    <button className="osc-iconbtn" title="Capture"><Camera /></button>
-                    <button
+                    <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="osc-iconbtn" 
+                        title="Capture" 
+                        aria-label="Capture Screenshot"
+                        onClick={handleScreenshot}
+                    >
+                        <Camera />
+                    </motion.button>
+                    <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="osc-iconbtn" 
+                        title="Export CSV" 
+                        aria-label="Export Waveform Data as CSV" 
+                        onClick={handleExportCSV}
+                    >
+                        <Download />
+                    </motion.button>
+                    <motion.button
+                        whileHover={{ scale: 1.02, backgroundColor: 'var(--bg-3)' }}
+                        whileTap={{ scale: 0.98 }}
                         className="osc-reset-btn"
                         title="Reset entire oscilloscope to default state"
+                        aria-label="Reset Oscilloscope"
                         onClick={handleReset}
                     >
                         <ResetIcon />
                         <span>RESET</span>
-                    </button>
-                    <button className="osc-iconbtn" title="Export CSV" onClick={handleExportCSV}><Download /></button>
-                    <button
-                        className="osc-reset-btn"
-                        style={{ background: 'var(--accent)', color: 'var(--accent-ink)', marginLeft: '12px' }}
+                    </motion.button>
+                    <motion.button
+                        whileHover={{ scale: 1.02, brightness: 1.2 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="osc-reset-btn osc-bg-accent"
+                        aria-label="Open Technical Reference"
                         onClick={() => setShowReference(true)}
                     >
                         <ReferenceIcon />
                         <span>REFERENCE</span>
-                    </button>
-                    <button className="osc-iconbtn" title="Settings" onClick={() => setShowSettings(v => !v)}><GearIcon /></button>
+                    </motion.button>
+                    <motion.button 
+                        whileHover={{ rotate: 90 }}
+                        transition={springTransition}
+                        className="osc-iconbtn" 
+                        title="Settings" 
+                        aria-label="Open Oscilloscope Settings" 
+                        onClick={() => setShowSettings(v => !v)}
+                    >
+                        <GearIcon />
+                    </motion.button>
                 </div>
-            </div>
+            </header>
+
+            {/* ── SCREEN FLASH EFFECT ─────────────────────────────────── */}
+            <AnimatePresence>
+                {flash && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[999] pointer-events-none bg-white"
+                    />
+                )}
+            </AnimatePresence>
 
             {/* ── REFERENCE OVERLAY ─────────────────────────────────────── */}
             {showReference && (
-                <div className="osc-overlay-modal" style={{ zIndex: 1000 }}>
+                <div className="osc-overlay-modal" role="dialog" aria-modal="true" aria-labelledby="ref-title">
                     <div className="osc-overlay-head">
-                        <div className="osc-brand">
-                            <div className="osc-logo" style={{ background: 'var(--accent)' }}>REF</div>
+                        <div className="osc-brand" role="presentation">
+                            <div className="osc-logo osc-bg-accent" aria-hidden="true">REF</div>
                             <div>
-                                <div className="osc-title">Signal Technical Reference</div>
+                                <div id="ref-title" className="osc-title">Signal Technical Reference</div>
                                 <div className="osc-sub">ISO 11898-2 · High Fidelity Analysis</div>
                             </div>
                         </div>
-                        <button className="osc-close-btn" onClick={() => setShowReference(false)}>
+                        <button className="osc-close-btn" onClick={() => setShowReference(false)} aria-label="Close Reference">
                             <XIcon /> <span>CLOSE</span>
                         </button>
                     </div>
-                    <div className="osc-overlay-body" style={{ background: '#0b0f10', overflowY: 'auto' }}>
+                    <div className="osc-overlay-body">
                         <ReferencePlots standalone={false} />
                     </div>
                 </div>
@@ -244,27 +304,27 @@ export const VoltageScope: React.FC = () => {
             {/* ── LEFT RAIL ────────────────────────────────────────────── */}
             {layout === 'knobs'
                 ? <KnobRail state={state} setState={setState} onAutoscale={handleAutoscale} />
-                : <LeftRail  state={state} setState={setState} onAutoscale={handleAutoscale} />}
+                : <LeftRail state={state} setState={setState} onAutoscale={handleAutoscale} />}
 
             {/* ── STAGE ────────────────────────────────────────────────── */}
             <div className="osc-stage">
                 <div className="osc-scope">
                     {/* Channel scale header */}
                     <div className="osc-scope-top">
-                        <div className="osc-scale-grp" style={{ '--chc': 'var(--ch1)' } as React.CSSProperties}>
+                        <div className="osc-scale-grp osc-ch-h">
                             <span className="osc-sw" /><span className="osc-lbl">CH1</span>
                             <span className="osc-val">{state.channels.h.vpd} V/div</span>
                         </div>
-                        <div className="osc-scale-grp" style={{ '--chc': 'var(--ch2)' } as React.CSSProperties}>
+                        <div className="osc-scale-grp osc-ch-l">
                             <span className="osc-sw" /><span className="osc-lbl">CH2</span>
                             <span className="osc-val">{state.channels.l.vpd} V/div</span>
                         </div>
-                        <div className="osc-scale-grp" style={{ '--chc': 'var(--chd)' } as React.CSSProperties}>
+                        <div className="osc-scale-grp osc-ch-d">
                             <span className="osc-sw" /><span className="osc-lbl">DIFF</span>
                             <span className="osc-val">{state.channels.d.vpd} V/div</span>
                         </div>
                         <div className="osc-scale-grp">
-                            <span className="osc-lbl" style={{ color: 'var(--accent)' }}>TIME</span>
+                            <span className="osc-lbl osc-text-accent">TIME</span>
                             <span className="osc-val">{fmtTb(state.timebase)}/div</span>
                         </div>
                         <div className="osc-right">
@@ -277,126 +337,112 @@ export const VoltageScope: React.FC = () => {
                             <button className={`osc-tbtn ${cursorsOn ? 'active' : ''}`} onClick={() => setCursorsOn(v => !v)}>
                                 <CursorIcon /> CURSORS
                             </button>
-                            <button className="osc-tbtn" onClick={handleExportCSV}>
-                                <Download /> EXPORT
-                            </button>
                         </div>
                     </div>
 
                     {/* Waveform canvases — split into two panes: lines (CAN_H/CAN_L) and diff (V_diff) */}
                     <div className="osc-scope-body osc-scope-split">
-                        <div className="osc-scope-pane osc-scope-pane-lines">
-                            <WaveformViewer
-                                ref={linesViewerRef}
-                                state={state}
-                                signal={signal}
-                                fftMode={fftMode}
-                                cursorsOn={cursorsOn}
-                                cursors={cursors}
-                                persistence={persistence}
-                                traceGlow={true}
-                                onMeas={setMeas}
-                                onStateChange={setState}
-                                onPanChange={setPanPositionUs}
-                                channelSet="lines"
-                                syncRef={scopeSyncRef}
-                                reportMeas={true}
-                            />
-                            <div className="osc-scope-badge">
-                                <span className="osc-dot" />
-                                {state.running ? 'CAPTURING' : 'HELD'} · 500 kbit/s
-                            </div>
-                            <div className="osc-scope-pane-label">
-                                <span className="osc-pane-title">LINES</span>
-                                <span className="osc-legend-item" style={{ '--chc': 'var(--ch1)' } as React.CSSProperties}>
-                                    <span className="osc-sw" style={{ background: 'var(--ch1)' }} /> CAN_H
-                                </span>
-                                <span className="osc-legend-item" style={{ '--chc': 'var(--ch2)' } as React.CSSProperties}>
-                                    <span className="osc-sw" style={{ background: 'var(--ch2)' }} /> CAN_L
-                                </span>
-                            </div>
-                        </div>
-                        <div className="osc-scope-pane osc-scope-pane-diff">
-                            <WaveformViewer
-                                ref={diffViewerRef}
-                                state={state}
-                                signal={signal}
-                                fftMode={fftMode}
-                                cursorsOn={cursorsOn}
-                                cursors={cursors}
-                                persistence={persistence}
-                                traceGlow={true}
-                                onMeas={setMeas}
-                                onStateChange={setState}
-                                onPanChange={setPanPositionUs}
-                                channelSet="diff"
-                                syncRef={scopeSyncRef}
-                                reportMeas={false}
-                            />
-                            <div className="osc-scope-pane-label">
-                                <span className="osc-pane-title">DIFF</span>
-                                <span className="osc-legend-item" style={{ '--chc': 'var(--chd)' } as React.CSSProperties}>
-                                    <span className="osc-sw" style={{ background: 'var(--chd)' }} /> V_diff = H − L
-                                </span>
-                            </div>
-                        </div>
+                        <div className="osc-scope-pane osc-scope-pane-lines" role="region" aria-label="CAN_H and CAN_L Waveform View">
+                                    <WaveformViewer
+                                        ref={linesViewerRef}
+                                        state={state}
+                                        signal={signal}
+                                        fftMode={fftMode}
+                                        cursorsOn={cursorsOn}
+                                        cursors={cursors}
+                                        persistence={persistence}
+                                        traceGlow={true}
+                                        onMeas={setMeas}
+                                        onStateChange={setState}
+                                        onPanChange={setPanPositionUs}
+                                        channelSet="lines"
+                                        syncRef={scopeSyncRef}
+                                        reportMeas={true}
+                                    />
+                                    <div className="osc-scope-badge" aria-live="polite">
+                                        <span className="osc-dot" aria-hidden="true" />
+                                        <span>{state.running ? 'CAPTURING' : 'HELD'} · 500 kbit/s</span>
+                                    </div>
+                                    <div className="osc-scope-pane-label">
+                                        <span className="osc-pane-title">LINES</span>
+                                        <span className="osc-legend-item osc-ch-h">
+                                            <span className="osc-sw osc-sw-ch-h" aria-hidden="true" /> CAN_H
+                                        </span>
+                                        <span className="osc-legend-item osc-ch-l">
+                                            <span className="osc-sw osc-sw-ch-l" aria-hidden="true" /> CAN_L
+                                        </span>
+                                    </div>
+                                </div>
+
+
+                                <div className="osc-scope-pane osc-scope-pane-diff" role="region" aria-label="Differential Waveform View">
+                                    <WaveformViewer
+                                        ref={diffViewerRef}
+                                        state={state}
+                                        signal={signal}
+                                        fftMode={fftMode}
+                                        cursorsOn={cursorsOn}
+                                        cursors={cursors}
+                                        persistence={persistence}
+                                        traceGlow={true}
+                                        onMeas={setMeas}
+                                        onStateChange={setState}
+                                        onPanChange={setPanPositionUs}
+                                        channelSet="diff"
+                                        syncRef={scopeSyncRef}
+                                        reportMeas={false}
+                                    />
+                                    <div className="osc-scope-pane-label">
+                                        <span className="osc-pane-title text-[var(--ch-d)]">V_diff</span>
+                                    </div>
+                                </div>
+
+                                {/* Logic Analyzer Ribbon - Synchronized temporal mapping layer */}
+                                {signal === 'can' && !fftMode && (
+                                    <LogicRibbon syncRef={scopeSyncRef} running={state.running} />
+                                )}
                     </div>
 
                     {/* Annotation bar — dedicated row below canvas, above frame ribbon */}
-                    <div className="osc-scope-ann">
-                        <span>◄ POSITION  {panPositionUs === 0 ? '0.00 µs' : `${panPositionUs > 0 ? '+' : ''}${panPositionUs.toFixed(1)} µs`}</span>
-                        <span>·</span><span>COUPLING  DC</span>
-                        <span>·</span><span>BW  200 MHz</span>
-                        <span>·</span><span>PROBE  10×</span>
-                        <span>·</span><span style={{ color: 'var(--accent)', marginLeft: 'auto', paddingRight: 4 }}>
-                            Scroll to zoom · Drag to pan · Use reset button to reset view
+                    <div className="osc-scope-ann text-[9px] font-black uppercase tracking-[0.1em]">
+                        <div className="flex items-center gap-3">
+                            <span className="text-[var(--ink)]">T_POS: {panPositionUs === 0 ? '0.00µs' : `${panPositionUs > 0 ? '+' : ''}${panPositionUs.toFixed(1)}µs`}</span>
+                            <span className="h-2.5 w-px bg-[var(--stroke)]" />
+                            <span className="text-[var(--ink-dim)]">DC · 200MHz · 10:1</span>
+                        </div>
+                        <span className="text-[var(--ch1)] opacity-70">
+                            AUTO-SYNC ACTIVE · LOGIC MAPPING ENABLED
                         </span>
                     </div>
 
-                    {/* CAN frame ribbon */}
-                    <div className="osc-frame-ribbon">
-                        {(() => {
-                            let acc = 0;
-                            return FRAME_ZONES.map((z, i) => {
-                                const left = `${acc}%`;
-                                acc += z.w;
-                                return (
-                                    <div key={i}
-                                        className={`osc-frame ${z.cls} ${i === 1 ? 'selected' : ''}`}
-                                        style={{ left, width: `${z.w - 0.4}%` }}
-                                        onClick={() => setSelectedFrame(0)}
-                                        title={z.label}
-                                    >{z.label}</div>
-                                );
-                            });
-                        })()}
-                    </div>
                 </div>
             </div>
 
             {/* ── RIGHT RAIL ───────────────────────────────────────────── */}
-            <ScopeMetrics meas={meas} running={state.running} />
+            <ScopeMetrics meas={meas} running={state.running} onFilterRequest={handleFilterRequest} />
 
             {/* ── DECODER ──────────────────────────────────────────────── */}
-            <ProtocolDecoder selected={selectedFrame} onSelect={setSelectedFrame} />
+            <ProtocolDecoder 
+                selected={selectedFrame} 
+                onSelect={setSelectedFrame} 
+                syncRef={scopeSyncRef}
+                setOscState={setState}
+                externalFilter={decoderFilter}
+                timebase={state.timebase}
+            />
 
             {/* ── SETTINGS PANEL ───────────────────────────────────────── */}
             {showSettings && (
-                <div style={{
-                    position: 'fixed', right: 18, bottom: 18, zIndex: 51,
-                    background: 'var(--panel)', border: '1px solid var(--stroke-2)',
-                    borderRadius: 'var(--radius-lg)', padding: '14px 16px',
-                    minWidth: 260, boxShadow: '0 20px 50px rgba(0,0,0,.6)',
-                    fontFamily: 'var(--mono)', display: 'flex', flexDirection: 'column', gap: 12,
-                }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                        <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--ink)' }}>Settings</span>
-                        <button onClick={() => setShowSettings(false)} style={{ color: 'var(--ink-dim)', fontSize: 20, lineHeight: 1, cursor: 'pointer' }}>×</button>
+                <div className="osc-settings-panel" role="dialog" aria-labelledby="settings-title">
+                    <div className="osc-settings-header">
+                        <span id="settings-title" className="osc-settings-title">Settings</span>
+                        <button onClick={() => setShowSettings(false)} className="osc-settings-close" aria-label="Close Settings">×</button>
                     </div>
                     <SettingRow label="Layout">
                         <ToggleGroup
                             value={layout}
                             options={[{ v: 'standard', l: 'Buttons' }, { v: 'knobs', l: 'Knobs' }]}
+                            ariaLabel="UI Layout Mode"
                             onChange={v => setLayout(v as LayoutType)}
                         />
                     </SettingRow>
@@ -404,60 +450,56 @@ export const VoltageScope: React.FC = () => {
                         <ToggleGroup
                             value={signal}
                             options={[{ v: 'can', l: 'CAN' }, { v: 'sine', l: 'Sine' }, { v: 'square', l: 'Sq.' }, { v: 'noisy', l: 'Noisy' }]}
+                            ariaLabel="Simulated Signal Source"
                             onChange={v => setSignal(v as SignalType)}
                         />
                     </SettingRow>
                     <SettingCheck label="Phosphor Persistence" value={persistence} onChange={setPersistence} />
                 </div>
             )}
-        </div>
+        </main>
     );
 };
 
 // ── Settings helpers ──────────────────────────────────────────────────────────
-const SettingRow: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <span style={{ fontSize: 10, letterSpacing: '.12em', color: 'var(--ink-faint)', textTransform: 'uppercase' }}>{label}</span>
+const SettingRow: React.FC<{ label: string; children: React.ReactNode }> = React.memo(({ label, children }) => (
+    <div className="osc-setting-row">
+        <span className="osc-setting-label">{label}</span>
         {children}
     </div>
-);
+));
 
 const ToggleGroup: React.FC<{
     value: string;
     options: { v: string; l: string }[];
+    ariaLabel?: string;
     onChange: (v: string) => void;
-}> = ({ value, options, onChange }) => (
-    <div style={{ display: 'flex', gap: 4 }}>
+}> = React.memo(({ value, options, ariaLabel, onChange }) => (
+    <div className="osc-toggle-group" role="group" aria-label={ariaLabel}>
         {options.map(o => (
-            <button key={o.v} onClick={() => onChange(o.v)} style={{
-                flex: 1, padding: '6px 4px', borderRadius: 4, border: '1px solid',
-                borderColor: value === o.v ? 'var(--accent)' : 'var(--stroke)',
-                background: value === o.v ? 'var(--accent)' : 'var(--bg-3)',
-                color: value === o.v ? 'var(--accent-ink)' : 'var(--ink-dim)',
-                fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700,
-                cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '.04em',
-            }}>{o.l}</button>
+            <button
+                key={o.v}
+                onClick={() => onChange(o.v)}
+                aria-pressed={value === o.v}
+                className={`osc-toggle-btn focus-ring-cyber ${value === o.v ? 'active' : ''}`}
+            >
+                {o.l}
+            </button>
         ))}
     </div>
-);
+));
 
-const SettingCheck: React.FC<{ label: string; value: boolean; onChange: (v: boolean) => void }> = ({ label, value, onChange }) => (
-    <div onClick={() => onChange(!value)} style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '8px 10px', background: 'var(--bg-3)',
-        border: '1px solid var(--stroke)', borderRadius: 4, cursor: 'pointer',
-    }}>
-        <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink)' }}>{label}</span>
-        <div style={{
-            width: 36, height: 18, borderRadius: 10,
-            background: value ? 'color-mix(in srgb, var(--accent) 40%, transparent)' : 'var(--stroke)',
-            position: 'relative', flexShrink: 0,
-        }}>
-            <div style={{
-                position: 'absolute', top: 2, borderRadius: '50%', width: 14, height: 14,
-                background: value ? 'var(--accent)' : 'var(--ink-faint)',
-                left: value ? 19 : 2, transition: 'left .15s, background .15s',
-            }} />
+const SettingCheck: React.FC<{ label: string; value: boolean; onChange: (v: boolean) => void }> = React.memo(({ label, value, onChange }) => (
+    <button
+        role="switch"
+        aria-checked={value}
+        aria-label={label}
+        onClick={() => onChange(!value)}
+        className="osc-switch focus-ring-cyber"
+    >
+        <span className="osc-font-mono osc-fs-11 osc-ink">{label}</span>
+        <div className="osc-switch-track">
+            <div className="osc-switch-thumb" />
         </div>
-    </div>
-);
+    </button>
+));

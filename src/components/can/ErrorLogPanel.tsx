@@ -4,14 +4,14 @@ import { canSimulator } from '../../services/can/can-simulator';
 import type { ErrorLogEntry } from '../../services/can/can-simulator';
 import type { CANErrorCode } from '../../types/can';
 
-const ERROR_COLORS: Record<CANErrorCode, { bg: string; text: string; border: string }> = {
-    BIT1: { bg: 'bg-red-500/10', text: 'text-red-600 dark:text-red-400', border: 'border-red-500/30' },
-    BIT0: { bg: 'bg-orange-500/10', text: 'text-orange-600 dark:text-orange-400', border: 'border-orange-500/30' },
-    STUFF: { bg: 'bg-yellow-500/10', text: 'text-yellow-600 dark:text-yellow-400', border: 'border-yellow-500/30' },
-    CRC: { bg: 'bg-purple-500/10', text: 'text-purple-600 dark:text-purple-400', border: 'border-purple-500/30' },
-    FORM: { bg: 'bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400', border: 'border-blue-500/30' },
-    ACK: { bg: 'bg-cyan-500/10', text: 'text-cyan-600 dark:text-cyan-400', border: 'border-cyan-500/30' },
-    OTHER: { bg: 'bg-gray-500/10', text: 'text-gray-600 dark:text-gray-400', border: 'border-gray-500/30' },
+const ERROR_COLORS: Record<CANErrorCode, { color: string }> = {
+    BIT1: { color: 'var(--danger)' },
+    BIT0: { color: 'var(--warn)' },
+    STUFF: { color: 'var(--f-purp)' },
+    CRC: { color: 'var(--f-pink)' },
+    FORM: { color: 'var(--f-indigo)' },
+    ACK: { color: 'var(--ch1)' },
+    OTHER: { color: 'var(--ink-dim)' },
 };
 
 const ERROR_LABELS: Record<CANErrorCode, string> = {
@@ -62,8 +62,8 @@ export const ErrorLogPanel: React.FC = () => {
                         key={f}
                         onClick={() => setFilter(f)}
                          className={`px-3 py-1.5 rounded-md text-[11px] font-black uppercase tracking-widest transition-all min-h-[44px] flex items-center justify-center ${filter === f
-                                ? 'bg-cyber-blue/20 text-cyber-blue border border-cyber-blue/40'
-                                : 'bg-gray-100 dark:bg-dark-800 text-gray-500 border border-gray-200 dark:border-dark-700 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-dark-600'
+                                ? 'bg-[var(--ch1)]/20 text-[var(--ch1)] border border-[var(--ch1)]/40'
+                                : 'bg-[var(--bg-2)] text-[var(--ink-dim)] border border-[var(--stroke)] hover:text-[var(--ink)] hover:border-[var(--stroke-2)]'
                             }`}
                     >
                         {f}
@@ -73,13 +73,13 @@ export const ErrorLogPanel: React.FC = () => {
                  <button
                     onClick={() => setAutoScroll(!autoScroll)}
                     className={`px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all min-h-[44px] flex items-center justify-center ${autoScroll
-                            ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/30'
-                            : 'bg-gray-100 dark:bg-dark-800 text-gray-500 border border-gray-200 dark:border-dark-700'
+                            ? 'bg-[var(--ok)]/10 text-[var(--ok)] border border-[var(--ok)]/30'
+                            : 'bg-[var(--bg-2)] text-[var(--ink-dim)] border border-[var(--stroke)]'
                         }`}
                 >
                     {autoScroll ? 'Auto-scroll ON' : 'Auto-scroll OFF'}
                 </button>
-                 <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider">
+                 <span className="text-[11px] font-bold text-[var(--ink-faint)] uppercase tracking-wider">
                     {filteredLog.length} entries
                 </span>
             </div>
@@ -87,11 +87,11 @@ export const ErrorLogPanel: React.FC = () => {
              {/* Log Table */}
             <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto min-h-0 rounded-xl bg-gray-50 dark:bg-dark-950/50 border border-gray-200 dark:border-dark-700/50 shadow-inner"
+                className="flex-1 overflow-y-auto min-h-0 rounded-xl bg-[var(--bg-2)]/50 border border-[var(--stroke)] shadow-inner"
                 style={{ maxHeight: '320px' }}
             >
                 {filteredLog.length === 0 ? (
-                    <div className="flex items-center justify-center h-full min-h-[120px] text-gray-600">
+                    <div className="flex items-center justify-center h-full min-h-[120px] text-[var(--ink-faint)]">
                         <div className="text-center">
                             <div className="text-2xl mb-2 opacity-30">
                                 <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,13 +99,13 @@ export const ErrorLogPanel: React.FC = () => {
                                 </svg>
                             </div>
                              <p className="text-[11px] font-bold uppercase tracking-widest">No errors logged</p>
-                            <p className="text-[11px] text-gray-700 mt-1">Inject an error to see activity here</p>
+                            <p className="text-[11px] text-[var(--ink-faint)]/60 mt-1">Inject an error to see activity here</p>
                         </div>
                     </div>
                 ) : (
                       <table className="w-full text-[11px]">
-                         <thead className="sticky top-0 bg-white/95 dark:bg-dark-900/95 backdrop-blur-sm z-10">
-                            <tr className="text-gray-500 uppercase tracking-widest font-black border-b border-gray-200 dark:border-dark-700/50">
+                         <thead className="sticky top-0 bg-[var(--bg-2)]/95 backdrop-blur-sm z-10">
+                            <tr className="text-[var(--ink-faint)] uppercase tracking-widest font-black border-b border-[var(--stroke)]">
                                 <th className="text-left py-2.5 px-3">#</th>
                                 <th className="text-left py-2.5 px-3">Time</th>
                                 <th className="text-left py-2.5 px-3">Type</th>
@@ -118,10 +118,10 @@ export const ErrorLogPanel: React.FC = () => {
                         <tbody>
                             <AnimatePresence initial={false}>
                                 {filteredLog.map((entry) => {
-                                    const colors = ERROR_COLORS[entry.errorCode];
-                                     const stateColor = entry.newState === 'ERROR_ACTIVE' ? 'text-cyan-700 dark:text-cyber-blue'
-                                        : entry.newState === 'ERROR_PASSIVE' ? 'text-purple-600 dark:text-purple-400'
-                                            : 'text-red-600 dark:text-red-400';
+                                    const cfg = ERROR_COLORS[entry.errorCode];
+                                     const stateColor = entry.newState === 'ERROR_ACTIVE' ? 'text-[var(--ch1)]'
+                                        : entry.newState === 'ERROR_PASSIVE' ? 'text-[var(--f-purp)]'
+                                            : 'text-[var(--danger)]';
 
                                     return (
                                          <motion.tr
@@ -129,36 +129,43 @@ export const ErrorLogPanel: React.FC = () => {
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ duration: 0.2 }}
-                                            className={`border-b border-gray-100 dark:border-dark-800/50 hover:bg-gray-100/50 dark:hover:bg-dark-800/30 transition-colors ${entry.stateChanged ? 'bg-yellow-500/10 dark:bg-yellow-500/5' : ''
+                                            className={`border-b border-[var(--stroke)]/30 hover:bg-[var(--bg-3)]/30 transition-colors ${entry.stateChanged ? 'bg-[var(--warn)]/10' : ''
                                                 }`}
                                         >
-                                              <td className="py-2.5 px-3 font-mono text-gray-500 dark:text-gray-400">{entry.id}</td>
-                                             <td className="py-2.5 px-3 font-mono text-gray-500 dark:text-gray-400">{formatTime(entry.timestamp)}</td>
+                                              <td className="py-2.5 px-3 font-mono text-[var(--ink-faint)]">{entry.id}</td>
+                                             <td className="py-2.5 px-3 font-mono text-[var(--ink-faint)]">{formatTime(entry.timestamp)}</td>
                                              <td className="py-2.5 px-3">
-                                                <span className={`inline-flex px-2 py-0.5 rounded ${colors.bg} ${colors.text} ${colors.border} border font-black tracking-wider`}>
+                                                <span 
+                                                    className="inline-flex px-2 py-0.5 rounded border font-black tracking-wider"
+                                                    style={{ 
+                                                        backgroundColor: `color-mix(in srgb, ${cfg.color} 10%, transparent)`,
+                                                        color: cfg.color,
+                                                        borderColor: `color-mix(in srgb, ${cfg.color} 30%, transparent)`
+                                                    }}
+                                                >
                                                     {ERROR_LABELS[entry.errorCode]}
                                                 </span>
                                             </td>
                                               <td className="py-2.5 px-3">
-                                                <span className={`font-bold tracking-wider ${entry.role === 'transmitter' ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'}`}>
+                                                <span className={`font-bold tracking-wider ${entry.role === 'transmitter' ? 'text-[var(--danger)]' : 'text-[var(--ch1)]'}`}>
                                                     {entry.role === 'transmitter' ? 'TX' : 'RX'}
                                                 </span>
                                             </td>
-                                             <td className={`py-2.5 px-3 text-right font-mono font-bold ${entry.tec >= 128 ? 'text-red-600 dark:text-red-400' : 'text-cyan-700 dark:text-cyber-blue'}`}>
+                                             <td className={`py-2.5 px-3 text-right font-mono font-bold ${entry.tec >= 128 ? 'text-[var(--danger)]' : 'text-[var(--ch1)]'}`}>
                                                 {entry.tec}
                                             </td>
-                                             <td className="py-2.5 px-3 uppercase text-right font-mono font-bold ${entry.rec >= 128 ? 'text-red-600 dark:text-red-400' : 'text-purple-600 dark:text-purple-400'}">
+                                             <td className={`py-2.5 px-3 text-right font-mono font-bold ${entry.rec >= 128 ? 'text-[var(--danger)]' : 'text-[var(--f-purp)]'}`}>
                                                 {entry.rec}
                                             </td>
                                              <td className="py-2.5 px-3">
                                                 <span className={`font-black tracking-wider ${stateColor}`}>
                                                      {entry.newState.replaceAll('_', ' ')}
                                                     {entry.stateChanged && (
-                                                        <span className="ml-1 text-yellow-400 animate-pulse">*</span>
+                                                        <span className="ml-1 text-[var(--warn)] animate-pulse">*</span>
                                                     )}
                                                 </span>
                                             </td>
-                                        </motion.tr>
+                                         </motion.tr>
                                     );
                                 })}
                             </AnimatePresence>

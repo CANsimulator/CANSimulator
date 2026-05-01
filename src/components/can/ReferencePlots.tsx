@@ -56,15 +56,15 @@ const generateData = (): DataPoint[] => {
 
 // --- Themes ---
 const THEME = {
-  bg: '#0b0f10',
-  grid: '#233038',
-  text: '#e6f1f3',
-  inkDim: '#9fb3bd',
-  canH: '#00f3ff', // Neon Cyan
-  canL: '#bf00ff', // Neon Purple
-  diff: '#00ff9f', // Neon Green
-  accent: '#ffd400',
-  danger: '#ff4d3a',
+  bg: 'var(--bg)',
+  grid: 'var(--stroke)',
+  text: 'var(--ink)',
+  inkDim: 'var(--ink-dim)',
+  canH: 'var(--ch1)',
+  canL: 'var(--ch2)',
+  diff: 'var(--chd)',
+  accent: 'var(--accent)',
+  danger: 'var(--danger)',
 };
 
 interface ReferencePlotsProps {
@@ -90,17 +90,17 @@ export const ReferencePlots: React.FC<ReferencePlotsProps> = ({ standalone = tru
 
   return (
     <motion.div 
-      className={`p-6 space-y-12 text-[#e6f1f3] font-sans ${standalone ? 'bg-[#0b0f10] min-h-screen' : ''}`}
+      className={`p-6 space-y-12 text-[var(--ink)] font-sans ${standalone ? 'bg-[var(--bg)] min-h-screen' : ''}`}
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* Header */}
-      <div className="space-y-2 border-l-4 border-[#00f3ff] pl-6 py-2">
+      <div className="space-y-2 border-l-4 border-[var(--ch1)] pl-6 py-2">
         <h1 className="text-3xl font-black tracking-tighter uppercase italic">
           CAN Bus Technical Reference
         </h1>
-        <p className="text-[#9fb3bd] font-mono text-sm uppercase tracking-widest">
+        <p className="text-[var(--ink-dim)] font-mono text-sm uppercase tracking-widest">
           Physical Layer Waveform Analysis · ISO 11898-2
         </p>
       </div>
@@ -109,17 +109,17 @@ export const ReferencePlots: React.FC<ReferencePlotsProps> = ({ standalone = tru
       <motion.div variants={itemVariants} className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-3">
-            <span className="w-1.5 h-6 bg-[#00f3ff]" />
+            <span className="w-1.5 h-6 bg-[var(--ch1)]" />
             1. Differential Line Waveforms (CAN_H & CAN_L)
           </h2>
-          <div className="text-xs font-mono text-[#9fb3bd] bg-[#161f24] px-3 py-1 rounded-sm border border-[#233038]">
+          <div className="text-xs font-mono text-[var(--ink-dim)] bg-[var(--bg-3)] px-3 py-1 rounded-sm border border-[var(--stroke)]">
             SCALE: 1.0 V/DIV · 2.0 µS/BIT
           </div>
         </div>
         
-        <div className="h-[400px] w-full bg-[#10161a] border border-[#233038] rounded-xl p-4 shadow-2xl relative overflow-hidden">
+        <div className="h-[400px] w-full bg-[var(--bg-2)] border border-[var(--stroke)] rounded-xl p-4 shadow-2xl relative overflow-hidden">
           {/* Decorative scanner line */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00f3ff05] to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[color-mix(in_srgb,var(--ch1)_5%,transparent)] to-transparent pointer-events-none" />
           
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
@@ -138,7 +138,7 @@ export const ReferencePlots: React.FC<ReferencePlotsProps> = ({ standalone = tru
                 tick={{ fill: THEME.inkDim, fontSize: 11, fontFamily: 'JetBrains Mono' }}
               />
               <Tooltip 
-                contentStyle={{ backgroundColor: '#161f24', border: '1px solid #233038', color: '#e6f1f3', fontFamily: 'JetBrains Mono', fontSize: 12 }}
+                contentStyle={{ backgroundColor: 'var(--bg-3)', border: '1px solid var(--stroke)', color: 'var(--ink)', fontFamily: 'var(--mono)', fontSize: 12 }}
                 itemStyle={{ padding: '2px 0' }}
               />
               <Legend verticalAlign="top" align="right" iconType="rect" wrapperStyle={{ paddingBottom: 20, fontFamily: 'JetBrains Mono', fontSize: 12, textTransform: 'uppercase' }} />
@@ -171,15 +171,15 @@ export const ReferencePlots: React.FC<ReferencePlotsProps> = ({ standalone = tru
       <motion.div variants={itemVariants} className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold uppercase tracking-tight flex items-center gap-3">
-            <span className="w-1.5 h-6 bg-[#00ff9f]" />
+            <span className="w-1.5 h-6 bg-[var(--chd)]" />
             2. Differential Voltage Waveform (V_diff)
           </h2>
-          <div className="text-xs font-mono text-[#9fb3bd] bg-[#161f24] px-3 py-1 rounded-sm border border-[#233038]">
+          <div className="text-xs font-mono text-[var(--ink-dim)] bg-[var(--bg-3)] px-3 py-1 rounded-sm border border-[var(--stroke)]">
             V_diff = CAN_H - CAN_L
           </div>
         </div>
 
-        <div className="h-[400px] w-full bg-[#10161a] border border-[#233038] rounded-xl p-4 shadow-2xl overflow-hidden">
+        <div className="h-[400px] w-full bg-[var(--bg-2)] border border-[var(--stroke)] rounded-xl p-4 shadow-2xl overflow-hidden">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={THEME.grid} vertical={false} />
@@ -228,14 +228,14 @@ export const ReferencePlots: React.FC<ReferencePlotsProps> = ({ standalone = tru
         </div>
         
         {/* Footer info box */}
-        <div className="p-4 bg-[#161f24] border border-[#233038] rounded-lg grid grid-cols-2 gap-8">
+        <div className="p-4 bg-[var(--bg-3)] border border-[var(--stroke)] rounded-lg grid grid-cols-2 gap-8">
           <div className="space-y-1">
-            <h4 className="text-[10px] font-black uppercase text-[#ffd400] tracking-widest">Dominant State (Bit 0)</h4>
-            <p className="text-xs text-[#9fb3bd]">CAN_H drives to ~3.5V, CAN_L drives to ~1.5V. Resulting V_diff ≈ 2.0V.</p>
+            <h4 className="text-[10px] font-black uppercase text-[var(--accent)] tracking-widest">Dominant State (Bit 0)</h4>
+            <p className="text-xs text-[var(--ink-dim)]">CAN_H drives to ~3.5V, CAN_L drives to ~1.5V. Resulting V_diff ≈ 2.0V.</p>
           </div>
           <div className="space-y-1">
-            <h4 className="text-[10px] font-black uppercase text-[#9fb3bd] tracking-widest">Recessive State (Bit 1)</h4>
-            <p className="text-xs text-[#9fb3bd]">Both lines float to ~2.5V (terminated). Resulting V_diff ≈ 0V.</p>
+            <h4 className="text-[10px] font-black uppercase text-[var(--ink-dim)] tracking-widest">Recessive State (Bit 1)</h4>
+            <p className="text-xs text-[var(--ink-dim)]">Both lines float to ~2.5V (terminated). Resulting V_diff ≈ 0V.</p>
           </div>
         </div>
       </motion.div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { KnobControl, RockerSwitch } from './KnobControl';
+import { CanTriggerMenu } from './CanTriggerMenu';
 import type { OscState } from './types';
 
 type SetState = React.Dispatch<React.SetStateAction<OscState>>;
@@ -37,15 +38,15 @@ const Target = () => (
 );
 
 // ── Button-based left rail ──────────────────────────────────────────────────
-export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) => {
+export const LeftRail: React.FC<RailProps> = React.memo(({ state, setState, onAutoscale }) => {
     const { running, channels, trig, timebase } = state;
 
     return (
         <div className="osc-leftrail">
             {/* Acquisition */}
-            <div className="osc-panel">
+            <section className="osc-panel" aria-labelledby="acquisition-title">
                 <div className="osc-panel-h">
-                    <span className="osc-t">Acquisition</span>
+                    <span id="acquisition-title" className="osc-t">Acquisition</span>
                     <span className={`osc-pill live ${running ? 'ok' : 'dim'}`}>
                         <span className="osc-dot" />
                         {running ? 'Live' : 'Held'}
@@ -54,51 +55,54 @@ export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                 <div className="osc-panel-b">
                     <div className="osc-btn-row">
                         <button
-                            className={`osc-bigbtn ${running ? 'primary' : ''}`}
+                            className={`osc-bigbtn focus-ring-cyber ${running ? 'primary' : ''}`}
                             onClick={() => setState(s => ({ ...s, running: true }))}
                         >
                             <Play /><span>Run</span>
                         </button>
                         <button
-                            className={`osc-bigbtn ${!running ? 'primary danger' : 'danger'}`}
+                            className={`osc-bigbtn focus-ring-cyber ${!running ? 'primary danger' : 'danger'}`}
                             onClick={() => setState(s => ({ ...s, running: false }))}
                         >
                             <Stop /><span>Stop</span>
                         </button>
                     </div>
-                    <button className="osc-bigbtn" onClick={() => setState(s => ({ ...s, running: false }))}>
-                        <Single /><span>Single</span><span className="osc-k">S</span>
+                    <button className="osc-bigbtn focus-ring-cyber" onClick={() => setState(s => ({ ...s, running: false }))}>
+                        <Single /><span>Single</span><span className="osc-k" aria-label="Shortcut: S">S</span>
                     </button>
                     <div className="osc-btn-row">
-                        <button className="osc-bigbtn" onClick={onAutoscale}><Target /><span>Auto</span></button>
-                        <button className="osc-bigbtn"><span>Cal</span></button>
+                        <button className="osc-bigbtn focus-ring-cyber" onClick={onAutoscale}><Target /><span>Auto</span></button>
+                        <button className="osc-bigbtn focus-ring-cyber"><span>Cal</span></button>
                     </div>
                 </div>
-            </div>
+            </section>
 
             {/* Channel Map */}
-            <div className="osc-panel">
+            <section className="osc-panel" aria-labelledby="channel-map-title">
                 <div className="osc-panel-h">
-                    <span className="osc-t">Channel Map</span>
+                    <span id="channel-map-title" className="osc-t">Channel Map</span>
                     <span className="osc-pill dim">2 + MATH</span>
                 </div>
                 <div className="osc-panel-b">
                     {(['h', 'l', 'd'] as const).map(k => {
                         const cfg = channels[k];
-                        const chcVar = k === 'h' ? 'var(--ch1)' : k === 'l' ? 'var(--ch2)' : 'var(--chd)';
+                        const chcClass = k === 'h' ? 'osc-ch-h' : k === 'l' ? 'osc-ch-l' : 'osc-ch-d';
                         const nameLbl = k === 'h' ? 'CH1' : k === 'l' ? 'CH2' : 'MATH';
                         const subLbl = k === 'h' ? '· CAN_H' : k === 'l' ? '· CAN_L' : '· DIFF (H−L)';
                         return (
                             <div key={k}
-                                className="osc-ch-card"
+                                className={`osc-ch-card ${chcClass}`}
                                 data-on={String(cfg.on)}
-                                style={{ '--chc': chcVar } as React.CSSProperties}
                             >
                                 <div className="osc-ch-head">
                                     <div className="osc-sw" />
                                     <div className="osc-name">{nameLbl}</div>
                                     <div className="osc-label">{subLbl}</div>
-                                    <div className="osc-ch-on"
+                                    <button 
+                                        type="button"
+                                        className="osc-ch-on focus-ring-cyber"
+                                        aria-label={`Toggle ${nameLbl} Visibility`}
+                                        aria-pressed={cfg.on}
                                         onClick={() => setState(s => ({
                                             ...s,
                                             channels: { ...s.channels, [k]: { ...s.channels[k], on: !s.channels[k].on } }
@@ -110,11 +114,13 @@ export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                                         <span className="osc-k">V / div</span>
                                         <span className="osc-v">{cfg.vpd} V</span>
                                     </div>
-                                    <div className="osc-stepper">
+                                    <div className="osc-stepper" role="group" aria-label={`${nameLbl} vertical scale`}>
                                         {VPD_OPTS.map(v => (
                                             <button
                                                 key={v}
-                                                className={cfg.vpd === v ? 'active' : ''}
+                                                className={`focus-ring-cyber ${cfg.vpd === v ? 'active' : ''}`}
+                                                aria-label={`Set ${nameLbl} scale to ${v < 1 ? v.toFixed(1) : v} V/div`}
+                                                aria-pressed={cfg.vpd === v}
                                                 onClick={() => setState(s => ({
                                                     ...s,
                                                     channels: { ...s.channels, [k]: { ...s.channels[k], vpd: v } }
@@ -127,10 +133,9 @@ export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                                         <span className="osc-v">{cfg.off >= 0 ? '+' : ''}{cfg.off.toFixed(2)} V</span>
                                     </div>
                                     <input
-                                        className="osc-slider"
+                                        className="osc-slider focus-ring-cyber"
                                         type="range" min="-2" max="2" step="0.05"
                                         value={cfg.off}
-                                        style={{ '--chc': chcVar } as React.CSSProperties}
                                         onChange={e => setState(s => ({
                                             ...s,
                                             channels: { ...s.channels, [k]: { ...s.channels[k], off: parseFloat(e.target.value) } }
@@ -141,12 +146,12 @@ export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                         );
                     })}
                 </div>
-            </div>
+            </section>
 
             {/* Time + Trigger */}
-            <div className="osc-panel">
+            <section className="osc-panel" aria-labelledby="time-trig-title">
                 <div className="osc-panel-h">
-                    <span className="osc-t">Time · Trigger</span>
+                    <span id="time-trig-title" className="osc-t">Time · Trigger</span>
                     <span className="osc-pill ok"><span className="osc-dot" />Armed</span>
                 </div>
                 <div className="osc-panel-b">
@@ -158,7 +163,7 @@ export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                         {TB_OPTS.map(v => (
                             <button
                                 key={v}
-                                className={timebase === v ? 'active' : ''}
+                                className={`focus-ring-cyber ${timebase === v ? 'active' : ''}`}
                                 onClick={() => setState(s => ({ ...s, timebase: v }))}
                             >{v < 1000 ? v : `${v / 1000}m`}</button>
                         ))}
@@ -170,7 +175,7 @@ export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                     <div className="osc-trig-type">
                         {(['CH1', 'CH2', 'DIFF'] as const).map(s => (
                             <button key={s}
-                                className={`osc-chip ${trig.source === s ? 'active' : ''}`}
+                                className={`osc-chip focus-ring-cyber ${trig.source === s ? 'active' : ''}`}
                                 onClick={() => setState(st => ({ ...st, trig: { ...st.trig, source: s } }))}
                             >{s}</button>
                         ))}
@@ -179,20 +184,26 @@ export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                         <span className="osc-k">Mode</span>
                         <span className="osc-v">{trig.mode}</span>
                     </div>
-                    <div className="osc-trig-type">
-                        {(['Edge', 'Pulse', 'Level'] as const).map(m => (
+                    <div className="osc-trig-type osc-relative">
+                        {(['Edge', 'Pulse', 'Level', 'CAN/Protocol'] as const).map(m => (
                             <button key={m}
-                                className={`osc-chip ${trig.mode === m ? 'active' : ''}`}
+                                className={`osc-chip focus-ring-cyber ${trig.mode === m ? 'active' : ''}`}
                                 onClick={() => setState(st => ({ ...st, trig: { ...st.trig, mode: m } }))}
-                            >{m}</button>
+                            >{m === 'CAN/Protocol' ? 'CAN' : m}</button>
                         ))}
+                        <CanTriggerMenu 
+                            isOpen={trig.mode === 'CAN/Protocol'} 
+                            state={state} 
+                            setState={setState} 
+                            onClose={() => setState(st => ({ ...st, trig: { ...st.trig, mode: 'Edge' } }))} 
+                        />
                     </div>
                     <div className="osc-kv">
                         <span className="osc-k">Level</span>
                         <span className="osc-v">{trig.level.toFixed(2)} V</span>
                     </div>
                     <input
-                        className="osc-slider"
+                        className="osc-slider focus-ring-cyber"
                         type="range" min="0" max="5" step="0.05"
                         value={trig.level}
                         onChange={e => setState(st => ({ ...st, trig: { ...st.trig, level: parseFloat(e.target.value) } }))}
@@ -200,19 +211,19 @@ export const LeftRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                     <div className="osc-trig-type">
                         {(['Auto', 'Normal', 'Single'] as const).map(m => (
                             <button key={m}
-                                className={`osc-chip ${trig.sweep === m ? 'active' : ''}`}
+                                className={`osc-chip focus-ring-cyber ${trig.sweep === m ? 'active' : ''}`}
                                 onClick={() => setState(st => ({ ...st, trig: { ...st.trig, sweep: m } }))}
                             >{m}</button>
                         ))}
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     );
-};
+});
 
 // ── Knob-based left rail ────────────────────────────────────────────────────
-export const KnobRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) => {
+export const KnobRail: React.FC<RailProps> = React.memo(({ state, setState, onAutoscale }) => {
     const { running, channels, trig, timebase } = state;
 
     const CH_CFG = [
@@ -228,21 +239,23 @@ export const KnobRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                 <div className="osc-panel-h">
                     <span className="osc-t">Acquisition</span>
                     <span className={`osc-pill live ${running ? 'ok' : 'dim'}`}>
-                        <span className="osc-dot" />{running ? 'Live' : 'Held'}
+                        <span className="osc-dot" aria-hidden="true" />{running ? 'Live' : 'Held'}
                     </span>
                 </div>
                 <div className="osc-panel-b">
                     <div className="osc-btn-row">
                         <button
-                            className={`osc-bigbtn ${running ? 'primary' : ''}`}
+                            className={`osc-bigbtn focus-ring-cyber ${running ? 'primary' : ''}`}
+                            aria-label="Run acquisition"
                             onClick={() => setState(s => ({ ...s, running: true }))}
                         ><Play /><span>Run</span></button>
                         <button
-                            className={`osc-bigbtn ${!running ? 'primary danger' : 'danger'}`}
+                            className={`osc-bigbtn focus-ring-cyber ${!running ? 'primary danger' : 'danger'}`}
+                            aria-label="Stop acquisition"
                             onClick={() => setState(s => ({ ...s, running: false }))}
                         ><Stop /><span>Stop</span></button>
                     </div>
-                    <button className="osc-bigbtn" onClick={() => setState(s => ({ ...s, running: false }))}>
+                    <button className="osc-bigbtn focus-ring-cyber" aria-label="Single acquisition trigger" onClick={() => setState(s => ({ ...s, running: false }))}>
                         <Single /><span>Single</span><span className="osc-k">S</span>
                     </button>
                 </div>
@@ -256,7 +269,7 @@ export const KnobRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                 </div>
                 <div className="osc-panel-b">
                     {CH_CFG.map(ch => (
-                        <div key={ch.k} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div key={ch.k} className="osc-ch-row">
                             <RockerSwitch
                                 on={channels[ch.k].on}
                                 color={ch.color}
@@ -325,33 +338,45 @@ export const KnobRail: React.FC<RailProps> = ({ state, setState, onAutoscale }) 
                     <div className="osc-trig-type">
                         {(['CH1', 'CH2', 'DIFF'] as const).map(s => (
                             <button key={s}
-                                className={`osc-chip ${trig.source === s ? 'active' : ''}`}
+                                className={`osc-chip focus-ring-cyber ${trig.source === s ? 'active' : ''}`}
+                                aria-label={`Trigger source: ${s}`}
+                                aria-pressed={trig.source === s}
                                 onClick={() => setState(st => ({ ...st, trig: { ...st.trig, source: s } }))}
                             >{s}</button>
                         ))}
                     </div>
-                    <div className="osc-trig-type">
-                        {(['Edge', 'Pulse', 'Level'] as const).map(m => (
+                    <div className="osc-trig-type osc-relative">
+                        {(['Edge', 'Pulse', 'Level', 'CAN/Protocol'] as const).map(m => (
                             <button key={m}
-                                className={`osc-chip ${trig.mode === m ? 'active' : ''}`}
+                                className={`osc-chip focus-ring-cyber ${trig.mode === m ? 'active' : ''}`}
+                                aria-label={`Trigger mode: ${m}`}
+                                aria-pressed={trig.mode === m}
                                 onClick={() => setState(st => ({ ...st, trig: { ...st.trig, mode: m } }))}
-                            >{m}</button>
+                            >{m === 'CAN/Protocol' ? 'CAN' : m}</button>
                         ))}
+                        <CanTriggerMenu 
+                            isOpen={trig.mode === 'CAN/Protocol'} 
+                            state={state} 
+                            setState={setState} 
+                            onClose={() => setState(st => ({ ...st, trig: { ...st.trig, mode: 'Edge' } }))} 
+                        />
                     </div>
                     <div className="osc-trig-type">
                         {(['Auto', 'Normal', 'Single'] as const).map(m => (
                             <button key={m}
-                                className={`osc-chip ${trig.sweep === m ? 'active' : ''}`}
+                                className={`osc-chip focus-ring-cyber ${trig.sweep === m ? 'active' : ''}`}
+                                aria-label={`Sweep mode: ${m}`}
+                                aria-pressed={trig.sweep === m}
                                 onClick={() => setState(st => ({ ...st, trig: { ...st.trig, sweep: m } }))}
                             >{m}</button>
                         ))}
                     </div>
-                    <div className="osc-btn-row" style={{ marginTop: 4 }}>
-                        <button className="osc-bigbtn" onClick={onAutoscale}><Target /><span>Auto</span></button>
-                        <button className="osc-bigbtn"><span>Cal</span></button>
+                    <div className="osc-btn-row osc-mt-4">
+                        <button className="osc-bigbtn focus-ring-cyber" aria-label="Auto-scale all channels" onClick={onAutoscale}><Target /><span>Auto</span></button>
+                        <button className="osc-bigbtn focus-ring-cyber" aria-label="Calibrate channels"><span>Cal</span></button>
                     </div>
                 </div>
             </div>
         </div>
     );
-};
+});

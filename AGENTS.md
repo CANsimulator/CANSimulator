@@ -1,7 +1,7 @@
 ## vexp <!-- vexp v2.0.12 -->
 
 **MANDATORY: use `run_pipeline` — do NOT grep or glob the codebase.**
-vexp returns pre-indexed, graph-ranked context in a single call.
+vexp returns pre-indexed, graph-ranked context in a single call. This is critical for **reducing token consumption** by avoiding redundant file reads.
 
 ### Workflow
 1. `run_pipeline` with your task description — ALWAYS FIRST (replaces all other tools)
@@ -29,9 +29,10 @@ Intent auto-detection, hybrid ranking, session memory, auto-expanding budget.
 
 ## graphify
 
-This project has a graphify knowledge graph at graphify-out/.
+This project has a graphify knowledge graph at graphify-out/. Using this graph is mandatory to **minimize token usage** during codebase exploration.
 
 Rules:
-- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
-- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
-- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure.
+- **Token Efficiency:** Prefer `mcp_graphify_query_graph` and `mcp_graphify_get_node` for high-level understanding before reading raw source files.
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files.
+- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost).

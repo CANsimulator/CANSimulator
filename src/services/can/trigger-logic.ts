@@ -65,3 +65,120 @@ export function isIDMatch(samples: Sample[], targetID: number): boolean {
 
     return bitsFound === 11 && extractedID === targetID;
 }
+
+/**
+ * Detects a match with a specific payload pattern within the data field.
+ * Evaluates when enough data bits have been processed.
+ */
+export function isPayloadMatch(samples: Sample[], patternBytes: number[]): boolean {
+    if (patternBytes.length === 0) return false;
+    
+    // In a standard CAN frame (as simulated), data field starts at bit index 19.
+    // It takes 8 bits per byte.
+    const requiredBits = 19 + patternBytes.length * 8;
+    if (samples.length < requiredBits) return false;
+
+    const current = samples[samples.length - 1];
+    const prev = samples[samples.length - 2];
+    
+    // Only evaluate exactly at the end of the required data payload
+    if (!prev || prev.bitIndex !== requiredBits - 2 || current.bitIndex !== requiredBits - 1) return false;
+
+    let match = true;
+    let currentByte = 0;
+    let bitCount = 0;
+    let byteIdx = 0;
+
+    // Scan forward from the start of the data field
+    for (let i = 0; i < samples.length; i++) {
+        const s = samples[i];
+        if (s.bitIndex >= 19 && s.bitIndex < requiredBits) {
+            const bitValue = s.isDominant ? 0 : 1;
+            currentByte = (currentByte << 1) | bitValue;
+            bitCount++;
+            
+            if (bitCount === 8) {
+                if (currentByte !== patternBytes[byteIdx]) {
+                    match = false;
+                    break;
+                }
+                byteIdx++;
+                currentByte = 0;
+                bitCount = 0;
+            }
+        }
+    }
+
+    return match && byteIdx === patternBytes.length;
+}
+
+import { CAN_LOGICAL_BITS, CAN_BIT_FIELD_MAP } from '../../components/can/scope/protocolUtils';
+import type { OscState } from '../../components/can/scope/types';
+
+/**
+ * Evaluates the CAN Protocol Trigger against the static CAN frame pattern.
+ * Returns the bit index where the trigger occurs, or null if no trigger is found.
+ */
+export function evaluateCanTrigger(triggerCfg: OscState['trig']['canTrigger']): number | null {
+    if (!triggerCfg) return null;
+    
+    if (triggerCfg.type === 'ID') {
+        const target = parseInt(triggerCfg.targetID, 16);
+        if (isNaN(target)) return null;
+        
+        let id = 0;
+        // ID bits are stored at indices 1 to 11 in CAN_LOGICAL_BITS
+        for (let i = 1; i <= 11; i++) {
+            id = (id << 1) | CAN_LOGICAL_BITS[i];
+        }
+        
+        // Trigger at the end of the ID field
+        if (id === target) return 11;
+    }
+    
+    if (triggerCfg.type === 'Payload') {
+        const patternStr = triggerCfg.payloadPattern.replace(/\s+/g, '');
+        if (!patternStr) return null;
+        
+        // Parse hex string into bytes
+        const patternBytes: number[] = [];
+        for (let i = 0; i < patternStr.length; i += 2) {
+            patternBytes.push(parseInt(patternStr.substring(i, i + 2), 16));
+        }
+        if (patternBytes.length === 0) return null;
+        
+        // Extract data bits from the logical bit array
+        const dataBits = CAN_BIT_FIELD_MAP.filter(m => m.fieldCls === 'data');
+        const dataBytes: number[] = [];
+        for (let i = 0; i < dataBits.length; i += 8) {
+            let byte = 0;
+            for (let j = 0; j < 8; j++) {
+                if (i + j < dataBits.length) {
+                    byte = (byte << 1) | dataBits[i + j].logicalBit;
+                }
+            }
+            dataBytes.push(byte);
+        }
+        
+        // Match prefix
+        let match = true;
+        let lastBitMatched = -1;
+        for (let i = 0; i < patternBytes.length; i++) {
+            if (i >= dataBytes.length || patternBytes[i] !== dataBytes[i]) {
+                match = false;
+                break;
+            }
+            lastBitMatched = dataBits[i * 8 + 7]?.bitIndex ?? -1;
+        }
+        
+        if (match) return lastBitMatched;
+    }
+    
+    if (triggerCfg.type === 'Error') {
+        // Our perfect simulated frame has no errors natively.
+        // So this will simply return null and won't trigger, correctly simulating reality.
+        return null;
+    }
+    
+    return null;
+}

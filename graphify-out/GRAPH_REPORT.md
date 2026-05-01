@@ -1,192 +1,197 @@
-# Graph Report - .  (2026-04-20)
+# Graph Report - E:\projects\UDS_Simulator\CAN-Simulator  (2026-05-01)
 
 ## Corpus Check
-- Large corpus: 234 files · ~262,475 words. Semantic extraction will be expensive (many Claude tokens). Consider running on a subfolder, or use --no-semantic to run AST-only.
+- 180 files · ~362,697 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 560 nodes · 476 edges · 173 communities detected
-- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 30 edges (avg confidence: 0.8)
-- Token cost: 28,050 input · 1,600 output
+- 577 nodes · 489 edges · 177 communities detected
+- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.8)
+- Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_CAN Bit Timing & Sample Point|CAN Bit Timing & Sample Point]]
-- [[_COMMUNITY_Analytics & User Engagement|Analytics & User Engagement]]
-- [[_COMMUNITY_CAN Simulator Core & State|CAN Simulator Core & State]]
-- [[_COMMUNITY_Python Backend Configuration|Python Backend Configuration]]
-- [[_COMMUNITY_UDS Protocol & FD Services|UDS Protocol & FD Services]]
-- [[_COMMUNITY_Network Topology Management|Network Topology Management]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic|Voltage Oscilloscope Logic]]
-- [[_COMMUNITY_Authentication & Security|Authentication & Security]]
-- [[_COMMUNITY_CAN Error & Fault Injection|CAN Error & Fault Injection]]
-- [[_COMMUNITY_Arbitration Simulation|Arbitration Simulation]]
-- [[_COMMUNITY_Analytics & User Engagement0|Analytics & User Engagement0]]
-- [[_COMMUNITY_Analytics & User Engagement1|Analytics & User Engagement1]]
-- [[_COMMUNITY_Analytics & User Engagement2|Analytics & User Engagement2]]
-- [[_COMMUNITY_Analytics & User Engagement3|Analytics & User Engagement3]]
-- [[_COMMUNITY_Analytics & User Engagement4|Analytics & User Engagement4]]
-- [[_COMMUNITY_Analytics & User Engagement5|Analytics & User Engagement5]]
-- [[_COMMUNITY_Analytics & User Engagement6|Analytics & User Engagement6]]
-- [[_COMMUNITY_Analytics & User Engagement7|Analytics & User Engagement7]]
-- [[_COMMUNITY_Analytics & User Engagement8|Analytics & User Engagement8]]
-- [[_COMMUNITY_Analytics & User Engagement9|Analytics & User Engagement9]]
-- [[_COMMUNITY_CAN Simulator Core & State0|CAN Simulator Core & State0]]
-- [[_COMMUNITY_CAN Simulator Core & State1|CAN Simulator Core & State1]]
-- [[_COMMUNITY_CAN Simulator Core & State2|CAN Simulator Core & State2]]
-- [[_COMMUNITY_CAN Simulator Core & State3|CAN Simulator Core & State3]]
-- [[_COMMUNITY_CAN Simulator Core & State4|CAN Simulator Core & State4]]
-- [[_COMMUNITY_CAN Simulator Core & State5|CAN Simulator Core & State5]]
-- [[_COMMUNITY_CAN Simulator Core & State6|CAN Simulator Core & State6]]
-- [[_COMMUNITY_CAN Simulator Core & State7|CAN Simulator Core & State7]]
-- [[_COMMUNITY_CAN Simulator Core & State8|CAN Simulator Core & State8]]
-- [[_COMMUNITY_CAN Simulator Core & State9|CAN Simulator Core & State9]]
-- [[_COMMUNITY_Python Backend Configuration0|Python Backend Configuration0]]
-- [[_COMMUNITY_Python Backend Configuration1|Python Backend Configuration1]]
-- [[_COMMUNITY_Python Backend Configuration2|Python Backend Configuration2]]
-- [[_COMMUNITY_Python Backend Configuration3|Python Backend Configuration3]]
-- [[_COMMUNITY_Python Backend Configuration4|Python Backend Configuration4]]
-- [[_COMMUNITY_Python Backend Configuration5|Python Backend Configuration5]]
-- [[_COMMUNITY_Python Backend Configuration6|Python Backend Configuration6]]
-- [[_COMMUNITY_Python Backend Configuration7|Python Backend Configuration7]]
-- [[_COMMUNITY_Python Backend Configuration8|Python Backend Configuration8]]
-- [[_COMMUNITY_Python Backend Configuration9|Python Backend Configuration9]]
-- [[_COMMUNITY_UDS Protocol & FD Services0|UDS Protocol & FD Services0]]
-- [[_COMMUNITY_UDS Protocol & FD Services1|UDS Protocol & FD Services1]]
-- [[_COMMUNITY_UDS Protocol & FD Services2|UDS Protocol & FD Services2]]
-- [[_COMMUNITY_UDS Protocol & FD Services3|UDS Protocol & FD Services3]]
-- [[_COMMUNITY_UDS Protocol & FD Services4|UDS Protocol & FD Services4]]
-- [[_COMMUNITY_UDS Protocol & FD Services5|UDS Protocol & FD Services5]]
-- [[_COMMUNITY_UDS Protocol & FD Services6|UDS Protocol & FD Services6]]
-- [[_COMMUNITY_UDS Protocol & FD Services7|UDS Protocol & FD Services7]]
-- [[_COMMUNITY_UDS Protocol & FD Services8|UDS Protocol & FD Services8]]
-- [[_COMMUNITY_UDS Protocol & FD Services9|UDS Protocol & FD Services9]]
-- [[_COMMUNITY_Network Topology Management0|Network Topology Management0]]
-- [[_COMMUNITY_Network Topology Management1|Network Topology Management1]]
-- [[_COMMUNITY_Network Topology Management2|Network Topology Management2]]
-- [[_COMMUNITY_Network Topology Management3|Network Topology Management3]]
-- [[_COMMUNITY_Network Topology Management4|Network Topology Management4]]
-- [[_COMMUNITY_Network Topology Management5|Network Topology Management5]]
-- [[_COMMUNITY_Network Topology Management6|Network Topology Management6]]
-- [[_COMMUNITY_Network Topology Management7|Network Topology Management7]]
-- [[_COMMUNITY_Network Topology Management8|Network Topology Management8]]
-- [[_COMMUNITY_Network Topology Management9|Network Topology Management9]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic0|Voltage Oscilloscope Logic0]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic1|Voltage Oscilloscope Logic1]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic2|Voltage Oscilloscope Logic2]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic3|Voltage Oscilloscope Logic3]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic4|Voltage Oscilloscope Logic4]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic5|Voltage Oscilloscope Logic5]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic6|Voltage Oscilloscope Logic6]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic7|Voltage Oscilloscope Logic7]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic8|Voltage Oscilloscope Logic8]]
-- [[_COMMUNITY_Voltage Oscilloscope Logic9|Voltage Oscilloscope Logic9]]
-- [[_COMMUNITY_Authentication & Security0|Authentication & Security0]]
-- [[_COMMUNITY_Authentication & Security1|Authentication & Security1]]
-- [[_COMMUNITY_Authentication & Security2|Authentication & Security2]]
-- [[_COMMUNITY_Authentication & Security3|Authentication & Security3]]
-- [[_COMMUNITY_Authentication & Security4|Authentication & Security4]]
-- [[_COMMUNITY_Authentication & Security5|Authentication & Security5]]
-- [[_COMMUNITY_Authentication & Security6|Authentication & Security6]]
-- [[_COMMUNITY_Authentication & Security7|Authentication & Security7]]
-- [[_COMMUNITY_Authentication & Security8|Authentication & Security8]]
-- [[_COMMUNITY_Authentication & Security9|Authentication & Security9]]
-- [[_COMMUNITY_CAN Error & Fault Injection0|CAN Error & Fault Injection0]]
-- [[_COMMUNITY_CAN Error & Fault Injection1|CAN Error & Fault Injection1]]
-- [[_COMMUNITY_CAN Error & Fault Injection2|CAN Error & Fault Injection2]]
-- [[_COMMUNITY_CAN Error & Fault Injection3|CAN Error & Fault Injection3]]
-- [[_COMMUNITY_CAN Error & Fault Injection4|CAN Error & Fault Injection4]]
-- [[_COMMUNITY_CAN Error & Fault Injection5|CAN Error & Fault Injection5]]
-- [[_COMMUNITY_CAN Error & Fault Injection6|CAN Error & Fault Injection6]]
-- [[_COMMUNITY_CAN Error & Fault Injection7|CAN Error & Fault Injection7]]
-- [[_COMMUNITY_CAN Error & Fault Injection8|CAN Error & Fault Injection8]]
-- [[_COMMUNITY_CAN Error & Fault Injection9|CAN Error & Fault Injection9]]
-- [[_COMMUNITY_Arbitration Simulation0|Arbitration Simulation0]]
-- [[_COMMUNITY_Arbitration Simulation1|Arbitration Simulation1]]
-- [[_COMMUNITY_Arbitration Simulation2|Arbitration Simulation2]]
-- [[_COMMUNITY_Arbitration Simulation3|Arbitration Simulation3]]
-- [[_COMMUNITY_Arbitration Simulation4|Arbitration Simulation4]]
-- [[_COMMUNITY_Arbitration Simulation5|Arbitration Simulation5]]
-- [[_COMMUNITY_Arbitration Simulation6|Arbitration Simulation6]]
-- [[_COMMUNITY_Arbitration Simulation7|Arbitration Simulation7]]
-- [[_COMMUNITY_Arbitration Simulation8|Arbitration Simulation8]]
-- [[_COMMUNITY_Arbitration Simulation9|Arbitration Simulation9]]
-- [[_COMMUNITY_Analytics & User Engagement00|Analytics & User Engagement00]]
-- [[_COMMUNITY_Analytics & User Engagement01|Analytics & User Engagement01]]
-- [[_COMMUNITY_Analytics & User Engagement02|Analytics & User Engagement02]]
-- [[_COMMUNITY_Analytics & User Engagement03|Analytics & User Engagement03]]
-- [[_COMMUNITY_Analytics & User Engagement04|Analytics & User Engagement04]]
-- [[_COMMUNITY_Analytics & User Engagement05|Analytics & User Engagement05]]
-- [[_COMMUNITY_Analytics & User Engagement06|Analytics & User Engagement06]]
-- [[_COMMUNITY_Analytics & User Engagement07|Analytics & User Engagement07]]
-- [[_COMMUNITY_Analytics & User Engagement08|Analytics & User Engagement08]]
-- [[_COMMUNITY_Analytics & User Engagement09|Analytics & User Engagement09]]
-- [[_COMMUNITY_Analytics & User Engagement10|Analytics & User Engagement10]]
-- [[_COMMUNITY_Analytics & User Engagement11|Analytics & User Engagement11]]
-- [[_COMMUNITY_Analytics & User Engagement12|Analytics & User Engagement12]]
-- [[_COMMUNITY_Analytics & User Engagement13|Analytics & User Engagement13]]
-- [[_COMMUNITY_Analytics & User Engagement14|Analytics & User Engagement14]]
-- [[_COMMUNITY_Analytics & User Engagement15|Analytics & User Engagement15]]
-- [[_COMMUNITY_Analytics & User Engagement16|Analytics & User Engagement16]]
-- [[_COMMUNITY_Analytics & User Engagement17|Analytics & User Engagement17]]
-- [[_COMMUNITY_Analytics & User Engagement18|Analytics & User Engagement18]]
-- [[_COMMUNITY_Analytics & User Engagement19|Analytics & User Engagement19]]
-- [[_COMMUNITY_Analytics & User Engagement20|Analytics & User Engagement20]]
-- [[_COMMUNITY_Analytics & User Engagement21|Analytics & User Engagement21]]
-- [[_COMMUNITY_Analytics & User Engagement22|Analytics & User Engagement22]]
-- [[_COMMUNITY_Analytics & User Engagement23|Analytics & User Engagement23]]
-- [[_COMMUNITY_Analytics & User Engagement24|Analytics & User Engagement24]]
-- [[_COMMUNITY_Analytics & User Engagement25|Analytics & User Engagement25]]
-- [[_COMMUNITY_Analytics & User Engagement26|Analytics & User Engagement26]]
-- [[_COMMUNITY_Analytics & User Engagement27|Analytics & User Engagement27]]
-- [[_COMMUNITY_Analytics & User Engagement28|Analytics & User Engagement28]]
-- [[_COMMUNITY_Analytics & User Engagement29|Analytics & User Engagement29]]
-- [[_COMMUNITY_Analytics & User Engagement30|Analytics & User Engagement30]]
-- [[_COMMUNITY_Analytics & User Engagement31|Analytics & User Engagement31]]
-- [[_COMMUNITY_Analytics & User Engagement32|Analytics & User Engagement32]]
-- [[_COMMUNITY_Analytics & User Engagement33|Analytics & User Engagement33]]
-- [[_COMMUNITY_Analytics & User Engagement34|Analytics & User Engagement34]]
-- [[_COMMUNITY_Analytics & User Engagement35|Analytics & User Engagement35]]
-- [[_COMMUNITY_Analytics & User Engagement36|Analytics & User Engagement36]]
-- [[_COMMUNITY_Analytics & User Engagement37|Analytics & User Engagement37]]
-- [[_COMMUNITY_Analytics & User Engagement38|Analytics & User Engagement38]]
-- [[_COMMUNITY_Analytics & User Engagement39|Analytics & User Engagement39]]
-- [[_COMMUNITY_Analytics & User Engagement40|Analytics & User Engagement40]]
-- [[_COMMUNITY_Analytics & User Engagement41|Analytics & User Engagement41]]
-- [[_COMMUNITY_Analytics & User Engagement42|Analytics & User Engagement42]]
-- [[_COMMUNITY_Analytics & User Engagement43|Analytics & User Engagement43]]
-- [[_COMMUNITY_Analytics & User Engagement44|Analytics & User Engagement44]]
-- [[_COMMUNITY_Analytics & User Engagement45|Analytics & User Engagement45]]
-- [[_COMMUNITY_Analytics & User Engagement46|Analytics & User Engagement46]]
-- [[_COMMUNITY_Analytics & User Engagement47|Analytics & User Engagement47]]
-- [[_COMMUNITY_Analytics & User Engagement48|Analytics & User Engagement48]]
-- [[_COMMUNITY_Analytics & User Engagement49|Analytics & User Engagement49]]
-- [[_COMMUNITY_Analytics & User Engagement50|Analytics & User Engagement50]]
-- [[_COMMUNITY_Analytics & User Engagement51|Analytics & User Engagement51]]
-- [[_COMMUNITY_Analytics & User Engagement52|Analytics & User Engagement52]]
-- [[_COMMUNITY_Analytics & User Engagement53|Analytics & User Engagement53]]
-- [[_COMMUNITY_Analytics & User Engagement54|Analytics & User Engagement54]]
-- [[_COMMUNITY_Analytics & User Engagement55|Analytics & User Engagement55]]
-- [[_COMMUNITY_Analytics & User Engagement56|Analytics & User Engagement56]]
-- [[_COMMUNITY_Analytics & User Engagement57|Analytics & User Engagement57]]
-- [[_COMMUNITY_Analytics & User Engagement58|Analytics & User Engagement58]]
-- [[_COMMUNITY_Analytics & User Engagement59|Analytics & User Engagement59]]
-- [[_COMMUNITY_Analytics & User Engagement60|Analytics & User Engagement60]]
-- [[_COMMUNITY_Analytics & User Engagement61|Analytics & User Engagement61]]
-- [[_COMMUNITY_Analytics & User Engagement62|Analytics & User Engagement62]]
-- [[_COMMUNITY_Analytics & User Engagement63|Analytics & User Engagement63]]
-- [[_COMMUNITY_Analytics & User Engagement64|Analytics & User Engagement64]]
-- [[_COMMUNITY_Analytics & User Engagement65|Analytics & User Engagement65]]
-- [[_COMMUNITY_Analytics & User Engagement66|Analytics & User Engagement66]]
-- [[_COMMUNITY_Analytics & User Engagement67|Analytics & User Engagement67]]
-- [[_COMMUNITY_Analytics & User Engagement68|Analytics & User Engagement68]]
-- [[_COMMUNITY_Analytics & User Engagement69|Analytics & User Engagement69]]
-- [[_COMMUNITY_Analytics & User Engagement70|Analytics & User Engagement70]]
-- [[_COMMUNITY_Analytics & User Engagement71|Analytics & User Engagement71]]
-- [[_COMMUNITY_Analytics & User Engagement72|Analytics & User Engagement72]]
+- [[_COMMUNITY_Community 0|Community 0]]
+- [[_COMMUNITY_Community 1|Community 1]]
+- [[_COMMUNITY_Community 2|Community 2]]
+- [[_COMMUNITY_Community 3|Community 3]]
+- [[_COMMUNITY_Community 4|Community 4]]
+- [[_COMMUNITY_Community 5|Community 5]]
+- [[_COMMUNITY_Community 6|Community 6]]
+- [[_COMMUNITY_Community 7|Community 7]]
+- [[_COMMUNITY_Community 8|Community 8]]
+- [[_COMMUNITY_Community 9|Community 9]]
+- [[_COMMUNITY_Community 10|Community 10]]
+- [[_COMMUNITY_Community 11|Community 11]]
+- [[_COMMUNITY_Community 12|Community 12]]
+- [[_COMMUNITY_Community 13|Community 13]]
+- [[_COMMUNITY_Community 14|Community 14]]
+- [[_COMMUNITY_Community 15|Community 15]]
+- [[_COMMUNITY_Community 16|Community 16]]
+- [[_COMMUNITY_Community 17|Community 17]]
+- [[_COMMUNITY_Community 18|Community 18]]
+- [[_COMMUNITY_Community 19|Community 19]]
+- [[_COMMUNITY_Community 20|Community 20]]
+- [[_COMMUNITY_Community 21|Community 21]]
+- [[_COMMUNITY_Community 22|Community 22]]
+- [[_COMMUNITY_Community 23|Community 23]]
+- [[_COMMUNITY_Community 24|Community 24]]
+- [[_COMMUNITY_Community 25|Community 25]]
+- [[_COMMUNITY_Community 26|Community 26]]
+- [[_COMMUNITY_Community 27|Community 27]]
+- [[_COMMUNITY_Community 28|Community 28]]
+- [[_COMMUNITY_Community 29|Community 29]]
+- [[_COMMUNITY_Community 30|Community 30]]
+- [[_COMMUNITY_Community 31|Community 31]]
+- [[_COMMUNITY_Community 32|Community 32]]
+- [[_COMMUNITY_Community 33|Community 33]]
+- [[_COMMUNITY_Community 34|Community 34]]
+- [[_COMMUNITY_Community 35|Community 35]]
+- [[_COMMUNITY_Community 36|Community 36]]
+- [[_COMMUNITY_Community 37|Community 37]]
+- [[_COMMUNITY_Community 38|Community 38]]
+- [[_COMMUNITY_Community 39|Community 39]]
+- [[_COMMUNITY_Community 40|Community 40]]
+- [[_COMMUNITY_Community 41|Community 41]]
+- [[_COMMUNITY_Community 42|Community 42]]
+- [[_COMMUNITY_Community 43|Community 43]]
+- [[_COMMUNITY_Community 44|Community 44]]
+- [[_COMMUNITY_Community 45|Community 45]]
+- [[_COMMUNITY_Community 46|Community 46]]
+- [[_COMMUNITY_Community 47|Community 47]]
+- [[_COMMUNITY_Community 48|Community 48]]
+- [[_COMMUNITY_Community 49|Community 49]]
+- [[_COMMUNITY_Community 50|Community 50]]
+- [[_COMMUNITY_Community 51|Community 51]]
+- [[_COMMUNITY_Community 52|Community 52]]
+- [[_COMMUNITY_Community 53|Community 53]]
+- [[_COMMUNITY_Community 54|Community 54]]
+- [[_COMMUNITY_Community 55|Community 55]]
+- [[_COMMUNITY_Community 56|Community 56]]
+- [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
+- [[_COMMUNITY_Community 59|Community 59]]
+- [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
+- [[_COMMUNITY_Community 63|Community 63]]
+- [[_COMMUNITY_Community 64|Community 64]]
+- [[_COMMUNITY_Community 65|Community 65]]
+- [[_COMMUNITY_Community 66|Community 66]]
+- [[_COMMUNITY_Community 67|Community 67]]
+- [[_COMMUNITY_Community 68|Community 68]]
+- [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
+- [[_COMMUNITY_Community 71|Community 71]]
+- [[_COMMUNITY_Community 72|Community 72]]
+- [[_COMMUNITY_Community 73|Community 73]]
+- [[_COMMUNITY_Community 74|Community 74]]
+- [[_COMMUNITY_Community 75|Community 75]]
+- [[_COMMUNITY_Community 76|Community 76]]
+- [[_COMMUNITY_Community 77|Community 77]]
+- [[_COMMUNITY_Community 78|Community 78]]
+- [[_COMMUNITY_Community 79|Community 79]]
+- [[_COMMUNITY_Community 80|Community 80]]
+- [[_COMMUNITY_Community 81|Community 81]]
+- [[_COMMUNITY_Community 82|Community 82]]
+- [[_COMMUNITY_Community 83|Community 83]]
+- [[_COMMUNITY_Community 84|Community 84]]
+- [[_COMMUNITY_Community 85|Community 85]]
+- [[_COMMUNITY_Community 86|Community 86]]
+- [[_COMMUNITY_Community 87|Community 87]]
+- [[_COMMUNITY_Community 88|Community 88]]
+- [[_COMMUNITY_Community 89|Community 89]]
+- [[_COMMUNITY_Community 90|Community 90]]
+- [[_COMMUNITY_Community 91|Community 91]]
+- [[_COMMUNITY_Community 92|Community 92]]
+- [[_COMMUNITY_Community 93|Community 93]]
+- [[_COMMUNITY_Community 94|Community 94]]
+- [[_COMMUNITY_Community 95|Community 95]]
+- [[_COMMUNITY_Community 96|Community 96]]
+- [[_COMMUNITY_Community 97|Community 97]]
+- [[_COMMUNITY_Community 98|Community 98]]
+- [[_COMMUNITY_Community 99|Community 99]]
+- [[_COMMUNITY_Community 100|Community 100]]
+- [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
+- [[_COMMUNITY_Community 104|Community 104]]
+- [[_COMMUNITY_Community 105|Community 105]]
+- [[_COMMUNITY_Community 106|Community 106]]
+- [[_COMMUNITY_Community 107|Community 107]]
+- [[_COMMUNITY_Community 108|Community 108]]
+- [[_COMMUNITY_Community 109|Community 109]]
+- [[_COMMUNITY_Community 110|Community 110]]
+- [[_COMMUNITY_Community 111|Community 111]]
+- [[_COMMUNITY_Community 112|Community 112]]
+- [[_COMMUNITY_Community 113|Community 113]]
+- [[_COMMUNITY_Community 114|Community 114]]
+- [[_COMMUNITY_Community 115|Community 115]]
+- [[_COMMUNITY_Community 116|Community 116]]
+- [[_COMMUNITY_Community 117|Community 117]]
+- [[_COMMUNITY_Community 118|Community 118]]
+- [[_COMMUNITY_Community 119|Community 119]]
+- [[_COMMUNITY_Community 120|Community 120]]
+- [[_COMMUNITY_Community 121|Community 121]]
+- [[_COMMUNITY_Community 122|Community 122]]
+- [[_COMMUNITY_Community 123|Community 123]]
+- [[_COMMUNITY_Community 124|Community 124]]
+- [[_COMMUNITY_Community 125|Community 125]]
+- [[_COMMUNITY_Community 126|Community 126]]
+- [[_COMMUNITY_Community 127|Community 127]]
+- [[_COMMUNITY_Community 128|Community 128]]
+- [[_COMMUNITY_Community 129|Community 129]]
+- [[_COMMUNITY_Community 130|Community 130]]
+- [[_COMMUNITY_Community 131|Community 131]]
+- [[_COMMUNITY_Community 132|Community 132]]
+- [[_COMMUNITY_Community 133|Community 133]]
+- [[_COMMUNITY_Community 134|Community 134]]
+- [[_COMMUNITY_Community 135|Community 135]]
+- [[_COMMUNITY_Community 136|Community 136]]
+- [[_COMMUNITY_Community 137|Community 137]]
+- [[_COMMUNITY_Community 138|Community 138]]
+- [[_COMMUNITY_Community 139|Community 139]]
+- [[_COMMUNITY_Community 140|Community 140]]
+- [[_COMMUNITY_Community 141|Community 141]]
+- [[_COMMUNITY_Community 142|Community 142]]
+- [[_COMMUNITY_Community 143|Community 143]]
+- [[_COMMUNITY_Community 144|Community 144]]
+- [[_COMMUNITY_Community 145|Community 145]]
+- [[_COMMUNITY_Community 146|Community 146]]
+- [[_COMMUNITY_Community 147|Community 147]]
+- [[_COMMUNITY_Community 148|Community 148]]
+- [[_COMMUNITY_Community 149|Community 149]]
+- [[_COMMUNITY_Community 150|Community 150]]
+- [[_COMMUNITY_Community 151|Community 151]]
+- [[_COMMUNITY_Community 152|Community 152]]
+- [[_COMMUNITY_Community 153|Community 153]]
+- [[_COMMUNITY_Community 154|Community 154]]
+- [[_COMMUNITY_Community 155|Community 155]]
+- [[_COMMUNITY_Community 156|Community 156]]
+- [[_COMMUNITY_Community 157|Community 157]]
+- [[_COMMUNITY_Community 158|Community 158]]
+- [[_COMMUNITY_Community 159|Community 159]]
+- [[_COMMUNITY_Community 160|Community 160]]
+- [[_COMMUNITY_Community 161|Community 161]]
+- [[_COMMUNITY_Community 162|Community 162]]
+- [[_COMMUNITY_Community 163|Community 163]]
+- [[_COMMUNITY_Community 164|Community 164]]
+- [[_COMMUNITY_Community 165|Community 165]]
+- [[_COMMUNITY_Community 166|Community 166]]
+- [[_COMMUNITY_Community 167|Community 167]]
+- [[_COMMUNITY_Community 168|Community 168]]
+- [[_COMMUNITY_Community 169|Community 169]]
+- [[_COMMUNITY_Community 170|Community 170]]
+- [[_COMMUNITY_Community 171|Community 171]]
+- [[_COMMUNITY_Community 172|Community 172]]
+- [[_COMMUNITY_Community 173|Community 173]]
+- [[_COMMUNITY_Community 174|Community 174]]
+- [[_COMMUNITY_Community 175|Community 175]]
+- [[_COMMUNITY_Community 176|Community 176]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `CANSimulator` - 21 edges
 2. `Analytics` - 16 edges
-3. `min()` - 9 edges
+3. `min()` - 11 edges
 4. `DTCManager` - 8 edges
 5. `generateCorrectFrame()` - 7 edges
 6. `generateErrorDemo()` - 6 edges
@@ -198,967 +203,985 @@
 ## Surprising Connections (you probably didn't know these)
 - `clamp()` --calls--> `min()`  [INFERRED]
   docs-site\components\BitTimingCalc.tsx → src\components\can\BitTimingConfig.tsx
-- `findFreePosition()` --calls--> `min()`  [INFERRED]
-  src\components\can\BusTopology.tsx → src\components\can\BitTimingConfig.tsx
-- `handleKeyDown()` --calls--> `min()`  [INFERRED]
-  src\features\generations\components\NeonSlider.tsx → src\components\can\BitTimingConfig.tsx
-- `clamp()` --calls--> `min()`  [INFERRED]
-  src\utils\scope-math.ts → src\components\can\BitTimingConfig.tsx
-- `handleAutoCalculate()` --calls--> `findOptimalTiming()`  [INFERRED]
-  src\components\can\BitTimingConfig.tsx → src\services\can\bit-timing.ts
+- `min()` --calls--> `findFreePosition()`  [INFERRED]
+  src\components\can\BitTimingConfig.tsx → src\components\can\BusTopology.tsx
+- `min()` --calls--> `render()`  [INFERRED]
+  src\components\can\BitTimingConfig.tsx → E:\projects\UDS_Simulator\CAN-Simulator\src\components\can\scope\LogicRibbon.tsx
+- `min()` --calls--> `clampPercent()`  [INFERRED]
+  src\components\can\BitTimingConfig.tsx → E:\projects\UDS_Simulator\CAN-Simulator\src\components\can\scope\ScopeMetrics.tsx
+- `min()` --calls--> `handleKeyDown()`  [INFERRED]
+  src\components\can\BitTimingConfig.tsx → src\features\generations\components\NeonSlider.tsx
 
 ## Communities
 
-### CAN Bit Timing & Sample Point - "CAN Bit Timing & Sample Point"
+### Community 0 - "Community 0"
 Cohesion: 0.07
-Nodes (18): decodeRegisters(), encodeRegisters(), findOptimalTiming(), clamp(), handleAutoCalculate(), handleBrpBlur(), handleBrpKeyDown(), handleChange() (+10 more)
+Nodes (17): decodeRegisters(), encodeRegisters(), findOptimalTiming(), clamp(), handleAutoCalculate(), handleBrpBlur(), handleBrpKeyDown(), handleChange() (+9 more)
 
-### Analytics & User Engagement - "Analytics & User Engagement"
+### Community 1 - "Community 1"
 Cohesion: 0.13
 Nodes (5): Analytics, trackConversion(), trackCTAClick(), trackEvent(), handleCTAClick()
 
-### CAN Simulator Core & State - "CAN Simulator Core & State"
+### Community 2 - "Community 2"
 Cohesion: 0.11
 Nodes (3): CANSimulator, handleReset(), runDemoSequence()
 
-### Python Backend Configuration - "Python Backend Configuration"
+### Community 3 - "Community 3"
 Cohesion: 0.11
 Nodes (12): get_env_bool(), get_env_int(), get_env_str(), Environment configuration for CAN Simulator Python scripts. Handles loading and, Pretty print settings., Get string environment variable with optional default., Get integer environment variable with optional default., Get boolean environment variable with optional default. (+4 more)
 
-### UDS Protocol & FD Services - "UDS Protocol & FD Services"
+### Community 4 - "Community 4"
 Cohesion: 0.15
 Nodes (4): dlcToLength(), CANFDHandler, UDSServer, sendRequest()
 
-### Network Topology Management - "Network Topology Management"
+### Community 5 - "Community 5"
 Cohesion: 0.15
 Nodes (8): downloadFile(), exportCSV(), exportJSON(), findFreePosition(), handleCancel(), handleKeyDown(), handleSave(), handleSubmit()
 
-### Voltage Oscilloscope Logic - "Voltage Oscilloscope Logic"
+### Community 6 - "Community 6"
 Cohesion: 0.14
 Nodes (0): 
 
-### Authentication & Security - "Authentication & Security"
+### Community 7 - "Community 7"
 Cohesion: 0.27
 Nodes (6): handleSubmit(), ensureSupabase(), getErrorMessage(), signIn(), signInWithGoogle(), signUp()
 
-### CAN Error & Fault Injection - "CAN Error & Fault Injection"
+### Community 8 - "Community 8"
 Cohesion: 0.38
 Nodes (8): computeSimpleCRC15(), generateACKErrorDemo(), generateBitErrorDemo(), generateCorrectFrame(), generateCRCErrorDemo(), generateErrorDemo(), generateFormErrorDemo(), generateStuffErrorDemo()
 
-### Arbitration Simulation - "Arbitration Simulation"
+### Community 9 - "Community 9"
 Cohesion: 0.2
 Nodes (0): 
 
-### Analytics & User Engagement0 - "Analytics & User Engagement0"
+### Community 10 - "Community 10"
 Cohesion: 0.33
 Nodes (1): DTCManager
 
-### Analytics & User Engagement1 - "Analytics & User Engagement1"
+### Community 11 - "Community 11"
 Cohesion: 0.25
 Nodes (3): Single(), getRemainingQuota(), trackUsage()
 
-### Analytics & User Engagement2 - "Analytics & User Engagement2"
+### Community 12 - "Community 12"
 Cohesion: 0.25
 Nodes (2): CANHandlerRegistry, initVirtualNetwork()
 
-### Analytics & User Engagement3 - "Analytics & User Engagement3"
+### Community 13 - "Community 13"
 Cohesion: 0.25
 Nodes (8): Post-Fix Oscilloscope View, Pre-Fix Oscilloscope View, CAN-Scope Dashboard, Immersive Diagnostic Analytics, CAN Bus Network Topology, Holographic Waveform Lab, Signal Integrity Eye Map, CAN Node ID Validation
 
-### Analytics & User Engagement4 - "Analytics & User Engagement4"
+### Community 14 - "Community 14"
+Cohesion: 0.38
+Nodes (3): clamp(), estimateBusLoad(), estimateFrameCount()
+
+### Community 15 - "Community 15"
 Cohesion: 0.52
 Nodes (6): applyGenerationQueryPatch(), buildGenerationQuery(), ensureDifferent(), parseGeneration(), parseGenerationQuery(), parseScenario()
 
-### Analytics & User Engagement5 - "Analytics & User Engagement5"
+### Community 16 - "Community 16"
 Cohesion: 0.29
 Nodes (0): 
 
-### Analytics & User Engagement6 - "Analytics & User Engagement6"
+### Community 17 - "Community 17"
 Cohesion: 0.33
 Nodes (1): ErrorBoundary
 
-### Analytics & User Engagement7 - "Analytics & User Engagement7"
-Cohesion: 0.4
-Nodes (2): bin(), makeFields()
+### Community 18 - "Community 18"
+Cohesion: 0.33
+Nodes (0): 
 
-### Analytics & User Engagement8 - "Analytics & User Engagement8"
+### Community 19 - "Community 19"
 Cohesion: 0.47
 Nodes (3): canBitPattern(), generateCAN(), generateNoisy()
 
-### Analytics & User Engagement9 - "Analytics & User Engagement9"
+### Community 20 - "Community 20"
+Cohesion: 0.33
+Nodes (0): 
+
+### Community 21 - "Community 21"
 Cohesion: 0.4
 Nodes (3): handleSubmit(), validate(), sendContactEmail()
 
-### CAN Simulator Core & State0 - "CAN Simulator Core & State0"
+### Community 22 - "Community 22"
 Cohesion: 0.33
 Nodes (0): 
 
-### CAN Simulator Core & State1 - "CAN Simulator Core & State1"
+### Community 23 - "Community 23"
 Cohesion: 0.33
 Nodes (5): Sparklines, SparklinesBars, SparklinesLine, SparklinesReferenceLine, SparklinesSpots
 
-### CAN Simulator Core & State2 - "CAN Simulator Core & State2"
+### Community 24 - "Community 24"
 Cohesion: 0.33
 Nodes (2): cn(), navLinkClass()
 
-### CAN Simulator Core & State3 - "CAN Simulator Core & State3"
+### Community 25 - "Community 25"
 Cohesion: 0.33
 Nodes (3): ISO 11898 (CAN Standard), React, Vite
 
-### CAN Simulator Core & State4 - "CAN Simulator Core & State4"
+### Community 26 - "Community 26"
 Cohesion: 0.4
 Nodes (0): 
 
-### CAN Simulator Core & State5 - "CAN Simulator Core & State5"
+### Community 27 - "Community 27"
 Cohesion: 0.4
 Nodes (0): 
 
-### CAN Simulator Core & State6 - "CAN Simulator Core & State6"
+### Community 28 - "Community 28"
+Cohesion: 0.4
+Nodes (0): 
+
+### Community 29 - "Community 29"
 Cohesion: 0.4
 Nodes (5): CAN-SCOPE (Physical Layer Scope), output/playwright/can-scope-concept.html, docs/oscilloscope-architecture.md, stitch_assets/2.html, VoltScope Pro
 
-### CAN Simulator Core & State7 - "CAN Simulator Core & State7"
+### Community 30 - "Community 30"
 Cohesion: 0.67
 Nodes (2): ArbitrationMini(), computeArbitration()
 
-### CAN Simulator Core & State8 - "CAN Simulator Core & State8"
+### Community 31 - "Community 31"
 Cohesion: 0.83
 Nodes (3): BitAnatomy(), tqToW(), tqToX()
 
-### CAN Simulator Core & State9 - "CAN Simulator Core & State9"
+### Community 32 - "Community 32"
 Cohesion: 0.5
 Nodes (0): 
 
-### Python Backend Configuration0 - "Python Backend Configuration0"
+### Community 33 - "Community 33"
 Cohesion: 0.5
 Nodes (0): 
 
-### Python Backend Configuration1 - "Python Backend Configuration1"
+### Community 34 - "Community 34"
 Cohesion: 0.5
 Nodes (0): 
 
-### Python Backend Configuration2 - "Python Backend Configuration2"
+### Community 35 - "Community 35"
+Cohesion: 0.5
+Nodes (0): 
+
+### Community 36 - "Community 36"
 Cohesion: 0.5
 Nodes (2): NotFoundPage(), useTheme()
 
-### Python Backend Configuration3 - "Python Backend Configuration3"
+### Community 37 - "Community 37"
 Cohesion: 0.5
 Nodes (0): 
 
-### Python Backend Configuration4 - "Python Backend Configuration4"
+### Community 38 - "Community 38"
 Cohesion: 0.5
 Nodes (0): 
 
-### Python Backend Configuration5 - "Python Backend Configuration5"
+### Community 39 - "Community 39"
 Cohesion: 0.5
 Nodes (2): useMediaQuery(), useMomentaryAction()
 
-### Python Backend Configuration6 - "Python Backend Configuration6"
+### Community 40 - "Community 40"
 Cohesion: 0.5
 Nodes (0): 
 
-### Python Backend Configuration7 - "Python Backend Configuration7"
-Cohesion: 0.5
-Nodes (0): 
-
-### Python Backend Configuration8 - "Python Backend Configuration8"
+### Community 41 - "Community 41"
 Cohesion: 0.83
 Nodes (3): createInitialWaveState(), generateBitStream(), generateSample()
 
-### Python Backend Configuration9 - "Python Backend Configuration9"
+### Community 42 - "Community 42"
 Cohesion: 0.67
 Nodes (0): 
 
-### UDS Protocol & FD Services0 - "UDS Protocol & FD Services0"
+### Community 43 - "Community 43"
 Cohesion: 0.67
 Nodes (0): 
 
-### UDS Protocol & FD Services1 - "UDS Protocol & FD Services1"
+### Community 44 - "Community 44"
 Cohesion: 0.67
 Nodes (1): AnimatedCounter()
 
-### UDS Protocol & FD Services2 - "UDS Protocol & FD Services2"
+### Community 45 - "Community 45"
 Cohesion: 0.67
 Nodes (0): 
 
-### UDS Protocol & FD Services3 - "UDS Protocol & FD Services3"
+### Community 46 - "Community 46"
 Cohesion: 0.67
 Nodes (0): 
 
-### UDS Protocol & FD Services4 - "UDS Protocol & FD Services4"
+### Community 47 - "Community 47"
 Cohesion: 1.0
 Nodes (2): describeArc(), polarToCartesian()
 
-### UDS Protocol & FD Services5 - "UDS Protocol & FD Services5"
+### Community 48 - "Community 48"
 Cohesion: 0.67
 Nodes (0): 
 
-### UDS Protocol & FD Services6 - "UDS Protocol & FD Services6"
+### Community 49 - "Community 49"
 Cohesion: 0.67
 Nodes (0): 
 
-### UDS Protocol & FD Services7 - "UDS Protocol & FD Services7"
+### Community 50 - "Community 50"
 Cohesion: 0.67
 Nodes (0): 
 
-### UDS Protocol & FD Services8 - "UDS Protocol & FD Services8"
+### Community 51 - "Community 51"
 Cohesion: 0.67
 Nodes (0): 
 
-### UDS Protocol & FD Services9 - "UDS Protocol & FD Services9"
+### Community 52 - "Community 52"
 Cohesion: 0.67
 Nodes (0): 
 
-### Network Topology Management0 - "Network Topology Management0"
+### Community 53 - "Community 53"
 Cohesion: 0.67
 Nodes (0): 
 
-### Network Topology Management1 - "Network Topology Management1"
+### Community 54 - "Community 54"
 Cohesion: 0.67
 Nodes (1): MockSettings
 
-### Network Topology Management2 - "Network Topology Management2"
+### Community 55 - "Community 55"
 Cohesion: 0.67
 Nodes (1): graphify
 
-### Network Topology Management3 - "Network Topology Management3"
+### Community 56 - "Community 56"
 Cohesion: 1.0
 Nodes (0): 
 
-### Network Topology Management4 - "Network Topology Management4"
+### Community 57 - "Community 57"
 Cohesion: 1.0
 Nodes (0): 
 
-### Network Topology Management5 - "Network Topology Management5"
+### Community 58 - "Community 58"
 Cohesion: 1.0
 Nodes (0): 
 
-### Network Topology Management6 - "Network Topology Management6"
+### Community 59 - "Community 59"
 Cohesion: 1.0
 Nodes (0): 
 
-### Network Topology Management7 - "Network Topology Management7"
+### Community 60 - "Community 60"
 Cohesion: 1.0
 Nodes (0): 
 
-### Network Topology Management8 - "Network Topology Management8"
+### Community 61 - "Community 61"
 Cohesion: 1.0
 Nodes (0): 
 
-### Network Topology Management9 - "Network Topology Management9"
+### Community 62 - "Community 62"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic0 - "Voltage Oscilloscope Logic0"
+### Community 63 - "Community 63"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic1 - "Voltage Oscilloscope Logic1"
+### Community 64 - "Community 64"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic2 - "Voltage Oscilloscope Logic2"
+### Community 65 - "Community 65"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic3 - "Voltage Oscilloscope Logic3"
+### Community 66 - "Community 66"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic4 - "Voltage Oscilloscope Logic4"
+### Community 67 - "Community 67"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic5 - "Voltage Oscilloscope Logic5"
+### Community 68 - "Community 68"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic6 - "Voltage Oscilloscope Logic6"
+### Community 69 - "Community 69"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic7 - "Voltage Oscilloscope Logic7"
+### Community 70 - "Community 70"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic8 - "Voltage Oscilloscope Logic8"
+### Community 71 - "Community 71"
 Cohesion: 1.0
 Nodes (0): 
 
-### Voltage Oscilloscope Logic9 - "Voltage Oscilloscope Logic9"
+### Community 72 - "Community 72"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security0 - "Authentication & Security0"
+### Community 73 - "Community 73"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security1 - "Authentication & Security1"
+### Community 74 - "Community 74"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security2 - "Authentication & Security2"
+### Community 75 - "Community 75"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security3 - "Authentication & Security3"
+### Community 76 - "Community 76"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security4 - "Authentication & Security4"
+### Community 77 - "Community 77"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security5 - "Authentication & Security5"
+### Community 78 - "Community 78"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security6 - "Authentication & Security6"
+### Community 79 - "Community 79"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security7 - "Authentication & Security7"
+### Community 80 - "Community 80"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security8 - "Authentication & Security8"
+### Community 81 - "Community 81"
 Cohesion: 1.0
 Nodes (0): 
 
-### Authentication & Security9 - "Authentication & Security9"
+### Community 82 - "Community 82"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection0 - "CAN Error & Fault Injection0"
+### Community 83 - "Community 83"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection1 - "CAN Error & Fault Injection1"
+### Community 84 - "Community 84"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection2 - "CAN Error & Fault Injection2"
+### Community 85 - "Community 85"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection3 - "CAN Error & Fault Injection3"
+### Community 86 - "Community 86"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection4 - "CAN Error & Fault Injection4"
+### Community 87 - "Community 87"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection5 - "CAN Error & Fault Injection5"
+### Community 88 - "Community 88"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection6 - "CAN Error & Fault Injection6"
+### Community 89 - "Community 89"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection7 - "CAN Error & Fault Injection7"
+### Community 90 - "Community 90"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection8 - "CAN Error & Fault Injection8"
+### Community 91 - "Community 91"
 Cohesion: 1.0
 Nodes (0): 
 
-### CAN Error & Fault Injection9 - "CAN Error & Fault Injection9"
+### Community 92 - "Community 92"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation0 - "Arbitration Simulation0"
+### Community 93 - "Community 93"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation1 - "Arbitration Simulation1"
+### Community 94 - "Community 94"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation2 - "Arbitration Simulation2"
+### Community 95 - "Community 95"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation3 - "Arbitration Simulation3"
+### Community 96 - "Community 96"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation4 - "Arbitration Simulation4"
+### Community 97 - "Community 97"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation5 - "Arbitration Simulation5"
+### Community 98 - "Community 98"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation6 - "Arbitration Simulation6"
+### Community 99 - "Community 99"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation7 - "Arbitration Simulation7"
+### Community 100 - "Community 100"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation8 - "Arbitration Simulation8"
+### Community 101 - "Community 101"
 Cohesion: 1.0
 Nodes (0): 
 
-### Arbitration Simulation9 - "Arbitration Simulation9"
+### Community 102 - "Community 102"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement00 - "Analytics & User Engagement00"
+### Community 103 - "Community 103"
 Cohesion: 1.0
 Nodes (2): ISO-TP (ISO 15765-2), Unified Diagnostic Services (ISO 14229)
 
-### Analytics & User Engagement01 - "Analytics & User Engagement01"
+### Community 104 - "Community 104"
 Cohesion: 1.0
 Nodes (2): Robert Bosch GmbH, learning/can_knowledge_base.md
 
-### Analytics & User Engagement02 - "Analytics & User Engagement02"
+### Community 105 - "Community 105"
 Cohesion: 1.0
 Nodes (2): Responsive Interface Design, Mobile Viewport (390px)
 
-### Analytics & User Engagement03 - "Analytics & User Engagement03"
+### Community 106 - "Community 106"
 Cohesion: 1.0
 Nodes (1): Construct full dev server URL.
 
-### Analytics & User Engagement04 - "Analytics & User Engagement04"
+### Community 107 - "Community 107"
 Cohesion: 1.0
 Nodes (1): Construct full backend URL.
 
-### Analytics & User Engagement05 - "Analytics & User Engagement05"
+### Community 108 - "Community 108"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement06 - "Analytics & User Engagement06"
+### Community 109 - "Community 109"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement07 - "Analytics & User Engagement07"
+### Community 110 - "Community 110"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement08 - "Analytics & User Engagement08"
+### Community 111 - "Community 111"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement09 - "Analytics & User Engagement09"
+### Community 112 - "Community 112"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement10 - "Analytics & User Engagement10"
+### Community 113 - "Community 113"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement11 - "Analytics & User Engagement11"
+### Community 114 - "Community 114"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement12 - "Analytics & User Engagement12"
+### Community 115 - "Community 115"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement13 - "Analytics & User Engagement13"
+### Community 116 - "Community 116"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement14 - "Analytics & User Engagement14"
+### Community 117 - "Community 117"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement15 - "Analytics & User Engagement15"
+### Community 118 - "Community 118"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement16 - "Analytics & User Engagement16"
+### Community 119 - "Community 119"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement17 - "Analytics & User Engagement17"
+### Community 120 - "Community 120"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement18 - "Analytics & User Engagement18"
+### Community 121 - "Community 121"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement19 - "Analytics & User Engagement19"
+### Community 122 - "Community 122"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement20 - "Analytics & User Engagement20"
+### Community 123 - "Community 123"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement21 - "Analytics & User Engagement21"
+### Community 124 - "Community 124"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement22 - "Analytics & User Engagement22"
+### Community 125 - "Community 125"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement23 - "Analytics & User Engagement23"
+### Community 126 - "Community 126"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement24 - "Analytics & User Engagement24"
+### Community 127 - "Community 127"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement25 - "Analytics & User Engagement25"
+### Community 128 - "Community 128"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement26 - "Analytics & User Engagement26"
+### Community 129 - "Community 129"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement27 - "Analytics & User Engagement27"
+### Community 130 - "Community 130"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement28 - "Analytics & User Engagement28"
+### Community 131 - "Community 131"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement29 - "Analytics & User Engagement29"
+### Community 132 - "Community 132"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement30 - "Analytics & User Engagement30"
+### Community 133 - "Community 133"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement31 - "Analytics & User Engagement31"
+### Community 134 - "Community 134"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement32 - "Analytics & User Engagement32"
+### Community 135 - "Community 135"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement33 - "Analytics & User Engagement33"
+### Community 136 - "Community 136"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement34 - "Analytics & User Engagement34"
+### Community 137 - "Community 137"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement35 - "Analytics & User Engagement35"
+### Community 138 - "Community 138"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement36 - "Analytics & User Engagement36"
+### Community 139 - "Community 139"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement37 - "Analytics & User Engagement37"
+### Community 140 - "Community 140"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement38 - "Analytics & User Engagement38"
+### Community 141 - "Community 141"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement39 - "Analytics & User Engagement39"
+### Community 142 - "Community 142"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement40 - "Analytics & User Engagement40"
+### Community 143 - "Community 143"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement41 - "Analytics & User Engagement41"
+### Community 144 - "Community 144"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement42 - "Analytics & User Engagement42"
+### Community 145 - "Community 145"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement43 - "Analytics & User Engagement43"
+### Community 146 - "Community 146"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement44 - "Analytics & User Engagement44"
+### Community 147 - "Community 147"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement45 - "Analytics & User Engagement45"
+### Community 148 - "Community 148"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement46 - "Analytics & User Engagement46"
+### Community 149 - "Community 149"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement47 - "Analytics & User Engagement47"
+### Community 150 - "Community 150"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement48 - "Analytics & User Engagement48"
+### Community 151 - "Community 151"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement49 - "Analytics & User Engagement49"
+### Community 152 - "Community 152"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement50 - "Analytics & User Engagement50"
+### Community 153 - "Community 153"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement51 - "Analytics & User Engagement51"
+### Community 154 - "Community 154"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement52 - "Analytics & User Engagement52"
+### Community 155 - "Community 155"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement53 - "Analytics & User Engagement53"
+### Community 156 - "Community 156"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement54 - "Analytics & User Engagement54"
+### Community 157 - "Community 157"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement55 - "Analytics & User Engagement55"
+### Community 158 - "Community 158"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement56 - "Analytics & User Engagement56"
+### Community 159 - "Community 159"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement57 - "Analytics & User Engagement57"
+### Community 160 - "Community 160"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement58 - "Analytics & User Engagement58"
+### Community 161 - "Community 161"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement59 - "Analytics & User Engagement59"
+### Community 162 - "Community 162"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement60 - "Analytics & User Engagement60"
+### Community 163 - "Community 163"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement61 - "Analytics & User Engagement61"
+### Community 164 - "Community 164"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement62 - "Analytics & User Engagement62"
+### Community 165 - "Community 165"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement63 - "Analytics & User Engagement63"
+### Community 166 - "Community 166"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement64 - "Analytics & User Engagement64"
+### Community 167 - "Community 167"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement65 - "Analytics & User Engagement65"
+### Community 168 - "Community 168"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement66 - "Analytics & User Engagement66"
+### Community 169 - "Community 169"
 Cohesion: 1.0
 Nodes (0): 
 
-### Analytics & User Engagement67 - "Analytics & User Engagement67"
+### Community 170 - "Community 170"
+Cohesion: 1.0
+Nodes (0): 
+
+### Community 171 - "Community 171"
 Cohesion: 1.0
 Nodes (1): docs-site/README.md
 
-### Analytics & User Engagement68 - "Analytics & User Engagement68"
+### Community 172 - "Community 172"
 Cohesion: 1.0
 Nodes (1): docs-site/app/page.mdx
 
-### Analytics & User Engagement69 - "Analytics & User Engagement69"
+### Community 173 - "Community 173"
 Cohesion: 1.0
 Nodes (1): Project Branding Assets
 
-### Analytics & User Engagement70 - "Analytics & User Engagement70"
+### Community 174 - "Community 174"
 Cohesion: 1.0
 Nodes (1): Final Redesign Mockup
 
-### Analytics & User Engagement71 - "Analytics & User Engagement71"
+### Community 175 - "Community 175"
 Cohesion: 1.0
 Nodes (1): Tablet Viewport (768px)
 
-### Analytics & User Engagement72 - "Analytics & User Engagement72"
+### Community 176 - "Community 176"
 Cohesion: 1.0
 Nodes (1): Desktop Viewport (1440px)
 
 ## Knowledge Gaps
 - **38 isolated node(s):** `Environment configuration for CAN Simulator Python scripts. Handles loading and`, `Get string environment variable with optional default.`, `Get integer environment variable with optional default.`, `Get boolean environment variable with optional default.`, `Application settings loaded from environment variables.` (+33 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Network Topology Management3`** (2 nodes): `asyncCssPlugin()`, `vite.config.ts`
+- **Thin community `Community 56`** (2 nodes): `asyncCssPlugin()`, `vite.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Network Topology Management4`** (2 nodes): `mdx-components.tsx`, `useMDXComponents()`
+- **Thin community `Community 57`** (2 nodes): `mdx-components.tsx`, `useMDXComponents()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Network Topology Management5`** (2 nodes): `layout.tsx`, `RootLayout()`
+- **Thin community `Community 58`** (2 nodes): `layout.tsx`, `RootLayout()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Network Topology Management6`** (2 nodes): `robots.ts`, `robots()`
+- **Thin community `Community 59`** (2 nodes): `robots.ts`, `robots()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Network Topology Management7`** (2 nodes): `sitemap.ts`, `sitemap()`
+- **Thin community `Community 60`** (2 nodes): `sitemap.ts`, `sitemap()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Network Topology Management8`** (2 nodes): `ArticleSchema()`, `ArticleSchema.tsx`
+- **Thin community `Community 61`** (2 nodes): `ArticleSchema()`, `ArticleSchema.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Network Topology Management9`** (2 nodes): `stuffBits()`, `BitStuffingDemo.tsx`
+- **Thin community `Community 62`** (2 nodes): `stuffBits()`, `BitStuffingDemo.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic0`** (2 nodes): `classifySP()`, `BitTimingPresets.tsx`
+- **Thin community `Community 63`** (2 nodes): `classifySP()`, `BitTimingPresets.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic1`** (2 nodes): `ErrorFrameAnatomy.tsx`, `ErrorFrameAnatomy()`
+- **Thin community `Community 64`** (2 nodes): `ErrorFrameAnatomy.tsx`, `ErrorFrameAnatomy()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic2`** (2 nodes): `FAQSchema.tsx`, `FAQSchema()`
+- **Thin community `Community 65`** (2 nodes): `FAQSchema.tsx`, `FAQSchema()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic3`** (2 nodes): `FaultConfinement.tsx`, `getState()`
+- **Thin community `Community 66`** (2 nodes): `FaultConfinement.tsx`, `getState()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic4`** (2 nodes): `FaultStateMachine.tsx`, `FaultStateMachine()`
+- **Thin community `Community 67`** (2 nodes): `FaultStateMachine.tsx`, `FaultStateMachine()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic5`** (2 nodes): `IsoTpSequence.tsx`, `togglePlay()`
+- **Thin community `Community 68`** (2 nodes): `IsoTpSequence.tsx`, `togglePlay()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic6`** (2 nodes): `ProtocolStack.tsx`, `op()`
+- **Thin community `Community 69`** (2 nodes): `ProtocolStack.tsx`, `op()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic7`** (2 nodes): `VoltageLevels.tsx`, `voltageToY()`
+- **Thin community `Community 70`** (2 nodes): `VoltageLevels.tsx`, `voltageToY()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic8`** (2 nodes): `utils.ts`, `cn()`
+- **Thin community `Community 71`** (2 nodes): `utils.ts`, `cn()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Voltage Oscilloscope Logic9`** (2 nodes): `App.tsx`, `main.tsx`
+- **Thin community `Community 72`** (2 nodes): `App.tsx`, `main.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security0`** (2 nodes): `getField()`, `BitStreamVisualizer.tsx`
+- **Thin community `Community 73`** (2 nodes): `getField()`, `BitStreamVisualizer.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security1`** (2 nodes): `getThemeColor()`, `ErrorGauges.tsx`
+- **Thin community `Community 74`** (2 nodes): `getThemeColor()`, `ErrorGauges.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security2`** (2 nodes): `handleClickOutside()`, `ErrorInjectionPanel.tsx`
+- **Thin community `Community 75`** (2 nodes): `handleClickOutside()`, `ErrorInjectionPanel.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security3`** (2 nodes): `formatTime()`, `ErrorLogPanel.tsx`
+- **Thin community `Community 76`** (2 nodes): `ErrorLogPanel.tsx`, `formatTime()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security4`** (2 nodes): `trackVisit()`, `Footer.tsx`
+- **Thin community `Community 77`** (2 nodes): `trackVisit()`, `Footer.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security5`** (2 nodes): `Marquee()`, `Marquee.tsx`
+- **Thin community `Community 78`** (2 nodes): `Marquee()`, `Marquee.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security6`** (2 nodes): `Meteors()`, `Meteors.tsx`
+- **Thin community `Community 79`** (2 nodes): `Meteors()`, `Meteors.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security7`** (2 nodes): `Particles()`, `Particles.tsx`
+- **Thin community `Community 80`** (2 nodes): `Particles()`, `Particles.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security8`** (2 nodes): `cn()`, `ShineBorder.tsx`
+- **Thin community `Community 81`** (2 nodes): `cn()`, `ShineBorder.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Authentication & Security9`** (2 nodes): `logEvent()`, `PowerSupplyDashboard.tsx`
+- **Thin community `Community 82`** (2 nodes): `logEvent()`, `PowerSupplyDashboard.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection0`** (2 nodes): `Container()`, `Container.tsx`
+- **Thin community `Community 83`** (2 nodes): `Container()`, `Container.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection1`** (2 nodes): `LoadingSpinner()`, `LoadingSpinner.tsx`
+- **Thin community `Community 84`** (2 nodes): `LoadingSpinner()`, `LoadingSpinner.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection2`** (2 nodes): `Tooltip.tsx`, `cn()`
+- **Thin community `Community 85`** (2 nodes): `Tooltip.tsx`, `cn()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection3`** (2 nodes): `useAuth()`, `AuthContext.tsx`
+- **Thin community `Community 86`** (2 nodes): `useAuth()`, `AuthContext.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection4`** (2 nodes): `usePower()`, `PowerContext.tsx`
+- **Thin community `Community 87`** (2 nodes): `usePower()`, `PowerContext.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection5`** (2 nodes): `ToastContext.tsx`, `useToast()`
+- **Thin community `Community 88`** (2 nodes): `ToastContext.tsx`, `useToast()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection6`** (2 nodes): `getBarGradient()`, `BusLoadPlayground.tsx`
+- **Thin community `Community 89`** (2 nodes): `getBarGradient()`, `BusLoadPlayground.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection7`** (2 nodes): `handleKeyDown()`, `EvolutionTimeline.tsx`
+- **Thin community `Community 90`** (2 nodes): `handleKeyDown()`, `EvolutionTimeline.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection8`** (2 nodes): `cn()`, `QuickMetricsStrip.tsx`
+- **Thin community `Community 91`** (2 nodes): `cn()`, `QuickMetricsStrip.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CAN Error & Fault Injection9`** (2 nodes): `SectionReveal()`, `SectionReveal.tsx`
+- **Thin community `Community 92`** (2 nodes): `SectionReveal()`, `SectionReveal.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation0`** (2 nodes): `useGenerationCompareState.ts`, `useGenerationCompareState()`
+- **Thin community `Community 93`** (2 nodes): `useGenerationCompareState.ts`, `useGenerationCompareState()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation1`** (2 nodes): `useABTest.ts`, `useABTest()`
+- **Thin community `Community 94`** (2 nodes): `useABTest.ts`, `useABTest()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation2`** (2 nodes): `useAnalytics.ts`, `useAnalytics()`
+- **Thin community `Community 95`** (2 nodes): `useAnalytics.ts`, `useAnalytics()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation3`** (2 nodes): `useFocusTrap.ts`, `useFocusTrap()`
+- **Thin community `Community 96`** (2 nodes): `useFocusTrap.ts`, `useFocusTrap()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation4`** (2 nodes): `useIsMobile.ts`, `useIsMobile()`
+- **Thin community `Community 97`** (2 nodes): `useIsMobile.ts`, `useIsMobile()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation5`** (2 nodes): `useScrollToTop.ts`, `useScrollToTop()`
+- **Thin community `Community 98`** (2 nodes): `useScrollToTop.ts`, `useScrollToTop()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation6`** (2 nodes): `LegalPage()`, `LegalPage.tsx`
+- **Thin community `Community 99`** (2 nodes): `LegalPage()`, `LegalPage.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation7`** (2 nodes): `getNodeStatus()`, `SimulatorPage.tsx`
+- **Thin community `Community 100`** (2 nodes): `getNodeStatus()`, `SimulatorPage.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation8`** (2 nodes): `openRazorpayCheckout()`, `razorpayService.ts`
+- **Thin community `Community 101`** (2 nodes): `openRazorpayCheckout()`, `razorpayService.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Arbitration Simulation9`** (2 nodes): `calculateDt()`, `cursor-dt.test.ts`
+- **Thin community `Community 102`** (2 nodes): `calculateDt()`, `cursor-dt.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement00`** (2 nodes): `ISO-TP (ISO 15765-2)`, `Unified Diagnostic Services (ISO 14229)`
+- **Thin community `Community 103`** (2 nodes): `ISO-TP (ISO 15765-2)`, `Unified Diagnostic Services (ISO 14229)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement01`** (2 nodes): `Robert Bosch GmbH`, `learning/can_knowledge_base.md`
+- **Thin community `Community 104`** (2 nodes): `Robert Bosch GmbH`, `learning/can_knowledge_base.md`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement02`** (2 nodes): `Responsive Interface Design`, `Mobile Viewport (390px)`
+- **Thin community `Community 105`** (2 nodes): `Responsive Interface Design`, `Mobile Viewport (390px)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement03`** (1 nodes): `Construct full dev server URL.`
+- **Thin community `Community 106`** (1 nodes): `Construct full dev server URL.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement04`** (1 nodes): `Construct full backend URL.`
+- **Thin community `Community 107`** (1 nodes): `Construct full backend URL.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement05`** (1 nodes): `eslint.config.js`
+- **Thin community `Community 108`** (1 nodes): `eslint.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement06`** (1 nodes): `postcss.config.js`
+- **Thin community `Community 109`** (1 nodes): `postcss.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement07`** (1 nodes): `tailwind.config.js`
+- **Thin community `Community 110`** (1 nodes): `tailwind.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement08`** (1 nodes): `vitest.config.ts`
+- **Thin community `Community 111`** (1 nodes): `vitest.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement09`** (1 nodes): `next-env.d.ts`
+- **Thin community `Community 112`** (1 nodes): `next-env.d.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement10`** (1 nodes): `next.config.ts`
+- **Thin community `Community 113`** (1 nodes): `next.config.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement11`** (1 nodes): `postcss.config.mjs`
+- **Thin community `Community 114`** (1 nodes): `postcss.config.mjs`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement12`** (1 nodes): `BusLengthChart.tsx`
+- **Thin community `Community 115`** (1 nodes): `BusLengthChart.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement13`** (1 nodes): `CanFdComparison.tsx`
+- **Thin community `Community 116`** (1 nodes): `CanFdComparison.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement14`** (1 nodes): `ExtendedFrameAnatomy.tsx`
+- **Thin community `Community 117`** (1 nodes): `ExtendedFrameAnatomy.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement15`** (1 nodes): `FrameAnatomy.tsx`
+- **Thin community `Community 118`** (1 nodes): `FrameAnatomy.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement16`** (1 nodes): `IsoTpFrameTypes.tsx`
+- **Thin community `Community 119`** (1 nodes): `IsoTpFrameTypes.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement17`** (1 nodes): `J1939CanId.tsx`
+- **Thin community `Community 120`** (1 nodes): `J1939CanId.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement18`** (1 nodes): `ObdPidReference.tsx`
+- **Thin community `Community 121`** (1 nodes): `ObdPidReference.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement19`** (1 nodes): `site.ts`
+- **Thin community `Community 122`** (1 nodes): `site.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement20`** (1 nodes): `install_graphify.py`
+- **Thin community `Community 123`** (1 nodes): `install_graphify.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement21`** (1 nodes): `ToastContainer.tsx`
+- **Thin community `Community 124`** (1 nodes): `ToastContainer.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement22`** (1 nodes): `CANFrameBuilder.tsx`
+- **Thin community `Community 125`** (1 nodes): `CANFrameBuilder.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement23`** (1 nodes): `DTCListPanel.tsx`
+- **Thin community `Community 126`** (1 nodes): `DTCListPanel.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement24`** (1 nodes): `ErrorStateMachine.tsx`
+- **Thin community `Community 127`** (1 nodes): `ErrorStateMachine.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement25`** (1 nodes): `ErrorTypeDeepDive.tsx`
+- **Thin community `Community 128`** (1 nodes): `ErrorTypeDeepDive.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement26`** (1 nodes): `FreezeFrameModal.tsx`
+- **Thin community `Community 129`** (1 nodes): `FreezeFrameModal.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement27`** (1 nodes): `NetworkMap.tsx`
+- **Thin community `Community 130`** (1 nodes): `NetworkMap.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement28`** (1 nodes): `ScopeMetrics.tsx`
+- **Thin community `Community 131`** (1 nodes): `types.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement29`** (1 nodes): `types.ts`
+- **Thin community `Community 132`** (1 nodes): `SimulatorStatusBar.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement30`** (1 nodes): `SimulatorStatusBar.tsx`
+- **Thin community `Community 133`** (1 nodes): `ShinyButton.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement31`** (1 nodes): `ShinyButton.tsx`
+- **Thin community `Community 134`** (1 nodes): `FaultScenarioPanel.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement32`** (1 nodes): `FaultScenarioPanel.tsx`
+- **Thin community `Community 135`** (1 nodes): `DBCExportModal.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement33`** (1 nodes): `DBCExportModal.tsx`
+- **Thin community `Community 136`** (1 nodes): `BorderBeam.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement34`** (1 nodes): `BorderBeam.tsx`
+- **Thin community `Community 137`** (1 nodes): `Breadcrumbs.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement35`** (1 nodes): `Breadcrumbs.tsx`
+- **Thin community `Community 138`** (1 nodes): `CyberButton.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement36`** (1 nodes): `CyberButton.tsx`
+- **Thin community `Community 139`** (1 nodes): `CyberStatCard.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement37`** (1 nodes): `CyberStatCard.tsx`
+- **Thin community `Community 140`** (1 nodes): `index.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement38`** (1 nodes): `index.ts`
+- **Thin community `Community 141`** (1 nodes): `LazyMount.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement39`** (1 nodes): `LazyMount.tsx`
+- **Thin community `Community 142`** (1 nodes): `PricingTeaser.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement40`** (1 nodes): `PricingTeaser.tsx`
+- **Thin community `Community 143`** (1 nodes): `pricing.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement41`** (1 nodes): `pricing.ts`
+- **Thin community `Community 144`** (1 nodes): `supabase.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement42`** (1 nodes): `supabase.ts`
+- **Thin community `Community 145`** (1 nodes): `TestBenchContext.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement43`** (1 nodes): `TestBenchContext.tsx`
+- **Thin community `Community 146`** (1 nodes): `data.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement44`** (1 nodes): `data.ts`
+- **Thin community `Community 147`** (1 nodes): `types.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement45`** (1 nodes): `types.ts`
+- **Thin community `Community 148`** (1 nodes): `index.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement46`** (1 nodes): `index.ts`
+- **Thin community `Community 149`** (1 nodes): `UseCaseRecommender.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement47`** (1 nodes): `UseCaseRecommender.tsx`
+- **Thin community `Community 150`** (1 nodes): `AboutPage.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement48`** (1 nodes): `AboutPage.tsx`
+- **Thin community `Community 151`** (1 nodes): `GenerationsPage.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement49`** (1 nodes): `GenerationsPage.tsx`
+- **Thin community `Community 152`** (1 nodes): `PhysicalPage.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement50`** (1 nodes): `PhysicalPage.tsx`
+- **Thin community `Community 153`** (1 nodes): `PricingPage.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement51`** (1 nodes): `PricingPage.tsx`
+- **Thin community `Community 154`** (1 nodes): `metrics.worker.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement52`** (1 nodes): `metrics.worker.ts`
+- **Thin community `Community 155`** (1 nodes): `validation.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement53`** (1 nodes): `validation.ts`
+- **Thin community `Community 156`** (1 nodes): `auth.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement54`** (1 nodes): `auth.ts`
+- **Thin community `Community 157`** (1 nodes): `payment.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement55`** (1 nodes): `payment.ts`
+- **Thin community `Community 158`** (1 nodes): `power.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement56`** (1 nodes): `power.ts`
+- **Thin community `Community 159`** (1 nodes): `can-bit-timing.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement57`** (1 nodes): `can-bit-timing.test.ts`
+- **Thin community `Community 160`** (1 nodes): `can-core.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement58`** (1 nodes): `can-core.test.ts`
+- **Thin community `Community 161`** (1 nodes): `can-error-catalog.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement59`** (1 nodes): `can-error-catalog.test.ts`
+- **Thin community `Community 162`** (1 nodes): `can-simulator.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement60`** (1 nodes): `can-simulator.test.ts`
+- **Thin community `Community 163`** (1 nodes): `can-validation.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement61`** (1 nodes): `can-validation.test.ts`
+- **Thin community `Community 164`** (1 nodes): `generations-utils.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement62`** (1 nodes): `generations-utils.test.ts`
+- **Thin community `Community 165`** (1 nodes): `protocolUtils.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement63`** (1 nodes): `scope-math.test.ts`
+- **Thin community `Community 166`** (1 nodes): `scope-math.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement64`** (1 nodes): `waveform-generator.test.ts`
+- **Thin community `Community 167`** (1 nodes): `scope-remediation.spec.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement65`** (1 nodes): `CLAUDE.md`
+- **Thin community `Community 168`** (1 nodes): `waveform-generator.test.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement66`** (1 nodes): `requirements-dev.txt`
+- **Thin community `Community 169`** (1 nodes): `CLAUDE.md`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement67`** (1 nodes): `docs-site/README.md`
+- **Thin community `Community 170`** (1 nodes): `requirements-dev.txt`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement68`** (1 nodes): `docs-site/app/page.mdx`
+- **Thin community `Community 171`** (1 nodes): `docs-site/README.md`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement69`** (1 nodes): `Project Branding Assets`
+- **Thin community `Community 172`** (1 nodes): `docs-site/app/page.mdx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement70`** (1 nodes): `Final Redesign Mockup`
+- **Thin community `Community 173`** (1 nodes): `Project Branding Assets`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement71`** (1 nodes): `Tablet Viewport (768px)`
+- **Thin community `Community 174`** (1 nodes): `Final Redesign Mockup`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Analytics & User Engagement72`** (1 nodes): `Desktop Viewport (1440px)`
+- **Thin community `Community 175`** (1 nodes): `Tablet Viewport (768px)`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 176`** (1 nodes): `Desktop Viewport (1440px)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `min()` connect `CAN Bit Timing & Sample Point` to `Network Topology Management`?**
-  _High betweenness centrality (0.007) - this node is a cross-community bridge._
-- **Why does `CANSimulator` connect `CAN Simulator Core & State` to `Analytics & User Engagement0`, `UDS Protocol & FD Services`?**
+- **Why does `min()` connect `Community 0` to `Community 5`, `Community 14`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **Why does `CANSimulator` connect `Community 2` to `Community 10`, `Community 4`?**
   _High betweenness centrality (0.006) - this node is a cross-community bridge._
-- **Why does `findFreePosition()` connect `Network Topology Management` to `CAN Bit Timing & Sample Point`?**
+- **Why does `findFreePosition()` connect `Community 5` to `Community 0`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Are the 5 inferred relationships involving `min()` (e.g. with `clamp()` and `findFreePosition()`) actually correct?**
-  _`min()` has 5 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 7 inferred relationships involving `min()` (e.g. with `clamp()` and `findFreePosition()`) actually correct?**
+  _`min()` has 7 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Environment configuration for CAN Simulator Python scripts. Handles loading and`, `Get string environment variable with optional default.`, `Get integer environment variable with optional default.` to the rest of the system?**
   _38 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `CAN Bit Timing & Sample Point` be split into smaller, more focused modules?**
+- **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.07 - nodes in this community are weakly interconnected._
-- **Should `Analytics & User Engagement` be split into smaller, more focused modules?**
+- **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.13 - nodes in this community are weakly interconnected._

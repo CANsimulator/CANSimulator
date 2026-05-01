@@ -1,25 +1,16 @@
-import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
+import React, { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, memo, useState, useMemo } from 'react';
+import { useTheme } from '../../../context/ThemeContext';
+import { CAN_FULL_PATTERN, CAN_CYCLE_US } from './protocolUtils';
 import type { OscState, OscMeas, SignalType } from './types';
+import { evaluateCanTrigger } from '../../../services/can/trigger-logic';
 
 // ── Signal generators ───────────────────────────────────────────────────────
 
 function canBitPattern(phase: number): number {
-    const pattern = [
-        1,
-        0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1,
-        0, 0, 0,
-        1, 0, 0, 0,
-        0, 0, 0, 1, 1, 0, 1, 0,
-        0, 1, 1, 0, 1, 0, 1, 1,
-        0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0,
-        1, 0, 1,
-        0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0,
-    ];
-    const n = pattern.length;
+    const n = CAN_FULL_PATTERN.length;
     const i = Math.floor(phase * n) % n;
-    const bit = pattern[i];
-    const next = pattern[(i + 1) % n];
+    const bit = CAN_FULL_PATTERN[i];
+    const next = CAN_FULL_PATTERN[(i + 1) % n];
     const sub = (phase * n) - Math.floor(phase * n);
     if (sub > 0.9 && bit !== next) {
         return bit + (next - bit) * ((sub - 0.9) / 0.1);
@@ -29,13 +20,13 @@ function canBitPattern(phase: number): number {
 
 type WaveArrays = { H: Float32Array; L: Float32Array; D: Float32Array };
 
-function generateCAN(N: number, scroll: number): WaveArrays {
+function generateCAN(N: number, scroll: number, zoom: number): WaveArrays {
     const H = new Float32Array(N);
     const L = new Float32Array(N);
     const D = new Float32Array(N);
     for (let i = 0; i < N; i++) {
-        const p = ((i / N) + scroll) % 1;
-        const b = canBitPattern(p);
+        const p = ((i / N) / zoom + scroll) % 1;
+        const b = canBitPattern(p < 0 ? 1 + p : p);
         const nz = (Math.random() - .5) * .06;
         const nz2 = (Math.random() - .5) * .06;
         const ring = (b > 0.05 && b < 0.95) ? Math.sin(b * Math.PI * 6) * 0.08 * (1 - b) : 0;
@@ -46,12 +37,12 @@ function generateCAN(N: number, scroll: number): WaveArrays {
     return { H, L, D };
 }
 
-function generateSine(N: number, scroll: number): WaveArrays {
+function generateSine(N: number, scroll: number, zoom: number): WaveArrays {
     const H = new Float32Array(N);
     const L = new Float32Array(N);
     const D = new Float32Array(N);
     for (let i = 0; i < N; i++) {
-        const t = (i / N) * Math.PI * 2 * 4 + scroll * Math.PI * 2;
+        const t = ((i / N) / zoom) * Math.PI * 2 * 4 + scroll * Math.PI * 2;
         H[i] = 2.5 + 0.8 * Math.sin(t) + (Math.random() - .5) * .03;
         L[i] = 2.5 - 0.8 * Math.sin(t) + (Math.random() - .5) * .03;
         D[i] = H[i] - L[i];
@@ -59,13 +50,13 @@ function generateSine(N: number, scroll: number): WaveArrays {
     return { H, L, D };
 }
 
-function generateSquare(N: number, scroll: number): WaveArrays {
+function generateSquare(N: number, scroll: number, zoom: number): WaveArrays {
     const H = new Float32Array(N);
     const L = new Float32Array(N);
     const D = new Float32Array(N);
     for (let i = 0; i < N; i++) {
-        const p = ((i / N) * 6 + scroll * 6) % 1;
-        const b = p < 0.5 ? 1 : 0;
+        const p = (((i / N) / zoom) * 6 + scroll * 6) % 1;
+        const b = (p < 0 ? 1 + p : p) < 0.5 ? 1 : 0;
         H[i] = 2.5 + b + (Math.random() - .5) * .04;
         L[i] = 2.5 - b + (Math.random() - .5) * .04;
         D[i] = H[i] - L[i];
@@ -73,8 +64,8 @@ function generateSquare(N: number, scroll: number): WaveArrays {
     return { H, L, D };
 }
 
-function generateNoisy(N: number, scroll: number): WaveArrays {
-    const w = generateCAN(N, scroll);
+function generateNoisy(N: number, scroll: number, zoom: number): WaveArrays {
+    const w = generateCAN(N, scroll, zoom);
     for (let i = 0; i < N; i++) {
         const nz = (Math.random() - .5) * .5;
         w.H[i] += nz; w.L[i] -= nz * .4; w.D[i] = w.H[i] - w.L[i];
@@ -82,7 +73,7 @@ function generateNoisy(N: number, scroll: number): WaveArrays {
     return w;
 }
 
-const GENERATORS: Record<SignalType, (N: number, scroll: number) => WaveArrays> = {
+const GENERATORS: Record<SignalType, (N: number, scroll: number, zoom: number) => WaveArrays> = {
     can: generateCAN,
     sine: generateSine,
     square: generateSquare,
@@ -92,7 +83,7 @@ const GENERATORS: Record<SignalType, (N: number, scroll: number) => WaveArrays> 
 // ── Component ───────────────────────────────────────────────────────────────
 
 type ChannelSet = 'all' | 'lines' | 'diff';
-export type ScopeSync = { zoom: number; pan: number; scroll: number };
+export type ScopeSync = { zoom: number; pan: number; scroll: number; markedTs?: number | null };
 
 interface WaveformViewerProps {
     state: OscState;
@@ -110,7 +101,7 @@ interface WaveformViewerProps {
     reportMeas?: boolean;
 }
 
-export const WaveformViewer = forwardRef<
+const WaveformViewerInternal = forwardRef<
     { reset: () => void },
     WaveformViewerProps
 >(({ state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, onStateChange, onPanChange, channelSet = 'all', syncRef, reportMeas = true }, ref) => {
@@ -136,37 +127,61 @@ export const WaveformViewer = forwardRef<
     const canvasRectRef = useRef<{ left: number; width: number }>({ left: 0, width: 0 });
     const stateRef = useRef(state);
     const onPanChangeRef = useRef(onPanChange);
+    const driftRef = useRef(0); // Persistent EMA drift state
+    const { theme } = useTheme();
 
-    const doRender = useCallback((ts: number) => {
+    // Cache theme colors to avoid getComputedStyle in loop
+    const colors = useMemo(() => {
+        const root = document.documentElement;
+        const css = getComputedStyle(root);
+        return {
+            bg: css.getPropertyValue('--bg').trim() || '#0b0f10',
+            gridC: css.getPropertyValue('--grid-c').trim() || 'rgba(255,255,255,.06)',
+            gridMaj: css.getPropertyValue('--grid-major-c').trim() || 'rgba(255,255,255,.11)',
+            ch1c: css.getPropertyValue('--ch1').trim() || '#00f3ff',
+            ch2c: css.getPropertyValue('--ch2').trim() || '#bf00ff',
+            chdc: css.getPropertyValue('--chd').trim() || '#00ff9f',
+            inkFaint: css.getPropertyValue('--ink-faint').trim() || '#5f7582',
+            accent: css.getPropertyValue('--accent').trim() || '#ffd400',
+            danger: css.getPropertyValue('--danger').trim() || '#ff4d3a',
+        };
+    }, [theme]);
+
+    // Cache dimensions to avoid layout reads in loop
+    const [dims, setDims] = useState({ w: 0, h: 0, dpr: 1 });
+    useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const parent = canvas.parentElement;
         if (!parent) return;
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const w = parent.clientWidth;
-        const h = parent.clientHeight;
-        const canvasRect = canvas.getBoundingClientRect();
-        canvasRectRef.current = { left: canvasRect.left, width: w };
+        const observer = new ResizeObserver((entries) => {
+            if (entries[0]) {
+                const { width, height } = entries[0].contentRect;
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                setDims({ w: width, h: height, dpr });
+            }
+        });
+        observer.observe(parent);
+        return () => observer.disconnect();
+    }, []);
+
+    const doRender = useCallback((ts: number) => {
+        const canvas = canvasRef.current;
+        if (!canvas || dims.w === 0) return;
+
+        const { w, h, dpr } = dims;
 
         if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
             canvas.width = w * dpr; canvas.height = h * dpr;
             canvas.style.width = `${w}px`; canvas.style.height = `${h}px`;
         }
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: false }); // Optimization: opaque canvas
         if (!ctx) return;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        const css = getComputedStyle(canvas.closest('.osc-app') ?? document.documentElement);
-        const bg = css.getPropertyValue('--bg').trim() || '#0b0f10';
-        const gridC = css.getPropertyValue('--grid-c').trim() || 'rgba(255,255,255,.06)';
-        const gridMaj = css.getPropertyValue('--grid-major-c').trim() || 'rgba(255,255,255,.11)';
-        const ch1c = css.getPropertyValue('--ch1').trim() || '#ff3d6e';
-        const ch2c = css.getPropertyValue('--ch2').trim() || '#39d4ff';
-        const chdc = css.getPropertyValue('--chd').trim() || '#ffd400';
-        const inkFaint = css.getPropertyValue('--ink-faint').trim() || '#5f7582';
-        const accent = css.getPropertyValue('--accent').trim() || '#ffd400';
+        const { bg, gridC, gridMaj, ch1c, ch2c, chdc, inkFaint, accent, danger } = colors;
 
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, w, h);
@@ -227,32 +242,41 @@ export const WaveformViewer = forwardRef<
         }
         const totalUs = effectiveTb * cols;
         const panOffsetUs = sync.current.pan * totalUs;
-        ctx.textAlign = 'center';
         for (let i = 0; i <= cols; i++) {
             const x = i * colW;
             const t = ((i - cols / 2) * effectiveTb + panOffsetUs).toFixed(0);
+            ctx.textAlign = i === 0 ? 'left' : i === cols ? 'right' : 'center';
             ctx.fillText(`${t}µs`, x, wh + 14);
         }
+        ctx.textAlign = 'center';
 
         // Generate signals — only advance shared scroll once per frame (on the primary pane)
         if (!isDiff) {
             sync.current.scroll = state.running ? (sync.current.scroll + 0.004 / zoom) : sync.current.scroll;
         }
         const N = Math.ceil(w / zoom);
-        const { H, L, D } = GENERATORS[signal](N, sync.current.scroll + sync.current.pan);
+        const { H, L, D } = GENERATORS[signal](N, sync.current.scroll + sync.current.pan, zoom);
 
         // Measurement accumulation
         let minD = +Infinity, maxD = -Infinity, sumSq = 0;
         let minH = +Infinity, maxH = -Infinity;
         let minL = +Infinity, maxL = -Infinity;
         let crossings = 0;
+        let cmSum = 0;
         for (let i = 0; i < N; i++) {
             if (D[i] < minD) minD = D[i]; if (D[i] > maxD) maxD = D[i];
             if (H[i] < minH) minH = H[i]; if (H[i] > maxH) maxH = H[i];
             if (L[i] < minL) minL = L[i]; if (L[i] > maxL) maxL = L[i];
             sumSq += D[i] * D[i];
+            cmSum += (H[i] + L[i]) / 2;
             if (i > 0 && ((D[i - 1] < 1 && D[i] >= 1) || (D[i - 1] >= 1 && D[i] < 1))) crossings++;
         }
+        const avgCm = cmSum / N;
+        
+        // Smoothing filter (EMA) for drift reporting to UI
+        const alpha = 0.05; 
+        const drift = avgCm - 2.5; // CAN nominal CM is 2.5V
+        driftRef.current = driftRef.current * (1 - alpha) + drift * alpha;
 
         const vToY = (v: number, vpdScale: number, offset: number, refV: number = 2.5) => {
             const center = wh / 2 - (offset / vpdScale) * rowH;
@@ -328,9 +352,50 @@ export const WaveformViewer = forwardRef<
                 }
                 ctx.drawImage(persistRef.current, 0, 0, persistRef.current.width / dpr, persistRef.current.height / dpr);
             }
+
+            // Common Mode Centerline (for LINES pane)
+            if (channelSet === 'lines') {
+                ctx.save();
+                // Neon cyan drift line with glow
+                ctx.strokeStyle = ch1c;
+                ctx.globalAlpha = 0.4;
+                ctx.setLineDash([8, 6]);
+                ctx.lineWidth = 1;
+                ctx.shadowColor = ch1c;
+                ctx.shadowBlur = 6;
+                const cmY = vToY(avgCm, state.channels.h.vpd, state.channels.h.off, 2.5);
+                ctx.beginPath();
+                ctx.moveTo(0, cmY);
+                ctx.lineTo(w, cmY);
+                ctx.stroke();
+                ctx.restore();
+            }
+
             if (showH) drawTrace(H, ch1c, state.channels.h.vpd, state.channels.h.off, 2.5);
             if (showL) drawTrace(L, ch2c, state.channels.l.vpd, state.channels.l.off, 2.5);
-            if (showD) drawTrace(D, chdc, state.channels.d.vpd, state.channels.d.off, diffRefV);
+            if (showD) {
+                // Dominant fill: semi-transparent yellow under the curve when V > 1.5V
+                ctx.save();
+                ctx.beginPath();
+                // Rectangle covering the area above 1.5V (smaller Y values)
+                const thresholdY = vToY(1.5, state.channels.d.vpd, state.channels.d.off, diffRefV);
+                ctx.rect(0, 0, w, thresholdY);
+                ctx.clip();
+                
+                ctx.fillStyle = chdc + '33'; // Semi-transparent yellow
+                ctx.beginPath();
+                const baselineY = vToY(0, state.channels.d.vpd, state.channels.d.off, diffRefV);
+                ctx.moveTo(0, baselineY);
+                for (let i = 0; i < N; i++) {
+                    ctx.lineTo(i * zoom, vToY(D[i], state.channels.d.vpd, state.channels.d.off, diffRefV));
+                }
+                ctx.lineTo((N - 1) * zoom, baselineY);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                drawTrace(D, chdc, state.channels.d.vpd, state.channels.d.off, diffRefV);
+            }
         }
 
         // Trigger line (only in lines/all — trigger is referenced to line voltages)
@@ -345,6 +410,79 @@ export const WaveformViewer = forwardRef<
             ctx.font = `bold 10px 'JetBrains Mono', monospace`;
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText(`T  ${state.trig.level.toFixed(2)} V`, w - 38, ty);
+        }
+
+        // CAN Protocol trigger marker — vertical line where the protocol condition fires
+        if (!fftMode && channelSet !== 'diff' && state.trig.mode === 'CAN/Protocol' && signal === 'can') {
+            const trigBitIdx = evaluateCanTrigger(state.trig.canTrigger);
+            if (trigBitIdx !== null) {
+                const totalBits = CAN_FULL_PATTERN.length;
+                const scrollWithPan = sync.current.scroll + sync.current.pan;
+                const trigPhase = trigBitIdx / totalBits;
+                const phaseDiff = ((trigPhase - scrollWithPan % 1) % 1 + 1) % 1;
+                const trigX = Math.round(phaseDiff * w);
+
+                if (trigX >= 0 && trigX <= w) {
+                    const cfg = state.trig.canTrigger!;
+                    const labelText = cfg.type === 'ID' ? `ID:0x${cfg.targetID}` :
+                                      cfg.type === 'Error' ? `${cfg.errorType} ERR` : 'PAY MATCH';
+                    ctx.save();
+                    // Protocol marker color (usually cyan/ch1)
+                    const trigColor = ch1c;
+                    ctx.strokeStyle = trigColor;
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 3]);
+                    ctx.shadowColor = trigColor;
+                    ctx.shadowBlur = 6;
+                    ctx.beginPath();
+                    ctx.moveTo(trigX, 0);
+                    ctx.lineTo(trigX, wh);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.shadowBlur = 0;
+                    // Label badge
+                    ctx.font = `bold 9px 'JetBrains Mono', monospace`;
+                    const lw = ctx.measureText(labelText).width + 10;
+                    const lx = Math.min(trigX + 3, w - lw - 2);
+                    ctx.fillStyle = trigColor;
+                    ctx.fillRect(lx, 28, lw, 16);
+                    ctx.fillStyle = bg;
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(labelText, lx + 5, 36);
+                    ctx.restore();
+                }
+            }
+        }
+
+        // Selection Marker (markedTs) — vertical red line for the selected frame
+        const markedTs = sync.current.markedTs;
+        if (markedTs != null && signal === 'can') {
+            const totalCycles = markedTs / CAN_CYCLE_US;
+            const phase = totalCycles % 1;
+            const scrollWithPan = sync.current.scroll + sync.current.pan;
+            const phaseDiff = ((phase - scrollWithPan % 1) % 1 + 1) % 1;
+            const markedX = Math.round(phaseDiff * w);
+
+            if (markedX >= 0 && markedX <= w) {
+                ctx.save();
+                // Solid danger vertical line
+                ctx.strokeStyle = danger;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(markedX, 0);
+                ctx.lineTo(markedX, wh);
+                ctx.stroke();
+
+                // Marker triangle at the bottom
+                ctx.fillStyle = danger;
+                ctx.beginPath();
+                ctx.moveTo(markedX, wh);
+                ctx.lineTo(markedX - 6, wh + 8);
+                ctx.lineTo(markedX + 6, wh + 8);
+                ctx.fill();
+                ctx.restore();
+            }
         }
 
         ctx.restore(); // end waveform clip
@@ -412,9 +550,10 @@ export const WaveformViewer = forwardRef<
                 rmsD: Math.sqrt(sumSq / N),
                 rise: 92 + Math.random() * 8,
                 fall: 86 + Math.random() * 8,
+                cmDrift: driftRef.current,
             });
         }
-    }, [state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, channelSet, reportMeas, sync]);
+    }, [state, signal, fftMode, cursorsOn, cursors, persistence, traceGlow, onMeas, channelSet, reportMeas, sync, colors, dims]);
 
     useEffect(() => { renderRef.current = doRender; }, [doRender]);
     useEffect(() => { stateRef.current = state; }, [state]);
@@ -523,6 +662,10 @@ export const WaveformViewer = forwardRef<
                 dragMode,
             };
             canvas.style.cursor = dragMode === 'axis' ? 'ns-resize' : 'grabbing';
+            
+            // Update cached rect on drag start
+            const rect = canvas.getBoundingClientRect();
+            canvasRectRef.current = { left: rect.left, width: rect.width };
         };
 
         const onPointerMove = (e: PointerEvent) => {
@@ -617,6 +760,12 @@ export const WaveformViewer = forwardRef<
 
     useEffect(() => {
         const loop = (ts: number) => {
+            
+            // Optimization: If the scope is held, we don't strictly need 60fps
+            // unless we are interacting. But for now, let's at least ensure 
+            // the loop is clean.
+            // Future: add a 'needsRender' flag set by interaction handlers.
+            
             renderRef.current(ts);
             rafRef.current = requestAnimationFrame(loop);
         };
@@ -626,3 +775,5 @@ export const WaveformViewer = forwardRef<
 
     return <canvas ref={canvasRef} />;
 });
+
+export const WaveformViewer = memo(WaveformViewerInternal);

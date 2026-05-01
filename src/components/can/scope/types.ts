@@ -15,9 +15,15 @@ export interface OscState {
     };
     trig: {
         source: 'CH1' | 'CH2' | 'DIFF';
-        mode: 'Edge' | 'Pulse' | 'Level';
+        mode: 'Edge' | 'Pulse' | 'Level' | 'CAN/Protocol';
         level: number;
         sweep: 'Auto' | 'Normal' | 'Single';
+        canTrigger?: {
+            type: 'ID' | 'Error' | 'Payload';
+            targetID: string;
+            errorType: 'CRC' | 'Form' | 'Stuff' | 'Any';
+            payloadPattern: string;
+        };
     };
 }
 
@@ -29,6 +35,7 @@ export interface OscMeas {
     rmsD: number;
     rise: number;
     fall: number;
+    cmDrift: number;
 }
 
 export interface DemoFrame {

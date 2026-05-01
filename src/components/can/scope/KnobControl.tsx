@@ -34,7 +34,8 @@ export const KnobControl: React.FC<KnobProps> = ({
     const v = options ? options.indexOf(value) : value;
     const lo = options ? 0 : min;
     const hi = options ? options.length - 1 : max;
-    const norm = Math.max(0, Math.min(1, (v - lo) / (hi - lo || 1)));
+    const range = hi - lo;
+    const norm = Math.max(0, Math.min(1, (v - lo) / (range || 1)));
     const angle = -135 + norm * 270;
     const tickCount = options ? options.length : 11;
 
@@ -86,14 +87,44 @@ export const KnobControl: React.FC<KnobProps> = ({
         }
     }, [value, lo, hi, step, options, onChange]);
 
+    const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+        let dir = 0;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowRight') dir = 1;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') dir = -1;
+        if (e.key === 'PageUp') dir = 5;
+        if (e.key === 'PageDown') dir = -5;
+        if (e.key === 'Home') dir = -range;
+        if (e.key === 'End') dir = range;
+
+        if (dir !== 0) {
+            e.preventDefault();
+            if (options) {
+                const curIdx = options.indexOf(value);
+                const nextIdx = Math.max(0, Math.min(options.length - 1, curIdx + (dir > 1 ? 1 : dir < -1 ? -1 : dir)));
+                onChange(options[nextIdx]);
+            } else {
+                const nv = Math.max(lo, Math.min(hi, value + dir * step));
+                onChange(parseFloat(nv.toFixed(4)));
+            }
+        }
+    }, [value, lo, hi, step, options, onChange, range]);
+
     return (
         <div className="osc-knob-ctl">
             <div
-                className="osc-knob-wrap"
+                className="osc-knob-wrap focus-ring-cyber"
                 style={{ width: size, height: size }}
                 onMouseDown={onDown}
                 onTouchStart={onDown}
                 onWheel={onWheel}
+                onKeyDown={onKeyDown}
+                role="slider"
+                aria-valuemin={lo}
+                aria-valuemax={hi}
+                aria-valuenow={v}
+                aria-valuetext={valueLabel ?? value.toString()}
+                aria-label={label}
+                tabIndex={0}
             >
                 <svg className="osc-knob-ticks" width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
                     {ticks.map((t, i) => {
@@ -123,7 +154,7 @@ export const KnobControl: React.FC<KnobProps> = ({
                 </div>
             </div>
             <div className="osc-knob-meta">
-                <div className="osc-knob-val" style={{ color }}>{valueLabel ?? value}</div>
+                <div className="osc-knob-val" style={{ color }} aria-live="polite">{valueLabel ?? value}</div>
                 <div className="osc-knob-lbl">{label}</div>
             </div>
         </div>
@@ -138,14 +169,20 @@ interface RockerProps {
 }
 
 export const RockerSwitch: React.FC<RockerProps> = ({ on, color, label, onChange }) => (
-    <div
-        className={`osc-rocker ${on ? 'on' : ''}`}
-        style={{ '--chc': color } as React.CSSProperties}
-        onClick={() => onChange(!on)}
-    >
-        <div className="osc-rocker-body">
-            <div className="osc-rocker-knob" />
-        </div>
-        <div className="osc-rocker-lbl">{label}</div>
+    <div className="osc-rocker-container">
+        <button
+            type="button"
+            className={`osc-rocker ${on ? 'on' : ''} focus-ring-cyber`}
+            style={{ '--chc': color } as React.CSSProperties}
+            onClick={() => onChange(!on)}
+            role="switch"
+            aria-checked={on}
+            aria-label={label}
+        >
+            <div className="osc-rocker-body">
+                <div className="osc-rocker-knob" />
+            </div>
+        </button>
+        <div className="osc-rocker-lbl" aria-hidden="true">{label}</div>
     </div>
 );
