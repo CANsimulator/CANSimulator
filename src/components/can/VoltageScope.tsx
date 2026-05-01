@@ -246,7 +246,7 @@ export const VoltageScope: React.FC = () => {
                         <span>RESET</span>
                     </motion.button>
                     <motion.button
-                        whileHover={{ scale: 1.02, brightness: 1.2 }}
+                        whileHover={{ scale: 1.02, filter: 'brightness(1.2)' }}
                         whileTap={{ scale: 0.98 }}
                         className="osc-reset-btn osc-bg-accent"
                         aria-label="Open Technical Reference"
@@ -257,7 +257,7 @@ export const VoltageScope: React.FC = () => {
                     </motion.button>
                     <motion.button 
                         whileHover={{ rotate: 90 }}
-                        transition={springTransition}
+                        transition={springTransition as any}
                         className="osc-iconbtn" 
                         title="Settings" 
                         aria-label="Open Oscilloscope Settings" 

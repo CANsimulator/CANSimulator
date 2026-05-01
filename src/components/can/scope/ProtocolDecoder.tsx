@@ -13,7 +13,8 @@ interface Field {
     label: string;
     bits: number;
     color: string;
-    val?: string | number;
+    desc: string;
+    value: string | number;
 }
 
 // ── Sub-components ──────────────────────────────────────────────────────────
@@ -82,7 +83,7 @@ const FrameInspector = React.memo(({
     crc: number; 
     hovField: string | null; 
     setHovField: (s: string | null) => void; 
-    hov: (key: string) => boolean; 
+    hov: Field | null | undefined; 
 }) => (
     <div className="osc-inspector">
         <div className="osc-insp-header">
