@@ -1,7 +1,7 @@
 ## vexp <!-- vexp v2.0.12 -->
 
 **MANDATORY: use `run_pipeline` — do NOT grep or glob the codebase.**
-vexp returns pre-indexed, graph-ranked context in a single call. This is critical for **reducing token consumption** by avoiding redundant file reads.
+vexp returns pre-indexed, graph-ranked context in a single call.
 
 ### Workflow
 1. `run_pipeline` with your task description — ALWAYS FIRST (replaces all other tools)
