@@ -39,3 +39,9 @@ graphify-out/cache/
 # Temporary screenshots and review artifacts
 *.png
 current-scope.md
+
+# Temporary and local development files
+NUL
+test_output.txt
+artifacts/
+scratch/
