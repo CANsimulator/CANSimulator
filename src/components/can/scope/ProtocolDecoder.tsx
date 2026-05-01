@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import type { DemoFrame } from './types';
+import type { DemoFrame, OscState } from './types';
 import { ReferencePlots } from '../ReferencePlots';
 import { DEMO_FRAMES, CAN_CYCLE_US } from './protocolUtils';
 import { type ScopeSync } from './WaveformViewer';
