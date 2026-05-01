@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Oscilloscope Accessibility & Normalization', () => {
     test.beforeEach(async ({ page }) => {
         // Navigate to the Physical Layer page where the VoltageScope is located
-        await page.goto('http://localhost:5173/physical'); 
+        await page.goto('http://localhost:5173/CANSimulator/physical'); 
     });
 
     test('should have semantic button elements for all interactive grid cells in Integrity Map', async ({ page }) => {
