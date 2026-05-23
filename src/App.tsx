@@ -21,7 +21,6 @@ const GenerationsPage = lazy(() => import('./pages/GenerationsPage'));
 const InspectorPage = lazy(() => import('./pages/InspectorPage'));
 const SignalsPage = lazy(() => import('./pages/SignalsPage'));
 const ArbitrationPage = lazy(() => import('./pages/ArbitrationPage'));
-const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
 const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m.LegalPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage').then(m => ({ default: m.AuthPage })));
@@ -91,14 +90,13 @@ function App() {
                 <Route path="/simulator" element={<SimulatorPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/contact" element={<ContactPage />} />
-                <Route path="/errors" element={<ErrorPage />} />
                 <Route path="/physical" element={<PhysicalPage />} />
                 <Route path="/generations" element={<GenerationsPage />} />
                 <Route path="/inspector" element={<InspectorPage />} />
                 <Route path="/signals" element={<SignalsPage />} />
                 <Route path="/arbitration" element={<ArbitrationPage />} />
+                <Route path="/errors" element={<ErrorPage />} />
                 <Route path="/auth" element={<AuthPage />} />
-                <Route path="/about" element={<AboutPage />} />
                 <Route path="/privacy-policy" element={<LegalPage title="Privacy Policy" />} />
                 <Route path="/terms" element={<LegalPage title="Terms of Use" />} />
                 <Route path="*" element={<NotFoundPage />} />

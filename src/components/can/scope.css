@@ -725,8 +725,8 @@
 }
 
 /* Ensure the Trigger section has a high stacking context so its overlays stack above sibling sections */
-.osc-rightrail > section:last-of-type,
-.osc-rightrail-scroll > section:last-of-type {
+.osc-rightrail > section:first-of-type,
+.osc-rightrail-scroll > section:first-of-type {
   position: relative;
   z-index: 20;
 }

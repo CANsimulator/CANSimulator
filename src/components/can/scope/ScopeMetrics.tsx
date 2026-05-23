@@ -1,25 +1,18 @@
 import React, { useMemo } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
-import { Activity, ShieldCheck, Binary } from 'lucide-react';
-import type { OscMeas } from './types';
-import { DEMO_FRAMES } from './protocolUtils';
+import { motion } from 'framer-motion';
+import { Activity, ShieldCheck, Target, ChevronDown, ChevronUp, Sliders } from 'lucide-react';
+import type { OscMeas, OscState } from './types';
+import { CanTriggerMenu } from './CanTriggerMenu';
+
+type SetState = React.Dispatch<React.SetStateAction<OscState>>;
 
 interface RightRailProps {
     meas: OscMeas;
     running: boolean;
-    onFilterRequest?: (type: 'err' | 'warn', frameIdx?: number) => void;
+    state: OscState;
+    setState: SetState;
+    onAutoscale: () => void;
 }
-
-const INTEGRITY_CELLS = Array.from({ length: 60 }, (_, i) => {
-    if (i < DEMO_FRAMES.length) {
-        const fr = DEMO_FRAMES[i];
-        return { cls: fr.status, o: 0.9, frameIdx: i };
-    }
-    const r = ((i * 2654435761) >>> 0) / 0xffffffff;
-    const cls = r > 0.99 ? 'err' : r > 0.97 ? 'warn' : 'ok';
-    const o = 0.35 + ((i * 1234567) % 100) / 250;
-    return { cls, o };
-});
 
 
 interface HealthEntry {
@@ -51,7 +44,42 @@ interface RailPanelProps {
 
 const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 
-export const ScopeMetrics: React.FC<RightRailProps> = ({ meas, onFilterRequest }) => {
+export const ScopeMetrics: React.FC<RightRailProps> = ({ meas, state, setState, onAutoscale }) => {
+    const [isEditingLevel, setIsEditingLevel] = React.useState(false);
+    const [editLevelVal, setEditLevelVal] = React.useState(state.trig.level.toFixed(2));
+    const [showAdvanced, setShowAdvanced] = React.useState(false);
+
+    React.useEffect(() => {
+        setEditLevelVal(state.trig.level.toFixed(2));
+    }, [state.trig.level]);
+
+    const handleLevelSubmit = () => {
+        setIsEditingLevel(false);
+        let val = parseFloat(editLevelVal);
+        if (isNaN(val)) {
+            setEditLevelVal(state.trig.level.toFixed(2));
+            return;
+        }
+        val = Math.max(0, Math.min(5, val));
+        setState(st => ({ ...st, trig: { ...st.trig, level: parseFloat(val.toFixed(2)) } }));
+    };
+
+    const handleLevelKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleLevelSubmit();
+        } else if (e.key === 'Escape') {
+            setIsEditingLevel(false);
+            setEditLevelVal(state.trig.level.toFixed(2));
+        }
+    };
+
+    const stepLevel = (direction: 'up' | 'down') => {
+        const delta = 0.05;
+        const current = state.trig.level;
+        const next = direction === 'up' ? Math.min(5, current + delta) : Math.max(0, current - delta);
+        setState(st => ({ ...st, trig: { ...st.trig, level: parseFloat(next.toFixed(2)) } }));
+    };
+
     const healthMetrics: HealthEntry[] = useMemo(() => {
         const cmVal = meas.cmDrift * 1000;
         const cmBadge = Math.abs(cmVal) > 100 ? 'FAIL' : Math.abs(cmVal) > 50 ? 'DRIFT' : 'PASS';
@@ -74,8 +102,285 @@ export const ScopeMetrics: React.FC<RightRailProps> = ({ meas, onFilterRequest }
         { label: 'ERR RATE', value: '0.01', unit: '%', trend: 'flat' },
     ], [meas.rise, meas.fall]);
 
+    const sourceColor = state.trig.source === 'CH1' ? 'var(--ch1)' : state.trig.source === 'CH2' ? 'var(--ch2)' : 'var(--chd)';
+    const sourceGlow = state.trig.source === 'CH1' ? '0 0 8px rgba(0, 243, 255, 0.4)' : state.trig.source === 'CH2' ? '0 0 8px rgba(191, 0, 255, 0.4)' : '0 0 8px rgba(0, 255, 159, 0.4)';
+
     return (
-        <aside className="osc-rightrail flex flex-col gap-2 p-1 select-none" role="complementary" aria-label="Oscilloscope Metrics">
+        <aside className="osc-rightrail flex flex-col p-1 select-none relative" role="complementary" aria-label="Oscilloscope Metrics">
+            <div className="osc-rightrail-scroll">
+                <RailPanel title="Trigger" eyebrow="controls & sync" icon={<Target className="h-3.5 w-3.5" />} tone="var(--accent)">
+                <div className="p-2 flex flex-col gap-2 bg-[var(--bg-2)]">
+                    {/* Dynamic Status / Sync Banner */}
+                    <div className="flex items-center justify-between px-2 py-1 bg-black/40 rounded border border-[var(--stroke)] text-[9px] font-black uppercase tracking-wider font-mono shadow-inner">
+                        <span className="text-[var(--ink-faint)]">Sync Status</span>
+                        <div className="flex items-center gap-1.5">
+                            <span 
+                                className={`w-1.5 h-1.5 rounded-full ${state.running ? 'bg-[var(--ok)] shadow-[0_0_6px_var(--ok)] animate-pulse' : 'bg-[var(--danger)] shadow-[0_0_6px_var(--danger)]'}`}
+                                style={{ animationDuration: '1.5s' }}
+                            />
+                            <span className={state.running ? 'text-[var(--ok)] font-bold' : 'text-[var(--danger)] font-bold'}>
+                                {state.running ? (state.trig.sweep === 'Auto' ? 'AUTO / TRIG\'D' : 'ARMED') : 'HELD'}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Source Selection Header */}
+                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.12em] px-0.5 mt-0.5">
+                        <span className="text-[var(--ink-faint)]">Source</span>
+                        <span className="font-bold font-mono" style={{ color: sourceColor, textShadow: sourceGlow }}>{state.trig.source}</span>
+                    </div>
+
+                    {/* Source selection */}
+                    <div className="grid grid-cols-3 gap-1.5">
+                        {(['CH1', 'CH2', 'DIFF'] as const).map(s => {
+                            const isAct = state.trig.source === s;
+                            const btnColor = s === 'CH1' ? 'var(--ch1)' : s === 'CH2' ? 'var(--ch2)' : 'var(--chd)';
+                            return (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => setState(st => ({ ...st, trig: { ...st.trig, source: s } }))}
+                                    className={`osc-chip focus-ring-cyber !py-1.5 transition-all duration-150 ${isAct ? 'active' : ''}`}
+                                    style={isAct ? { 
+                                        backgroundColor: btnColor, 
+                                        borderColor: btnColor, 
+                                        color: '#000',
+                                        fontWeight: 900,
+                                        boxShadow: `0 0 10px ${btnColor}`
+                                    } : {}}
+                                >
+                                    {s}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* Mode selection (EDGE, PULSE, LEVEL, CAN) - Perfectly Balanced 2x2 Grid */}
+                    <div className="flex flex-col gap-1">
+                        <div className="text-[9px] font-black uppercase tracking-wider text-[var(--ink-faint)] px-0.5 mt-0.5">Mode</div>
+                        <div className="grid grid-cols-2 gap-1.5">
+                            {(['Edge', 'Pulse', 'Level'] as const).map(m => (
+                                <button
+                                    key={m}
+                                    type="button"
+                                    onClick={() => setState(st => ({ ...st, trig: { ...st.trig, mode: m } }))}
+                                    className={`osc-chip focus-ring-cyber !py-1.5 ${state.trig.mode === m ? 'active' : ''}`}
+                                >
+                                    {m}
+                                </button>
+                            ))}
+                            <button
+                                type="button"
+                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, mode: 'CAN/Protocol' } }))}
+                                className={`osc-chip focus-ring-cyber !py-1.5 ${state.trig.mode === 'CAN/Protocol' ? 'active' : ''}`}
+                            >
+                                CAN Protocol
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Sweep Selection */}
+                    <div className="flex flex-col gap-1">
+                        <div className="text-[9px] font-black uppercase tracking-wider text-[var(--ink-faint)] px-0.5 mt-0.5">Sweep</div>
+                        <div className="grid grid-cols-3 gap-1.5">
+                            {(['Auto', 'Normal', 'Single'] as const).map(m => (
+                                <button
+                                    key={m}
+                                    type="button"
+                                    onClick={() => setState(st => ({ ...st, trig: { ...st.trig, sweep: m } }))}
+                                    className={`osc-chip focus-ring-cyber !py-1.5 ${state.trig.sweep === m ? 'active' : ''}`}
+                                >
+                                    {m}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Integrated Interactive Trigger Level Control */}
+                    <div className="flex flex-col gap-1 border-t border-[var(--stroke)] pt-2 mt-1">
+                        <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.12em] px-0.5">
+                            <span className="text-[var(--ink-faint)]">Trigger Level</span>
+                            <div className="flex items-center gap-1">
+                                {isEditingLevel ? (
+                                    <input
+                                        type="text"
+                                        value={editLevelVal}
+                                        onChange={e => setEditLevelVal(e.target.value.replace(/[^0-9.]/g, ''))}
+                                        onBlur={handleLevelSubmit}
+                                        onKeyDown={handleLevelKeyDown}
+                                        className="w-12 text-right bg-[var(--bg-3)] border border-[var(--stroke-2)] rounded px-1 text-[10px] font-mono font-bold text-white focus:outline-none focus:border-[var(--accent)]"
+                                        autoFocus
+                                    />
+                                ) : (
+                                    <span 
+                                        onClick={() => setIsEditingLevel(true)}
+                                        className="font-mono font-bold cursor-pointer hover:underline text-[10px] py-0.5 px-1 rounded bg-[var(--bg-3)] border border-[var(--stroke-2)]"
+                                        title="Click to edit numerically"
+                                    >
+                                        {state.trig.level.toFixed(2)} V
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {/* Fine tuning decrement */}
+                            <button
+                                type="button"
+                                onClick={() => stepLevel('down')}
+                                className="w-5 h-5 rounded border border-[var(--stroke-2)] bg-[var(--bg-3)] hover:bg-[var(--stroke)] text-[var(--ink-dim)] hover:text-white flex items-center justify-center font-bold text-xs transition-colors focus-ring-cyber"
+                                aria-label="Decrement Trigger Level 0.05V"
+                            >
+                                -
+                            </button>
+
+                            {/* Range slider styled dynamically to match source color */}
+                            <input
+                                type="range"
+                                min="0"
+                                max="5"
+                                step="0.05"
+                                value={state.trig.level}
+                                onChange={e => setState(st => ({ ...st, trig: { ...st.trig, level: parseFloat(e.target.value) } }))}
+                                className="flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-[var(--bg-3)] accent-color"
+                                style={{ 
+                                    accentColor: sourceColor,
+                                    outline: 'none'
+                                } as React.CSSProperties}
+                                aria-label="Trigger Level Slider"
+                            />
+
+                            {/* Fine tuning increment */}
+                            <button
+                                type="button"
+                                onClick={() => stepLevel('up')}
+                                className="w-5 h-5 rounded border border-[var(--stroke-2)] bg-[var(--bg-3)] hover:bg-[var(--stroke)] text-[var(--ink-dim)] hover:text-white flex items-center justify-center font-bold text-xs transition-colors focus-ring-cyber"
+                                aria-label="Increment Trigger Level 0.05V"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Advanced Settings collapsible drawer */}
+                    <div className="flex flex-col gap-1 border-t border-[var(--stroke)] pt-2 mt-0.5">
+                        <button
+                            type="button"
+                            onClick={() => setShowAdvanced(!showAdvanced)}
+                            className="flex items-center justify-between w-full text-[9px] font-black uppercase tracking-wider text-[var(--ink-dim)] hover:text-white py-0.5 transition-colors focus-ring-cyber"
+                            aria-expanded={showAdvanced}
+                        >
+                            <span className="flex items-center gap-1.5">
+                                <Sliders className="h-3 w-3" />
+                                Advanced Settings
+                            </span>
+                            {showAdvanced ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                        </button>
+
+                        <motion.div
+                            initial={false}
+                            animate={showAdvanced ? { height: 'auto', opacity: 1, marginTop: 4 } : { height: 0, opacity: 0, marginTop: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden flex flex-col gap-2"
+                        >
+                            {/* Slope Toggle */}
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[7.5px] font-black uppercase tracking-wider text-[var(--ink-faint)]">Slope</span>
+                                <div className="grid grid-cols-2 gap-1">
+                                    {(['Rising', 'Falling'] as const).map(sl => {
+                                        const isAct = state.trig.slope === sl;
+                                        return (
+                                            <button
+                                                key={sl}
+                                                type="button"
+                                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, slope: sl } }))}
+                                                className={`osc-chip focus-ring-cyber !py-1 text-[8px] ${isAct ? 'active' : ''}`}
+                                                aria-pressed={isAct}
+                                            >
+                                                {sl === 'Rising' ? 'Rising (↑)' : 'Falling (↓)'}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Coupling Selector */}
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[7.5px] font-black uppercase tracking-wider text-[var(--ink-faint)]">Coupling</span>
+                                <div className="grid grid-cols-3 gap-1">
+                                    {(['DC', 'AC', 'HF REJ'] as const).map(cp => {
+                                        const isAct = state.trig.coupling === cp;
+                                        return (
+                                            <button
+                                                key={cp}
+                                                type="button"
+                                                onClick={() => setState(st => ({ ...st, trig: { ...st.trig, coupling: cp } }))}
+                                                className={`osc-chip focus-ring-cyber !py-1 text-[7.5px] ${isAct ? 'active' : ''}`}
+                                                aria-pressed={isAct}
+                                            >
+                                                {cp}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Holdoff Stepper */}
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center justify-between text-[7.5px] font-black uppercase tracking-wider text-[var(--ink-faint)]">
+                                    <span>Holdoff</span>
+                                    <span className="font-mono font-bold text-[var(--ink)]">{(state.trig.holdoff ?? 1.0).toFixed(1)} µs</span>
+                                </div>
+                                <div className="flex items-stretch border border-[var(--stroke-2)] bg-[var(--bg-3)] rounded overflow-hidden h-6">
+                                    <button
+                                        type="button"
+                                        className="flex-1 hover:bg-[var(--stroke)] text-[var(--ink-dim)] hover:text-white transition-colors text-xs font-bold"
+                                        onClick={() => setState(st => {
+                                            const val = Math.max(1.0, (st.trig.holdoff ?? 1.0) - 0.5);
+                                            return { ...st, trig: { ...st.trig, holdoff: parseFloat(val.toFixed(1)) } };
+                                        })}
+                                        aria-label="Decrement Holdoff"
+                                    >
+                                        -
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="flex-1 hover:bg-[var(--stroke)] text-[var(--ink-dim)] hover:text-white transition-colors text-xs font-bold"
+                                        onClick={() => setState(st => {
+                                            const val = Math.min(10.0, (st.trig.holdoff ?? 1.0) + 0.5);
+                                            return { ...st, trig: { ...st.trig, holdoff: parseFloat(val.toFixed(1)) } };
+                                        })}
+                                        aria-label="Increment Holdoff"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* Actions: Auto / Cal */}
+                    <div className="grid grid-cols-2 gap-1.5 mt-1 border-t border-[var(--stroke)] pt-2">
+                        <button
+                            type="button"
+                            onClick={onAutoscale}
+                            className="flex items-center justify-center gap-1.5 h-8 rounded-[4px] border border-[var(--stroke-2)] bg-[var(--bg-3)] hover:bg-[var(--stroke)] hover:text-white text-[var(--ink)] font-bold text-[10px] uppercase tracking-wider transition-all focus-ring-cyber"
+                            aria-label="Auto-scale all channels"
+                        >
+                            <Target className="h-3 w-3" />
+                            <span>Auto</span>
+                        </button>
+                        <button
+                            type="button"
+                            className="flex items-center justify-center gap-1.5 h-8 rounded-[4px] border border-[var(--stroke-2)] bg-[var(--bg-3)] hover:bg-[var(--stroke)] hover:text-white text-[var(--ink)] font-bold text-[10px] uppercase tracking-wider transition-all focus-ring-cyber"
+                            aria-label="Calibrate channels"
+                        >
+                            <span>Cal</span>
+                        </button>
+                    </div>
+                </div>
+            </RailPanel>
+
             <RailPanel title="Physical Health" eyebrow="line status" icon={<ShieldCheck className="h-3.5 w-3.5" />} tone="var(--ok)">
                 <div className="flex flex-col gap-1 p-1.5">
                     {healthMetrics.map(entry => <HealthRow key={entry.label} entry={entry} />)}
@@ -87,10 +392,13 @@ export const ScopeMetrics: React.FC<RightRailProps> = ({ meas, onFilterRequest }
                     {analyticsMetrics.map(metric => <MetricCard key={metric.label} metric={metric} />)}
                 </div>
             </RailPanel>
-
-            <RailPanel title="Integrity Map" eyebrow="bit consistency" icon={<Binary className="h-3.5 w-3.5" />} tone="var(--warn)">
-                <IntegrityMap onFilter={onFilterRequest} />
-            </RailPanel>
+            </div>
+            <CanTriggerMenu 
+                isOpen={state.trig.mode === 'CAN/Protocol'} 
+                state={state} 
+                setState={setState} 
+                onClose={() => setState(st => ({ ...st, trig: { ...st.trig, mode: 'Edge' } }))} 
+            />
         </aside>
     );
 };
@@ -152,26 +460,4 @@ const MetricCard: React.FC<{ metric: SignalMetric }> = React.memo(({ metric }) =
     );
 });
 
-const IntegrityMap: React.FC<{ onFilter?: (type: 'err' | 'warn', idx?: number) => void }> = React.memo(({ onFilter }) => {
-    const shouldReduceMotion = useReducedMotion();
-    return (
-        <div className="p-2">
-            <div className="mb-2 flex items-center justify-between rounded-[4px] border border-[var(--stroke)] bg-[var(--bg-3)] px-2 py-1">
-                <span className="text-[7px] font-black uppercase text-[var(--ink-dim)]">QoS Score</span>
-                <span className="font-mono text-[10px] font-black text-[var(--ok)]">98.2%</span>
-            </div>
-            <div className="grid grid-cols-10 gap-[2px]">
-                {INTEGRITY_CELLS.map((cell, i) => (
-                    <motion.button
-                        key={i}
-                        type="button"
-                        className={`h-1.5 rounded-[1px] ${cell.cls === 'ok' ? 'bg-[var(--ok)]' : cell.cls === 'warn' ? 'bg-[var(--warn)]' : 'bg-[var(--danger)]'}`}
-                        style={{ opacity: cell.o, cursor: cell.cls !== 'ok' ? 'pointer' : 'default' } as React.CSSProperties}
-                        whileHover={shouldReduceMotion ? {} : { scale: 1.5, zIndex: 10 }}
-                        onClick={() => (cell.cls === 'err' || cell.cls === 'warn') && onFilter?.(cell.cls as 'err' | 'warn', cell.frameIdx)}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-});
+

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, Cpu, Sparkles } from 'lucide-react';
+import { Cpu, Sparkles } from 'lucide-react';
 import { Container } from '../components/ui/Container';
 import { cn } from '../utils/cn';
 import { GENERATIONS, SCENARIOS } from '../features/generations/data';
@@ -17,9 +17,9 @@ import {
   SectionReveal,
   UseCaseRecommender,
 } from '../features/generations/components';
+import { LabNavigation } from '../components/ui/LabNavigation';
 
 export default function GenerationsPage() {
-  const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const {
     primary,
@@ -294,22 +294,7 @@ export default function GenerationsPage() {
           </div>
         </SectionReveal>
 
-        {/* ──────────── CTA ──────────── */}
-        <section className="flex justify-center pb-8 pt-3">
-          <motion.button
-            type="button"
-            onClick={() => navigate('/inspector')}
-            whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-            whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-            className="group inline-flex items-center gap-3 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-7 py-4 text-sm font-black uppercase tracking-[0.15em] text-cyan-700 dark:text-cyan-100 transition-all duration-200 hover:bg-cyan-500/20 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)]"
-          >
-            Next Lab: Bit-Level Inspector
-            <ArrowRight
-              size={16}
-              className="transition-transform duration-200 group-hover:translate-x-1"
-            />
-          </motion.button>
-        </section>
+        <LabNavigation />
       </Container>
     </div>
   );

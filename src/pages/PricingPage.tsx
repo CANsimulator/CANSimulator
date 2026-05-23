@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { CyberButton } from '../components/ui/CyberButton';
@@ -33,10 +33,11 @@ const PLAN_FEATURES: Record<PlanId, string[]> = {
 
 export const PricingPage: React.FC = () => {
     const { user } = useAuth();
+    const [isYearly, setIsYearly] = useState(false);
 
     return (
         <section id="pricing" className="max-w-7xl mx-auto px-4 pt-20 pb-12 space-y-12 flex-1 flex flex-col justify-center">
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-6">
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -48,6 +49,32 @@ export const PricingPage: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto font-medium">
                     From individual learners to embedded teams — pick a plan and start simulating CAN frames in your browser, no hardware needed.
                 </p>
+                
+                {/* Billing Toggle */}
+                <motion.div 
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }} 
+                    transition={{ delay: 0.2 }}
+                    className="flex items-center justify-center gap-4 mt-8"
+                >
+                    <span className={cn("text-sm font-bold uppercase tracking-widest transition-colors", !isYearly ? "text-white" : "text-gray-500")}>Monthly</span>
+                    <button 
+                        onClick={() => setIsYearly(!isYearly)}
+                        className="relative w-16 h-8 rounded-full bg-dark-800 border border-white/10 p-1 transition-colors focus:outline-none focus:ring-2 focus:ring-cyber-blue/50"
+                        role="switch"
+                        aria-checked={isYearly}
+                        aria-label="Toggle yearly billing"
+                    >
+                        <motion.div 
+                            className="w-6 h-6 bg-cyber-blue rounded-full shadow-[0_0_10px_rgba(0,243,255,0.5)]"
+                            animate={{ x: isYearly ? 32 : 0 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                    </button>
+                    <span className={cn("text-sm font-bold uppercase tracking-widest transition-colors", isYearly ? "text-white" : "text-gray-500")}>
+                        Yearly <span className="text-cyber-green ml-1 text-[10px] bg-cyber-green/10 px-2 py-0.5 rounded-full">-20%</span>
+                    </span>
+                </motion.div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -83,10 +110,12 @@ export const PricingPage: React.FC = () => {
                                 </h3>
                                 <div className="mt-2 flex items-baseline gap-1">
                                     <span className="text-4xl font-black text-cyber-blue">
-                                        {plan.priceInr === 0 ? 'FREE' : `₹${plan.priceInr}`}
+                                        {plan.priceInr === 0 ? 'FREE' : `₹${isYearly ? plan.priceInr * 10 : plan.priceInr}`}
                                     </span>
                                     {plan.priceInr > 0 && (
-                                        <span className="text-gray-700 dark:text-gray-400 text-sm font-bold">/mo</span>
+                                        <span className="text-gray-700 dark:text-gray-400 text-sm font-bold">
+                                            /{isYearly ? 'yr' : 'mo'}
+                                        </span>
                                     )}
                                 </div>
                             </div>

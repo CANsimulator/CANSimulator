@@ -1,10 +1,7 @@
 import { CANFrameBuilder } from '../components/can/CANFrameBuilder';
 import { CANBusMonitor } from '../components/can/CANBusMonitor';
-import { BorderBeam } from '../components/ui/BorderBeam';
 import { PowerSupplyDashboard } from '../components/power/PowerSupplyDashboard';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Swords, ChevronRight } from 'lucide-react';
+import { Save, Download } from 'lucide-react';
 import { UDSConsole } from '../components/can/UDSConsole';
 import { useTestBench } from '../context/TestBenchContext';
 import { usePower } from '../context/PowerContext';
@@ -66,35 +63,24 @@ export default function SimulatorPage() {
                     
                     {/* UDS Console Section */}
                     <div className="space-y-4">
-                        <div className="flex items-center gap-3 ml-1">
-                            <div className="w-1.5 h-6 bg-cyber-blue rounded-full shadow-[0_0_8px_#00f3ff]" />
-                            <h2 className="text-lg font-black text-white uppercase tracking-tighter">Diagnostics & Timings</h2>
+                        <div className="flex items-center justify-between ml-1">
+                            <div className="flex items-center gap-3">
+                                <div className="w-1.5 h-6 bg-cyber-blue rounded-full shadow-[0_0_8px_#00f3ff]" />
+                                <h2 className="text-lg font-black text-white uppercase tracking-tighter">Diagnostics & Timings</h2>
+                            </div>
+                            <div className="flex gap-2">
+                                <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold tracking-widest uppercase rounded bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors border border-white/5">
+                                    <Download size={14} />
+                                    Export Logs
+                                </button>
+                                <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold tracking-widest uppercase rounded bg-cyber-blue/10 hover:bg-cyber-blue/20 text-cyber-blue transition-colors border border-cyber-blue/30">
+                                    <Save size={14} />
+                                    Save Workspace
+                                </button>
+                            </div>
                         </div>
                         <UDSConsole />
                     </div>
-
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ scale: 1.005 }}
-                        className="glass-panel p-6 border-cyber-purple/30 bg-cyber-purple/5 group relative overflow-hidden cursor-pointer"
-                    >
-                        <Link to="/arbitration" className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-cyber-purple/20 flex items-center justify-center text-cyber-purple text-2xl animate-pulse shadow-[0_0_15px_rgba(191,0,255,0.2)]">
-                                    <Swords size={24} aria-hidden="true" />
-                                </div>
-                                <div>
-                                    <h4 className="text-sm font-black text-cyber-purple uppercase tracking-tight">Arbitration Arena</h4>
-                                    <p className="text-xs text-gray-600 dark:text-gray-400 font-bold">See CAN bus arbitration in action bit-by-bit</p>
-                                </div>
-                            </div>
-                            <div className="text-cyber-purple group-hover:translate-x-1 transition-transform">
-                                <ChevronRight size={20} />
-                            </div>
-                        </Link>
-                        <BorderBeam duration={5} size={150} colorFrom="#bf00ff" colorTo="#00f3ff" className="opacity-40" />
-                    </motion.div>
                 </div>
             </section>
 

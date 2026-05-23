@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from '../components/ui/Container';
+import { LabNavigation } from '../components/ui/LabNavigation';
 import { Sword, Zap, Shield, Cpu, RefreshCw, Info, AlertTriangle } from 'lucide-react';
 import { canSimulator } from '../services/can/can-simulator';
 import { cn } from '../utils/cn';
@@ -462,6 +463,7 @@ export default function ArbitrationPage() {
                         </div>
                     </div>
                 </div>
+                <LabNavigation />
             </Container>
         </div>
     );

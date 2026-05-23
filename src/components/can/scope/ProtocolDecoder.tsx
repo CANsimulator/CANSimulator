@@ -198,6 +198,7 @@ interface ProtocolDecoderProps {
     setOscState?: React.Dispatch<React.SetStateAction<OscState>>;
     externalFilter?: { type: 'err' | 'warn'; timestamp: number; frameIdx?: number } | null;
     timebase: number;
+    running?: boolean;
 }
 
 export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = React.memo(({ 
@@ -206,7 +207,8 @@ export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = React.memo(({
     syncRef, 
     setOscState,
     externalFilter,
-    timebase
+    timebase,
+    running
 }) => {
     const [tab, setTab] = useState<TabKey>('Frames');
     const [hovField, setHovField] = useState<string | null>(null);
@@ -266,6 +268,48 @@ export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = React.memo(({
         const busLoad = ((totalBytes * 8 * 1.2) / (500_000 * duration / 1000) * 100).toFixed(1);
         return { total, okCount, warnCount, errCount, stdCount, extCount, avgDlc, totalBytes, idDist, duration, busLoad };
     }, []);
+
+    const [liveTotal, setLiveTotal] = useState(DEMO_FRAMES.length);
+    const [liveErrors, setLiveErrors] = useState(3);
+    const [liveBusLoad, setLiveBusLoad] = useState('12.8');
+
+    // Live frame selection and metadata counters update loop
+    useEffect(() => {
+        if (!running) {
+            setLiveTotal(DEMO_FRAMES.length);
+            setLiveErrors(errorFrames.length);
+            setLiveBusLoad(stats.busLoad);
+            return;
+        }
+
+        let rafId: number;
+        let lastIndex = -1;
+        const updateLoop = () => {
+            if (syncRef?.current) {
+                const scroll = syncRef.current.scroll;
+
+                // 1. Live Frame Selection: Cycle through frames every ~2.08s (based on scroll advancing by 0.5 units)
+                const idx = Math.floor(scroll * 2) % DEMO_FRAMES.length;
+                if (idx !== lastIndex && idx >= 0 && idx < DEMO_FRAMES.length) {
+                    lastIndex = idx;
+                    onSelect(idx);
+                }
+
+                // 2. Live Metadata Counters
+                const totalCount = Math.max(DEMO_FRAMES.length, Math.floor(scroll * 2) + 1);
+                const errorsCount = Math.floor(totalCount * (errorFrames.length / DEMO_FRAMES.length));
+                const fluctuatingLoad = (12.8 + (Math.sin(scroll * 5) * 0.4)).toFixed(1);
+
+                setLiveTotal(totalCount);
+                setLiveErrors(errorsCount);
+                setLiveBusLoad(fluctuatingLoad);
+            }
+            rafId = requestAnimationFrame(updateLoop);
+        };
+
+        rafId = requestAnimationFrame(updateLoop);
+        return () => cancelAnimationFrame(rafId);
+    }, [running, syncRef, onSelect, errorFrames.length, stats.busLoad]);
 
     const QUICK_CHIPS = useMemo(() => [
         { label: 'All',     filter: (_fr: DemoFrame) => true },
@@ -337,9 +381,9 @@ export const ProtocolDecoder: React.FC<ProtocolDecoderProps> = React.memo(({
                     ))}
                     <div className="osc-r">
                         <span className="osc-dec-stat">ISO 11898-2 · <b>500 kbit/s</b></span>
-                        <span className="osc-dec-stat">Frames <b>{DEMO_FRAMES.length}</b></span>
-                        <span className="osc-dec-stat">Errors <b className="text-[var(--danger)]">{stats.errCount + stats.warnCount}</b></span>
-                        <span className="osc-dec-stat">Load <b>{stats.busLoad}%</b></span>
+                        <span className="osc-dec-stat">Frames <b>{liveTotal}</b></span>
+                        <span className="osc-dec-stat">Errors <b className="text-[var(--danger)]">{liveErrors}</b></span>
+                        <span className="osc-dec-stat">Load <b>{liveBusLoad}%</b></span>
                     </div>
                 </div>
 

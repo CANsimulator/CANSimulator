@@ -161,7 +161,7 @@ const Footer: React.FC = () => {
                                 <FooterItem label="ISO 11898-1" to="/physical" />
                                 <FooterItem label="Arbitration" to="/arbitration" />
                                 <FooterItem label="ISO 15765-2" to="/generations" />
-                                <FooterItem label="ISO 14229-1" to="/about" />
+                                <FooterItem label="About Us" to="/contact" />
                             </ul>
                         </motion.div>
 

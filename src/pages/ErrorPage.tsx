@@ -9,6 +9,7 @@ import { TroubleshootingHints } from '../components/can/TroubleshootingHints';
 import { ErrorTypeDeepDive } from '../components/can/ErrorTypeDeepDive';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { AlertTriangle } from 'lucide-react';
+import { LabNavigation } from '../components/ui/LabNavigation';
 
 const ErrorPage: React.FC = () => {
     const [errorState, setErrorState] = useState<CANErrorState>(canSimulator.getErrorState());
@@ -411,6 +412,7 @@ const ErrorPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                <LabNavigation />
             </div>
         </div>
     );

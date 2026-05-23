@@ -141,7 +141,7 @@ const WaveformViewerInternal = forwardRef<
             ch1c: css.getPropertyValue('--ch1').trim() || '#00f3ff',
             ch2c: css.getPropertyValue('--ch2').trim() || '#bf00ff',
             chdc: css.getPropertyValue('--chd').trim() || '#00ff9f',
-            inkFaint: css.getPropertyValue('--ink-faint').trim() || '#5f7582',
+            inkDim: css.getPropertyValue('--ink-dim').trim() || '#9fb3bd',
             accent: css.getPropertyValue('--accent').trim() || '#ffd400',
             danger: css.getPropertyValue('--danger').trim() || '#ff4d3a',
         };
@@ -168,7 +168,7 @@ const WaveformViewerInternal = forwardRef<
 
     const doRender = useCallback((ts: number) => {
         const canvas = canvasRef.current;
-        if (!canvas || dims.w === 0) return;
+        if (dims.w === 0 || !canvas) return;
 
         const { w, h, dpr } = dims;
 
@@ -181,7 +181,7 @@ const WaveformViewerInternal = forwardRef<
         if (!ctx) return;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        const { bg, gridC, gridMaj, ch1c, ch2c, chdc, inkFaint, accent, danger } = colors;
+        const { bg, gridC, gridMaj, ch1c, ch2c, chdc, inkDim, accent, danger } = colors;
 
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, w, h);
@@ -231,7 +231,7 @@ const WaveformViewerInternal = forwardRef<
         const axisOffset = isDiff ? state.channels.d.off : state.axisOffsetY;
 
         // Axis labels
-        ctx.fillStyle = inkFaint;
+        ctx.fillStyle = inkDim;
         ctx.font = `10px 'JetBrains Mono', monospace`;
         ctx.textAlign = 'left';
         for (let i = 0; i <= rows; i++) {

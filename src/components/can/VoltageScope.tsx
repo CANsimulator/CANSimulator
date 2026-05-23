@@ -75,6 +75,9 @@ const getInitialState = (): OscState => ({
         mode: 'Edge', 
         level: 2.9, 
         sweep: 'Auto',
+        slope: 'Rising',
+        coupling: 'DC',
+        holdoff: 1.0,
         canTrigger: {
             type: 'ID',
             targetID: '0C9',
@@ -97,7 +100,7 @@ export const VoltageScope: React.FC = () => {
     const scopeSyncRef = React.useRef<ScopeSync>({ zoom: 1, pan: 0, scroll: 0 });
     const [state, setState] = useState<OscState>(getInitialState);
     const [meas, setMeas] = useState<OscMeas>(getInitialMeas);
-    const [layout, setLayout] = useState<LayoutType>('knobs');
+    const [layout, setLayout] = useState<LayoutType>('standard');
     const [signal, setSignal] = useState<SignalType>('can');
     const [fftMode, setFftMode] = useState(false);
     const [cursorsOn, setCursorsOn] = useState(true);
@@ -130,7 +133,7 @@ export const VoltageScope: React.FC = () => {
         setFftMode(false);
         setCursorsOn(true);
         setPersistence(false);
-        setLayout('knobs');
+        setLayout('standard');
         setSignal('can');
     }, []);
 
@@ -189,8 +192,8 @@ export const VoltageScope: React.FC = () => {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >DV</motion.div>
                     <div>
-                        <h1 className="osc-title">DIFFERENTIAL VOLTAGE OSCILLOSCOPE</h1>
-                        <div className="osc-sub">CAN · ISO 11898-2 · 500 KBIT/S</div>
+                        <h1 className="osc-title">VOLTAGE SCOPE</h1>
+                        <div className="osc-sub">500 KBIT/S · ISO 11898-2</div>
                     </div>
                 </div>
                 <div className="osc-topbar-meta">
@@ -303,8 +306,8 @@ export const VoltageScope: React.FC = () => {
 
             {/* ── LEFT RAIL ────────────────────────────────────────────── */}
             {layout === 'knobs'
-                ? <KnobRail state={state} setState={setState} onAutoscale={handleAutoscale} />
-                : <LeftRail state={state} setState={setState} onAutoscale={handleAutoscale} />}
+                ? <KnobRail state={state} setState={setState} onFilterRequest={handleFilterRequest} />
+                : <LeftRail state={state} setState={setState} onFilterRequest={handleFilterRequest} />}
 
             {/* ── STAGE ────────────────────────────────────────────────── */}
             <div className="osc-stage">
@@ -419,7 +422,13 @@ export const VoltageScope: React.FC = () => {
             </div>
 
             {/* ── RIGHT RAIL ───────────────────────────────────────────── */}
-            <ScopeMetrics meas={meas} running={state.running} onFilterRequest={handleFilterRequest} />
+            <ScopeMetrics 
+                meas={meas} 
+                running={state.running} 
+                state={state}
+                setState={setState}
+                onAutoscale={handleAutoscale}
+            />
 
             {/* ── DECODER ──────────────────────────────────────────────── */}
             <ProtocolDecoder 
@@ -429,6 +438,7 @@ export const VoltageScope: React.FC = () => {
                 setOscState={setState}
                 externalFilter={decoderFilter}
                 timebase={state.timebase}
+                running={state.running}
             />
 
             {/* ── SETTINGS PANEL ───────────────────────────────────────── */}

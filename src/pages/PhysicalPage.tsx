@@ -7,6 +7,7 @@ import { PowerSupplyDashboard } from '../components/power/PowerSupplyDashboard';
 import { useTestBench } from '../context/TestBenchContext';
 
 import { LazyMount } from '../components/ui/LazyMount';
+import { LabNavigation } from '../components/ui/LabNavigation';
 
 const PhysicalPageInner: React.FC = () => {
     const bench = useTestBench();
@@ -39,7 +40,7 @@ const PhysicalPageInner: React.FC = () => {
             : 'bg-[var(--danger)] shadow-[0_0_8px_var(--danger)] animate-pulse';
 
     return (
-        <div className="relative w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 py-8 overflow-hidden bg-[var(--bg)] min-h-screen">
+        <div className="relative w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 py-8 overflow-x-hidden bg-[var(--bg)] min-h-screen">
             {/* ── Vertical Rack Rail ── */}
             <div className="absolute left-6 lg:left-12 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[var(--stroke)] to-transparent hidden sm:block" aria-hidden="true">
                 <div className="absolute inset-0 flex flex-col justify-around py-48 opacity-30 select-none">
@@ -116,6 +117,8 @@ const PhysicalPageInner: React.FC = () => {
                         <BitTimingConfig />
                     </LazyMount>
                 </section>
+                
+                <LabNavigation />
             </div>
         </div>
     );

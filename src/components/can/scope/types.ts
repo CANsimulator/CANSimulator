@@ -18,6 +18,9 @@ export interface OscState {
         mode: 'Edge' | 'Pulse' | 'Level' | 'CAN/Protocol';
         level: number;
         sweep: 'Auto' | 'Normal' | 'Single';
+        slope?: 'Rising' | 'Falling';
+        coupling?: 'AC' | 'DC' | 'HF REJ';
+        holdoff?: number;
         canTrigger?: {
             type: 'ID' | 'Error' | 'Payload';
             targetID: string;

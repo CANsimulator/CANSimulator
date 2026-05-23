@@ -1,14 +1,14 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { motion } from 'framer-motion';
 import { Container } from '../components/ui/Container';
 import { TestTube, Settings, ArrowRight, Gauge, Info, Layers, Plus, Trash2, Activity, Download } from 'lucide-react';
 import { canSimulator } from '../services/can/can-simulator';
 import { cn } from '../utils/cn';
 import { DBCExportModal } from '../components/signals/DBCExportModal';
+import { LabNavigation } from '../components/ui/LabNavigation';
 
 export default function SignalsPage() {
-    const navigate = useNavigate();
     const [payload, setPayload] = useState<Uint8Array>(new Uint8Array([0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0]));
     const [startBit, setStartBit] = useState(12);
     const [bitLength, setBitLength] = useState(16);
@@ -355,13 +355,7 @@ export default function SignalsPage() {
                                 </div>
                             </div>
 
-                             <button
-                                 onClick={() => navigate('/arbitration')}
-                                 className="w-full p-6 rounded-[2rem] bg-gradient-to-r from-cyber-purple/20 to-cyber-blue/20 border border-cyber-purple/30 text-dark-950 dark:text-white font-black uppercase tracking-widest flex items-center justify-between group hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(191,0,255,0.1)] outline-none focus:ring-2 focus:ring-cyber-purple/50"
-                             >
-                                <span className="italic">To Arbitration Arena</span>
-                                <ArrowRight className="group-hover:translate-x-2 transition-transform" aria-hidden="true" />
-                            </button>
+                            <LabNavigation />
                         </div>
                     </div>
                 </div>

@@ -15,9 +15,9 @@ const Particles = lazy(() => import('../components/magicui/Particles'));
 const Meteors = lazy(() => import('../components/magicui/Meteors').then(m => ({ default: m.Meteors })));
 const Marquee = lazy(() => import('../components/magicui/Marquee'));
 const ShinyButton = lazy(() => import('../components/magicui/ShinyButton'));
-const ShineBorder = lazy(() => import('../components/magicui/ShineBorder'));
+
 const CyberStatCard = lazy(() => import('../components/ui/CyberStatCard').then(m => ({ default: m.CyberStatCard })));
-const PricingTeaser = lazy(() => import('../components/ui/PricingTeaser').then(m => ({ default: m.PricingTeaser })));
+
 
 import {
     Sparkles,
@@ -313,77 +313,30 @@ export const LandingPage: React.FC = () => {
                         </ul>
                     </section>
 
-                     {/* Bus Trace Preview Section */}
-                    <section className="container mx-auto px-4 py-12 md:py-20 lg:py-32 relative z-10">
-                        <motion.div
-                            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
-                            whileInView={prefersReducedMotion ? undefined : { opacity: 1 }}
-                            viewport={{ once: true }}
-                            className="max-w-6xl mx-auto"
-                        >
-                            <Suspense fallback={<div className="w-full bg-white/5 animate-pulse rounded-[3.5rem] h-96"></div>}>
-                                <ShineBorder
-                                    borderRadius={56}
-                                    borderWidth={2}
-                                    duration={12}
-                                    color={['#00f3ff', '#bd00ff', '#00ff9f']}
-                                    className="w-full max-w-none p-0 bg-transparent"
-                                >
-                                    <div className={cn("cyber-glass p-6 sm:p-10 lg:p-16 rounded-[3.5rem] border-0 w-full", glassSurface)}>
-                                        <div className="text-center mb-12 sm:mb-16">
-                                            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-light-600 dark:text-white tracking-tighter uppercase italic leading-[0.9]">
-                                                BUS TRACE ANALYTICS
-                                            </h2>
-                                            <p className="text-xl sm:text-2xl font-black text-light-400 dark:text-gray-400 italic">
-                                                Microsecond precision trace analysis with real-time arbitration visualization.
-                                            </p>
-                                        </div>
 
-                                        <div className="bg-dark-950 rounded-[2.5rem] p-6 sm:p-10 border border-white/10 shadow-3xl relative overflow-hidden font-mono">
-                                            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-                                                <div className="flex gap-2">
-                                                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                                                    <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                                                    <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                                                </div>
-                                                <div className="text-[11px] text-gray-500 uppercase tracking-widest flex items-center gap-4">
-                                                    <span>NODE_COUNT: 04</span>
-                                                    <span>BUS_LOAD: 12.4%</span>
-                                                    <span>V1.2.0-CANFD</span>
-                                                </div>
-                                            </div>
 
-                                            <div className="space-y-4 text-xs sm:text-sm" role="list" aria-label="Real-time bus frame trace">
-                                                {[
-                                                    { time: '0.000142', id: '123', type: 'CAN', dlc: '8', data: '01 02 03 04 05 06 07 08', color: 'text-cyber-blue' },
-                                                    { time: '0.000284', id: '7DF', type: 'CAN', dlc: '8', data: '02 01 0D 00 00 00 00 00', color: 'text-cyber-purple' },
-                                                    { time: '0.000612', id: '1A2', type: 'FD', dlc: '64', data: 'AA BB CC DD EE FF ...', color: 'text-cyber-green' },
-                                                    { time: '0.000845', id: 'ERR', type: '!!', dlc: '0', data: 'STUFF_ERROR_DETECTED', color: 'text-red-500' },
-                                                ].map((row, i) => (
-                                                    <motion.div
-                                                        key={i}
-                                                        role="listitem"
-                                                        initial={{ opacity: 0, x: -10 }}
-                                                        whileInView={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: i * 0.1 }}
-                                                        className="grid grid-cols-4 sm:grid-cols-6 gap-4 py-3 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors px-4 rounded-xl"
-                                                    >
-                                                        <span className="text-gray-500" aria-label={`Timestamp: ${row.time}`}>{row.time}</span>
-                                                        <span className={`${row.color} font-black`} aria-label={`CAN ID: ${row.id}`}>{row.id}</span>
-                                                        <span className="text-gray-400 hidden sm:block">{row.type}</span>
-                                                        <span className="text-gray-400 hidden sm:block">L:{row.dlc}</span>
-                                                        <span className="col-span-2 text-gray-300 truncate" aria-label={`Payload: ${row.data}`}>{row.data}</span>
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </ShineBorder>
-                            </Suspense>
-                        </motion.div>
+                    {/* About / Mission Section (Merged from AboutPage) */}
+                    <section className="container mx-auto px-4 py-12 md:py-20 relative z-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                            <div className={cn("p-8 md:p-12 space-y-4 rounded-[3rem] border-2 transition-all", isDark ? "bg-white/5 border-white/5" : "bg-white/80 border-gray-100 shadow-[0_12px_32px_rgba(15,23,42,0.08)]")}>
+                                <h3 className="text-cyber-blue font-black uppercase tracking-widest text-sm">Our Mission</h3>
+                                <p className="text-light-700 dark:text-gray-300 leading-relaxed text-sm md:text-base font-bold">
+                                    CAN Simulator was founded to democratize access to high-fidelity automotive network testing. 
+                                    We believe that learning the intricacies of ISO 11898 and CAN FD shouldn't require 
+                                    expensive hardware or proprietary software.
+                                </p>
+                            </div>
+                            <div className={cn("p-8 md:p-12 space-y-4 rounded-[3rem] border-2 transition-all", isDark ? "bg-white/5 border-white/5" : "bg-white/80 border-gray-100 shadow-[0_12px_32px_rgba(15,23,42,0.08)]")}>
+                                <h3 className="text-cyber-purple font-black uppercase tracking-widest text-sm">The Technology</h3>
+                                <p className="text-light-700 dark:text-gray-300 leading-relaxed text-sm md:text-base font-mono">
+                                    {'>'} React 19 / TypeScript 5.9<br/>
+                                    {'>'} Real-time Bus Arbitration Simulation<br/>
+                                    {'>'} Eye Diagram Signal Analysis<br/>
+                                    {'>'} WCAG 2.1 AAA Accessibility
+                                </p>
+                            </div>
+                        </div>
                     </section>
-
-                    <PricingTeaser />
 
                      {/* Final CTA */}
                     <section className="container mx-auto px-4 py-12 md:py-20 lg:py-32 relative z-10">
