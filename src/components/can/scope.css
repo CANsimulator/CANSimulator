@@ -104,11 +104,12 @@
     "osc-topbar osc-topbar osc-topbar"
     "osc-leftrail osc-stage osc-rightrail"
     "osc-decoder osc-decoder osc-decoder";
-  height: 1040px;
-  min-height: 700px;
+  height: auto;
+  min-height: 800px;
+  max-height: fit-content;
   background: var(--bg);
   color: var(--ink);
-  overflow: hidden;
+  overflow: visible;
   font-family: var(--font);
   user-select: none;
   -webkit-font-smoothing: antialiased;
@@ -138,18 +139,20 @@
       "osc-leftrail osc-stage"
       "osc-rightrail osc-stage"
       "osc-decoder osc-decoder";
-    grid-template-rows: auto auto 1fr auto;
-    overflow-y: hidden;
-    height: 1040px;
+    overflow-y: visible;
+    height: auto;
   }
   
-  .osc-leftrail, .osc-rightrail {
+  .osc-leftrail {
     height: 100%;
     overflow-y: auto;
     padding-right: 4px;
   }
 
   .osc-rightrail {
+    height: 100%;
+    overflow: visible;
+    padding-right: 4px;
     border-top: 1px solid var(--stroke);
     border-left: none;
   }
@@ -413,14 +416,14 @@
   gap: 8px;
   padding: 10px;
   grid-template-columns: 232px 1fr 252px;
-  grid-template-rows: 52px minmax(0, 1fr) 240px;
+  grid-template-rows: 42px minmax(0, 1fr) 240px;
 }
 
 .osc-app.density-comfortable {
   gap: 12px;
   padding: 16px;
   grid-template-columns: 260px 1fr 280px;
-  grid-template-rows: 60px minmax(620px, 1fr) 280px;
+  grid-template-rows: 48px minmax(620px, 1fr) 280px;
 }
 
 @media (max-width: 1280px) and (min-width: 1025px) {
@@ -430,7 +433,7 @@
       "osc-topbar osc-topbar osc-topbar"
       "osc-leftrail osc-stage osc-rightrail"
       "osc-decoder osc-decoder osc-decoder";
-    grid-template-rows: 60px minmax(620px, 1fr) 280px;
+    grid-template-rows: 48px minmax(620px, 1fr) 280px;
   }
 }
 
@@ -475,8 +478,8 @@
 .osc-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 18px;
+  gap: 8px;
+  padding: 0 12px;
   border-right: 1px solid var(--stroke);
   background: var(--accent);
   color: var(--accent-ink);
@@ -484,29 +487,29 @@
 }
 
 .osc-brand .osc-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
   background: var(--accent-ink);
   display: grid;
   place-items: center;
   color: var(--accent);
   font-weight: 800;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .osc-brand .osc-title {
   font-weight: 800;
   letter-spacing: .04em;
-  font-size: 13px;
+  font-size: 11px;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .osc-brand .osc-sub {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   opacity: .75;
 }
@@ -521,17 +524,17 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 8px 16px;
+  padding: 4px 12px;
   border-right: 1px solid var(--stroke);
-  min-width: 110px;
-  max-width: 180px;
+  min-width: 100px;
+  max-width: 160px;
   overflow: hidden;
   flex-shrink: 1;
 }
 
 .osc-meta-k {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: .12em;
   color: var(--ink-faint);
   text-transform: uppercase;
@@ -539,10 +542,10 @@
 
 .osc-meta-v {
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink);
-  margin-top: 2px;
+  margin-top: 1px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -622,14 +625,14 @@
 .osc-top-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 10px;
+  gap: 6px;
+  padding: 0 8px;
   border-left: 1px solid var(--stroke);
 }
 
 .osc-iconbtn {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius);
   background: var(--bg-3);
   border: 1px solid var(--stroke);
@@ -645,8 +648,8 @@
 }
 
 .osc-iconbtn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   stroke: currentColor;
   fill: none;
   stroke-width: 2;
@@ -657,14 +660,14 @@
 .osc-reset-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 12px;
-  height: 36px;
+  gap: 4px;
+  padding: 0 10px;
+  height: 30px;
   border-radius: var(--radius);
   background: var(--danger);
   border: 1px solid var(--danger-border);
   color: white;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.05em;
   transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -683,8 +686,8 @@
 }
 
 .osc-reset-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   stroke: white;
   fill: none;
   stroke-width: 2.5;
@@ -706,9 +709,26 @@
   grid-area: osc-rightrail;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   min-height: 0;
+  overflow: visible;
+  position: relative;
+}
+
+.osc-rightrail-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+
+/* Ensure the Trigger section has a high stacking context so its overlays stack above sibling sections */
+.osc-rightrail > section:last-of-type,
+.osc-rightrail-scroll > section:last-of-type {
+  position: relative;
+  z-index: 20;
 }
 
 .osc-leftrail::-webkit-scrollbar,
@@ -3434,11 +3454,9 @@
     font-weight: 500;
 }
 
-/* CAN TRIGGER MENU */
 .osc-trig-menu {
     position: absolute;
-    bottom: 110%;
-    left: 0;
+    bottom: 12px;
     width: 320px;
     background: rgba(10, 10, 10, 0.85);
     backdrop-filter: blur(16px);
@@ -3448,11 +3466,54 @@
     border-radius: 8px;
     padding: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.8), 0 0 20px rgba(6, 232, 249, 0.05);
-    z-index: 50;
+    z-index: 100;
     font-family: 'Space Grotesk', var(--mono);
     display: flex;
     flex-direction: column;
     gap: 16px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 1. Viewport > 1280px: 3-column layout (sidebar on right) for ALL densities */
+@media (min-width: 1281px) {
+    .osc-app .osc-trig-menu {
+        right: 105%;
+        left: auto;
+    }
+}
+
+/* 2. Viewport 1025px to 1280px:
+   - For density-comfortable, it uses a 3-column layout (sidebar on right) -> float left
+   - For all other layouts/densities, it uses a 2-column layout (sidebar on left) -> float right
+*/
+@media (max-width: 1280px) and (min-width: 1025px) {
+    /* 2a. Sidebar on Left (density-compact or no density) */
+    .osc-app:not(.density-comfortable) .osc-trig-menu {
+        right: auto;
+        left: 105%;
+    }
+
+    /* 2b. Sidebar on Right (density-comfortable) */
+    .osc-app.density-comfortable .osc-trig-menu {
+        right: 105%;
+        left: auto;
+    }
+}
+
+/* 3. Viewport <= 1024px: Mobile/Tablet centered overlay */
+@media (max-width: 1024px) {
+    .osc-app .osc-trig-menu {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) !important;
+        right: auto;
+        bottom: auto;
+        z-index: 2000;
+        width: 340px;
+        max-width: calc(100vw - 32px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 30px rgba(6, 232, 249, 0.2);
+    }
 }
 
 .osc-trig-header {
@@ -3644,3 +3705,216 @@
     outline: none;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(191, 0, 255, 0.2);
 }
+
+/* CAN Trigger Dialog Footer & Action UI */
+.osc-trig-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.osc-trig-arm-btn {
+    width: 100%;
+    padding: 10px;
+    font-family: 'Space Grotesk', var(--mono);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #000;
+    background: linear-gradient(90deg, #06e8f9, #00f3ff);
+    border: 1px solid #06e8f9;
+    border-radius: 4px;
+    cursor: pointer;
+    text-shadow: none;
+    box-shadow: 0 0 15px rgba(6, 232, 249, 0.4);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.osc-trig-arm-btn:hover:not(.disabled) {
+    background: linear-gradient(90deg, #00f3ff, #bf00ff);
+    color: #fff;
+    border-color: #bf00ff;
+    box-shadow: 0 0 25px rgba(191, 0, 255, 0.7);
+    transform: translateY(-1px);
+}
+
+.osc-trig-arm-btn:active:not(.disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 0 10px rgba(6, 232, 249, 0.3);
+}
+
+.osc-trig-arm-btn.disabled {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.25);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Simulated Syncing States */
+.osc-trig-status-anim {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.osc-trig-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.osc-trig-progress-fill {
+    height: 100%;
+    background: #06e8f9;
+    box-shadow: 0 0 10px #06e8f9;
+}
+
+.osc-trig-status-text {
+    font-size: 8px;
+    font-weight: 800;
+    color: #06e8f9;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: osc-pulse-text 1.2s infinite ease-in-out;
+}
+
+.osc-trig-status-success {
+    width: 100%;
+    padding: 10px;
+    background: rgba(0, 255, 159, 0.1);
+    border: 1px solid #00ff9f;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(0, 255, 159, 0.2);
+}
+
+.osc-trig-success-text {
+    font-family: 'Space Grotesk', var(--mono);
+    font-size: 10px;
+    font-weight: 800;
+    color: #00ff9f;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(0, 255, 159, 0.4);
+}
+
+@keyframes osc-pulse-text {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; filter: drop-shadow(0 0 4px rgba(6, 232, 249, 0.6)); }
+}
+
+
+/* Tab Switcher - Futuristic Cyber Aesthetic */
+.osc-tabs {
+  display: flex;
+  background: var(--bg-darker);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  padding: 2px;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+.osc-tab {
+  flex: 1;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 2px;
+  border-radius: calc(var(--radius) - 1px);
+  color: var(--ink-faint);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent !important;
+}
+
+.osc-tab:hover {
+  color: var(--ink-dim);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.osc-tab.active {
+  background: color-mix(in srgb, var(--tab-color) 15%, var(--bg-3)) !important;
+  border: 1px solid color-mix(in srgb, var(--tab-color) 40%, var(--stroke)) !important;
+  color: var(--tab-color) !important;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--tab-color) 15%, transparent);
+}
+
+.osc-tab.osc-ch-h {
+  --tab-color: var(--ch1);
+}
+
+.osc-tab.osc-ch-l {
+  --tab-color: var(--ch2);
+}
+
+.osc-tab.osc-ch-d {
+  --tab-color: var(--chd);
+}
+
+/* Premium Flowing Waveform Animations */
+.osc-flowing-wave {
+  animation: osc-flow-right 1.2s linear infinite;
+}
+
+.osc-flowing-wave-reverse {
+  animation: osc-flow-left 1.2s linear infinite;
+}
+
+.osc-flowing-wave-diff {
+  animation: osc-flow-diff 1.5s linear infinite;
+}
+
+@keyframes osc-flow-right {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes osc-flow-left {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 20;
+  }
+}
+
+@keyframes osc-flow-diff {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Respect user preferences for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .osc-flowing-wave,
+  .osc-flowing-wave-reverse,
+  .osc-flowing-wave-diff {
+    animation: none !important;
+  }
+}
+
