@@ -52,12 +52,14 @@ export interface ChannelCfg {
     color: string;
 }
 
+export const DLC_MAP = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64];
+
 /**
  * CAN FD DLC to Data Length conversion table
  */
 export function dlcToLength(dlc: number): number {
-    const table = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64];
-    return table[dlc] ?? 0;
+    if (dlc < 0 || dlc > 15) return 64;
+    return DLC_MAP[dlc] ?? 64;
 }
 
 /**
@@ -73,3 +75,4 @@ export function lengthToDlc(len: number): number {
     if (len <= 48) return 14;
     return 15;
 }
+
